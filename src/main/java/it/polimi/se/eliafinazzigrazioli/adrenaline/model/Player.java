@@ -1,7 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponCard;
-
 import java.util.List;
 
 public class Player {
@@ -10,33 +8,29 @@ public class Player {
     private PlayerBoard playerBoard;
     private boolean suspended;
     private boolean connected;
-    private List<WeaponCard> weapons;
-    private List<PowerUpCard> powerUps;
+    private List<WeaponCard> weaponsDeck;
+    private List<PowerUpCard> powerUpsDeck;
 
     //TODO Costruttore
 
     public List<WeaponCard> getWeapons(){
         //TODO
-        return null;
     }
 
     public WeaponCard removeWeapon(int index){
         //TODO
-        return null;
     }
 
-    public void addWeapon(WeaponCard weapon){
+    public addWeapon(WeaponCard weapon){
         //TODO
     }
 
-    public List<PowerUpCard> getPowerUps(){
+    public List<PowerUpcard> getPowerUps(){
         //TODO
-        return null;
     }
 
-    public void addPowerUp(PowerUpCard powerUpCard){
+    public addPowerUp(PowerUpCard powerUpCard){
         //TODO
-
     }
 
     public void connect(){
