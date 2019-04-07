@@ -1,5 +1,11 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
-public interface Selectable {
-    //TODO
+import java.util.List;
+
+public interface Selectable{
+
+    //List<Player> getPlayers();
+
+    //BoardSquare getSquare();
+
 }

@@ -1,32 +1,48 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerBoard {
-    private List<DamageMark> damages;
-    private List<DamageMark> marks;
+    private ArrayList<DamageMark> damages;
+    private ArrayList<DamageMark> marks;
     private int skulls;
-    private int[] scores;
+    private ArrayList<Integer> scores;
 
-    //TODO Costruttori
+    public PlayerBoard(int damagesNumber, int marksNumber, int skulls, ArrayList<Integer> scores) {
+        this.damages = new ArrayList<DamageMark>(damagesNumber);
+        this.marks = new ArrayList<DamageMark>(marksNumber);
+        this.skulls = skulls;
+        this.scores = scores;
+    }
 
-    //TODO public void addDamage
+    public void addDamage(DamageMark mark){
+        damages.add(mark);
+    }
+
+    public void addMark(DamageMark mark){
+        marks.add(mark);
+    }
 
     public void cleanPlayerBoard() {
+        damages.clear();
+        marks.clear();
+    }
+
+    public void spendAmmo(List<Ammo> toSpend){
         //TODO
     }
 
-    //TODO addMark()
-
-    //TODO spendAmmo()
-
-    //TODO addAMMO()
+    public void addAmmo(List<Ammo> toAdd){
+        //TODO
+    }
 
     public void addSkull(){
-        //TODO
+        skulls++;
     }
 
-    public int[] getScores(){
-        //TODO
+    public ArrayList<Integer> getScores(){
+        return null;
     }
+
 }
