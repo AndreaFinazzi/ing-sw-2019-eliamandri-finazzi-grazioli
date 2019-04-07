@@ -9,10 +9,22 @@ public abstract class BoardSquare implements Selectable{
     private InterSquareLink east;
     private InterSquareLink west;
 
-    //TODO Costruttore
+    public BoardSquare(Room room, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
+        this.room = room;
+        this.north = north;
+        this.south = south;
+        this.east = east;
+        this.west = west;
+    }
 
-    public List<BoardSquare> getRoom(){
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public List<Player> getPlayers(){
         //TODO
+        return null;
     }
 
 }
