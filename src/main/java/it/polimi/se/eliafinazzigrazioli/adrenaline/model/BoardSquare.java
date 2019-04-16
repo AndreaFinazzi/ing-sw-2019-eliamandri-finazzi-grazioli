@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BoardSquare implements Selectable{
@@ -8,6 +9,7 @@ public abstract class BoardSquare implements Selectable{
     private InterSquareLink south;
     private InterSquareLink east;
     private InterSquareLink west;
+    private List<Player> players;
 
     public BoardSquare(Room room, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
         this.room = room;
@@ -15,6 +17,7 @@ public abstract class BoardSquare implements Selectable{
         this.south = south;
         this.east = east;
         this.west = west;
+        players = new ArrayList<Player> ();
     }
 
 
@@ -22,9 +25,18 @@ public abstract class BoardSquare implements Selectable{
         return room;
     }
 
-    public List<Player> getPlayers(){
-        //TODO
-        return null;
+    @Override
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+
+    public void addPlayer(Player player) {
+        players.add (player);
+    }
+
+    public void removePlayer(Player player) {
+        players.remove (player);
     }
 
 }

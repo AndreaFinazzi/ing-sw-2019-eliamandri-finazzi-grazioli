@@ -10,6 +10,7 @@ public class Player {
     private PlayerBoard playerBoard;
     private boolean suspended;
     private boolean connected;
+    private boolean placed;
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
 
@@ -55,5 +56,11 @@ public class Player {
         //TODO
     }
 
+    public boolean isPlaced() {
+        return placed;
+    }
 
+    public void setPlaced(boolean placed) {
+        this.placed = placed;
+    }
 }

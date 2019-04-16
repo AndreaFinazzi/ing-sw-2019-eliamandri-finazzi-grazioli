@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface Selectable{
 
-    //List<Player> getPlayers();
+    List<Player> getPlayers();
 
-    //BoardSquare getSquare();
+    BoardSquare getSquare();
 
 }

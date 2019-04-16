@@ -4,31 +4,29 @@ import java.util.List;
 
 public class GenericBoardSquare extends BoardSquare {
 
-    private AmmoCard collectables;
+    private AmmoCard collectable;
 
 
-    public GenericBoardSquare(Room room, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west, AmmoCard collectables) {
+    public GenericBoardSquare(Room room, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
         super(room, north, south, east, west);
-        this.collectables = collectables;
+        collectable = null;
     }
-
-    public AmmoCard removeCollectables(){
-        //TODO
-        return null;
+    //TODO define type excpetion
+    public AmmoCard removeCollectables() throws Exception{
+        if (collectable == null)
+            throw new Exception ();
+        AmmoCard tempCollectables = collectable;
+        collectable = null;
+        return tempCollectables;
     }
 
     public void dropCollectables(AmmoCard toDrop){
-        //TODO
+        collectable = toDrop;
     }
 
-    public List<Player> getPlayers(){
-        //TODO
-        return null;
-    }
 
-    public BoardSquare getSquare(){
-        //TODO
-        return null;
+    @Override
+    public BoardSquare getSquare() {
+        return this;
     }
-
 }
