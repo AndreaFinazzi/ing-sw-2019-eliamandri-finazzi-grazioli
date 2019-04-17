@@ -2,12 +2,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponCard;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private static final int maxWeapons = 3;
-    private static final int maxPowerUps = 3;
     private String playerNickname;
     private BoardSquare position;
     private PlayerBoard playerBoard;
@@ -17,13 +14,7 @@ public class Player {
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
 
-
-    public Player(String playerNickname) {
-        this.playerNickname = playerNickname;
-        connected = true;
-        weapons = new ArrayList<> ();
-        powerUps = new ArrayList<> ();
-    }
+    //TODO Costruttore
 
     public List<WeaponCard> getWeapons(){
         return weapons;
@@ -33,9 +24,7 @@ public class Player {
         int index = weapons.indexOf (weapon);
         if (index == -1)
             throw new Exception ();
-        WeaponCard tempWeapon = weapons.get (index);
-        weapons.remove (index);
-        return tempWeapon;
+        return weapons.remove (index);
     }
     //TODO define type excpetion
     public void addWeapon(WeaponCard weapon) throws Exception{
@@ -44,51 +33,47 @@ public class Player {
         weapons.add (weapon);
     }
 
-    public List<PowerUpCard> getPowerUps(){
-        return powerUps;
-    }
-
-    //TODO define type excpetion
-    public void addPowerUp(PowerUpCard powerUpCard) throws Exception{
-        if (powerUps.size () == maxPowerUps)
-            throw new Exception ();
-        powerUps.add (powerUpCard);
-    }
-
-    public String getPlayerNickname() {
-        return playerNickname;
-    }
-
-    public BoardSquare getPosition() {
-        return position;
+    public PlayerBoard getPlayerBoard() {
+        return playerBoard;
     }
 
     public void setPosition(BoardSquare position) {
         this.position = position;
     }
 
-    public boolean isConnected() {
-        return connected;
+    public WeaponCard removeWeapon(int index){
+        //TODO
+        return null;
+    }
+
+    public void addWeapon(WeaponCard weapon){
+        //TODO
+    }
+
+    public List<PowerUpCard> getPowerUps(){
+        //TODO
+        return null;
+    }
+
+    public void addPowerUp(PowerUpCard powerUpCard){
+        //TODO
+
     }
 
     public void connect(){
-        connected = true;
+        //TODO
     }
 
     public void disconnect(){
-        connected = false;
-    }
-
-    public boolean isSuspended() {
-        return suspended;
+        //TODO
     }
 
     public void suspend(){
-        suspended = true;
+        //TODO
     }
 
     public void unsuspend(){
-        suspended = false;
+        //TODO
     }
 
     public boolean isPlaced() {
