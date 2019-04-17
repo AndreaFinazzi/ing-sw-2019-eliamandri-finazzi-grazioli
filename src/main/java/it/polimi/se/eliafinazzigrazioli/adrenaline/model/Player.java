@@ -2,9 +2,12 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponCard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
+    private static final int maxWeapons = 3;
+    private static final int maxPowerUps = 3;
     private String playerNickname;
     private BoardSquare position;
     private PlayerBoard playerBoard;
@@ -14,46 +17,78 @@ public class Player {
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
 
-    //TODO Costruttore
+
+    public Player(String playerNickname) {
+        this.playerNickname = playerNickname;
+        connected = true;
+        weapons = new ArrayList<> ();
+        powerUps = new ArrayList<> ();
+    }
 
     public List<WeaponCard> getWeapons(){
-        //TODO
-        return null;
+        return weapons;
     }
-
-    public WeaponCard removeWeapon(int index){
-        //TODO
-        return null;
+    //TODO define type excpetion
+    public WeaponCard removeWeapon(WeaponCard weapon) throws Exception{
+        int index = weapons.indexOf (weapon);
+        if (index == -1)
+            throw new Exception ();
+        WeaponCard tempWeapon = weapons.get (index);
+        weapons.remove (index);
+        return tempWeapon;
     }
-
-    public void addWeapon(WeaponCard weapon){
-        //TODO
+    //TODO define type excpetion
+    public void addWeapon(WeaponCard weapon) throws Exception{
+        if (weapons.size () == maxWeapons)
+            throw new Exception ();
+        weapons.add (weapon);
     }
 
     public List<PowerUpCard> getPowerUps(){
-        //TODO
-        return null;
+        return powerUps;
     }
 
-    public void addPowerUp(PowerUpCard powerUpCard){
-        //TODO
+    //TODO define type excpetion
+    public void addPowerUp(PowerUpCard powerUpCard) throws Exception{
+        if (powerUps.size () == maxPowerUps)
+            throw new Exception ();
+        powerUps.add (powerUpCard);
+    }
 
+    public String getPlayerNickname() {
+        return playerNickname;
+    }
+
+    public BoardSquare getPosition() {
+        return position;
+    }
+
+    public void setPosition(BoardSquare position) {
+        this.position = position;
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 
     public void connect(){
-        //TODO
+        connected = true;
     }
 
     public void disconnect(){
-        //TODO
+        connected = false;
+    }
+
+    public boolean isSuspended() {
+        return suspended;
     }
 
     public void suspend(){
-        //TODO
+        suspended = true;
     }
 
     public void unsuspend(){
-        //TODO
+        suspended = false;
     }
 
     public boolean isPlaced() {
