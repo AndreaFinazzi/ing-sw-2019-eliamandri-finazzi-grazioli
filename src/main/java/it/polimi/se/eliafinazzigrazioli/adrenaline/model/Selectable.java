@@ -2,7 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
 import java.util.List;
 
-public interface Selectable{
+public interface Selectable {
 
     List<Player> getPlayers();
 

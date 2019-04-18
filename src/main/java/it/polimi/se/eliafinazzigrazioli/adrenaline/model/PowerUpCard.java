@@ -14,7 +14,7 @@ public class PowerUpCard {
         return equivalentAmmo;
     }
 
-    public void activate(){
+    public void activate() {
         effect.activate();
     }
 

@@ -1,7 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
-import java.util.List;
-
 public class GenericBoardSquare extends BoardSquare {
 
     private AmmoCard collectable;
@@ -11,16 +9,17 @@ public class GenericBoardSquare extends BoardSquare {
         super(room, north, south, east, west);
         collectable = null;
     }
-    //TODO define type excpetion
-    public AmmoCard removeCollectables() throws Exception{
+
+    //TODO define type exception
+    public AmmoCard removeCollectables() throws Exception {
         if (collectable == null)
-            throw new Exception ();
+            throw new Exception();
         AmmoCard tempCollectables = collectable;
         collectable = null;
         return tempCollectables;
     }
 
-    public void dropCollectables(AmmoCard toDrop){
+    public void dropCollectables(AmmoCard toDrop) {
         collectable = toDrop;
     }
 

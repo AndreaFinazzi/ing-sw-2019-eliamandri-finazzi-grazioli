@@ -1,11 +1,13 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.events.controller;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.controller.EventListenerInterface;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Coordinates;
 
 import java.util.List;
 import java.util.Map;
 
-public class AllowedMovesEvent implements ControllerEventInterface{
+public class AllowedMovesEvent extends AbstractControllerEvent {
     private String player;
     private Map<Coordinates, List<Coordinates>> path;
 
@@ -16,5 +18,10 @@ public class AllowedMovesEvent implements ControllerEventInterface{
 
     public Map<Coordinates, List<Coordinates>> getPath() {
         return path;
+    }
+
+    @Override
+    public void handle(EventListenerInterface listener) throws HandlerNotImplementedException {
+        listener.handleEvent(this);
     }
 }

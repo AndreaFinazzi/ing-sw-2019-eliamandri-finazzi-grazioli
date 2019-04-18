@@ -1,8 +1,10 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.events.controller;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.controller.EventListenerInterface;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.PlayerBoard;
 
-public class FinalFrenzyBeginEvent implements ControllerEventInterface{
+public class FinalFrenzyBeginEvent extends AbstractControllerEvent {
     private String player;
     private PlayerBoard frenzyBoard;
 
@@ -13,5 +15,10 @@ public class FinalFrenzyBeginEvent implements ControllerEventInterface{
 
     public PlayerBoard getFrenzyBoard() {
         return frenzyBoard;
+    }
+
+    @Override
+    public void handle(EventListenerInterface listener) throws HandlerNotImplementedException {
+        listener.handleEvent(this);
     }
 }

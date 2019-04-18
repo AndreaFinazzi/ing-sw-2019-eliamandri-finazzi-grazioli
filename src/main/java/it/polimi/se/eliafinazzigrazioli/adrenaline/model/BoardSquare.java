@@ -5,7 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Coordinates;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BoardSquare implements Selectable{
+public abstract class BoardSquare implements Selectable {
     private Room room;
     private Coordinates coordinates;
     private InterSquareLink north;
@@ -20,7 +20,7 @@ public abstract class BoardSquare implements Selectable{
         this.south = south;
         this.east = east;
         this.west = west;
-        players = new ArrayList<Player> ();
+        players = new ArrayList<Player>();
     }
 
     public Coordinates getCoordinates() {
@@ -53,11 +53,11 @@ public abstract class BoardSquare implements Selectable{
     }
 
     public void addPlayer(Player player) {
-        players.add (player);
+        players.add(player);
     }
 
     public void removePlayer(Player player) {
-        players.remove (player);
+        players.remove(player);
     }
 
 }

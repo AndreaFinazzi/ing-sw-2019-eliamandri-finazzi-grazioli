@@ -16,7 +16,9 @@ public class MoveAction extends EffectState {
         List<Player> toMove = executingEffect.getToAffect();
         BoardSquare destination = executingEffect.getMovementDestination();
         for(Player moved:toMove){
+            moved.getPosition().removePlayer(moved);
             moved.setPosition(destination);
+            destination.addPlayer(moved);
         }
         executingEffect.addMovedPlayers(toMove);
     }

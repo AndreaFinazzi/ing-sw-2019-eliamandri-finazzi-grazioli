@@ -54,8 +54,7 @@ public class WeaponEffect {
     }
 
 
-
-    public void execute(WeaponCard invoker){
+    public void execute(WeaponCard invoker) {
         currentState.execute(invoker);
         currentState = stateIterator.next();
     }

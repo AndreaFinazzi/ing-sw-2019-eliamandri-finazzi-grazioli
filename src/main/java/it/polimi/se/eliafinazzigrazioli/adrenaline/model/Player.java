@@ -14,31 +14,46 @@ public class Player {
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
 
-    //TODO Costruttore
 
-    public List<WeaponCard> getWeapons(){
-        return weapons;
-    }
-    //TODO define type excpetion
-    public WeaponCard removeWeapon(WeaponCard weapon) throws Exception{
-        int index = weapons.indexOf (weapon);
-        if (index == -1)
-            throw new Exception ();
-        return weapons.remove (index);
-    }
-    //TODO define type excpetion
-    public void addWeapon(WeaponCard weapon) throws Exception{
-        if (weapons.size () == maxWeapons)
-            throw new Exception ();
-        weapons.add (weapon);
+    public Player(String playerNickname) {
+        this.playerNickname = playerNickname;
+        connected = true;
+        weapons = new ArrayList<>();
+        powerUps = new ArrayList<>();
     }
 
     public PlayerBoard getPlayerBoard() {
         return playerBoard;
     }
 
-    public void setPosition(BoardSquare position) {
-        this.position = position;
+    public List<WeaponCard> getWeapons(){
+        return weapons;
+    }
+
+    //TODO define type excpetion
+    public WeaponCard removeWeapon(WeaponCard weapon) throws Exception {
+        int index = weapons.indexOf(weapon);
+        if (index == -1)
+            throw new Exception();
+        return weapons.remove(index);
+    }
+
+    //TODO define type excpetion
+    public void addWeapon(WeaponCard weapon) throws Exception {
+        if (weapons.size() == maxWeapons)
+            throw new Exception();
+        weapons.add(weapon);
+    }
+
+    public List<PowerUpCard> getPowerUps() {
+        return powerUps;
+    }
+
+    //TODO define type excpetion
+    public void addPowerUp(PowerUpCard powerUpCard) throws Exception {
+        if (powerUps.size() == maxPowerUps)
+            throw new Exception();
+        powerUps.add(powerUpCard);
     }
 
     public WeaponCard removeWeapon(int index){
@@ -60,20 +75,24 @@ public class Player {
 
     }
 
-    public void connect(){
-        //TODO
+    public void connect() {
+        connected = true;
     }
 
-    public void disconnect(){
-        //TODO
+    public void disconnect() {
+        connected = false;
     }
 
-    public void suspend(){
-        //TODO
+    public boolean isSuspended() {
+        return suspended;
     }
 
-    public void unsuspend(){
-        //TODO
+    public void suspend() {
+        suspended = true;
+    }
+
+    public void unsuspend() {
+        suspended = false;
     }
 
     public boolean isPlaced() {

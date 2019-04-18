@@ -7,7 +7,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Selectable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeaponCard extends Card{
+public class WeaponCard extends Card {
 
     private Ammo cardColor;
     private List<Ammo> loader;
@@ -29,20 +29,20 @@ public class WeaponCard extends Card{
         this.deliveredMark = deliveredMark;
     }
 
-    public void executeStep(){
+    public void executeStep() {
 
         activeEffect.execute(this);
     }
 
-    public void playCard(){
+    public void playCard() {
         //TODO
     }
 
-    public void reload(){
+    public void reload() {
         //TODO
     }
 
-    private void unload(){
+    private void unload() {
         //TODO
     }
 
