@@ -1,15 +1,18 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.AmmoNotAvaibleException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.OutofBoundException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerBoard {
-    private static final int maxSkulls = 6;
-    private static final int maxDamage = 12;
-    private static final int maxMark = 12;
-    private static final int deadShoot = 11;
-    private static final int firstShoot = 1;
-    private static final int maxAmmo = 3;
+    private static final int MAX_SKULLS = 6;
+    private static final int MAX_DAMAGE = 12;
+    private static final int MAX_MARK = 12;
+    private static final int DEAD_SHOOT = 11;
+    private static final int FIRST_SHOOT = 1;
+    private static final int MAX_AMMO = 3;
     private int skulls;
     private boolean firstBlood;
     private boolean death;
@@ -17,56 +20,71 @@ public class PlayerBoard {
     private ArrayList<DamageMark> damages;
     private ArrayList<DamageMark> marks;
     private ArrayList<Ammo> ammos;
-    private ArrayList<Integer> scores;
+    private ArrayList<Integer> deathScores;
 
-    public PlayerBoard(int damagesNumber, int marksNumber, int skulls, ArrayList<Integer> scores) {
-        this.damages = new ArrayList<DamageMark>(damagesNumber);
-        this.marks = new ArrayList<DamageMark>(marksNumber);
-        this.ammos = new ArrayList<Ammo>();
-        this.skulls = skulls;
-        this.scores = scores;
+    public PlayerBoard() {
+        this.damages = new ArrayList<>();
+        this.marks = new ArrayList<>();
+        this.ammos = new ArrayList<>();
+        deathScores = new ArrayList<> ();
+        deathScores.add (8);
+        deathScores.add (6);
+        deathScores.add (4);
+        deathScores.add (2);
+        deathScores.add (1);
+        deathScores.add (1);
     }
 
-    //TODO define type excpetion
-    public void addDamage(DamageMark damage) throws Exception {
-        if (damages.size() == maxDamage)
-            throw new Exception();
+    public void addDamage(DamageMark damage) throws OutofBoundException {
+        if (damages.size() == MAX_DAMAGE)
+            throw new OutofBoundException ("damages out of bound");
         damages.add(damage);
-        if (damages.size() == firstShoot)
+        if (damages.size() == FIRST_SHOOT)
             firstBlood = true;
-        else if (damages.size() == deadShoot)
+        else if (damages.size() == DEAD_SHOOT)
             death = true;
-        else if (damages.size() == maxDamage)
+        else if (damages.size() == MAX_DAMAGE)
             overkill = true;
     }
 
-    //TODO define type excpetion
-    public void addMark(DamageMark mark) throws Exception {
-        if (marks.size() == maxMark)
-            throw new Exception();
+    public void addMark(DamageMark mark) throws OutofBoundException {
+        if (marks.size() == MAX_MARK)
+            throw new OutofBoundException ("marks out of bount");
         marks.add(mark);
     }
 
     public void cleanPlayerBoard() {
         damages.clear();
-        marks.clear();
         death = false;
         firstBlood = false;
         overkill = false;
         skulls = 0;
     }
+    public void decreaseDeathScore() {
+        if(deathScores.size () > 1)
+            deathScores.remove (0);
+    }
 
-    //TODO define type excpetion
-    public void spendAmmo(List<Ammo> toSpend) throws Exception {
+    public Integer getDeathScore() {
+        return deathScores.get (0);
+    }
+
+    public void cleanPlayerBoard(boolean cleanMark) {
+        cleanPlayerBoard ();
+        if (cleanMark)
+            marks.clear ();
+    }
+
+    public void spendAmmo(List<Ammo> toSpend) throws AmmoNotAvaibleException {
         if (!ammos.containsAll(toSpend))
-            throw new Exception();
+            throw new AmmoNotAvaibleException ();
         if (!ammos.removeAll(toSpend))
-            throw new Exception();
+            throw new AmmoNotAvaibleException ();
     }
 
     public void addAmmo(List<Ammo> toAdd) {
         for (Ammo tempAmmo : toAdd) {
-            if (numAmmoType(tempAmmo) < maxAmmo)
+            if (numAmmoType(tempAmmo) < MAX_AMMO)
                 ammos.add(tempAmmo);
         }
     }
@@ -75,15 +93,14 @@ public class PlayerBoard {
         return skulls;
     }
 
-    public void addSkull() throws Exception {
-        if (skulls == maxSkulls)
-            throw new Exception();
+    public void addSkull() throws OutofBoundException {
+        if (skulls == MAX_SKULLS)
+            throw new OutofBoundException ("Skulls out of bound");
         skulls++;
     }
 
-    public ArrayList<Integer> getScores() {
-        //TODO
-        return null;
+    public List getScores() {
+        return damages;
     }
 
     public int numAmmoType(Ammo ammo) {
@@ -93,7 +110,17 @@ public class PlayerBoard {
                 cont++;
         }
         return cont;
-
     }
 
+    public boolean isFirstBlood() {
+        return firstBlood;
+    }
+
+    public boolean isDeath() {
+        return death;
+    }
+
+    public boolean isOverkill() {
+        return overkill;
+    }
 }
