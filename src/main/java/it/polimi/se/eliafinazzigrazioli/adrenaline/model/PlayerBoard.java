@@ -53,6 +53,19 @@ public class PlayerBoard {
         marks.add(mark);
     }
 
+    public int numMarkType(DamageMark type) {
+        int cont = 0;
+        for (DamageMark tempMark : marks) {
+            if (tempMark.equals(type))
+                cont++;
+        }
+        return cont;
+    }
+
+    public ArrayList<DamageMark> getMarks() {
+        return marks;
+    }
+
     public void cleanPlayerBoard() {
         damages.clear();
         death = false;
@@ -78,8 +91,9 @@ public class PlayerBoard {
     public void spendAmmo(List<Ammo> toSpend) throws AmmoNotAvaibleException {
         if (!ammos.containsAll(toSpend))
             throw new AmmoNotAvaibleException ();
-        if (!ammos.removeAll(toSpend))
-            throw new AmmoNotAvaibleException ();
+        for (Ammo ammo: toSpend) {
+            ammos.remove (ammo);
+        }
     }
 
     public void addAmmo(List<Ammo> toAdd) {
@@ -87,6 +101,10 @@ public class PlayerBoard {
             if (numAmmoType(tempAmmo) < MAX_AMMO)
                 ammos.add(tempAmmo);
         }
+    }
+
+    public ArrayList<Ammo> getAmmos() {
+        return ammos;
     }
 
     public int getSkulls() {
