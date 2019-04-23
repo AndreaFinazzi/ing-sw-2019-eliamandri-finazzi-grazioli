@@ -1,7 +1,8 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
-
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.AmmoNotAvaibleException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.OutofBoundException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.DamageMark;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.PlayerBoard;
 import org.junit.Test;
 
 import java.util.ArrayList;
