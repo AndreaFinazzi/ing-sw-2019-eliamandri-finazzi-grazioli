@@ -1,8 +1,7 @@
+package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
+
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.AmmoNotAvaibleException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.OutofBoundException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Ammo;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.DamageMark;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.PlayerBoard;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -120,9 +119,6 @@ public class PlayerBoardTest {
         assertEquals (playerBoard.getDeathScore (), new Integer (1));
 
 
-
-
-
     }
 
     @Test
@@ -218,16 +214,14 @@ public class PlayerBoardTest {
         PlayerBoard playerBoard = new PlayerBoard ();
         ArrayList<Ammo> toAdd = new ArrayList<> ();
         ArrayList<Ammo> toSpend = new ArrayList<> ();
-        for (int i=0; i<9; i++) {
+        for (int i = 0; i<9; i++) {
             if(i>=0 && i<3) {
                 toAdd.add (Ammo.BLUE);
                 toSpend.add (Ammo.BLUE);
-            }
-            else if(i>=3 && i<6) {
+            } else if (i >= 3 && i < 6) {
                 toAdd.add (Ammo.RED);
                 toSpend.add (Ammo.RED);
-            }
-            else if(i>=6 && i<9) {
+            } else if (i >= 6 && i < 9) {
                 toAdd.add (Ammo.YELLOW);
                 toSpend.add (Ammo.YELLOW);
             }
