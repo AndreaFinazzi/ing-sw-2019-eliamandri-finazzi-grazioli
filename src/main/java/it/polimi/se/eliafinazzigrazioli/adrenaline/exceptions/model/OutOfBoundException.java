@@ -1,4 +1,4 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
 

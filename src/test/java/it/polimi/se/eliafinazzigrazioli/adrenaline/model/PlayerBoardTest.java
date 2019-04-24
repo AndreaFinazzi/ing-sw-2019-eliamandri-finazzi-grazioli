@@ -1,7 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.AmmoNotAvailableException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.OutOfBoundException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.AmmoNotAvailableException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.OutOfBoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 import org.junit.Test;
 
