@@ -7,8 +7,12 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponEffect;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DamageAction extends EffectState {
+
+    private static final Logger LOGGER = Logger.getLogger(DamageAction.class.getName());
 
     int damageAmount;
     int markAmount;
@@ -26,9 +30,9 @@ public class DamageAction extends EffectState {
             for(int i=0; i<damageAmount; i++){
                 try {
                     board.addDamage(invoker.getDeliveredMark());
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     //TODO a handling procedure is to be defined
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
                     break;
                 }
             }
@@ -37,6 +41,7 @@ public class DamageAction extends EffectState {
                     board.addMark(invoker.getDeliveredMark());
                 } catch (Exception e) {
                     //TODO a handling procedure is to be defined
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
                     break;
                 }
             }

@@ -8,10 +8,14 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Observer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class EventController implements Observer {
     private HashMap<Class<? extends AbstractViewEvent>, ArrayList<EventListenerInterface>> listenerMap;
+
+    private static final Logger LOGGER = Logger.getLogger(EventController.class.getName());
 
     public EventController() {
         listenerMap = new HashMap<>();
@@ -20,11 +24,14 @@ public class EventController implements Observer {
     @Override
     public void update(AbstractEvent event) {
         ArrayList<EventListenerInterface> listeners = listenerMap.get(event.getClass());
+
+        if (listeners == null) return;
+
         listeners.forEach(listener -> {
                     try {
                         event.handle(listener);
                     } catch (HandlerNotImplementedException e) {
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, e.toString(), e);
                     }
                 }
         );
@@ -44,6 +51,6 @@ public class EventController implements Observer {
 
     public void removeEventListener(Class<? extends AbstractViewEvent> key, EventListenerInterface value) throws ListenerNotFoundException {
         ArrayList<EventListenerInterface> listeners = listenerMap.get(key);
-        listeners.remove(value);
+        if (!listeners.remove(value)) throw new ListenerNotFoundException();
     }
 }

@@ -1,18 +1,14 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.AmmoNotAvaibleException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.OutofBoundException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.AmmoNotAvailableException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exception.model.OutOfBoundException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerBoard {
-    private static final int MAX_SKULLS = 6;
-    private static final int MAX_DAMAGE = 12;
-    private static final int MAX_MARK = 12;
-    private static final int DEAD_SHOOT = 11;
-    private static final int FIRST_SHOOT = 1;
-    private static final int MAX_AMMO = 3;
     private int skulls;
     private boolean firstBlood;
     private boolean death;
@@ -26,30 +22,25 @@ public class PlayerBoard {
         this.damages = new ArrayList<>();
         this.marks = new ArrayList<>();
         this.ammos = new ArrayList<>();
-        deathScores = new ArrayList<> ();
-        deathScores.add (8);
-        deathScores.add (6);
-        deathScores.add (4);
-        deathScores.add (2);
-        deathScores.add (1);
-        deathScores.add (1);
+        deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
     }
 
-    public void addDamage(DamageMark damage) throws OutofBoundException {
-        if (damages.size() == MAX_DAMAGE)
-            throw new OutofBoundException ("damages out of bound");
+    public void addDamage(DamageMark damage) throws OutOfBoundException {
+        if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
+            throw new OutOfBoundException(Messages.get("app.exceptions.game.player.damages_out_of_bound"));
         damages.add(damage);
-        if (damages.size() == FIRST_SHOOT)
+        if (damages.size() == Rules.PLAYER_BOARD_FIRST_SHOOT)
             firstBlood = true;
-        else if (damages.size() == DEAD_SHOOT)
+        else if (damages.size() == Rules.PLAYER_BOARD_DEAD_SHOOT)
             death = true;
-        else if (damages.size() == MAX_DAMAGE)
+        else if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
             overkill = true;
     }
 
-    public void addMark(DamageMark mark) throws OutofBoundException {
-        if (marks.size() == MAX_MARK)
-            throw new OutofBoundException ("marks out of bount");
+    public void addMark(DamageMark mark) throws OutOfBoundException {
+        if (marks.size() == Rules.PLAYER_BOARD_MAX_MARKS || numMarkType(mark) >= Rules.PLAYER_BOARD_MAX_MARKS_PER_TYPE)
+            throw new OutOfBoundException(Messages.get("app.exceptions.game.player.marks_out_of_bound"));
+
         marks.add(mark);
     }
 
@@ -88,9 +79,9 @@ public class PlayerBoard {
             marks.clear ();
     }
 
-    public void spendAmmo(List<Ammo> toSpend) throws AmmoNotAvaibleException {
+    public void spendAmmo(List<Ammo> toSpend) throws AmmoNotAvailableException {
         if (!ammos.containsAll(toSpend))
-            throw new AmmoNotAvaibleException ();
+            throw new AmmoNotAvailableException();
         for (Ammo ammo: toSpend) {
             ammos.remove (ammo);
         }
@@ -98,7 +89,7 @@ public class PlayerBoard {
 
     public void addAmmo(List<Ammo> toAdd) {
         for (Ammo tempAmmo : toAdd) {
-            if (numAmmoType(tempAmmo) < MAX_AMMO)
+            if (numAmmoType(tempAmmo) < Rules.PLAYER_BOARD_MAX_AMMO)
                 ammos.add(tempAmmo);
         }
     }
@@ -111,9 +102,9 @@ public class PlayerBoard {
         return skulls;
     }
 
-    public void addSkull() throws OutofBoundException {
-        if (skulls == MAX_SKULLS)
-            throw new OutofBoundException ("Skulls out of bound");
+    public void addSkull() throws OutOfBoundException {
+        if (skulls == Rules.PLAYER_BOARD_MAX_SKULLS)
+            throw new OutOfBoundException(Messages.get("app.exceptions.game.player.skulls_out_of_bound"));
         skulls++;
     }
 

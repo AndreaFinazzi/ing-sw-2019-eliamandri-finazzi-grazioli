@@ -6,13 +6,14 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.CollectPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.EffectSelectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.TargetSelectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
 
-
+// TODO implement controller
 public class CardController implements EventListenerInterface {
 
     @Override
     public void handleEvent(AbstractEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException("This listener does not implement proper handler for class: " + event.getClass());
+        throw new HandlerNotImplementedException(Messages.get("app.server.exception.handler_not_implemented") + event.getClass());
     }
 
     @Override

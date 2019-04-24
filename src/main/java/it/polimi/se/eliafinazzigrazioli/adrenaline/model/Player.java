@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponCard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class Player {
 
     //TODO define type excpetion
     public void addWeapon(WeaponCard weapon) throws Exception {
-        if (weapons.size() == maxWeapons)
+        if (weapons.size() == Rules.PLAYER_CARDS_MAX_WEAPONS)
             throw new Exception();
         weapons.add(weapon);
     }
@@ -51,7 +52,7 @@ public class Player {
 
     //TODO define type excpetion
     public void addPowerUp(PowerUpCard powerUpCard) throws Exception {
-        if (powerUps.size() == maxPowerUps)
+        if (powerUps.size() == Rules.PLAYER_CARDS_MAX_POWER_UPS)
             throw new Exception();
         powerUps.add(powerUpCard);
     }

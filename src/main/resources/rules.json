@@ -1,0 +1,27 @@
+{
+  "default": {
+    "player": {
+      "board": {
+        "max_marks_per_type": 3,
+        "max_skulls": 6,
+        "max_damage": 12,
+        "max_marks": 12,
+        "dead_shoot": 11,
+        "first_shoot": 1,
+        "max_ammo": 3,
+        "death_scores": [
+          8,
+          6,
+          4,
+          2,
+          1,
+          1
+        ]
+      },
+      "cards": {
+        "max_weapons": 3,
+        "max_power_ups": 3
+      }
+    }
+  }
+}
