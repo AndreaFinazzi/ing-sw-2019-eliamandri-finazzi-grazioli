@@ -1,8 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Ammo;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.DamageMark;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Selectable;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +14,7 @@ public class WeaponCard extends Card {
     private ArrayList<WeaponEffect> effects;
     private WeaponEffect activeEffect;
     private DamageMark deliveredMark;       //to be set when the card is assigned to a player, avoids the need for a reference to the current player
+    private Match match;
 
     public WeaponEffect getActiveEffect() {
         return activeEffect;
@@ -23,6 +22,10 @@ public class WeaponCard extends Card {
 
     public DamageMark getDeliveredMark() {
         return deliveredMark;
+    }
+
+    public Match getMatch() {
+        return match;
     }
 
     public void setDeliveredMark(DamageMark deliveredMark) {

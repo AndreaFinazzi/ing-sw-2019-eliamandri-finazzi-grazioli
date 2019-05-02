@@ -12,15 +12,80 @@ public abstract class BoardSquare implements Selectable {
     private InterSquareLink south;
     private InterSquareLink east;
     private InterSquareLink west;
-    private List<Player> players;   //TODO Should be removed, with the new logic are player them selves to keep track of their position
+    private Match match;
 
-    public BoardSquare(Room room, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
+    public BoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west, Match match) {
         this.room = room;
+        this.coordinates = coordinates;
         this.north = north;
         this.south = south;
         this.east = east;
         this.west = west;
-        players = new ArrayList<Player>();
+        this.match = match;
+    }
+
+    @Override
+    public List<Selectable> getVisible(SelectableType selType, boolean notVisible) {
+        switch (selType){
+            case PLAYER:
+                return new ArrayList<>(match.getMap().getVisiblePlayers(this, notVisible));
+            case BOARDSQUARE:
+                return new ArrayList<>(match.getMap().getVisibleSquares(this, notVisible));
+            default:
+                return null; //TODO define exception raise for default case
+        }
+    }
+
+    @Override
+    public List<Selectable> getByDistance(SelectableType selType, int maxDistance, int minDistance){
+        switch (selType){
+            case PLAYER:
+                try {
+                    return new ArrayList<>(match.getMap().getPlayersByDistance(this, maxDistance, minDistance));
+                }
+                catch (Exception e){
+                    return null;
+                }
+            case BOARDSQUARE:
+                try {
+                    return new ArrayList<>(match.getMap().getSquaresByDistance(this, maxDistance, minDistance));
+                }
+                catch (Exception e){
+                    return null;
+                }
+            default:
+                return null; //TODO define exception raise for default case
+        }
+    }
+
+    @Override
+    public List<Selectable> getByRoom(SelectableType selType) {
+        switch (selType){
+            case PLAYER:
+                List<Selectable> toSelect = new ArrayList<>();
+                for (Player player:match.getPlayers()){
+                    if (player.getPosition().getRoom() == room){
+                        toSelect.add(player);
+                    }
+                }
+                return toSelect;
+            case BOARDSQUARE:
+                return new ArrayList<>(match.getMap().getRoomSquares(room));
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public List<Selectable> getOnCardinal(SelectableType selType) {
+        switch (selType){
+            case BOARDSQUARE:
+                return new ArrayList<>(match.getMap().getSquaresOnCardinalDirections(this));
+            case PLAYER:
+                return new ArrayList<>(match.getMap().getPlayersOnCardinalDirections(this));
+            default:
+                return null;
+        }
     }
 
     public Coordinates getCoordinates() {
@@ -30,11 +95,6 @@ public abstract class BoardSquare implements Selectable {
     public Room getRoom() {
         return room;
     }
-
-    @Override
-    public List<Player> getPlayers() {
-        return players;
-    }  //TODO Should be removed as well as said above
 
     public InterSquareLink getNorth() {
         return north;
@@ -52,12 +112,7 @@ public abstract class BoardSquare implements Selectable {
         return west;
     }
 
-    public void addPlayer(Player player) {
-        players.add(player);
+    public List<Player> getPlayers() {
+        return match.getPlayersOnSquare(this);
     }
-
-    public void removePlayer(Player player) {
-        players.remove(player);
-    }
-
 }

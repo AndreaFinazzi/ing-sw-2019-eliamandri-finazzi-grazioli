@@ -9,16 +9,16 @@ import java.util.Set;
 
 public class GameBoard {
 
-    BoardSquare[][] squaresMatrix;
-    int width;
-    int height;
+    private BoardSquare[][] squaresMatrix;
+    private int width;
+    private int height;
 
     public GameBoard() {
         //TODO
     }
 
     public List<BoardSquare> getRoomSquares(Room room){
-        List<BoardSquare> roomSquares = new ArrayList<BoardSquare>();
+        List<BoardSquare> roomSquares = new ArrayList<>();
         for(int i=0; i<height; i++){
             for (int j=0; j<width; j++){
                 BoardSquare square = squaresMatrix[i][j];
@@ -31,7 +31,7 @@ public class GameBoard {
     }
 
     public List<BoardSquare> getVisibleSquares(BoardSquare referenceSquare, boolean notVisible){
-        List<BoardSquare> visibleSquares = new ArrayList<BoardSquare>();
+        List<BoardSquare> visibleSquares = new ArrayList<>();
         visibleSquares.addAll(getRoomSquares(referenceSquare.getRoom()));
         Coordinates coord = referenceSquare.getCoordinates();
         int x;
@@ -71,13 +71,12 @@ public class GameBoard {
         return visibleSquares;
     }
 
-    public List<BoardSquare> getVisibleSqure(Player referencePlayer, boolean notVisible){
-        BoardSquare referenceSquare = referencePlayer.getPosition();
-        return getVisibleSquares(referenceSquare, notVisible);
+    public List<BoardSquare> getVisibleSquares(Player referencePlayer, boolean notVisible){
+        return getVisibleSquares(referencePlayer.getPosition(), notVisible);
     }
 
     public List<Player> getVisiblePlayers(BoardSquare referenceSquare, boolean notVisible){
-        List<Player> visiblePlayers = new ArrayList<Player>();
+        List<Player> visiblePlayers = new ArrayList<>();
         List<BoardSquare> visibleSquares = getVisibleSquares(referenceSquare, notVisible);
         for (BoardSquare visible:visibleSquares){
             visiblePlayers.addAll(visible.getPlayers());
@@ -89,7 +88,6 @@ public class GameBoard {
         BoardSquare referenceSquare = referencePlayer.getPosition();
         return getVisiblePlayers(referenceSquare, notVisible);
     }
-
 
 
     private Set<BoardSquare> getOneStepReachableSquares(BoardSquare referenceSquare) throws Exception{ //TODO define exception type

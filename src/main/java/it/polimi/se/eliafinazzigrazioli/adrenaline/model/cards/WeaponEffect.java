@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.BoardSquare;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Player;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Selectable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,12 +15,23 @@ public class WeaponEffect {
     private ArrayList<EffectState> effectStates;
     private EffectState currentState;
     private Iterator<EffectState> stateIterator;
-    private ArrayList<Player> selectedPlayers;
-    private ArrayList<BoardSquare> selectedSquares;
+
+    private List<Selectable> intermediateSelectionList; //List used to implement composite selections, it initially contains all players
+    private ArrayList<Selectable> selected;
     private List<Player> toAffect;
     private BoardSquare movementDestination;
     private List<Player> shotPlayers;
     private List<Player> movedPlayers;
+
+
+    public void updateIntermediateSelectionList(List<Selectable> newSelection){
+        for (Selectable element:intermediateSelectionList){
+            if (!newSelection.contains(element))
+                intermediateSelectionList.remove(element);
+        }
+    }
+
+    public Selectable getSelected(int selectionOrder) { return selected.get(selectionOrder); }
 
     public BoardSquare getMovementDestination() {
         return movementDestination;
@@ -29,22 +41,6 @@ public class WeaponEffect {
         return new ArrayList<Player>(toAffect);
     }
 
-    public ArrayList<Player> getSelectedPlayers() {
-        return new ArrayList<Player>(selectedPlayers);
-    }
-
-    public ArrayList<BoardSquare> getSelectedSquares() {
-        return  new ArrayList<BoardSquare>(selectedSquares);
-    }
-
-    public void addSelectedPlayers(ArrayList<Player> selected){
-        selectedPlayers.addAll(selected);
-    }
-
-    public void addSelectedSquares(ArrayList<BoardSquare> selected){
-        selectedSquares.addAll(selected);
-    }
-
     public void addShotPlayers(List<Player> toAdd){
         shotPlayers.addAll(toAdd);
     }
@@ -52,7 +48,6 @@ public class WeaponEffect {
     public void addMovedPlayers(List<Player> toAdd){
         movedPlayers.addAll(toAdd);
     }
-
 
     public void execute(WeaponCard invoker) {
         currentState.execute(invoker);

@@ -1,12 +1,14 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Coordinates;
+
 public class GenericBoardSquare extends BoardSquare {
 
     private AmmoCard collectable;
 
 
-    public GenericBoardSquare(Room room, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
-        super(room, north, south, east, west);
+    public GenericBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west, Match match) {
+        super(room, coordinates, north, south, east, west, match);
         collectable = null;
     }
 
@@ -21,11 +23,5 @@ public class GenericBoardSquare extends BoardSquare {
 
     public void dropCollectables(AmmoCard toDrop) {
         collectable = toDrop;
-    }
-
-
-    @Override
-    public BoardSquare getSquare() {
-        return this;
     }
 }

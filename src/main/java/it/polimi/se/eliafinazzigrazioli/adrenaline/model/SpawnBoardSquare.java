@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponCard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Coordinates;
 
 import java.util.ArrayList;
 
@@ -8,9 +9,8 @@ public class SpawnBoardSquare extends BoardSquare {
 
     private ArrayList<WeaponCard> weaponSlots;
 
-    public SpawnBoardSquare(Room room, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
-        super(room, north, south, east, west);
-        this.weaponSlots = new ArrayList<WeaponCard>();
+    public SpawnBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west, Match match) {
+        super(room, coordinates, north, south, east, west, match);
     }
 
 
@@ -38,8 +38,4 @@ public class SpawnBoardSquare extends BoardSquare {
         weaponSlots.add(weapon);
     }
 
-    @Override
-    public BoardSquare getSquare() {
-        return this;
-    }
 }

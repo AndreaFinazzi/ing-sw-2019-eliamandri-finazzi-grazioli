@@ -5,7 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
 import java.util.List;
 
-public class Player {
+public class Player implements Selectable{
     private String playerNickname;
     private BoardSquare position;
     private PlayerBoard playerBoard;
@@ -14,6 +14,7 @@ public class Player {
     private boolean placed;
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
+    Match match;
 
 
     public Player(String playerNickname) {
@@ -21,6 +22,26 @@ public class Player {
         connected = true;
         weapons = new ArrayList<>();
         powerUps = new ArrayList<>();
+    }
+
+    @Override
+    public List<Selectable> getVisible(SelectableType selType, boolean notVisible) {
+        return position.getVisible(selType, notVisible);
+    }
+
+    @Override
+    public List<Selectable> getByDistance(SelectableType selType, int maxDistance, int minDistance){
+        return position.getByDistance(selType, maxDistance, minDistance);
+    }
+
+    @Override
+    public List<Selectable> getByRoom(SelectableType selType) {
+        return position.getByRoom(selType);
+    }
+
+    @Override
+    public List<Selectable> getOnCardinal(SelectableType selType) {
+        return position.getOnCardinal(selType);
     }
 
     public PlayerBoard getPlayerBoard() {
@@ -31,7 +52,7 @@ public class Player {
         return weapons;
     }
 
-    //TODO define type excpetion
+    //TODO define type exception
     public WeaponCard removeWeapon(WeaponCard weapon) throws Exception {
         int index = weapons.indexOf(weapon);
         if (index == -1)
