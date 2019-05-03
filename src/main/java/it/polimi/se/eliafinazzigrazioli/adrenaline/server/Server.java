@@ -1,4 +1,4 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 // Server main class
 

@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,17 +10,15 @@ import java.util.Set;
 
 public class GameBoard {
 
-    private BoardSquare[][] squaresMatrix;
-    private int width;
-    private int height;
+    BoardSquare[][] squaresMatrix;
+    int x_max = Rules.GAME_BOARD_X_MAX;
+    int y_max = Rules.GAME_BOARD_Y_MAX;
     private Match match;
 
     public GameBoard(MapType mapType, Match match) {
         if (mapType.equals (MapType.ONE)) {
-            width = 4;
-            height = 3;
             this.match = match;
-            squaresMatrix = new BoardSquare[height][width];
+            squaresMatrix = new BoardSquare[y_max][x_max];
             squaresMatrix[0][0] = new GenericBoardSquare (Room.RED, new Coordinates (0,0),
                     InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, match);
             squaresMatrix[1][0] = new SpawnBoardSquare(Room.RED, new Coordinates (1,0),
@@ -49,9 +48,9 @@ public class GameBoard {
 
 
     public List<BoardSquare> getRoomSquares(Room room){
-        List<BoardSquare> roomSquares = new ArrayList<>();
-        for(int i=0; i<height; i++){
-            for (int j=0; j<width; j++){
+        List<BoardSquare> roomSquares = new ArrayList<BoardSquare>();
+        for (int i = 0; i < x_max; i++) {
+            for (int j = 0; j < y_max; j++) {
                 BoardSquare square = squaresMatrix[i][j];
                 if (square != null && square.getRoom()==room){
                     roomSquares.add(square);
@@ -90,8 +89,8 @@ public class GameBoard {
 
         if(notVisible){
             List<BoardSquare> notVisibleSquares = new ArrayList<>();
-            for (int i=0; i<height; i++){
-                for (int j=0; j<width; j++) {
+            for (int i = 0; i < x_max; i++) {
+                for (int j = 0; j < y_max; j++) {
                     if (!visibleSquares.contains(squaresMatrix[i][j])){
                         notVisibleSquares.add(squaresMatrix[i][j]);
                     }
@@ -208,11 +207,11 @@ public class GameBoard {
         List<BoardSquare> squaresByDirection = new ArrayList<>();
         squaresByDirection.add(referenceSquare);
         //check north
-        for(int i=y+1; i<height; i++){
+        for (int i = y + 1; i < x_max; i++) {
             squaresByDirection.add(squaresMatrix[i][x]);
         }
         //check east
-        for(int i=x+1; i<width; i++){
+        for (int i = x + 1; i < y_max; i++) {
             squaresByDirection.add(squaresMatrix[y][i]);
         }
         //check south
@@ -243,7 +242,9 @@ public class GameBoard {
         return getPlayersOnCardinalDirections(referencePlayer.getPosition());
     }
 
-
+    public BoardSquare getBoardSquareByCoordinates(Coordinates coordinates) {
+        return squaresMatrix[coordinates.getXCoordinates()][coordinates.getYCoordinates()];
+    }
 
 
 }

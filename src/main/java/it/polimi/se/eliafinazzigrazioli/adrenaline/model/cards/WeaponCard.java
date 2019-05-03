@@ -1,6 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.DamageMark;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Match;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Selectable;
 
 import java.util.ArrayList;
 import java.util.List;
