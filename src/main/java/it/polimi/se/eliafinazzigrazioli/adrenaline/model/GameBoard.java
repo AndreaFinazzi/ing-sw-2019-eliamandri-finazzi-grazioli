@@ -12,10 +12,41 @@ public class GameBoard {
     private BoardSquare[][] squaresMatrix;
     private int width;
     private int height;
+    private Match match;
 
-    public GameBoard() {
-        //TODO
+    public GameBoard(MapType mapType, Match match) {
+        if (mapType.equals (MapType.ONE)) {
+            width = 4;
+            height = 3;
+            this.match = match;
+            squaresMatrix = new BoardSquare[height][width];
+            squaresMatrix[0][0] = new GenericBoardSquare (Room.RED, new Coordinates (0,0),
+                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, match);
+            squaresMatrix[1][0] = new SpawnBoardSquare(Room.RED, new Coordinates (1,0),
+                    InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL, match);
+            squaresMatrix[0][1] = new GenericBoardSquare (Room.BLUE, new Coordinates (0,1),
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, match);
+            squaresMatrix[0][2] = new SpawnBoardSquare (Room.BLUE, new Coordinates (0,2),
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, match);
+            squaresMatrix[1][1] = new GenericBoardSquare (Room.PURPLE, new Coordinates (1,1),
+                    InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL, match);
+            squaresMatrix[1][2] = new GenericBoardSquare (Room.PURPLE, new Coordinates (1,2),
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, match);
+            squaresMatrix[1][3] = new SpawnBoardSquare (Room.YELLOW, new Coordinates (1,3),
+                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.DOOR, match);
+            squaresMatrix[2][3] = new SpawnBoardSquare (Room.YELLOW, new Coordinates (2,3),
+                    InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR, match);
+            squaresMatrix[2][0] = new GenericBoardSquare (Room.GRAY, new Coordinates (2,0),
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, match);
+            squaresMatrix[2][1] = new GenericBoardSquare (Room.GRAY, new Coordinates (2,1),
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM, match);
+            squaresMatrix[2][2] = new GenericBoardSquare (Room.GRAY, new Coordinates (2,2),
+                    InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, match);
+            squaresMatrix[0][3] = null;
+        }
     }
+
+
 
     public List<BoardSquare> getRoomSquares(Room room){
         List<BoardSquare> roomSquares = new ArrayList<>();
@@ -88,7 +119,6 @@ public class GameBoard {
         BoardSquare referenceSquare = referencePlayer.getPosition();
         return getVisiblePlayers(referenceSquare, notVisible);
     }
-
 
     private Set<BoardSquare> getOneStepReachableSquares(BoardSquare referenceSquare) throws Exception{ //TODO define exception type
         if(referenceSquare == null){

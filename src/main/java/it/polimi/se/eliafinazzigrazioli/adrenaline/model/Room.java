@@ -5,5 +5,6 @@ public enum Room {
     YELLOW,
     GREEN,
     GRAY,
-    BLUE
+    BLUE,
+    RED
 }
