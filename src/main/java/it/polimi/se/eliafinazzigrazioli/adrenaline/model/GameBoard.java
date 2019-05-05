@@ -11,8 +11,8 @@ import java.util.Set;
 public class GameBoard {
 
     BoardSquare[][] squaresMatrix;
-    int x_max = Rules.GAME_BOARD_X_MAX;
-    int y_max = Rules.GAME_BOARD_Y_MAX;
+    private int x_max = Rules.GAME_BOARD_X_MAX;
+    private int y_max = Rules.GAME_BOARD_Y_MAX;
     private Match match;
 
     public GameBoard(MapType mapType, Match match) {

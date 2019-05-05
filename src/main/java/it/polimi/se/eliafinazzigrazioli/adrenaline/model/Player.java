@@ -14,12 +14,11 @@ public class Player implements Selectable{
     private boolean placed;
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
-    Match match;
+    private Match match;
 
 
     public Player(String playerNickname) {
         this.playerNickname = playerNickname;
-        connected = true;
         weapons = new ArrayList<>();
         powerUps = new ArrayList<>();
     }
@@ -123,5 +122,28 @@ public class Player implements Selectable{
 
     public void setPlaced(boolean placed) {
         this.placed = placed;
+    }
+
+    //TODO define type Excpetion
+    public void setMatch(Match match) throws Exception {
+        if (this.match == null)
+            this.match = match;
+        else throw new Exception();
+    }
+
+    public Match getMatch() {
+        return match;
+    }
+
+    public void setPlayerBoard(PlayerBoard playerBoard) {
+        this.playerBoard = playerBoard;
+    }
+
+    public void setSuspended(boolean suspended) {
+        this.suspended = suspended;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
     }
 }
