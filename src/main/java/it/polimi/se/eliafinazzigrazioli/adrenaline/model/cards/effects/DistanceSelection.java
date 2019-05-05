@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.model.SelectableType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.EffectState;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponEffect;
+
 import java.util.ArrayList;
 import java.util.List;
 

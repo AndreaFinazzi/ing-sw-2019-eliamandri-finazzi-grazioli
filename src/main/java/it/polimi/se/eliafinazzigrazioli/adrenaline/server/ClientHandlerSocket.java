@@ -7,28 +7,28 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ClientHandlerSocket implements ClientHandler {
 
     private Socket socket;
+    private Server server;
     private ObjectOutputStream send;
-    private ObjectInputStream receveid;
+    private ObjectInputStream received;
     private static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName ());
     private EventController eventController;
 
 
-    public ClientHandlerSocket(Socket socket) {
+    public ClientHandlerSocket(Server server, Socket socket) {
+        this.server = server;
         this.socket = socket;
         try {
             send = new ObjectOutputStream (socket.getOutputStream ());
-            receveid = new ObjectInputStream (socket.getInputStream ());
+            received = new ObjectInputStream(socket.getInputStream());
         }catch (IOException e) {
             LOGGER.log (Level.SEVERE, e.toString (), e);
         }
-        eventController = new EventController ();
     }
 
     @Override
@@ -42,10 +42,11 @@ public class ClientHandlerSocket implements ClientHandler {
     }
 
     @Override
-    public AbstractEvent receved() {
-        AbstractEvent event; Object object;
+    public AbstractEvent received() {
+        AbstractEvent event;
+        Object object;
         try {
-            object = receveid.readObject ();
+            object = received.readObject();
             if(object == null)
                 throw new NullPointerException ();
             event = (AbstractEvent) object;
@@ -60,7 +61,7 @@ public class ClientHandlerSocket implements ClientHandler {
     @Override
     public void run() {
         //read player name
-        AbstractEvent event = receved ();
+        AbstractEvent event = received();
         eventController.update (event);
     }
 }

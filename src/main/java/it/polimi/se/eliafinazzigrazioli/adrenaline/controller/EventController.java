@@ -14,11 +14,13 @@ import java.util.logging.Logger;
 
 public class EventController implements Observer {
     private HashMap<Class<? extends AbstractViewEvent>, ArrayList<EventListenerInterface>> listenerMap;
+    private MatchController matchController;
 
     private static final Logger LOGGER = Logger.getLogger(EventController.class.getName());
 
-    public EventController() {
+    public EventController(MatchController matchController) {
         listenerMap = new HashMap<>();
+        this.matchController = matchController;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class EventController implements Observer {
 
         listeners.forEach(listener -> {
                     try {
-                        event.handle(listener);
+                        event.handle(listener, matchController);
                     } catch (HandlerNotImplementedException e) {
                         LOGGER.log(Level.SEVERE, e.toString(), e);
                     }

@@ -8,6 +8,6 @@ public class MaxPlayerException extends Exception {
     }
 
     public MaxPlayerException() {
-        super(Messages.get ("app.exceptions.game.match.max_players"));
+        super(Messages.MESSAGE_EXCEPTIONS_GAME_MATCH_PLAYERS_OUT_OF_BOUND);
     }
 }

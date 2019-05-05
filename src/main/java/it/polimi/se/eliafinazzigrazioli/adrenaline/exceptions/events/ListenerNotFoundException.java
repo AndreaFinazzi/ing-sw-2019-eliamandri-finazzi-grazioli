@@ -5,7 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
 public class ListenerNotFoundException extends Exception {
 
     public ListenerNotFoundException() {
-        super(Messages.get("app.exceptions.server.listener_not_not_found"));
+        super(Messages.MESSAGE_EXCEPTIONS_SERVER_LISTENER_NOT_FOUND);
     }
 
     public ListenerNotFoundException(String message) {

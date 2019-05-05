@@ -13,9 +13,23 @@ public final class Rules {
     private static final String RULES_FILE_NAME = "rules.json";
     private static final String RULES_FILE_PATH = "resources/rules.json";
 
+    private static final Logger LOGGER = Logger.getLogger(Rules.class.getName());
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final Logger LOGGER = Logger.getGlobal();
+    private static JsonNode RULES = null;
+
+    // TODO Rules should be loadable for single match, dynamically
+    static {
+        try {
+            RULES = objectMapper.readTree(Rules.class.getClassLoader().getResourceAsStream(RULES_FILE_NAME)).get("default");
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, Messages.MESSAGE_EXCEPTIONS_SERVER_RULES_FILE_NOT_FOUND + RULES_FILE_PATH, e);
+        }
+    }
+
+    //PUBLIC RULES CONSTANTS
+    private static final JsonNode PLAYER = RULES.get("player");
+
     // PLAYER CARDS
     private static final JsonNode CARDS = PLAYER.get("cards");
     public static final int PLAYER_CARDS_MAX_WEAPONS = CARDS.get("max_weapons").asInt(3);

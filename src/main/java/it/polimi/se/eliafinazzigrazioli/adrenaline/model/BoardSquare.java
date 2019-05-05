@@ -14,6 +14,7 @@ public abstract class BoardSquare implements Selectable {
     private InterSquareLink west;
     private Match match;
 
+    // TODO remove reference to martch
     public BoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west, Match match) {
         this.room = room;
         this.coordinates = coordinates;
@@ -114,5 +115,21 @@ public abstract class BoardSquare implements Selectable {
 
     public List<Player> getPlayers() {
         return match.getPlayersOnSquare(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals (obj);
+    }
+
+    @Override
+    public String toString() {
+        return  "room=" + room +
+                ", coordinates=" + coordinates +
+                ", north=" + north +
+                ", south=" + south +
+                ", east=" + east +
+                ", west=" + west +
+                '}';
     }
 }

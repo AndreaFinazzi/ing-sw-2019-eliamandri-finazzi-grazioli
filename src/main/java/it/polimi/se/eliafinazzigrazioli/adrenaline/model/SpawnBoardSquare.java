@@ -38,4 +38,27 @@ public class SpawnBoardSquare extends BoardSquare {
         weaponSlots.add(weapon);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof SpawnBoardSquare) {
+            SpawnBoardSquare spawnBS = (SpawnBoardSquare) obj;
+            if (spawnBS.getRoom ().equals (this.getRoom ()) &&
+                    spawnBS.getCoordinates ().equals (this.getCoordinates ()) &&
+                    spawnBS.getNorth ().equals (this.getNorth ()) &&
+                    spawnBS.getSouth ().equals (this.getSouth ()) &&
+                    spawnBS.getEast ().equals (this.getEast ()) &&
+                    spawnBS.getWest ().equals (this.getWest ()))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "SpawnBoardSquare {" +
+                super.toString () +"\n";
+
+    }
 }
+
+

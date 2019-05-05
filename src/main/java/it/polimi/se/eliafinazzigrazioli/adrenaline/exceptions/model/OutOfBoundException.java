@@ -5,7 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
 public class OutOfBoundException extends Exception {
 
     public OutOfBoundException() {
-        super(Messages.get("app.exceptions.game.out_of_bound"));
+        super(Messages.MESSAGE_EXCEPTIONS_GAME_OUT_OF_BOUND);
     }
 
     public OutOfBoundException(String message) {

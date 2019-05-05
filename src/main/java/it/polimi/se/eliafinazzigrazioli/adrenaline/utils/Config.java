@@ -16,9 +16,14 @@ public final class Config {
         try {
             CONFIG.load(Config.class.getClassLoader().getResourceAsStream(CONFIG_FILE_NAME));
         } catch (IOException e) {
-            LOGGER.severe(Messages.get("app.exceptions.server.config_file_not_found") + CONFIG_FILE_PATH);
+            LOGGER.severe(Messages.MESSAGE_EXCEPTIONS_SERVER_CONFIG_FILE_NOT_FOUND + CONFIG_FILE_PATH);
         }
     }
+
+    public static final String CONFIG_SERVER_MESSAGES_FILE_PATH = (String) CONFIG.getOrDefault("server.messages.messages_file_path", "resources/messages.properties");
+    public static final String CONFIG_SERVER_MESSAGES_FILE_NAME = (String) CONFIG.getOrDefault("server.messages.messages_file_name", "messages.properties");
+
+    public static final int CONFIG_SERVER_SOCKET_PORT = Integer.parseInt((String) CONFIG.getOrDefault("server.socket.port", 9999));
 
     private Config() {
         throw new AssertionError();

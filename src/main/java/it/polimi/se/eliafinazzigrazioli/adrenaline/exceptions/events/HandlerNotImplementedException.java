@@ -5,10 +5,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
 public class HandlerNotImplementedException extends Exception {
 
     public HandlerNotImplementedException() {
-        super(Messages.get("app.exceptions.server.handler_not_implemented"));
+        super(Messages.MESSAGE_EXCEPTIONS_SERVER_HANDLER_NOT_IMPLEMENTED);
     }
 
     public HandlerNotImplementedException(String message) {
-        super(message);
+        super(Messages.MESSAGE_EXCEPTIONS_SERVER_HANDLER_NOT_IMPLEMENTED + ":\t" + message);
     }
 }

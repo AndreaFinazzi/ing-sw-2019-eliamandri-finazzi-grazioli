@@ -27,7 +27,7 @@ public class PlayerBoard {
 
     public void addDamage(DamageMark damage) throws OutOfBoundException {
         if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
-            throw new OutOfBoundException(Messages.get("app.exceptions.game.player.damages_out_of_bound"));
+            throw new OutOfBoundException(Messages.MESSAGE_EXCEPTIONS_GAME_PLAYER_DAMAGES_OUT_OF_BOUND);
         damages.add(damage);
         if (damages.size() == Rules.PLAYER_BOARD_FIRST_SHOOT)
             firstBlood = true;
@@ -39,7 +39,7 @@ public class PlayerBoard {
 
     public void addMark(DamageMark mark) throws OutOfBoundException {
         if (marks.size() == Rules.PLAYER_BOARD_MAX_MARKS || numMarkType(mark) >= Rules.PLAYER_BOARD_MAX_MARKS_PER_TYPE)
-            throw new OutOfBoundException(Messages.get("app.exceptions.game.player.marks_out_of_bound"));
+            throw new OutOfBoundException(Messages.MESSAGE_EXCEPTIONS_GAME_PLAYER_MARKS_OUT_OF_BOUND);
 
         marks.add(mark);
     }
@@ -104,7 +104,7 @@ public class PlayerBoard {
 
     public void addSkull() throws OutOfBoundException {
         if (skulls == Rules.PLAYER_BOARD_MAX_SKULLS)
-            throw new OutOfBoundException(Messages.get("app.exceptions.game.player.skulls_out_of_bound"));
+            throw new OutOfBoundException(Messages.MESSAGE_EXCEPTIONS_GAME_PLAYER_SKULLS_OUT_OF_BOUND);
         skulls++;
     }
 

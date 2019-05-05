@@ -27,7 +27,7 @@
       "max_players": 5,
       "board": {
         "x_max": 4,
-        "y_max": 6
+        "y_max": 3
       }
     }
   }

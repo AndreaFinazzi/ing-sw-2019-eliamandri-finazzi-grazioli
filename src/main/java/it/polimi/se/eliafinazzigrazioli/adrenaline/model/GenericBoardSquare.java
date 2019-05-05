@@ -24,4 +24,25 @@ public class GenericBoardSquare extends BoardSquare {
     public void dropCollectables(AmmoCard toDrop) {
         collectable = toDrop;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GenericBoardSquare) {
+            GenericBoardSquare genericBS = (GenericBoardSquare)obj;
+            if (genericBS.getRoom ().equals (this.getRoom ()) &&
+                genericBS.getCoordinates ().equals (this.getCoordinates ()) &&
+                genericBS.getNorth ().equals (this.getNorth ()) &&
+                genericBS.getSouth ().equals (this.getSouth ()) &&
+                genericBS.getEast ().equals (this.getEast ()) &&
+                genericBS.getWest ().equals (this.getWest ()))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "GenericBoardSquare { " +
+        super.toString () + "\n";
+    }
 }

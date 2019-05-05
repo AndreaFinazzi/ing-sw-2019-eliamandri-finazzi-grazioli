@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class GameBoard {
 
-    BoardSquare[][] squaresMatrix;
+    private BoardSquare[][] squaresMatrix;
     private int x_max = Rules.GAME_BOARD_X_MAX;
     private int y_max = Rules.GAME_BOARD_Y_MAX;
     private Match match;
@@ -18,30 +18,30 @@ public class GameBoard {
     public GameBoard(MapType mapType, Match match) {
         if (mapType.equals (MapType.ONE)) {
             this.match = match;
-            squaresMatrix = new BoardSquare[y_max][x_max];
-            squaresMatrix[0][0] = new GenericBoardSquare (Room.RED, new Coordinates (0,0),
+            squaresMatrix = new BoardSquare[x_max][y_max];
+            squaresMatrix[0][2] = new GenericBoardSquare (Room.RED, new Coordinates (0,2),
                     InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, match);
-            squaresMatrix[1][0] = new SpawnBoardSquare(Room.RED, new Coordinates (1,0),
+            squaresMatrix[0][1] = new SpawnBoardSquare(Room.RED, new Coordinates (0,1),
                     InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL, match);
-            squaresMatrix[0][1] = new GenericBoardSquare (Room.BLUE, new Coordinates (0,1),
+            squaresMatrix[1][2] = new GenericBoardSquare (Room.BLUE, new Coordinates (1,2),
                     InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, match);
-            squaresMatrix[0][2] = new SpawnBoardSquare (Room.BLUE, new Coordinates (0,2),
+            squaresMatrix[2][2] = new SpawnBoardSquare (Room.BLUE, new Coordinates (2,2),
                     InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, match);
             squaresMatrix[1][1] = new GenericBoardSquare (Room.PURPLE, new Coordinates (1,1),
                     InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL, match);
-            squaresMatrix[1][2] = new GenericBoardSquare (Room.PURPLE, new Coordinates (1,2),
+            squaresMatrix[2][1] = new GenericBoardSquare (Room.PURPLE, new Coordinates (2,1),
                     InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, match);
-            squaresMatrix[1][3] = new SpawnBoardSquare (Room.YELLOW, new Coordinates (1,3),
+            squaresMatrix[3][1] = new GenericBoardSquare (Room.YELLOW, new Coordinates (3,1),
                     InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.DOOR, match);
-            squaresMatrix[2][3] = new SpawnBoardSquare (Room.YELLOW, new Coordinates (2,3),
+            squaresMatrix[3][0] = new SpawnBoardSquare (Room.YELLOW, new Coordinates (3,0),
                     InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR, match);
-            squaresMatrix[2][0] = new GenericBoardSquare (Room.GRAY, new Coordinates (2,0),
+            squaresMatrix[0][0] = new GenericBoardSquare (Room.GRAY, new Coordinates (0,0),
                     InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, match);
-            squaresMatrix[2][1] = new GenericBoardSquare (Room.GRAY, new Coordinates (2,1),
+            squaresMatrix[1][0] = new GenericBoardSquare (Room.GRAY, new Coordinates (1,0),
                     InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM, match);
-            squaresMatrix[2][2] = new GenericBoardSquare (Room.GRAY, new Coordinates (2,2),
+            squaresMatrix[2][0] = new GenericBoardSquare (Room.GRAY, new Coordinates (2,0),
                     InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, match);
-            squaresMatrix[0][3] = null;
+            squaresMatrix[3][2] = null;
         }
     }
 
@@ -69,22 +69,22 @@ public class GameBoard {
         if (referenceSquare.getNorth() == InterSquareLink.DOOR){
             x = coord.getXCoordinates();
             y = coord.getYCoordinates()+1;
-            visibleSquares.addAll(getRoomSquares(squaresMatrix[y][x].getRoom()));
+            visibleSquares.addAll(getRoomSquares(squaresMatrix[x][y].getRoom()));
         }
         if (referenceSquare.getSouth() == InterSquareLink.DOOR){
             x = coord.getXCoordinates();
             y = coord.getYCoordinates()-1;
-            visibleSquares.addAll(getRoomSquares(squaresMatrix[y][x].getRoom()));
+            visibleSquares.addAll(getRoomSquares(squaresMatrix[x][y].getRoom()));
         }
         if (referenceSquare.getEast() == InterSquareLink.DOOR){
             x = coord.getXCoordinates()+1;
             y = coord.getYCoordinates();
-            visibleSquares.addAll(getRoomSquares(squaresMatrix[y][x].getRoom()));
+            visibleSquares.addAll(getRoomSquares(squaresMatrix[x][y].getRoom()));
         }
         if (referenceSquare.getWest() == InterSquareLink.DOOR){
             x = coord.getXCoordinates()-1;
             y = coord.getYCoordinates();
-            visibleSquares.addAll(getRoomSquares(squaresMatrix[y][x].getRoom()));
+            visibleSquares.addAll(getRoomSquares(squaresMatrix[x][y].getRoom()));
         }
 
         if(notVisible){
@@ -92,7 +92,8 @@ public class GameBoard {
             for (int i = 0; i < x_max; i++) {
                 for (int j = 0; j < y_max; j++) {
                     if (!visibleSquares.contains(squaresMatrix[i][j])){
-                        notVisibleSquares.add(squaresMatrix[i][j]);
+                        if (squaresMatrix[i][j] != null)
+                            notVisibleSquares.add(squaresMatrix[i][j]);
                     }
                 }
             }

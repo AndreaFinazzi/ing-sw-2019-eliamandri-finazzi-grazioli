@@ -9,6 +9,6 @@ public class PlayerAlreadyPresentException extends Exception {
     }
 
     public PlayerAlreadyPresentException() {
-        super(Messages.get ("app.exception.game.match.player_already_present"));
+        super(Messages.MESSAGE_EXCEPTIONS_GAME_MATCH_PLAYER_ALREADY_PRESENT);
     }
 }

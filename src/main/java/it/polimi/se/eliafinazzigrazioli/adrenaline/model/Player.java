@@ -5,7 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
 import java.util.List;
 
-public class Player implements Selectable{
+public class Player implements Selectable {
     private String playerNickname;
     private BoardSquare position;
     private PlayerBoard playerBoard;
@@ -16,6 +16,15 @@ public class Player implements Selectable{
     private List<PowerUpCard> powerUps;
     private Match match;
 
+    // Define additional methods, granting access to players list by nickname (unique key)
+    // These are implemented in anonymous class in Match
+    public abstract static class AbstractPlayerList extends ArrayList<Player> {
+        public abstract boolean contains(String nickname);
+
+        public abstract Player get(String nickname);
+
+        public abstract Player add(String nickname);
+    }
 
     public Player(String playerNickname) {
         this.playerNickname = playerNickname;

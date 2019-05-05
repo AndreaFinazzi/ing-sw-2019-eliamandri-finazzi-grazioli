@@ -1,7 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLI;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,11 +11,13 @@ import java.util.logging.Logger;
 public class ServerSocketManager {
 
     private final int PORT;
+    private Server server;
     private static final Logger LOGGER = Logger.getLogger(ServerSocketManager.class.getName ());
 
 
-    public ServerSocketManager(int PORT) {
+    public ServerSocketManager(Server server, int PORT) {
         this.PORT = PORT;
+        this.server = server;
     }
 
     public void startServerSocket() {
@@ -35,8 +35,8 @@ public class ServerSocketManager {
             try {
                 LOGGER.log (Level.INFO, "Waiting a connection");
                 Socket socket = serverSocket.accept ();
-                executor.submit (new ClientHandlerSocket (socket));
-            }catch (IOException e) {
+                executor.submit(new ClientHandlerSocket(server, socket));
+            } catch (IOException e) {
                 LOGGER.log (Level.SEVERE, e.toString (), e);
                 break;
             }

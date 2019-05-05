@@ -36,7 +36,6 @@ public class WeaponCard extends Card {
     }
 
     public void executeStep() {
-
         activeEffect.execute(this);
     }
 

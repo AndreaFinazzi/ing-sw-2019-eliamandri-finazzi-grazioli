@@ -22,7 +22,8 @@ public class DamageAction extends EffectState {
         this.markAmount = markAmount;
     }
 
-    public void execute(WeaponCard invoker){
+    public void execute(WeaponCard invoker) {
+        //
         WeaponEffect executingEffect = invoker.getActiveEffect();
         List<Player> toDamage = executingEffect.getToAffect();
         for (Player damaged:toDamage){

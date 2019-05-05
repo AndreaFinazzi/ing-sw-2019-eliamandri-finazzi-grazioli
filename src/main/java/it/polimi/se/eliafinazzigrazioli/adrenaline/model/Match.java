@@ -5,11 +5,36 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.PlayerAlread
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Match {
 
-    private List<Player> players;
+    // Players list extra-methods implementations
+    private Player.AbstractPlayerList players = new Player.AbstractPlayerList() {
+        // allows to check on nicknames
+        @Override
+        public boolean contains(String nickname) {
+            for (Player player : this) {
+                if (player.getPlayerNickname().equals(nickname)) return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Player get(String nickname) {
+            for (Player player : this) {
+                if (player.getPlayerNickname().equals(nickname)) return player;
+            }
+            return null;
+        }
+
+        @Override
+        public Player add(String nickname) {
+            Player newPlayer = new Player(nickname);
+            add(newPlayer);
+            return newPlayer;
+        }
+    };
+
     private GameBoard map;
     private MatchPhase phase;
     private Player currentPlayer;
@@ -18,11 +43,11 @@ public class Match {
 
     public Match() {
         phase = MatchPhase.INITIALIZATION;
-        players = new ArrayList<> ();
+        map = new GameBoard(MapType.ONE, this);
     }
 
-    public List<Player> getPlayersOnSquare(BoardSquare square){
-        List<Player> onSquare = new ArrayList<>();
+    public ArrayList<Player> getPlayersOnSquare(BoardSquare square) {
+        ArrayList<Player> onSquare = new ArrayList<>();
         for (Player player:players){
             if (player.getPosition() == square){
                 onSquare.add(player);
@@ -35,7 +60,7 @@ public class Match {
         return currentPlayer;
     }
 
-    public List<Player> getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 
@@ -48,7 +73,7 @@ public class Match {
         currentPlayer = players.get ((index+1)%players.size ());
     }
 
-    public void addPlayers(Player player) throws MaxPlayerException, PlayerAlreadyPresentException {
+    public void addPlayer(Player player) throws MaxPlayerException, PlayerAlreadyPresentException {
         if (players.size () >= Rules.GAME_MAX_PLAYERS)
             throw new MaxPlayerException();
         if (players.contains (player))
@@ -59,6 +84,29 @@ public class Match {
             currentPlayer = player;
         }
     }
+
+    public void addPlayer(String nickname) throws MaxPlayerException, PlayerAlreadyPresentException {
+        Player tempPlayer = players.get(nickname);
+        if (tempPlayer != null) {
+            if (tempPlayer.isConnected())
+                throw new PlayerAlreadyPresentException();
+            else
+                tempPlayer.connect();
+        } else if (players.size() >= Rules.GAME_MAX_PLAYERS) {
+            throw new MaxPlayerException();
+        } else {
+            tempPlayer = players.add(nickname);
+            if (players.size() == 1) {
+                firstPlayer = tempPlayer;
+                currentPlayer = tempPlayer;
+            }
+        }
+
+        if (players.size() == Rules.GAME_MAX_PLAYERS) {
+
+        }
+    }
+
 
     public MatchPhase getPhase() {
         return phase;
