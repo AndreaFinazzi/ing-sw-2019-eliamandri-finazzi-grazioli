@@ -47,6 +47,7 @@ public final class Rules {
 
     // GAME
     private static final JsonNode GAME = RULES.get("game");
+    public static final int GAME_MIN_PLAYERS = GAME.get("min_players").asInt(3);
     public static final int GAME_MAX_PLAYERS = GAME.get("max_players").asInt(5);
     // PLAYER_BOARD
     private static final JsonNode GAME_BOARD = GAME.get("board");

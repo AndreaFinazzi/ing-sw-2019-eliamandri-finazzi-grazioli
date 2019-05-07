@@ -31,7 +31,7 @@ public class EventController implements Observer {
 
         listeners.forEach(listener -> {
                     try {
-                        event.handle(listener, matchController);
+                        event.handle(listener);
                     } catch (HandlerNotImplementedException e) {
                         LOGGER.log(Level.SEVERE, e.toString(), e);
                     }

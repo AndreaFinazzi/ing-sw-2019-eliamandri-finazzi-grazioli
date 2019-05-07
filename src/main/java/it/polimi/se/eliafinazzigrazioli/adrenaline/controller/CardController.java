@@ -9,8 +9,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotI
 
 // TODO implement controller
 public class CardController implements EventListenerInterface {
+    private MatchController matchController;
 
-    public CardController(EventController eventController) {
+    public CardController(EventController eventController, MatchController matchController) {
+        this.matchController = matchController;
         //listen to interesting events
         eventController.addEventListener(CardSelectedEvent.class, this);
         eventController.addEventListener(EffectSelectedEvent.class, this);
@@ -19,28 +21,28 @@ public class CardController implements EventListenerInterface {
     }
 
     @Override
-    public void handleEvent(AbstractEvent event, MatchController matchController) throws HandlerNotImplementedException {
+    public void handleEvent(AbstractEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException(event.getClass().getName());
     }
 
     @Override
-    public void handleEvent(CardSelectedEvent event, MatchController matchController) {
+    public void handleEvent(CardSelectedEvent event) {
 
     }
 
     @Override
-    public void handleEvent(EffectSelectedEvent event, MatchController matchController) {
+    public void handleEvent(EffectSelectedEvent event) {
         //matchController.getActiveWeapon().setActiveEffect();
         //new WeaponCard().executeStep();
     }
 
     @Override
-    public void handleEvent(TargetSelectedEvent event, MatchController matchController) {
+    public void handleEvent(TargetSelectedEvent event) {
         System.out.println("called for " + event.getPlayer());
     }
 
     @Override
-    public void handleEvent(CollectPlayEvent event, MatchController matchController) {
+    public void handleEvent(CollectPlayEvent event) {
         System.out.println("called for " + event.getPlayer());
     }
 }

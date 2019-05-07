@@ -9,16 +9,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerController implements EventListenerInterface {
-    Map<String, Player> players = new HashMap<>();
+    private Map<String, Player> players = new HashMap<>();
+    private MatchController matchController;
 
-    public PlayerController(EventController eventController) {
+    public PlayerController(EventController eventController, MatchController matchController) {
+        this.matchController = matchController;
         //listen to interesting events
         eventController.addEventListener(PlayerConnectedEvent.class, this);
         eventController.addEventListener(MovePlayEvent.class, this);
     }
 
     @Override
-    public void handleEvent(MovePlayEvent event, MatchController matchController) {
+    public void handleEvent(MovePlayEvent event) {
         Player currentPlayer = players.get(event.getPlayer());
 
         if (event.getPath() != null && event.getPath().size() > 0) {
@@ -28,7 +30,7 @@ public class PlayerController implements EventListenerInterface {
         }
     }
 
-    public void handleEvent(PlayerConnectedEvent event, MatchController matchController) {
+    public void handleEvent(PlayerConnectedEvent event) {
         matchController.addPlayer(event.getPlayer());
     }
 }

@@ -8,6 +8,4 @@ public abstract class AbstractModelEvent extends AbstractEvent {
     public String getPlayer() {
         return player;
     }
-
-    ;
 }

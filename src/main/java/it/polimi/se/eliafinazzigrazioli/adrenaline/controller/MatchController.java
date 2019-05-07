@@ -4,7 +4,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.MaxPlayerExc
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Match;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.MatchPhase;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
+import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,18 +18,19 @@ public class MatchController implements EventListenerInterface {
     private PlayerController playerController;
     private CardController cardController;
     private EventController eventController;
+    private Timer timer;
 
     public MatchController() {
         match = new Match();
 
         eventController = new EventController(this);
-        playerController = new PlayerController(eventController);
-        cardController = new CardController(eventController);
+        playerController = new PlayerController(eventController, this);
+        cardController = new CardController(eventController, this);
 
     }
 
-    private void initMatch() {
-
+    public void initMatch() {
+        //TODO: to implement
     }
 
     public EventController getEventController() {
@@ -48,5 +51,17 @@ public class MatchController implements EventListenerInterface {
 
     public void startRecruiting() {
         match.setPhase(MatchPhase.RECRUITING);
+    }
+
+    public boolean isReady() {
+        if (match.getPlayers().size() >= Rules.GAME_MIN_PLAYERS)
+            return true;
+        return false;
+    }
+
+    public boolean isFull() {
+        if (match.getPlayers().size() == Rules.GAME_MAX_PLAYERS)
+            return true;
+        return false;
     }
 }

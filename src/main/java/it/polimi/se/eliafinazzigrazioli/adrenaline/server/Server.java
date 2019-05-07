@@ -8,6 +8,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 public class Server {
@@ -17,11 +19,29 @@ public class Server {
     ServerSocketManager serverSocketManager;
     HashMap<String, MatchController> playerToMatchMap;
     MatchController nextMatch;
+    private Timer timer;
 
 
     private Server() {
+        timer = new Timer();
         playerToMatchMap = new HashMap<>();
         nextMatch = new MatchController();
+    }
+
+    public void addPlayer(String player) {
+        stopTimer();
+
+        nextMatch.addPlayer(player);
+        playerToMatchMap.put(player, nextMatch);
+
+        if (nextMatch.isFull()) {
+            nextMatch.initMatch();
+            //TODO: move to Messages
+            LOGGER.info("Game started");
+            nextMatch = new MatchController();
+        } else if (nextMatch.isReady()) {
+            startTimer();
+        }
     }
 
     public void addPlayer(String player, MatchController matchController) {
@@ -35,6 +55,22 @@ public class Server {
 
     public void removePlayer(Player player) {
         playerToMatchMap.remove(player.getPlayerNickname());
+    }
+
+    public void startTimer() {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                nextMatch.initMatch();
+                //TODO: move to Messages
+                LOGGER.info("Game started");
+                nextMatch = new MatchController();
+            }
+        }, Config.CONFIG_SERVER_NEW_GAME_TIMEOUT);
+    }
+
+    public void stopTimer() {
+        timer.cancel();
     }
 
     public void main(String[] args) {

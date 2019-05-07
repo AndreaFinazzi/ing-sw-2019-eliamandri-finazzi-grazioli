@@ -3,11 +3,10 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.events.controller;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.controller.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotImplementedException;
 
-public class ConnectionTimeoutEvent extends AbstractControllerEvent {
-    private String message;
+public class GenericEvent extends AbstractControllerEvent {
 
-    public String getMessage() {
-        return message;
+    public GenericEvent(String message) {
+        setMessage(message);
     }
 
     @Override

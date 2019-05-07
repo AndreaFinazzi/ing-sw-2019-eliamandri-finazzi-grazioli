@@ -25,6 +25,8 @@ public final class Config {
 
     public static final int CONFIG_SERVER_SOCKET_PORT = Integer.parseInt((String) CONFIG.getOrDefault("server.socket.port", 9999));
 
+    public static final int CONFIG_SERVER_NEW_GAME_TIMEOUT = Integer.parseInt((String) CONFIG.getOrDefault("server.new_game_timeout", 30000));
+
     private Config() {
         throw new AssertionError();
     }

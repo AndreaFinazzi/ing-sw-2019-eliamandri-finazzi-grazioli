@@ -6,5 +6,5 @@ public interface ClientHandler extends Runnable {
 
     void send(AbstractEvent event);
 
-    AbstractEvent received();
+    AbstractEvent receive();
 }

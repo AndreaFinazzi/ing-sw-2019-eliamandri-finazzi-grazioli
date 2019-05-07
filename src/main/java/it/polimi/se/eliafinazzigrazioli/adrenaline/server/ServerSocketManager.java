@@ -8,12 +8,12 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ServerSocketManager {
+public class ServerSocketManager implements Runnable {
 
     private final int PORT;
     private Server server;
     private static final Logger LOGGER = Logger.getLogger(ServerSocketManager.class.getName ());
-
+    ServerSocket serverSocket;
 
     public ServerSocketManager(Server server, int PORT) {
         this.PORT = PORT;
@@ -22,7 +22,6 @@ public class ServerSocketManager {
 
     public void startServerSocket() {
         ExecutorService executor = Executors.newCachedThreadPool ();
-        ServerSocket serverSocket;
         try {
             serverSocket = new ServerSocket (PORT);
         }catch (IOException e) {
@@ -41,5 +40,10 @@ public class ServerSocketManager {
                 break;
             }
         }
+    }
+
+    @Override
+    public void run() {
+        startServerSocket();
     }
 }

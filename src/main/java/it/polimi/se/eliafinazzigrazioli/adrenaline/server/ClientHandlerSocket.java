@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.controller.EventController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.events.controller.GenericEvent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,18 +15,19 @@ public class ClientHandlerSocket implements ClientHandler {
 
     private Socket socket;
     private Server server;
-    private ObjectOutputStream send;
-    private ObjectInputStream received;
+    private ObjectOutputStream sender;
+    private ObjectInputStream receiver;
     private static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName ());
     private EventController eventController;
+    private AbstractEvent nextReceivedEvent;
 
 
     public ClientHandlerSocket(Server server, Socket socket) {
         this.server = server;
         this.socket = socket;
         try {
-            send = new ObjectOutputStream (socket.getOutputStream ());
-            received = new ObjectInputStream(socket.getInputStream());
+            sender = new ObjectOutputStream(socket.getOutputStream());
+            receiver = new ObjectInputStream(socket.getInputStream());
         }catch (IOException e) {
             LOGGER.log (Level.SEVERE, e.toString (), e);
         }
@@ -34,34 +36,32 @@ public class ClientHandlerSocket implements ClientHandler {
     @Override
     public void send(AbstractEvent event) {
         try {
-            send.writeObject (event);
-            send.flush ();
+            sender.writeObject(event);
+            sender.flush();
         }catch (IOException e) {
             LOGGER.log (Level.SEVERE, e.toString (), e);
         }
     }
 
     @Override
-    public AbstractEvent received() {
-        AbstractEvent event;
-        Object object;
+    public AbstractEvent receive() {
+        AbstractEvent event = null;
+
         try {
-            object = received.readObject();
-            if(object == null)
-                throw new NullPointerException ();
-            event = (AbstractEvent) object;
+            event = (AbstractEvent) receiver.readObject();
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.log (Level.SEVERE, e.toString (), e);
-            throw new NullPointerException ();
         }
         return event;
     }
 
-
+    //TODO: this should do something useful
+    //TODO: add message constants to dedicated class
     @Override
     public void run() {
-        //read player name
-        AbstractEvent event = received();
-        eventController.update (event);
+        LOGGER.info("Client initialized: waiting for player's nickname");
+        send(new GenericEvent("Waiting for nickname"));
+        nextReceivedEvent = receive();
+        server.addPlayer(nextReceivedEvent.getMessage());
     }
 }
