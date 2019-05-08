@@ -1,51 +1,72 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GameBoard {
 
     private BoardSquare[][] squaresMatrix;
     private int x_max = Rules.GAME_BOARD_X_MAX;
     private int y_max = Rules.GAME_BOARD_Y_MAX;
-    private Match match;
+    private Map<Player,BoardSquare> playerPositions;
 
-    public GameBoard(MapType mapType, Match match) {
+    public GameBoard(MapType mapType) {
         if (mapType.equals (MapType.ONE)) {
-            this.match = match;
             squaresMatrix = new BoardSquare[x_max][y_max];
             squaresMatrix[0][2] = new GenericBoardSquare (Room.RED, new Coordinates (0,2),
-                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, match);
+                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL);
             squaresMatrix[0][1] = new SpawnBoardSquare(Room.RED, new Coordinates (0,1),
-                    InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL, match);
+                    InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
             squaresMatrix[1][2] = new GenericBoardSquare (Room.BLUE, new Coordinates (1,2),
-                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, match);
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
             squaresMatrix[2][2] = new SpawnBoardSquare (Room.BLUE, new Coordinates (2,2),
-                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, match);
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
             squaresMatrix[1][1] = new GenericBoardSquare (Room.PURPLE, new Coordinates (1,1),
-                    InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL, match);
+                    InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
             squaresMatrix[2][1] = new GenericBoardSquare (Room.PURPLE, new Coordinates (2,1),
-                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, match);
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
             squaresMatrix[3][1] = new GenericBoardSquare (Room.YELLOW, new Coordinates (3,1),
-                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.DOOR, match);
+                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.DOOR);
             squaresMatrix[3][0] = new SpawnBoardSquare (Room.YELLOW, new Coordinates (3,0),
-                    InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR, match);
+                    InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR);
             squaresMatrix[0][0] = new GenericBoardSquare (Room.GRAY, new Coordinates (0,0),
-                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, match);
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
             squaresMatrix[1][0] = new GenericBoardSquare (Room.GRAY, new Coordinates (1,0),
-                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM, match);
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM);
             squaresMatrix[2][0] = new GenericBoardSquare (Room.GRAY, new Coordinates (2,0),
-                    InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, match);
+                    InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
             squaresMatrix[3][2] = null;
+            playerPositions = new HashMap<>();
         }
     }
 
 
+
+    public void movePlayer(Player player, BoardSquare destination){
+        playerPositions.put(player, destination);
+    }
+
+    public void playerMovement(Player player, List<Coordinates> coordinatesPath) throws MovementNotAllowedException {
+        if (player.getPlayerBoard().getNumberOfMovementsAllowed() < coordinatesPath.size()){
+            throw new MovementNotAllowedException(new String("MovementNotAllowedException: number of steps exceeds allowed movements"));
+            //TODO define appropriate message for the exception
+        }
+        List<BoardSquare> boardSquaresPath = new ArrayList<>();
+        BoardSquare playerPostion = getPlayerPosition(player);
+        coordinatesPath.forEach(coordinates -> {
+            boardSquaresPath.add(getBoardSquareByCoordinates(coordinates));
+        });
+        for (BoardSquare boardSquare:boardSquaresPath){
+            if (!getOneStepReachableSquares(playerPostion).contains(boardSquare))
+                throw new MovementNotAllowedException(new String("MovementNotAllowedExeption: provided path is not valid"));
+                //TODO define appropriate message for the exception
+            playerPostion = boardSquare;
+        }
+        movePlayer(player, playerPostion);
+    }
 
     public List<BoardSquare> getRoomSquares(Room room){
         List<BoardSquare> roomSquares = new ArrayList<BoardSquare>();
@@ -60,6 +81,16 @@ public class GameBoard {
         return roomSquares;
     }
 
+
+
+    public List<Player> getRoomPlayers(Room room){
+        List<BoardSquare> roomSquares = getRoomSquares(room);
+        List<Player> roomPlayers = new ArrayList<>();
+        for (BoardSquare boardSquare:roomSquares)
+            roomPlayers.addAll(getPlayersOnSquare(boardSquare));
+        return roomPlayers;
+    }
+
     public List<BoardSquare> getVisibleSquares(BoardSquare referenceSquare, boolean notVisible){
         List<BoardSquare> visibleSquares = new ArrayList<>();
         visibleSquares.addAll(getRoomSquares(referenceSquare.getRoom()));
@@ -67,23 +98,23 @@ public class GameBoard {
         int x;
         int y;
         if (referenceSquare.getNorth() == InterSquareLink.DOOR){
-            x = coord.getXCoordinates();
-            y = coord.getYCoordinates()+1;
+            x = coord.getXCoordinate();
+            y = coord.getYCoordinate()+1;
             visibleSquares.addAll(getRoomSquares(squaresMatrix[x][y].getRoom()));
         }
         if (referenceSquare.getSouth() == InterSquareLink.DOOR){
-            x = coord.getXCoordinates();
-            y = coord.getYCoordinates()-1;
+            x = coord.getXCoordinate();
+            y = coord.getYCoordinate()-1;
             visibleSquares.addAll(getRoomSquares(squaresMatrix[x][y].getRoom()));
         }
         if (referenceSquare.getEast() == InterSquareLink.DOOR){
-            x = coord.getXCoordinates()+1;
-            y = coord.getYCoordinates();
+            x = coord.getXCoordinate()+1;
+            y = coord.getYCoordinate();
             visibleSquares.addAll(getRoomSquares(squaresMatrix[x][y].getRoom()));
         }
         if (referenceSquare.getWest() == InterSquareLink.DOOR){
-            x = coord.getXCoordinates()-1;
-            y = coord.getYCoordinates();
+            x = coord.getXCoordinate()-1;
+            y = coord.getYCoordinate();
             visibleSquares.addAll(getRoomSquares(squaresMatrix[x][y].getRoom()));
         }
 
@@ -102,51 +133,57 @@ public class GameBoard {
         return visibleSquares;
     }
 
-    public List<BoardSquare> getVisibleSquares(Player referencePlayer, boolean notVisible){
-        return getVisibleSquares(referencePlayer.getPosition(), notVisible);
+    public List<Room> getVisibleRooms(BoardSquare referenceSquare, boolean notVisible){
+        List<Room> visibleRooms = new ArrayList<>();
+        int x = referenceSquare.getCoordinates().getXCoordinate();
+        int y = referenceSquare.getCoordinates().getYCoordinate();
+        if (referenceSquare.getNorth() == InterSquareLink.DOOR)
+            visibleRooms.add(squaresMatrix[x][y+1].getRoom());
+        if (referenceSquare.getSouth() == InterSquareLink.DOOR)
+            visibleRooms.add(squaresMatrix[x][y-1].getRoom());
+        if (referenceSquare.getEast() == InterSquareLink.DOOR)
+            visibleRooms.add(squaresMatrix[x+1][y].getRoom());
+        if (referenceSquare.getWest() == InterSquareLink.DOOR)
+            visibleRooms.add(squaresMatrix[x-1][y].getRoom());
+        return visibleRooms;
     }
 
     public List<Player> getVisiblePlayers(BoardSquare referenceSquare, boolean notVisible){
         List<Player> visiblePlayers = new ArrayList<>();
         List<BoardSquare> visibleSquares = getVisibleSquares(referenceSquare, notVisible);
         for (BoardSquare visible:visibleSquares){
-            visiblePlayers.addAll(visible.getPlayers());
+            visiblePlayers.addAll(getPlayersOnSquare(visible));
         }
         return visiblePlayers;
     }
 
-    public List<Player> getVisiblePlayers(Player referencePlayer, boolean notVisible){
-        BoardSquare referenceSquare = referencePlayer.getPosition();
-        return getVisiblePlayers(referenceSquare, notVisible);
-    }
 
-    private Set<BoardSquare> getOneStepReachableSquares(BoardSquare referenceSquare) throws Exception{ //TODO define exception type
-        if(referenceSquare == null){
-            throw new Exception();
-        }
+
+
+    private Set<BoardSquare> getOneStepReachableSquares(BoardSquare referenceSquare){ //TODO define exception type
         Set<BoardSquare> reachableSquares = new HashSet<>();
         Coordinates coord = referenceSquare.getCoordinates();
         int x;
         int y;
         if (referenceSquare.getNorth() != InterSquareLink.WALL){
-            x = coord.getXCoordinates();
-            y = coord.getYCoordinates()+1;
-            reachableSquares.add(squaresMatrix[y][x]);
+            x = coord.getXCoordinate();
+            y = coord.getYCoordinate()+1;
+            reachableSquares.add(squaresMatrix[x][y]);
         }
         if (referenceSquare.getSouth() != InterSquareLink.WALL){
-            x = coord.getXCoordinates();
-            y = coord.getYCoordinates()-1;
-            reachableSquares.add(squaresMatrix[y][x]);
+            x = coord.getXCoordinate();
+            y = coord.getYCoordinate()-1;
+            reachableSquares.add(squaresMatrix[x][y]);
         }
         if (referenceSquare.getEast() != InterSquareLink.WALL){
-            x = coord.getXCoordinates()+1;
-            y = coord.getYCoordinates();
-            reachableSquares.add(squaresMatrix[y][x]);
+            x = coord.getXCoordinate()+1;
+            y = coord.getYCoordinate();
+            reachableSquares.add(squaresMatrix[x][y]);
         }
         if (referenceSquare.getWest() != InterSquareLink.WALL){
-            x = coord.getXCoordinates()-1;
-            y = coord.getYCoordinates();
-            reachableSquares.add(squaresMatrix[y][x]);
+            x = coord.getXCoordinate()-1;
+            y = coord.getYCoordinate();
+            reachableSquares.add(squaresMatrix[x][y]);
         }
 
         return reachableSquares;
@@ -188,64 +225,64 @@ public class GameBoard {
         List<Player> playersByDistance = new ArrayList<>();
         List<BoardSquare> squaresByDistance = getSquaresByDistance(referenceSquare, maxDistance, minDistance);
         for(BoardSquare square:squaresByDistance){
-            playersByDistance.addAll(square.getPlayers());
+            playersByDistance.addAll(getPlayersOnSquare(square));
         }
         return playersByDistance;
     }
 
     public List<BoardSquare> getSquaresByDistance(Player referencePlayer, int maxDistance, int minDistance) throws Exception { //TODO define exception type
-        return getSquaresByDistance(referencePlayer.getPosition(), maxDistance, minDistance);
+        return getSquaresByDistance(getPlayerPosition(referencePlayer), maxDistance, minDistance);
     }
 
     public List<Player> getPlayersByDistance(Player referencePlayer, int maxDistance, int minDistance) throws Exception { //TODO define exception type
-        return getPlayersByDistance(referencePlayer.getPosition(), maxDistance, minDistance);
+        return getPlayersByDistance(getPlayerPosition(referencePlayer), maxDistance, minDistance);
     }
 
     public List<BoardSquare> getSquaresOnCardinalDirections(BoardSquare referenceSquare){
         Coordinates referenceCoordinates = referenceSquare.getCoordinates();
-        int x = referenceCoordinates.getXCoordinates();
-        int y = referenceCoordinates.getYCoordinates();
+        int x = referenceCoordinates.getXCoordinate();
+        int y = referenceCoordinates.getYCoordinate();
         List<BoardSquare> squaresByDirection = new ArrayList<>();
         squaresByDirection.add(referenceSquare);
-        //check north
-        for (int i = y + 1; i < x_max; i++) {
-            squaresByDirection.add(squaresMatrix[i][x]);
+        //check north vertical
+        for (int i=0;i<y_max;i++) {
+            if (squaresMatrix[x][i] != null && i!=y)
+                squaresByDirection.add(squaresMatrix[x][i]);
         }
-        //check east
-        for (int i = x + 1; i < y_max; i++) {
-            squaresByDirection.add(squaresMatrix[y][i]);
-        }
-        //check south
-        for(int i=y-1; i>=0; i--){
-            squaresByDirection.add(squaresMatrix[i][x]);
-        }
-        //check west
-        for(int i=y-1; i>=0; i--){
-            squaresByDirection.add(squaresMatrix[y][i]);
+        //check horizontal
+        for (int i=0;i<x_max;i++) {
+            if (squaresMatrix[i][y] != null && i!=x)
+                squaresByDirection.add(squaresMatrix[i][y]);
         }
         return squaresByDirection;
-    }
-
-    public List<BoardSquare> getSquaresOnCardinalDirections(Player referencePlayer){
-        return getSquaresOnCardinalDirections(referencePlayer.getPosition());
     }
 
     public List<Player> getPlayersOnCardinalDirections(BoardSquare referenceSquare){
         List<BoardSquare> squaresByDirection = getSquaresOnCardinalDirections(referenceSquare);
         List<Player> playersByDirection = new ArrayList<>();
         for (BoardSquare square:squaresByDirection){
-            playersByDirection.addAll(square.getPlayers());
+            playersByDirection.addAll(getPlayersOnSquare(square));
         }
         return playersByDirection;
     }
 
-    public List<Player> getPlayersOnCardinalDirections(Player referencePlayer){
-        return getPlayersOnCardinalDirections(referencePlayer.getPosition());
+    public BoardSquare getBoardSquareByCoordinates(Coordinates coordinates) {
+        return squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()];
     }
 
-    public BoardSquare getBoardSquareByCoordinates(Coordinates coordinates) {
-        return squaresMatrix[coordinates.getXCoordinates()][coordinates.getYCoordinates()];
+    public List<Player> getPlayersOnSquare(BoardSquare square){
+        List<Player> onSquarePlayers = new ArrayList<>();
+        for (Map.Entry<Player, BoardSquare> playerBoardSquareEntry: playerPositions.entrySet()){
+            if (playerBoardSquareEntry.getValue() == square)
+                onSquarePlayers.add(playerBoardSquareEntry.getKey());
+        }
+        return onSquarePlayers;
     }
+
+    public BoardSquare getPlayerPosition(Player player){
+        return playerPositions.get(player);
+    }
+
 
 
 }

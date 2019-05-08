@@ -1,10 +1,13 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.MaxPlayerException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Match {
 
@@ -43,7 +46,7 @@ public class Match {
 
     public Match() {
         phase = MatchPhase.INITIALIZATION;
-        map = new GameBoard(MapType.ONE, this);
+        map = new GameBoard(MapType.ONE);
     }
 
     public ArrayList<Player> getPlayersOnSquare(BoardSquare square) {
@@ -54,6 +57,10 @@ public class Match {
             }
         }
         return onSquare;
+    }
+
+    public void playerMovement(Player player, List<Coordinates> path) throws MovementNotAllowedException {
+        map.playerMovement(player, path);
     }
 
     public Player getCurrentPlayer() {
@@ -106,6 +113,7 @@ public class Match {
 
         }
     }
+
 
 
     public MatchPhase getPhase() {

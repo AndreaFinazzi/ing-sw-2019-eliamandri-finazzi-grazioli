@@ -28,8 +28,8 @@ public class EventControllerTest {
         eventController = matchController.getEventController();
 
         collectPlayEvent = new CollectPlayEvent("UserA!");
-        targetSelectedEvent = new TargetSelectedEvent("Mariooooo!");
-        movePlayEvent = new MovePlayEvent();
+        targetSelectedEvent = new TargetSelectedEvent("Mariooooo!", null);
+        movePlayEvent = new MovePlayEvent(null, null);
 
         eventController.update(collectPlayEvent);
         eventController.update(targetSelectedEvent);

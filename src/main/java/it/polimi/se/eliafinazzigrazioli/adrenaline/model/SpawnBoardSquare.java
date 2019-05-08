@@ -9,8 +9,8 @@ public class SpawnBoardSquare extends BoardSquare {
 
     private ArrayList<WeaponCard> weaponSlots;
 
-    public SpawnBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west, Match match) {
-        super(room, coordinates, north, south, east, west, match);
+    public SpawnBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
+        super(room, coordinates, north, south, east, west);
     }
 
 

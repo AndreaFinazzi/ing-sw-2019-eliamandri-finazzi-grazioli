@@ -9,12 +9,12 @@ public class Player implements Selectable {
     private String playerNickname;
     private BoardSquare position;
     private PlayerBoard playerBoard;
+    private DamageMark damageMarkDelivered; //Is the type of damage placeholder used by the player
     private boolean suspended;
     private boolean connected;
     private boolean placed;
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
-    private Match match;
 
     // Define additional methods, granting access to players list by nickname (unique key)
     // These are implemented in anonymous class in Match
@@ -33,23 +33,27 @@ public class Player implements Selectable {
     }
 
     @Override
-    public List<Selectable> getVisible(SelectableType selType, boolean notVisible) {
-        return position.getVisible(selType, notVisible);
+    public List<Selectable> getVisible(SelectableType selType, boolean notVisible, GameBoard gameBoard) {
+        return position.getVisible(selType, notVisible, gameBoard);
     }
 
     @Override
-    public List<Selectable> getByDistance(SelectableType selType, int maxDistance, int minDistance){
-        return position.getByDistance(selType, maxDistance, minDistance);
+    public List<Selectable> getByDistance(SelectableType selType, int maxDistance, int minDistance, GameBoard gameBoard){
+        return position.getByDistance(selType, maxDistance, minDistance ,gameBoard);
     }
 
     @Override
-    public List<Selectable> getByRoom(SelectableType selType) {
-        return position.getByRoom(selType);
+    public List<Selectable> getByRoom(SelectableType selType, GameBoard gameBoard, List<Player> p) {
+        return position.getByRoom(selType ,new GameBoard(MapType.ONE), p);
     }
 
     @Override
-    public List<Selectable> getOnCardinal(SelectableType selType) {
-        return position.getOnCardinal(selType);
+    public List<Selectable> getOnCardinal(SelectableType selType, GameBoard gameBoard) {
+        return position.getOnCardinal(selType, gameBoard);
+    }
+
+    public DamageMark getDamageMarkDelivered() {
+        return damageMarkDelivered;
     }
 
     public PlayerBoard getPlayerBoard() {
@@ -131,17 +135,6 @@ public class Player implements Selectable {
 
     public void setPlaced(boolean placed) {
         this.placed = placed;
-    }
-
-    //TODO define type Excpetion
-    public void setMatch(Match match) throws Exception {
-        if (this.match == null)
-            this.match = match;
-        else throw new Exception();
-    }
-
-    public Match getMatch() {
-        return match;
     }
 
     public void setPlayerBoard(PlayerBoard playerBoard) {

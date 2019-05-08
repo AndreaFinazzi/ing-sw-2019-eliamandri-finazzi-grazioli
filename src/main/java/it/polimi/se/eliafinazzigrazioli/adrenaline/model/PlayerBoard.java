@@ -17,6 +17,8 @@ public class PlayerBoard {
     private ArrayList<DamageMark> marks;
     private ArrayList<Ammo> ammos;
     private ArrayList<Integer> deathScores;
+    private int numberOfMovementsAllowed;
+    private int adrenalinicMovementSurplus;
 
     public PlayerBoard() {
         this.damages = new ArrayList<>();
@@ -92,6 +94,12 @@ public class PlayerBoard {
             if (numAmmoType(tempAmmo) < Rules.PLAYER_BOARD_MAX_AMMO)
                 ammos.add(tempAmmo);
         }
+    }
+
+    public int getNumberOfMovementsAllowed(){
+        int numberOfMovements = numberOfMovementsAllowed;
+        //TODO define logic for adrenalinic movement
+        return numberOfMovements;
     }
 
     public ArrayList<Ammo> getAmmos() {

@@ -51,6 +51,7 @@ public class EventController implements Observer {
         }
     }
 
+
     public void removeEventListener(Class<? extends AbstractViewEvent> key, EventListenerInterface value) throws ListenerNotFoundException {
         ArrayList<EventListenerInterface> listeners = listenerMap.get(key);
         if (!listeners.remove(value)) throw new ListenerNotFoundException();

@@ -11,12 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class GameBoardTest {
-    private Match match;
     private GameBoard gameBoard;
     @Before
     public void setUp() {
-        match = new Match ();
-        gameBoard = new GameBoard (MapType.ONE, match);
+        gameBoard = new GameBoard (MapType.ONE);
     }
 
     /*

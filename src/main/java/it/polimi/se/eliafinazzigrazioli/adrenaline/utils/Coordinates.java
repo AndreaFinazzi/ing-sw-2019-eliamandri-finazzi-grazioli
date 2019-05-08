@@ -2,19 +2,19 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.utils;
 
 public class Coordinates {
 
-    private final int xCoordinates;
-    private final int yCoordinates;
+    private final int xCoordinate;
+    private final int yCoordinate;
 
-    public Coordinates(int xCoordinates, int yCoordinates) {
-        this.xCoordinates = xCoordinates;
-        this.yCoordinates = yCoordinates;
+    public Coordinates(int xCoordinate, int yCoordinate) {
+        this.xCoordinate = xCoordinate;
+        this.yCoordinate = yCoordinate;
     }
 
-    public int getXCoordinates() {
-        return xCoordinates;
+    public int getXCoordinate() {
+        return xCoordinate;
     }
 
-    public int getYCoordinates() {
-        return yCoordinates;
+    public int getYCoordinate() {
+        return yCoordinate;
     }
 }

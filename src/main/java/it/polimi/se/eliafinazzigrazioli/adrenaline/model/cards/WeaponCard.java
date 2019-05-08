@@ -2,22 +2,24 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.DamageMark;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Match;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Selectable;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.GameBoard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WeaponCard extends Card {
 
+    private String weaponName;
     private Ammo cardColor;
     private List<Ammo> loader;
     private boolean loaded;
-    private List<Selectable> selectedElements;
     private ArrayList<WeaponEffect> effects;
     private WeaponEffect activeEffect;
     private DamageMark deliveredMark;       //to be set when the card is assigned to a player, avoids the need for a reference to the current player
-    private Match match;
+    private List<WeaponEffect> callableEffects;
+
+
 
     public WeaponEffect getActiveEffect() {
         return activeEffect;
@@ -27,16 +29,12 @@ public class WeaponCard extends Card {
         return deliveredMark;
     }
 
-    public Match getMatch() {
-        return match;
-    }
-
     public void setDeliveredMark(DamageMark deliveredMark) {
         this.deliveredMark = deliveredMark;
     }
 
-    public void executeStep() {
-        activeEffect.execute(this);
+    public void executeStep(GameBoard gameBoard, Player currentPlayer) {
+        activeEffect.execute(this, gameBoard, currentPlayer);
     }
 
     public void playCard() {
@@ -49,6 +47,10 @@ public class WeaponCard extends Card {
 
     private void unload() {
         //TODO
+    }
+
+    public List<WeaponEffect> getCallableEffects(){
+        return callableEffects;
     }
 
 }

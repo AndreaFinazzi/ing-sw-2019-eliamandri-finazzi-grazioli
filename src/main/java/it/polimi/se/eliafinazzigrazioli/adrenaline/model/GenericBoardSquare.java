@@ -7,8 +7,8 @@ public class GenericBoardSquare extends BoardSquare {
     private AmmoCard collectable;
 
 
-    public GenericBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west, Match match) {
-        super(room, coordinates, north, south, east, west, match);
+    public GenericBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
+        super(room, coordinates, north, south, east, west);
         collectable = null;
     }
 

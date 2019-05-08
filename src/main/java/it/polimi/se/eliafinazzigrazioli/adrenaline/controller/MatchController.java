@@ -64,4 +64,11 @@ public class MatchController implements EventListenerInterface {
             return true;
         return false;
     }
+
+    //Getter
+
+
+    public Match getMatch() {
+        return match;
+    }
 }

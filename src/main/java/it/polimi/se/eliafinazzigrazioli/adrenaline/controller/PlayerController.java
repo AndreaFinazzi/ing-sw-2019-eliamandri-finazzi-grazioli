@@ -2,10 +2,12 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.MovePlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.PlayerConnectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Coordinates;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlayerController implements EventListenerInterface {
@@ -22,10 +24,12 @@ public class PlayerController implements EventListenerInterface {
     @Override
     public void handleEvent(MovePlayEvent event) {
         Player currentPlayer = players.get(event.getPlayer());
-
-        if (event.getPath() != null && event.getPath().size() > 0) {
-            for (Coordinates nextSquare : event.getPath()) {
-                //currentPlayer.setPosition(); //TODO complete moving player to new position
+        List<Coordinates> path = event.getPath();
+        if (path != null && path.size() > 0) {
+            try {
+                matchController.getMatch().playerMovement(currentPlayer, path);
+            } catch (MovementNotAllowedException e){
+                //TODO invalid movement handling strategy
             }
         }
     }

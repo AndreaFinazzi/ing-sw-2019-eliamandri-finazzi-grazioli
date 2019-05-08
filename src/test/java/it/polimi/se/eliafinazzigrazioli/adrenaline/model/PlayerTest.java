@@ -19,7 +19,7 @@ public class PlayerTest {
         player = new Player ("nickname");
         playerBoard = new PlayerBoard ();
         match = new Match ();
-        gameBoard = new GameBoard (ONE, match);
+        gameBoard = new GameBoard (ONE);
         match.addPlayer(new Player("second"));
         match.addPlayer(new Player("third"));
         match.addPlayer(new Player("fourth"));
@@ -32,18 +32,10 @@ public class PlayerTest {
         assertTrue (player.getPosition () == null);
         assertTrue (player.getPowerUps ().size () == 0);
         assertTrue (player.getWeapons ().size () == 0);
-        assertTrue (player.getMatch () == null);
         assertTrue (player.getPlayerBoard () == null);
         assertFalse (player.isConnected ());
         assertFalse (player.isPlaced ());
         assertFalse (player.isSuspended ());
-    }
-
-    @Test(expected = Exception.class)
-    public void setMatchTest() throws Exception{
-        player.setMatch (match);
-        assertEquals (match, player.getMatch ());
-        player.setMatch (new Match ());
     }
 
     @Test
