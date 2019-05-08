@@ -164,4 +164,14 @@ public class Player implements Selectable {
                 ", powerUps=" + powerUps +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Player) {
+            Player player = (Player) obj;
+            if (player.getPlayerNickname ().equals (this.playerNickname))
+                return true;
+        }
+        return false;
+    }
 }

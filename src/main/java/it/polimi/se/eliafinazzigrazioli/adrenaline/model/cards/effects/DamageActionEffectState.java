@@ -15,8 +15,8 @@ public class DamageActionEffectState extends ActionEffectState {
 
     private static final Logger LOGGER = Logger.getLogger(DamageActionEffectState.class.getName());
 
-    int damageAmount;
-    int markAmount;
+    private int damageAmount;
+    private int markAmount;
 
     public DamageActionEffectState(int damageAmount, int markAmount, WeaponEffect playerToAffectSource, int toAffectPlayerSelectionOrder) {
         super(playerToAffectSource, toAffectPlayerSelectionOrder);
