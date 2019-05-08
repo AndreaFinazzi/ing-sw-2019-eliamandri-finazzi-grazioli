@@ -3,7 +3,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.events;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.controller.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotImplementedException;
 
-public abstract class AbstractEvent {
+import java.io.Serializable;
+
+public abstract class AbstractEvent implements Serializable {
     private String message;
 
     public String getMessage() {

@@ -18,4 +18,11 @@ public class PowerUpCard {
         effect.activate();
     }
 
+    @Override
+    public String toString() {
+        return "PowerUpCard{" +
+                "equivalentAmmo=" + equivalentAmmo +
+                ", effect=" + effect +
+                '}';
+    }
 }

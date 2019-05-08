@@ -23,6 +23,11 @@ public abstract class AbstractClientHandler implements Runnable {
         LOGGER.info("Client initialized: waiting for player's nickname");
         send(new GenericEvent("Waiting for nickname"));
         nextReceivedEvent = receive();
-        server.addPlayer(nextReceivedEvent.getMessage());
+        LOGGER.info (nextReceivedEvent.getMessage ());
+        if (nextReceivedEvent.getMessage ().equals ("tony"))
+            send (new GenericEvent ("test tony "));
+        else
+            send (new GenericEvent ("test finazzi"));
+        //server.addPlayer(nextReceivedEvent.getMessage());
     }
 }

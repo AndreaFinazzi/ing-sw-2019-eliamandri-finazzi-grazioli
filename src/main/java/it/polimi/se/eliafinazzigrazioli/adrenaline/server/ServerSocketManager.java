@@ -13,7 +13,7 @@ public class ServerSocketManager implements Runnable {
     private final int PORT;
     private Server server;
     private static final Logger LOGGER = Logger.getLogger(ServerSocketManager.class.getName ());
-    ServerSocket serverSocket;
+    private ServerSocket serverSocket;
 
     public ServerSocketManager(Server server, int PORT) {
         this.PORT = PORT;
@@ -21,9 +21,11 @@ public class ServerSocketManager implements Runnable {
     }
 
     public void startServerSocket() {
+        System.out.println ("Server socket is started...");
         ExecutorService executor = Executors.newCachedThreadPool ();
         try {
             serverSocket = new ServerSocket (PORT);
+            LOGGER.log (Level.INFO, "serversocket created");
         }catch (IOException e) {
             LOGGER.log (Level.SEVERE, e.toString (), e);
             return;

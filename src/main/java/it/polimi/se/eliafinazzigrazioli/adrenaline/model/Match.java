@@ -36,6 +36,16 @@ public class Match {
             add(newPlayer);
             return newPlayer;
         }
+        @Override
+        public Player remove(String nickname) {
+            for (Player player : this) {
+                if (player.getPlayerNickname ().equals (nickname)) {
+                    remove (player);
+                    return player;
+                }
+            }
+            return null;
+        }
     };
 
     private GameBoard map;
@@ -92,6 +102,13 @@ public class Match {
         }
     }
 
+    public void removePlayer(String nickname) {
+        Player tempPlayer = players.get (nickname);
+        if (tempPlayer != null) {
+            players.remove (nickname);
+        }
+    }
+
     public void addPlayer(String nickname) throws MaxPlayerException, PlayerAlreadyPresentException {
         Player tempPlayer = players.get(nickname);
         if (tempPlayer != null) {
@@ -134,5 +151,9 @@ public class Match {
 
     public void increaseTurn() {
         turn++;
+    }
+
+    public Player getPlayer(String nickname) {
+        return getPlayer (nickname);
     }
 }

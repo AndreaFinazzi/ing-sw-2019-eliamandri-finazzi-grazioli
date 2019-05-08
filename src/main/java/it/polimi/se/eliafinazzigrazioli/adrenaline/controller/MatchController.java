@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.MaxPlayerExc
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Match;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.MatchPhase;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
 import java.util.Timer;
@@ -47,6 +48,10 @@ public class MatchController implements EventListenerInterface {
             // TODO: define handling strategy
             LOGGER.log(Level.INFO, e.toString(), e);
         }
+    }
+
+    public void removePlayer(String nickname) {
+        match.removePlayer (nickname);
     }
 
     public void startRecruiting() {

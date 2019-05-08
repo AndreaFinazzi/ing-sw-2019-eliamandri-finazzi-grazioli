@@ -17,4 +17,22 @@ public class Coordinates {
     public int getYCoordinate() {
         return yCoordinate;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Coordinates) {
+            Coordinates coordinates = (Coordinates)obj;
+            if (xCoordinate == coordinates.getXCoordinate () && yCoordinate == coordinates.getYCoordinate ())
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "(" +
+                 + xCoordinate +
+                "," + yCoordinate +
+                ')';
+    }
 }

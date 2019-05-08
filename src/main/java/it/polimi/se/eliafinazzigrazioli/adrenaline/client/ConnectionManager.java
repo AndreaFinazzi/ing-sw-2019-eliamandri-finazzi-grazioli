@@ -3,11 +3,11 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.AbstractViewEvent;
 
-public abstract class ConnectionManger {
+public abstract class ConnectionManager {
 
     protected String playerName;
 
-    public ConnectionManger(String playerName) {
+    public ConnectionManager(String playerName) {
         this.playerName = playerName;
     }
 

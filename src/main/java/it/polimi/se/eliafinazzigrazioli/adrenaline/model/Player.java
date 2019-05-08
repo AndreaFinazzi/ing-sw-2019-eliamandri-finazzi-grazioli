@@ -24,6 +24,8 @@ public class Player implements Selectable {
         public abstract Player get(String nickname);
 
         public abstract Player add(String nickname);
+
+        public abstract Player remove(String nickname);
     }
 
     public Player(String playerNickname) {
@@ -147,5 +149,19 @@ public class Player implements Selectable {
 
     public void setConnected(boolean connected) {
         this.connected = connected;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "playerNickname='" + playerNickname + '\'' +
+                ", position=" + position +
+                ", playerBoard=" + playerBoard +
+                ", suspended=" + suspended +
+                ", connected=" + connected +
+                ", placed=" + placed +
+                ", weapons=" + weapons +
+                ", powerUps=" + powerUps +
+                '}';
     }
 }
