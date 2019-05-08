@@ -8,6 +8,10 @@ public class PowerUpPlayEvent extends AbstractViewEvent {
 
     private PowerUpCard card;
 
+    public PowerUpPlayEvent(String player, PowerUpCard card) {
+        super(player);
+        this.card = card;
+    }
 
     public PowerUpCard getCard() {
         return card;

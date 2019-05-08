@@ -7,7 +7,7 @@ public class CollectPlayEvent extends AbstractViewEvent {
 
 
     public CollectPlayEvent(String player) {
-        this.player = player;
+        super(player);
     }
 
     @Override

@@ -5,6 +5,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotI
 
 public class PlayerConnectedEvent extends AbstractViewEvent {
 
+    public PlayerConnectedEvent(String player) {
+        super(player);
+    }
+
     @Override
     public void handle(EventListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);

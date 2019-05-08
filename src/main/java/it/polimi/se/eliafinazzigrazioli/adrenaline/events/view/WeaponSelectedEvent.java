@@ -5,9 +5,15 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotI
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.cards.WeaponCard;
 
 public class WeaponSelectedEvent extends AbstractViewEvent {
+
     private String player;
     private WeaponCard weapon;
 
+    public WeaponSelectedEvent(String player, String player1, WeaponCard weapon) {
+        super(player);
+        this.player = player1;
+        this.weapon = weapon;
+    }
 
     public WeaponCard getWeapon() {
         return weapon;

@@ -8,6 +8,10 @@ public class ReloadWeaponEvent extends AbstractViewEvent {
 
     private WeaponCard weapon;
 
+    public ReloadWeaponEvent(String player, WeaponCard weapon) {
+        super(player);
+        this.weapon = weapon;
+    }
 
     public WeaponCard getWeapon() {
         return weapon;

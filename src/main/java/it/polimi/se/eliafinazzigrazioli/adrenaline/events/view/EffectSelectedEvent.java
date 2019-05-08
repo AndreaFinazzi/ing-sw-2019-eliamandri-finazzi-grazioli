@@ -8,8 +8,9 @@ public class EffectSelectedEvent extends AbstractViewEvent {
 
     private WeaponEffect effect;
 
-    public EffectSelectedEvent() {
-        effect = new WeaponEffect();
+    public EffectSelectedEvent(String player, WeaponEffect effect) {
+        super(player);
+        this.effect = effect;
     }
 
     public WeaponEffect getEffect() {

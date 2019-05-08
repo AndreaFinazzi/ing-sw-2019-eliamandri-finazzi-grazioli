@@ -10,6 +10,11 @@ public class MovePlayEvent extends AbstractViewEvent {
 
     private List<Coordinates> path;
 
+    public MovePlayEvent(String player, List<Coordinates> path) {
+        super(player);
+        this.path = path;
+    }
+
     public List<Coordinates> getPath() {
         return path;
     }

@@ -8,6 +8,11 @@ public class CardSelectedEvent extends AbstractViewEvent {
 
     private Card card;
 
+    public CardSelectedEvent(String player, Card card) {
+        super(player);
+        this.card = card;
+    }
+
     public Card getCard() {
         return card;
     }

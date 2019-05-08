@@ -10,8 +10,9 @@ public class TargetSelectedEvent extends AbstractViewEvent {
 
     private List<Selectable> targets;
 
-    public TargetSelectedEvent(String player) {
-        this.player = player;
+    public TargetSelectedEvent(String player, List<Selectable> targets) {
+        super(player);
+        this.targets = targets;
     }
 
     public List<Selectable> getTargets() {
