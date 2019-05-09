@@ -14,4 +14,14 @@ public abstract class ConnectionManager {
     public abstract void send(AbstractViewEvent event);
 
     public abstract AbstractEvent receive();
+
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
 }

@@ -7,6 +7,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.model.MatchPhase;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Rules;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,9 +72,16 @@ public class MatchController implements EventListenerInterface {
     }
 
     //Getter
-
+    public Player.AbstractPlayerList getPlayers() {
+        return match.getPlayers();
+    }
 
     public Match getMatch() {
         return match;
     }
+
+    public ArrayList<String> getPlayersNicknames() {
+        return match.getPlayersNicknames();
+    }
 }
+

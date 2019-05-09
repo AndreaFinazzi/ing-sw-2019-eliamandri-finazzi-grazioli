@@ -1,16 +1,23 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.utils;
 
-public abstract class Observable {
+import it.polimi.se.eliafinazzigrazioli.adrenaline.events.AbstractEvent;
 
-    public void addObserver(Observer element) {
+import java.util.ArrayList;
 
+public class Observable {
+    ArrayList<Observer> observers = new ArrayList<>();
+
+    public void addObserver(Observer observer) {
+        observers.add(observer);
     }
 
-    public void removeObserver(Observer element) {
-
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
     }
 
-    public void notifyObserver() {
-
+    public synchronized void notifyObservers(AbstractEvent event) {
+        for (Observer observer : observers) {
+            observer.update(event);
+        }
     }
 }

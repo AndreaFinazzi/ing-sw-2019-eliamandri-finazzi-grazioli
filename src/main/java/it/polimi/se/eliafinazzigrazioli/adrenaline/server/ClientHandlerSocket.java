@@ -46,5 +46,4 @@ public class ClientHandlerSocket extends AbstractClientHandler {
         }
         return event;
     }
-
 }

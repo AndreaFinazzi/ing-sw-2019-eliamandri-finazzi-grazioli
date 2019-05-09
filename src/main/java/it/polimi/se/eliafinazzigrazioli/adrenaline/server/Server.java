@@ -7,15 +7,18 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+
+//TODO CHECK CONCURRENCY ISSUES OF THE WHOLE LOGIC!!!
 
 public class Server {
 
@@ -23,50 +26,84 @@ public class Server {
 
     private ServerSocketManager serverSocketManager;
     private HashMap<String, MatchController> playerToMatchMap;
+    private HashMap<String, AbstractClientHandler> playerToClientHandler;
     private MatchController nextMatch;
     private Registry registry;
     private Timer timer;
 
 
     private Server() {
+        LOGGER.info("Creating Server"); //TODO move to messages
         timer = new Timer();
         playerToMatchMap = new HashMap<>();
         nextMatch = new MatchController();
         try {
-            registry = LocateRegistry.createRegistry (1099);
-        }catch (RemoteException e) {
-            LOGGER.log (Level.SEVERE, e.toString (), e);
+            registry = LocateRegistry.createRegistry(1099);
+        } catch (RemoteException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 
     public void startServerSocket() {
+        LOGGER.info("Starting socket manager");
         serverSocketManager = new ServerSocketManager(this, Config.CONFIG_SERVER_SOCKET_PORT);
         serverSocketManager.startServerSocket();
     }
 
     public void startServerRMI() {
+        LOGGER.info("Starting RMI manager");
 
     }
 
-    public void addPlayer(String player) {
+    private void mapPlayerToMatch(String player, MatchController matchController) {
+        playerToMatchMap.put(player, matchController);
+    }
+
+    //TODO It may not be the best choice to block Server...
+    public synchronized void addPlayer(String player) {
         stopTimer();
 
         nextMatch.addPlayer(player);
-        playerToMatchMap.put(player, nextMatch);
+        mapPlayerToMatch(player, nextMatch);
 
         if (nextMatch.isFull()) {
-            nextMatch.initMatch();
-            //TODO: move to Messages
-            LOGGER.info("Game started");
-            nextMatch = new MatchController();
+            startNextMatch();
         } else if (nextMatch.isReady()) {
             startTimer();
         }
     }
 
+    //TODO It may not be the best choice to block Server...
+    public synchronized void addPlayer(String player, AbstractClientHandler clientHandler) {
+        stopTimer();
+
+        nextMatch.addPlayer(player);
+        mapPlayerToMatch(player, nextMatch);
+        playerToClientHandler.put(player, clientHandler);
+
+        if (nextMatch.isFull()) {
+            startNextMatch();
+        } else if (nextMatch.isReady()) {
+            startTimer();
+        }
+    }
+
+    private synchronized void startNextMatch() {
+        // Add next match EventController as an Observer of RemoteViews
+        ArrayList<String> nextPlayingPlayers = nextMatch.getPlayersNicknames();
+        for (String player : nextPlayingPlayers) {
+            playerToClientHandler.get(player).addViewObserver(nextMatch.getEventController());
+        }
+
+        nextMatch.initMatch();
+        //TODO: move to Messages
+        LOGGER.info("Game started");
+        nextMatch = new MatchController();
+    }
+
     public void addPlayer(String player, MatchController matchController) {
         nextMatch.addPlayer(player);
-        playerToMatchMap.put(player, matchController);
+        mapPlayerToMatch(player, matchController);
     }
 
     public void removePlayer(String player) {
@@ -81,10 +118,7 @@ public class Server {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                nextMatch.initMatch();
-                //TODO: move to Messages
-                LOGGER.info("Game started");
-                nextMatch = new MatchController();
+                startNextMatch();
             }
         }, Config.CONFIG_SERVER_NEW_GAME_TIMEOUT);
     }
@@ -99,10 +133,10 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
-        new Thread (new ServerSocketManager (server, Config.CONFIG_SERVER_SOCKET_PORT)).start ();
 
-        new Thread (new ServerRmiManager (server)).start ();
+        new Thread(new ServerSocketManager(server, Config.CONFIG_SERVER_SOCKET_PORT)).start();
 
+        new Thread(new ServerRmiManager(server)).start();
 
         //server.startServerSocket ();
         //server.startServerRMI ();

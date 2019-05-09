@@ -77,8 +77,17 @@ public class Match {
         return currentPlayer;
     }
 
-    public ArrayList<Player> getPlayers() {
+    public Player.AbstractPlayerList getPlayers() {
         return players;
+    }
+
+    public ArrayList<String> getPlayersNicknames() {
+        ArrayList<String> tempList = new ArrayList<>();
+        for (Player player : players) {
+            tempList.add(player.getPlayerNickname());
+        }
+
+        return tempList;
     }
 
     public GameBoard getMap() {
