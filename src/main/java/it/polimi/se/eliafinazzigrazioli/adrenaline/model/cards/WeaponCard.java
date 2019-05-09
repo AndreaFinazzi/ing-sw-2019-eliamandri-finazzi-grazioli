@@ -20,6 +20,14 @@ public class WeaponCard extends Card {
     private List<WeaponEffect> callableEffects;
 
 
+    public WeaponCard(WeaponEffect activeEffect) {
+        this.activeEffect = activeEffect;
+    }
+
+    public WeaponCard(){
+        //TODO to be built from json file
+    }
+
 
     public WeaponEffect getActiveEffect() {
         return activeEffect;

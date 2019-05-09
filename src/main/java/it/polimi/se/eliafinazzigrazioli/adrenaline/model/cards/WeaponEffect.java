@@ -30,6 +30,10 @@ public class WeaponEffect {
     private List<BoardSquare> toSelectBoardSquares;
     private List<Room> toSelectRooms;
 
+    public WeaponEffect(EffectState currentState, List<Player> players){
+        this.currentState = currentState;
+        this.toSelectPlayers = players;
+    }
 
 
     public Player getSelectedPlayer(int selectionOrder){
