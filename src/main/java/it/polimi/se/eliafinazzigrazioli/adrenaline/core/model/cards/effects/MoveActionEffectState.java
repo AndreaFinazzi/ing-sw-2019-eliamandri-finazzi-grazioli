@@ -33,21 +33,6 @@ public class MoveActionEffectState extends ActionEffectState {
         if (toMove != null){
             gameBoard.movePlayer(toMove, destination);
         }
-
-        //May be necessary to add moved players to a list in the card
-
-        if (false) {
-            BoardSquare d = movementDestionationSource.getSelectedBoardSquare(destinationSelectionOrder);
-            List<Player> m = new ArrayList<>();
-            for (Integer selectionOrder : new ArrayList<Integer>())
-                for (Player moved : m) {
-                    moved.setPosition(d);
-                }
-            new WeaponEffect(null, null).addMovedPlayers(m);
-        }
-
-        //All the stuff in the last if is to be deleted
-
     }
 
 }

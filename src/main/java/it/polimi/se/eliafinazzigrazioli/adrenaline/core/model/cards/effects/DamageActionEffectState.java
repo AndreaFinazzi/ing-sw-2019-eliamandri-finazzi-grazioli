@@ -51,34 +51,6 @@ public class DamageActionEffectState extends ActionEffectState {
                 }
             }
         }
-
-        //May be necessary to add hit players to a list in the card
-
-        if (false) {
-            for (Player damaged : new ArrayList<Player>()) {
-                PlayerBoard board = damaged.getPlayerBoard();
-                for (int i = 0; i < damageAmount; i++) {
-                    try {
-                        board.addDamage(invoker.getDeliveredMark());
-                    } catch (Exception e) {
-                        //TODO a handling procedure is to be defined
-                        LOGGER.log(Level.SEVERE, e.toString(), e);
-                        break;
-                    }
-                }
-                for (int i = 0; i < markAmount; i++) {
-                    try {
-                        board.addMark(invoker.getDeliveredMark());
-                    } catch (Exception e) {
-                        //TODO a handling procedure is to be defined
-                        LOGGER.log(Level.SEVERE, e.toString(), e);
-                        break;
-                    }
-                }
-                new WeaponEffect(null, null).addShotPlayers(new ArrayList<>());
-            }
-        }
-        //All the stuff in the last if is to be deleted
     }
 
 
