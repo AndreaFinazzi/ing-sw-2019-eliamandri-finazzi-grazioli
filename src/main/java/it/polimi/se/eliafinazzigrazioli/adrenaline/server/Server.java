@@ -88,7 +88,9 @@ public class Server {
     }
 
     private synchronized void startNextMatch() {
+        LOGGER.info("Next match initialization: start");
         // Add next match EventController as an Observer of RemoteViews
+
         ArrayList<String> nextPlayingPlayers = nextMatch.getPlayersNicknames();
         for (String player : nextPlayingPlayers) {
             playerToClientHandler.get(player).bindViewToEventController(nextMatch.getEventController());

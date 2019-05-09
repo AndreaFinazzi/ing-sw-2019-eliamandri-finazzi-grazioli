@@ -1,6 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
 public class PlayerConnectedEvent extends AbstractViewEvent {
@@ -10,7 +9,7 @@ public class PlayerConnectedEvent extends AbstractViewEvent {
     }
 
     @Override
-    public void handle(EventListenerInterface listener) throws HandlerNotImplementedException {
+    public void handle(ViewEventsListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);
     }
 }

@@ -1,8 +1,11 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
 public interface Observer {
 
-    void update(AbstractEvent event);
+    void update(AbstractViewEvent event);
+
+    void update(AbstractModelEvent event);
 }

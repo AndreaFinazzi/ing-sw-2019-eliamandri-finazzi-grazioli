@@ -1,7 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.controller.GenericEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.GenericEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
 public interface ViewEventsListenerInterface extends EventListenerInterface {

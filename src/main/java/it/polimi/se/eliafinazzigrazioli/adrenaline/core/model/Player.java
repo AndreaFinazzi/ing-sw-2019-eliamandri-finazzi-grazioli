@@ -1,5 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -173,4 +176,14 @@ public class Player implements Selectable {
         }
         return false;
     }
+
+    public AbstractModelEvent createBeginTurnEvent() {
+        return new BeginTurnEvent(playerNickname);
+    }
+
+    //TODO should be transformed in initTurn method
+    public EndTurnEvent createEndTurnEvent() {
+        return new EndTurnEvent(playerNickname);
+    }
+
 }

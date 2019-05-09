@@ -1,6 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 
@@ -16,7 +15,7 @@ public class SelectableRoomsEvent extends AbstractModelEvent {
     }
 
     @Override
-    public void handle(EventListenerInterface listener) throws HandlerNotImplementedException {
+    public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
         if (this.getPlayer() == listener.getPlayer())
             listener.handleEvent(this);
     }

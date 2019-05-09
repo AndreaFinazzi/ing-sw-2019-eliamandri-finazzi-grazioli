@@ -1,8 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 public class EventController implements Observer {
     private HashMap<Class<? extends AbstractViewEvent>, ArrayList<ViewEventsListenerInterface>> viewEventsListenerMap;
-    private ArrayList<EventListenerInterface> modelEventsListenerMap;
+    private ArrayList<ModelEventsListenerInterface> modelEventsListenerMap;
 
     private static final Logger LOGGER = Logger.getLogger(EventController.class.getName());
 
@@ -28,8 +28,9 @@ public class EventController implements Observer {
         viewEventsListenerMap = new HashMap<>();
     }
 
+
     @Override
-    public void update(AbstractEvent event) {
+    public void update(AbstractViewEvent event) {
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(event.getClass());
 
         if (listeners == null) return;
@@ -44,6 +45,7 @@ public class EventController implements Observer {
         );
     }
 
+    @Override
     public void update(AbstractModelEvent event) {
         if (modelEventsListenerMap == null) return;
 
@@ -69,7 +71,7 @@ public class EventController implements Observer {
         }
     }
 
-    public void addModelEventsListener(EventListenerInterface listener) {
+    public void addModelEventsListener(ModelEventsListenerInterface listener) {
         if (modelEventsListenerMap != null) {
             modelEventsListenerMap.add(listener);
         } else {

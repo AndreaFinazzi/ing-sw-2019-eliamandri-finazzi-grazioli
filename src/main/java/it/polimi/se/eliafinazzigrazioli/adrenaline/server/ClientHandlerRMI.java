@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
 import java.io.Serializable;
 import java.rmi.Remote;
@@ -30,7 +31,7 @@ public class ClientHandlerRMI extends AbstractClientHandler implements Remote, S
     }
 
     @Override
-    public AbstractEvent receive() {
+    public AbstractViewEvent receive() {
         return clientRMI.getReceived ();
     }
 

@@ -6,5 +6,5 @@ public enum MatchPhase {
     PLAYING,
     FINAL_FRENZY,
     FINAL_SIMPLE,
-    ENDED
+    ENDED,
 }

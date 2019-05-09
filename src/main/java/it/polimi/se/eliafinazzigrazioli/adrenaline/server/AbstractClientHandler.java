@@ -2,7 +2,8 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.EventController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.controller.GenericEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.GenericEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.view.RemoteView;
 
 import java.util.logging.Logger;
@@ -10,7 +11,7 @@ import java.util.logging.Logger;
 public abstract class AbstractClientHandler implements Runnable {
     protected Server server;
     protected static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
-    protected AbstractEvent nextReceivedEvent;
+    protected AbstractViewEvent nextReceivedEvent;
     private RemoteView view;
 
     // register starting match
@@ -23,11 +24,13 @@ public abstract class AbstractClientHandler implements Runnable {
 
     abstract void send(AbstractEvent event);
 
-    abstract AbstractEvent receive();
+    abstract AbstractViewEvent receive();
 
     private void setup() {
-        send(new GenericEvent("Waiting for nickname"));
-        nextReceivedEvent = receive();
+
+        //TODO view is not registered yet!
+        send(new GenericEvent(null, "Waiting for nickname"));
+        nextReceivedEvent = (AbstractViewEvent) receive();
 
         //initialize RemoteView
         view = new RemoteView(nextReceivedEvent.getMessage());
@@ -49,9 +52,9 @@ public abstract class AbstractClientHandler implements Runnable {
         LOGGER.info(nextReceivedEvent.getMessage());
         view.notifyObservers(nextReceivedEvent);
         if (nextReceivedEvent.getMessage().equals("tony"))
-            send(new GenericEvent("test tony "));
+            send(new GenericEvent(null, "test tony "));
         else
-            send(new GenericEvent("test finazzi"));
+            send(new GenericEvent(null, "test finazzi"));
         //server.addPlayer(nextReceivedEvent.getMessage());
     }
 }

@@ -30,10 +30,15 @@ public class MatchController implements EventListenerInterface {
         playerController = new PlayerController(eventController, this);
         cardController = new CardController(eventController, this);
 
+        match.addObserver(eventController);
     }
 
     public void initMatch() {
         //TODO: to implement
+        match.setPhase(MatchPhase.PLAYING);
+        match.increaseTurn();
+
+        match.beginTurn();
     }
 
     public EventController getEventController() {

@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -134,7 +135,7 @@ public class GameBoard {
         playerPositions.put(player, destination);
     }
 
-    public void playerMovement(Player player, List<Coordinates> coordinatesPath) throws MovementNotAllowedException {
+    public PlayerMovementEvent playerMovement(Player player, List<Coordinates> coordinatesPath) throws MovementNotAllowedException {
         if (player.getPlayerBoard().getNumberOfMovementsAllowed() < coordinatesPath.size()){
             throw new MovementNotAllowedException("MovementNotAllowedException: number of steps exceeds allowed movements");
             //TODO define appropriate message for the exception
@@ -151,6 +152,8 @@ public class GameBoard {
             playerPostion = boardSquare;
         }
         movePlayer(player, playerPostion);
+
+        return new PlayerMovementEvent(player.getPlayerNickname(), coordinatesPath);
     }
 
     public List<BoardSquare> getRoomSquares(Room room){

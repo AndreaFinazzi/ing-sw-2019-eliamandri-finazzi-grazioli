@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,11 +37,11 @@ public class ClientHandlerSocket extends AbstractClientHandler {
     }
 
     @Override
-    public AbstractEvent receive() {
-        AbstractEvent event = null;
+    public AbstractViewEvent receive() {
+        AbstractViewEvent event = null;
 
         try {
-            event = (AbstractEvent) receiver.readObject();
+            event = (AbstractViewEvent) receiver.readObject();
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.log (Level.SEVERE, e.toString (), e);
         }

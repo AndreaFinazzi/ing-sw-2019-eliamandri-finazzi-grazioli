@@ -4,12 +4,13 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlay
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Match {
+public class Match extends Observable {
 
     // Players list extra-methods implementations
     private Player.AbstractPlayerList players = new Player.AbstractPlayerList() {
@@ -36,11 +37,12 @@ public class Match {
             add(newPlayer);
             return newPlayer;
         }
+
         @Override
         public Player remove(String nickname) {
             for (Player player : this) {
-                if (player.getPlayerNickname ().equals (nickname)) {
-                    remove (player);
+                if (player.getPlayerNickname().equals(nickname)) {
+                    remove(player);
                     return player;
                 }
             }
@@ -52,33 +54,47 @@ public class Match {
     private MatchPhase phase;
     private Player currentPlayer;
     private Player firstPlayer;
-    private int turn;
+    private int turn = 0;
 
     public Match() {
         phase = MatchPhase.INITIALIZATION;
         map = new GameBoard(MapType.ONE);
     }
 
+
+    /*
+     * Player-related methods
+     */
+
     public ArrayList<Player> getPlayersOnSquare(BoardSquare square) {
         ArrayList<Player> onSquare = new ArrayList<>();
-        for (Player player:players){
-            if (player.getPosition() == square){
+        for (Player player : players) {
+            if (player.getPosition() == square) {
                 onSquare.add(player);
             }
         }
         return onSquare;
     }
 
-    public void playerMovement(Player player, List<Coordinates> path) throws MovementNotAllowedException {
-        map.playerMovement(player, path);
-    }
-
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
+    public void nextCurrentPlayer() {
+        int index = players.indexOf(currentPlayer);
+        currentPlayer = players.get((index + 1) % players.size());
+    }
+
+    public Player getFirstPlayer() {
+        return firstPlayer;
+    }
+
     public Player.AbstractPlayerList getPlayers() {
         return players;
+    }
+
+    public Player getPlayer(String nickname) {
+        return getPlayer(nickname);
     }
 
     public ArrayList<String> getPlayersNicknames() {
@@ -90,31 +106,15 @@ public class Match {
         return tempList;
     }
 
-    public GameBoard getMap() {
-        return map;
-    }
-
-    public void nextCurrentPlayer() {
-        int index = players.indexOf (currentPlayer);
-        currentPlayer = players.get ((index+1)%players.size ());
-    }
-
     public void addPlayer(Player player) throws MaxPlayerException, PlayerAlreadyPresentException {
-        if (players.size () >= Rules.GAME_MAX_PLAYERS)
+        if (players.size() >= Rules.GAME_MAX_PLAYERS)
             throw new MaxPlayerException();
-        if (players.contains (player))
-            throw new PlayerAlreadyPresentException ();
-        players.add (player);
-        if (players.size () == 1) {
+        if (players.contains(player))
+            throw new PlayerAlreadyPresentException();
+        players.add(player);
+        if (players.size() == 1) {
             firstPlayer = player;
             currentPlayer = player;
-        }
-    }
-
-    public void removePlayer(String nickname) {
-        Player tempPlayer = players.get (nickname);
-        if (tempPlayer != null) {
-            players.remove (nickname);
         }
     }
 
@@ -140,7 +140,28 @@ public class Match {
         }
     }
 
+    public void removePlayer(String nickname) {
+        Player tempPlayer = players.get(nickname);
+        if (tempPlayer != null) {
+            players.remove(nickname);
+        }
+    }
 
+    public void playerMovement(Player player, List<Coordinates> path) throws MovementNotAllowedException {
+        notifyObservers(map.playerMovement(player, path));
+    }
+
+    /*
+     * GameBoard-related methods
+     */
+
+    public GameBoard getMap() {
+        return map;
+    }
+
+    /*
+     * Match flow related methods
+     */
 
     public MatchPhase getPhase() {
         return phase;
@@ -148,10 +169,6 @@ public class Match {
 
     public void setPhase(MatchPhase phase) {
         this.phase = phase;
-    }
-
-    public Player getFirstPlayer() {
-        return firstPlayer;
     }
 
     public int getTurn() {
@@ -162,7 +179,13 @@ public class Match {
         turn++;
     }
 
-    public Player getPlayer(String nickname) {
-        return getPlayer (nickname);
+    public void beginTurn() {
+        notifyObservers(currentPlayer.createBeginTurnEvent());
     }
+
+    public void endTurn() {
+        notifyObservers(currentPlayer.createEndTurnEvent());
+    }
+
+
 }

@@ -19,7 +19,7 @@ public class ConnectionManagerRMI extends ConnectionManager implements Remote, S
     private Registry registry;
     private ClientHandlerRMI clientHandlerRMI;
     private AbstractEvent sended;
-    private AbstractEvent received;
+    private AbstractViewEvent received;
 
     public ConnectionManagerRMI(String playerName) throws RemoteException, NotBoundException {
         super (playerName);
@@ -50,11 +50,11 @@ public class ConnectionManagerRMI extends ConnectionManager implements Remote, S
         this.sended = sended;
     }
 
-    public AbstractEvent getReceived() {
+    public AbstractViewEvent getReceived() {
         return received;
     }
 
-    public void setReceived(AbstractEvent received) {
+    public void setReceived(AbstractViewEvent received) {
         this.received = received;
     }
 }

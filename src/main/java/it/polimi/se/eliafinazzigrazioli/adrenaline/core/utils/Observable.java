@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
 import java.util.ArrayList;
 
@@ -15,9 +16,16 @@ public class Observable {
         observers.remove(observer);
     }
 
-    public synchronized void notifyObservers(AbstractEvent event) {
+    public synchronized void notifyObservers(AbstractViewEvent event) {
         for (Observer observer : observers) {
             observer.update(event);
         }
     }
+
+    public synchronized void notifyObservers(AbstractModelEvent event) {
+        for (Observer observer : observers) {
+            observer.update(event);
+        }
+    }
+
 }
