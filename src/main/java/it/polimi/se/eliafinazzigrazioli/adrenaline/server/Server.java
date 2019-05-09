@@ -2,10 +2,10 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 // Server main class
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.controller.MatchController;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Player;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Config;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Messages;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -73,7 +73,6 @@ public class Server {
         }
     }
 
-    //TODO It may not be the best choice to block Server...
     public synchronized void addPlayer(String player, AbstractClientHandler clientHandler) {
         stopTimer();
 
@@ -92,7 +91,7 @@ public class Server {
         // Add next match EventController as an Observer of RemoteViews
         ArrayList<String> nextPlayingPlayers = nextMatch.getPlayersNicknames();
         for (String player : nextPlayingPlayers) {
-            playerToClientHandler.get(player).addViewObserver(nextMatch.getEventController());
+            playerToClientHandler.get(player).bindViewToEventController(nextMatch.getEventController());
         }
 
         nextMatch.initMatch();
@@ -101,7 +100,7 @@ public class Server {
         nextMatch = new MatchController();
     }
 
-    public void addPlayer(String player, MatchController matchController) {
+    public synchronized void addPlayer(String player, MatchController matchController) {
         nextMatch.addPlayer(player);
         mapPlayerToMatch(player, matchController);
     }
@@ -115,9 +114,11 @@ public class Server {
     }
 
     public void startTimer() {
+        LOGGER.info("Timer tarted"); //TODO move to messages
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                LOGGER.info("New game timeout occurred, starting next match"); //TODO move to messages
                 startNextMatch();
             }
         }, Config.CONFIG_SERVER_NEW_GAME_TIMEOUT);

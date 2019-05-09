@@ -1,7 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.AbstractEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

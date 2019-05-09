@@ -1,11 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
-
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

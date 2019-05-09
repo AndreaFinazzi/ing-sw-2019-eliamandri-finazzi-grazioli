@@ -1,13 +1,10 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 
 import java.io.Serializable;
-import java.rmi.AlreadyBoundException;
 import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
 
 // RMI SERVER

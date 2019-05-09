@@ -1,14 +1,10 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManager;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.AbstractEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.GenericViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.GenericViewEvent;
 
-import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 

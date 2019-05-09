@@ -1,0 +1,20 @@
+package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
+
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+
+public class SquareSelectedEvent extends AbstractViewEvent {
+
+    private Coordinates square;
+
+    public SquareSelectedEvent(String player, Coordinates square) {
+        super(player);
+        this.square = square;
+    }
+
+    @Override
+    public void handle(EventListenerInterface listener) throws HandlerNotImplementedException {
+        listener.handleEvent(this);
+    }
+}

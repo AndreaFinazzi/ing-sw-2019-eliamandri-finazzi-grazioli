@@ -1,9 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.AbstractEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.controller.GenericEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.utils.Observer;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.view.RemoteView;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.EventController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.controller.GenericEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.view.RemoteView;
 
 import java.util.logging.Logger;
 
@@ -14,8 +14,11 @@ public abstract class AbstractClientHandler implements Runnable {
     private RemoteView view;
 
     // register starting match
-    public void addViewObserver(Observer observer) {
-        view.addObserver(observer);
+    public void bindViewToEventController(EventController eventController) {
+
+        view.addObserver(eventController);
+        eventController.addModelEventsListener(view);
+
     }
 
     abstract void send(AbstractEvent event);
