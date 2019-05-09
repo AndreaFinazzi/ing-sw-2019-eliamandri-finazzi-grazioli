@@ -22,7 +22,7 @@ public abstract class SelectorEffectState extends EffectState {
         this.selectionType = selectionType;
     }
 
-    protected BoardSquare getReference(GameBoard gameBoard, Player currentPlayer) throws Exception{
+    protected BoardSquare getReference(GameBoard gameBoard, Player currentPlayer) throws Exception{ //TODO define exception type
         BoardSquare reference;
         if (referenceSource == null)
             reference = gameBoard.getPlayerPosition(currentPlayer);

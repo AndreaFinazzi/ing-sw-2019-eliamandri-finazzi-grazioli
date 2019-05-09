@@ -1,17 +1,20 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.events.model;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.events.view;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.controller.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Room;
 
-public class PlayerUpdateEvent extends AbstractModelEvent {
+public class RoomSelectedEvent extends AbstractViewEvent {
 
-    public PlayerUpdateEvent(String player) {
+    private Room room;
+
+    public RoomSelectedEvent(String player, Room room) {
         super(player);
+        this.room = room;
     }
 
     @Override
     public void handle(EventListenerInterface listener) throws HandlerNotImplementedException {
-        if (this.getPlayer() == listener.getPlayer())
-            listener.handleEvent(this);
+        listener.handleEvent(this);
     }
 }
