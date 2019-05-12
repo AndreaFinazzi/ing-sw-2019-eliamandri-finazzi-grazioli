@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 
 // TODO implement controller
 public class CardController implements ViewEventsListenerInterface {
@@ -15,6 +16,7 @@ public class CardController implements ViewEventsListenerInterface {
         eventController.addViewEventsListener(EffectSelectedEvent.class, this);
         eventController.addViewEventsListener(TargetSelectedEvent.class, this);
         eventController.addViewEventsListener(CollectPlayEvent.class, this);
+        eventController.addViewEventsListener(WeaponToUseSelectedEvent.class, this);
     }
 
     @Override
@@ -31,6 +33,11 @@ public class CardController implements ViewEventsListenerInterface {
     public void handleEvent(EffectSelectedEvent event) {
         //matchController.getActiveWeapon().setActiveEffect();
         //new WeaponCard().executeStep();
+    }
+
+    @Override
+    public void handleEvent(WeaponToUseSelectedEvent event) throws HandlerNotImplementedException {
+
     }
 
     @Override

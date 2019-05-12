@@ -1,0 +1,69 @@
+{
+  "weaponName" : "Lock Refile",
+  "cardColor" : "BLUE",
+  "loader" : ["BLUE"],
+  "effects" : [
+    {
+      "effectName" : "basic effect",
+      "effectDescription" : "Deal 2 damage and 1 mark to 1 target you can see.",
+      "price" : [],
+      "effectStates" : [
+        {
+          "type" : "VisibilitySelectorEffectState",
+          "notVisible" : false,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : 0,
+          "selectionType" : "PLAYER",
+          "referenceType" : "PLAYER"
+        }, {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 1,
+          "playerToAffectSource" : "basic effect",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ],
+      "nextCallableEffects" : [
+        "with second lock"
+      ]
+    },
+    {
+      "effectName" : "with second lock",
+      "effectDescription" : "Deal 1 mark to a different target you can see.",
+      "price" : ["RED"],
+      "effectStates" : [
+        {
+          "type" : "VisibilitySelectorEffectState",
+          "notVisible" : false,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : -1,
+          "selectionType" : "PLAYER",
+          "referenceType" : "PLAYER"
+        }, {
+          "type" : "PreselectionBasedSelectorEffectState",
+          "previousSelected" : {
+            "basic effect" : [0]
+          },
+          "alreadySelected" : false
+        }, {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 0,
+          "markAmount" : 1,
+          "playerToAffectSource" : "with second lock",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ]
+    }
+  ],
+  "callableEffects" : ["basic effect"]
+}

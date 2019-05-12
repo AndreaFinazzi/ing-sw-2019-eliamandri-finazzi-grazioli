@@ -2,16 +2,18 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 public abstract class AbstractModelEvent extends AbstractEvent {
     private String player;
 
     public AbstractModelEvent(String player) {
+        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
         this.player = player;
     }
 
     public AbstractModelEvent(String player, String message) {
-        super();
+        super(message);
         this.player = player;
     }
 

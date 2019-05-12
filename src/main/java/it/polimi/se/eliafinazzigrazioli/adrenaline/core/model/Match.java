@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -147,8 +148,29 @@ public class Match extends Observable {
         }
     }
 
-    public void playerMovement(Player player, List<Coordinates> path) throws MovementNotAllowedException {
-        notifyObservers(map.playerMovement(player, path));
+    public void weaponToUseSelected(Player player, String weaponSelected){
+        if (player != currentPlayer){
+            //TODO throw exception or generate event
+            return;
+        }
+        WeaponCard weaponCard = currentPlayer.getWeaponByName(weaponSelected);
+        if (weaponCard == null){
+            //TODO throw exception or generate event
+            return;
+        }
+        if (!weaponCard.isLoaded()){
+            //TODO throw exception or generate event
+            return;
+        }
+
+    }
+
+    public void playerMovement(Player player, List<Coordinates> path) {
+        try {
+            notifyObservers(map.playerMovement(player, path));
+        } catch (MovementNotAllowedException e){
+            //TODO generate invalid move exception
+        }
     }
 
     /*

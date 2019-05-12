@@ -95,9 +95,16 @@ public class Player implements Selectable {
         powerUps.add(powerUpCard);
     }
 
-    public WeaponCard removeWeapon(int index){
-        //TODO
+    public WeaponCard getWeaponByName(String weaponName){
+        for (WeaponCard weaponCard: weapons) {
+            if (weaponName.equals(weaponCard.getWeaponName()))
+                return weaponCard;
+        }
         return null;
+    }
+
+    public String getPlayerNickname() {
+        return playerNickname;
     }
 
     public void addWeapon(WeaponCard weapon){

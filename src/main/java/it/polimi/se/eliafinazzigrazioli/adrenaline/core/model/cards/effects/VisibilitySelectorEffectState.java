@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
@@ -7,20 +8,20 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect
 import java.util.ArrayList;
 import java.util.List;
 
-public class VisibilitySelectionEffectState extends SelectorEffectState{
+public class VisibilitySelectorEffectState extends SelectorEffectState{
 
     final private boolean notVisible;
 
-    public VisibilitySelectionEffectState(boolean notVisible, WeaponEffect referenceSource, int sourceSelectionOrder, SelectableType selectionType, SelectableType referenceType) {
+    public VisibilitySelectorEffectState(boolean notVisible, String referenceSource, int sourceSelectionOrder, SelectableType selectionType, SelectableType referenceType) {
         super(referenceSource, sourceSelectionOrder, referenceType, selectionType);
         this.notVisible = notVisible;
     }
 
     @Override
-    public void execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) { //TODO define exception type (invalid reference)
+    public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) { //TODO define exception type (invalid reference)
         BoardSquare reference = null;
         try {
-            reference = getReference(gameBoard, currentPlayer);
+            reference = getReference(invoker, gameBoard, currentPlayer);
         }
         catch (Exception e) {
             //TODO held exception
@@ -39,6 +40,7 @@ public class VisibilitySelectionEffectState extends SelectorEffectState{
                 invoker.getActiveEffect().updateToSelectRooms(roomsToSelect);
                 break;
         }
+        return null;
     }
 
 

@@ -54,7 +54,7 @@ public interface ViewEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(WeaponSelectedEvent event) throws HandlerNotImplementedException {
+    default void handleEvent(WeaponToUseSelectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 

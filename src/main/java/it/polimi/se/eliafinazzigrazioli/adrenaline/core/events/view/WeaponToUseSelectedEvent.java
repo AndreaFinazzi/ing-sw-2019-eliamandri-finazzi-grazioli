@@ -3,19 +3,17 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 
-public class WeaponSelectedEvent extends AbstractViewEvent {
+public class WeaponToUseSelectedEvent extends AbstractViewEvent {
 
-    private String player;
-    private WeaponCard weapon;
+    private String weaponName;
 
-    public WeaponSelectedEvent(String player, String player1, WeaponCard weapon) {
+    public WeaponToUseSelectedEvent(String player, String weaponName) {
         super(player);
-        this.player = player1;
-        this.weapon = weapon;
+        this.weaponName = weaponName;
     }
 
-    public WeaponCard getWeapon() {
-        return weapon;
+    public String getWeaponName() {
+        return weaponName;
     }
 
     @Override

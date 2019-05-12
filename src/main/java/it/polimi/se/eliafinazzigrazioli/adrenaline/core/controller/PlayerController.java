@@ -27,13 +27,8 @@ public class PlayerController implements EventListenerInterface {
         Player currentPlayer = matchController.getPlayers ().get(event.getPlayer());
         System.out.println (currentPlayer);
         List<Coordinates> path = event.getPath();
-        if (path != null && path.size() > 0) {
-            try {
-                matchController.getMatch().playerMovement(currentPlayer, path);
-            } catch (MovementNotAllowedException e){
-                //TODO invalid movement handling strategy
-            }
-        }
+        if (path != null && path.size() > 0)
+            matchController.getMatch().playerMovement(currentPlayer, path);
     }
 
     public void handleEvent(PlayerConnectedEvent event) {

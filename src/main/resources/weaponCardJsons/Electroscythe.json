@@ -1,0 +1,98 @@
+{
+  "weaponName" : "Electroscythe",
+  "cardColor" : "BLUE",
+  "loader" : [],
+  "effects" : [
+    {
+      "effectName" : "basic mode",
+      "effectDescription" : "Deal 1 damage to every other player on your square.",
+      "price" : [],
+      "effectStates" : [
+        {
+          "type" : "DistanceSelectorEffectState",
+          "maxDistance" : 0,
+          "minDistance" : 0,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : -1,
+          "selectionType" : "PLAYER",
+          "referenceType" : "PLAYER"
+        }, {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : -1
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 0
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 1
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 2
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 3
+        }
+      ],
+      "nextCallableEffects" : []
+    }, {
+      "effectName" : "in reaper mode",
+      "effectDescription" : "Deal 2 damage to every other player on your square.",
+      "price" : ["BLUE", "RED"],
+      "effectStates" : [
+        {
+          "type" : "DistanceSelectorEffectState",
+          "maxDistance" : 0,
+          "minDistance" : 0,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : -1,
+          "selectionType" : "PLAYER",
+          "referenceType" : "PLAYER"
+        }, {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : -1
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in reaper mode",
+          "toAffectPlayerSelectionOrder" : 0
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in reaper mode",
+          "toAffectPlayerSelectionOrder" : 1
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in reaper mode",
+          "toAffectPlayerSelectionOrder" : 2
+        }, {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in reaper mode",
+          "toAffectPlayerSelectionOrder" : 3
+        }
+      ],
+      "nextCallableEffects" : []
+    }
+  ]
+}

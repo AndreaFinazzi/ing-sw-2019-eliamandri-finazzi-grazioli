@@ -5,6 +5,10 @@ import java.io.Serializable;
 public abstract class AbstractEvent implements Serializable {
     private String message;
 
+    public AbstractEvent(String message) {
+        this.message = message;
+    }
+
     public String getMessage() {
         return message;
     }

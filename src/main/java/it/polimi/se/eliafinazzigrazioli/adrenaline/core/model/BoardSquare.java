@@ -79,9 +79,9 @@ public abstract class BoardSquare implements Selectable {
     public List<Selectable> getOnCardinal(SelectableType selType, GameBoard gameBoard) {
         switch (selType){
             case BOARDSQUARE:
-                return new ArrayList<>(gameBoard.getSquaresOnCardinalDirections(this));
+                return null;
             case PLAYER:
-                return new ArrayList<>(gameBoard.getPlayersOnCardinalDirections(this));
+                return null;
             default:
                 return null;
         }

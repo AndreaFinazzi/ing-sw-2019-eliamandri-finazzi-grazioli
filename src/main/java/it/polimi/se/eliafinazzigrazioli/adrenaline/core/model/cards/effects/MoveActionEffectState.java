@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerMovedByWeaponEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.BoardSquare;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
@@ -12,27 +14,35 @@ import java.util.List;
 public class MoveActionEffectState extends ActionEffectState {
 
 
-    private WeaponEffect movementDestionationSource;
+    private String movementDestinationSource;
     private int destinationSelectionOrder;
 
-    public MoveActionEffectState(WeaponEffect movementDestionationSource, int destinationSelectionOrder, WeaponEffect playerToAffectSource, int toAffectPlayerSelectionOrder) {
+    public MoveActionEffectState(String movementDestinationSource, int destinationSelectionOrder, String playerToAffectSource, int toAffectPlayerSelectionOrder) {
         super(playerToAffectSource, toAffectPlayerSelectionOrder);
-        this.movementDestionationSource = movementDestionationSource;
+        this.movementDestinationSource = movementDestinationSource;
         this.destinationSelectionOrder = destinationSelectionOrder;
     }
 
 
-    public void execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
-        BoardSquare destination = movementDestionationSource.getSelectedBoardSquare(destinationSelectionOrder);
+    public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
+        List<AbstractModelEvent> events = new ArrayList<>();
+        BoardSquare destination = invoker.getEffectByName(movementDestinationSource).getSelectedBoardSquare(destinationSelectionOrder);
         Player toMove;
-        try {
-            toMove = playerToAffectSource.getSelectedPlayer(destinationSelectionOrder);
-        } catch (IndexOutOfBoundsException e) {
-            toMove = null;
+        if (movementDestinationSource != null) {
+            try {
+                toMove = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(destinationSelectionOrder);
+            } catch (IndexOutOfBoundsException e) {
+                toMove = null;
+            }
         }
+        else
+            toMove = currentPlayer;
         if (toMove != null){
             gameBoard.movePlayer(toMove, destination);
+            events.add(new PlayerMovedByWeaponEvent(currentPlayer.getPlayerNickname(), invoker.getWeaponName(), toMove.getPlayerNickname()));
+            return events;
         }
+        return null;
     }
 
 }

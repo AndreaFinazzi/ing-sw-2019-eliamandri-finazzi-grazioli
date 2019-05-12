@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.SelectableEffectsEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 
 import java.util.ArrayList;
@@ -9,31 +11,51 @@ import java.util.List;
 
 public class WeaponEffect {
 
+
+    /*
+     * This block of attributes characterizes the effect and it's the part
+     * saved in the json file.
+     */
     private String effectName;
     private String effectDescription;
     private List<Ammo> price;
     private ArrayList<EffectState> effectStates;
-    private boolean alreadyUsed;
-    private List<WeaponEffect> nextCallableEffects;
+    private List<String> nextCallableEffects;
     private EffectState currentState;
-    private Iterator<EffectState> stateIterator;
 
-    private List<Player> selectedPlayers;
-    private List<BoardSquare> selectedBoardSquares;
-    private List<Room> selectedRooms;
-    private List<Player> toAffect;
-    private BoardSquare movementDestination;
-    private List<Player> shotPlayers;
-    private List<Player> movedPlayers;
 
     /*
-     This flag is used to in the update lists methods to avoid filtering
-     and simply add selected items when no visibility class has been run.
+     * This block of attributes is used to store items selected by the user.
      */
-    private boolean beginningSelectionBuilding;
-    private List<Player> toSelectPlayers;
-    private List<BoardSquare> toSelectBoardSquares;
-    private List<Room> toSelectRooms;
+    private List<Player> selectedPlayers = new ArrayList<>();
+    private List<BoardSquare> selectedBoardSquares = new ArrayList<>();
+    private List<Room> selectedRooms = new ArrayList<>();
+    private List<CardinalDirection> selectedDirections = new ArrayList<>();
+
+
+    /*
+     * This flag is used to in the update lists methods to avoid filtering
+     * and simply add selected items when no visibility class has been run.
+     */
+    private boolean beginningSelectionBuilding = true;
+
+
+    /*
+     * Lists used to build the list of selectable items
+     */
+    private List<Player> toSelectPlayers = new ArrayList<>();
+    private List<BoardSquare> toSelectBoardSquares  = new ArrayList<>();
+    private List<Room> toSelectRooms  = new ArrayList<>();
+
+    /*
+     * Other support attributes.
+     */
+    private Iterator<EffectState> stateIterator = effectStates.iterator();
+    private boolean alreadyUsed = false;
+
+
+
+
 
     public WeaponEffect(EffectState currentState, List<Player> players){
         this.currentState = currentState;
@@ -49,7 +71,14 @@ public class WeaponEffect {
     }
 
 
-    public Player getSelectedPlayer(int selectionOrder){
+    public String getEffectName() {
+        return effectName;
+    }
+
+    /*
+         Methods to retrieve a selected item based on the selection order.
+         */
+    public Player getSelectedPlayer(int selectionOrder) throws IndexOutOfBoundsException{
         return selectedPlayers.get(selectionOrder);
     }
 
@@ -60,6 +89,46 @@ public class WeaponEffect {
     public Room getSelectedRoom(int selectionOrder){
         return selectedRooms.get(selectionOrder);
     }
+
+    public CardinalDirection getSelectedDirection(int selectionOrder){
+        return selectedDirections.get(selectionOrder);
+    }
+
+
+
+    /*
+    Method used to convert selection building lists to already selected items in case where items to be affected
+    don't require a selection by the user but are uniquely determined by the effect itself.
+     */
+    public void automaticSelection(){
+        selectedPlayers.addAll(toSelectPlayers);
+        selectedBoardSquares.addAll(toSelectBoardSquares);
+        selectedRooms.addAll(toSelectRooms);
+    }
+
+
+
+
+    /*
+    Methods used by the controller to send new selected items.
+     */
+    public void addSelectedPlayers(List<Player> newSelectedPlayers){
+        selectedPlayers.addAll(newSelectedPlayers);
+    }
+
+    public void addSelectedBoardSquares(List<BoardSquare> newSelectedBoardSquares){
+        selectedBoardSquares.addAll(newSelectedBoardSquares);
+    }
+
+    public void addSelectedRooms(List<Room> newSelectedRooms){
+        selectedRooms.addAll(newSelectedRooms);
+    }
+
+    public void addSelectedDirections(List<CardinalDirection> newSelectedDirections){
+        selectedDirections.addAll(newSelectedDirections);
+    }
+
+
 
     public List<Player> getToSelectPlayers() {
         return new ArrayList<>(toSelectPlayers);
@@ -73,39 +142,67 @@ public class WeaponEffect {
         return new ArrayList<>(toSelectRooms);
     }
 
-    public BoardSquare getMovementDestination() {
-        return movementDestination;
-    }
 
-    public List<Player> getToAffect() {
-        return new ArrayList<Player>(toAffect);
-    }
-
+    /*
+    This method is to be used by the controller when the effect is controlled.
+     */
     public void setCurrentState(EffectState currentState) {
         this.currentState = currentState;
     }
 
-    public void addShotPlayers(List<Player> toAdd){
-        shotPlayers.addAll(toAdd);
-    }
 
-    public void addMovedPlayers(List<Player> toAdd){
-        movedPlayers.addAll(toAdd);
-    }
 
-    public void execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
-        while (!currentState.selectionIsRequired() && !currentState.isFinal()){
-            currentState.execute(invoker, gameBoard, currentPlayer); //A selection event is to be generated by the effect state
+
+    /*
+    Unique method to be called by the controller to run the effect.
+     */
+    public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
+        List<AbstractModelEvent> events = null;
+        while ((events == null || events.isEmpty()) && !currentState.isFinal()){
+            events = currentState.execute(invoker, gameBoard, currentPlayer); //A selection event is to be generated by the effect state
+            if (stateIterator.hasNext()){
+                currentState = stateIterator.next();
+            }
+            else {
+                events.add(new SelectableEffectsEvent(currentPlayer.getPlayerNickname(), getNextCallableEffects(invoker)));
+            }
         }
-        if (currentState.isFinal()){
-            //TODO generate a termination event containing next callable effects
-        }
+        return events;
     }
 
+
+    /*
+     * Method to initialize support attributes at the beginning of the execution.
+     */
+    public void initialize(){
+        selectedPlayers = new ArrayList<>();
+        selectedBoardSquares = new ArrayList<>();
+        selectedRooms = new ArrayList<>();
+        selectedDirections = new ArrayList<>();
+
+        beginningSelectionBuilding = true;
+
+        toSelectPlayers = new ArrayList<>();
+        toSelectBoardSquares  = new ArrayList<>();
+        toSelectRooms  = new ArrayList<>();
+
+        stateIterator = effectStates.iterator();
+        alreadyUsed = false;
+    }
+
+
+    /*
+     * Method to know if the selected effect is still callable.
+     */
     public boolean isAlreadyUsed(){
         return alreadyUsed;
     }
 
+
+    /*
+    Methods to build step by step the selectable set when it has to respect
+    multiple requirements (like visible + at least one movement from you).
+     */
     public void updateToSelectPlayers(List<Player> newSelectedPlayers){ //List of players built by last visibility step to be intersected with the previously computed
         if (beginningSelectionBuilding) {
             toSelectPlayers = newSelectedPlayers;
@@ -151,15 +248,27 @@ public class WeaponEffect {
         }
     }
 
-    public List<WeaponEffect> getNextCallableEffects() {
-        List<WeaponEffect> notUsedYetEffects = new ArrayList<>();
 
-        for (WeaponEffect callableEffect: nextCallableEffects) {
+    /*
+    Method used to filter suggested callable effects.
+     */
+    public List<String> getNextCallableEffects(WeaponCard invoker) {
+        List<String> notUsedYetEffects = new ArrayList<>();
+        for (String callableEffectName: nextCallableEffects) {
+            WeaponEffect callableEffect = invoker.getEffectByName(callableEffectName);
             if (!callableEffect.isAlreadyUsed())
-                notUsedYetEffects.add(callableEffect);
+                notUsedYetEffects.add(callableEffectName);
         }
-
         return notUsedYetEffects;
+    }
+
+
+
+    /*
+    See comment above the involved boolean attribute.
+     */
+    public void selectionReset(){
+        beginningSelectionBuilding = true;
     }
 
 }

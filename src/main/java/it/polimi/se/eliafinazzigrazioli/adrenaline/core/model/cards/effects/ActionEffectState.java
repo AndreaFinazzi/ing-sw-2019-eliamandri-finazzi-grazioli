@@ -5,10 +5,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect
 
 public abstract class ActionEffectState extends EffectState {
 
-    protected WeaponEffect playerToAffectSource;
+    protected String playerToAffectSource;
     protected int toAffectPlayerSelectionOrder;
 
-    public ActionEffectState(WeaponEffect playerToAffectSource, int toAffectPlayerSelectionOrder) {
+    public ActionEffectState(String playerToAffectSource, int toAffectPlayerSelectionOrder) {
         this.playerToAffectSource = playerToAffectSource;
         this.toAffectPlayerSelectionOrder = toAffectPlayerSelectionOrder;
     }

@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
@@ -9,13 +10,13 @@ import java.util.List;
 
 public class InRoomSelectorEffectState extends SelectorEffectState{
 
-    public InRoomSelectorEffectState(WeaponEffect referenceSource, int sourceSelectionOrder, SelectableType referenceType, SelectableType selectionType) {
+    public InRoomSelectorEffectState(String referenceSource, int sourceSelectionOrder, SelectableType referenceType, SelectableType selectionType) {
         super(referenceSource, sourceSelectionOrder, selectionType, referenceType);
     }
 
     @Override
-    public void execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
-        Room reference = referenceSource.getSelectedRoom(sourceSelectionOrder);
+    public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
+        Room reference = invoker.getEffectByName(referenceSource).getSelectedRoom(sourceSelectionOrder);
         switch (selectionType) {
             case BOARDSQUARE:
                 List<BoardSquare> boardSquaresToSelect = new ArrayList<>(gameBoard.getRoomSquares(reference));
@@ -29,6 +30,7 @@ public class InRoomSelectorEffectState extends SelectorEffectState{
                 //TODO define and throw exception
                 break;
         }
+        return null;
     }
 
 }

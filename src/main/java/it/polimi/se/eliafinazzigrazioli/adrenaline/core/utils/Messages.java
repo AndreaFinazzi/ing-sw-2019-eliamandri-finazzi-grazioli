@@ -45,4 +45,14 @@ public final class Messages {
     //Match
     public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_PLAYER_ALREADY_PRESENT = MESSAGES.getProperty("app.exceptions.game.match.player_already_present", "DEFAULT: Player is already connected");
     public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_PLAYERS_OUT_OF_BOUND = MESSAGES.getProperty("app.exceptions.game.match.players_out_of_bounds", "DEFAULT: Players out of bound");
+
+    //WeaponCard
+    public static final String MESSAGE_EXCEPTIONS_GAME_WEAPON_CARD_WEAPON_FILE_NOT_FOUND = MESSAGES.getProperty("app.exceptions.game.match.weapon_file_not_found", "DEFAULT: Weapon doesn't exist");
+
+    //Events messages
+    //Model
+    public static final String MESSAGE_EVENTS_MODEL_DEFAULT = MESSAGES.getProperty("app.events.model.default");
+    //View
+    public static final String MESSAGE_EVENTS_VIEW_DEFAULT = MESSAGES.getProperty("app.events.view.default");
+
 }

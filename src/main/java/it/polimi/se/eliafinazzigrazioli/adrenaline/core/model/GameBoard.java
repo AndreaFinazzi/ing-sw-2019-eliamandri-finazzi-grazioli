@@ -169,14 +169,8 @@ public class GameBoard {
         return roomSquares;
     }
 
-
-
     public List<Player> getRoomPlayers(Room room){
-        List<BoardSquare> roomSquares = getRoomSquares(room);
-        List<Player> roomPlayers = new ArrayList<>();
-        for (BoardSquare boardSquare:roomSquares)
-            roomPlayers.addAll(getPlayersOnSquare(boardSquare));
-        return roomPlayers;
+        return convertSquaresIntoPlayers(getRoomSquares(room));
     }
 
     public List<BoardSquare> getVisibleSquares(BoardSquare referenceSquare, boolean notVisible){
@@ -237,45 +231,7 @@ public class GameBoard {
     }
 
     public List<Player> getVisiblePlayers(BoardSquare referenceSquare, boolean notVisible){
-        List<Player> visiblePlayers = new ArrayList<>();
-        List<BoardSquare> visibleSquares = getVisibleSquares(referenceSquare, notVisible);
-        for (BoardSquare visible:visibleSquares){
-            visiblePlayers.addAll(getPlayersOnSquare(visible));
-        }
-        return visiblePlayers;
-    }
-
-
-
-
-    private Set<BoardSquare> getOneStepReachableSquares(BoardSquare referenceSquare){ //TODO define exception type
-        Set<BoardSquare> reachableSquares = new HashSet<>();
-        Coordinates coord = referenceSquare.getCoordinates();
-        int x;
-        int y;
-        if (referenceSquare.getNorth() != InterSquareLink.WALL){
-            x = coord.getXCoordinate();
-            y = coord.getYCoordinate()+1;
-            reachableSquares.add(squaresMatrix[x][y]);
-        }
-        if (referenceSquare.getSouth() != InterSquareLink.WALL){
-            x = coord.getXCoordinate();
-            y = coord.getYCoordinate()-1;
-            reachableSquares.add(squaresMatrix[x][y]);
-        }
-        if (referenceSquare.getEast() != InterSquareLink.WALL){
-            x = coord.getXCoordinate()+1;
-            y = coord.getYCoordinate();
-            reachableSquares.add(squaresMatrix[x][y]);
-        }
-        if (referenceSquare.getWest() != InterSquareLink.WALL){
-            x = coord.getXCoordinate()-1;
-            y = coord.getYCoordinate();
-            reachableSquares.add(squaresMatrix[x][y]);
-        }
-
-        return reachableSquares;
-
+        return convertSquaresIntoPlayers(getVisibleSquares(referenceSquare, notVisible));
     }
 
     //returns all the squares between maxDistance and minDistance, if minDistance=0 referenceSquare is included, if minDistance=1 reference square is excluded
@@ -308,14 +264,8 @@ public class GameBoard {
         return new ArrayList<>(belowMaxDistanceSquares);
 
     }
-
     public List<Player> getPlayersByDistance(BoardSquare referenceSquare, int maxDistance, int minDistance) throws Exception { //TODO define exception type
-        List<Player> playersByDistance = new ArrayList<>();
-        List<BoardSquare> squaresByDistance = getSquaresByDistance(referenceSquare, maxDistance, minDistance);
-        for(BoardSquare square:squaresByDistance){
-            playersByDistance.addAll(getPlayersOnSquare(square));
-        }
-        return playersByDistance;
+        return convertSquaresIntoPlayers(getSquaresByDistance(referenceSquare, maxDistance, minDistance));
     }
 
     public List<BoardSquare> getSquaresByDistance(Player referencePlayer, int maxDistance, int minDistance) throws Exception { //TODO define exception type
@@ -326,36 +276,54 @@ public class GameBoard {
         return getPlayersByDistance(getPlayerPosition(referencePlayer), maxDistance, minDistance);
     }
 
-    public List<BoardSquare> getSquaresOnCardinalDirections(BoardSquare referenceSquare){
-        Coordinates referenceCoordinates = referenceSquare.getCoordinates();
-        int x = referenceCoordinates.getXCoordinate();
-        int y = referenceCoordinates.getYCoordinate();
+    public List<BoardSquare> getBoardSquaresByCardinalDirection(BoardSquare referenceSquare, CardinalDirection direction){
         List<BoardSquare> squaresByDirection = new ArrayList<>();
-        squaresByDirection.add(referenceSquare);
-        //check north vertical
-        for (int i=0;i<y_max;i++) {
-            if (squaresMatrix[x][i] != null && i!=y)
-                squaresByDirection.add(squaresMatrix[x][i]);
-        }
-        //check horizontal
-        for (int i=0;i<x_max;i++) {
-            if (squaresMatrix[i][y] != null && i!=x)
-                squaresByDirection.add(squaresMatrix[i][y]);
+        int x = referenceSquare.getCoordinates().getXCoordinate();
+        int y = referenceSquare.getCoordinates().getYCoordinate();
+        switch (direction) {
+            case NORTH:
+                for (int i = y+1; i < y_max; i++){
+                    if (squaresMatrix[x][i] != null)
+                        squaresByDirection.add(squaresMatrix[x][i]);
+                }
+                break;
+            case SOUTH:
+                for (int i = y-1; i >= 0; i--){
+                    if (squaresMatrix[x][i] != null)
+                        squaresByDirection.add(squaresMatrix[x][i]);
+                }
+                break;
+            case EAST:
+                for (int i = x+1; i < x_max; i++){
+                    if (squaresMatrix[i][y] != null)
+                        squaresByDirection.add(squaresMatrix[i][y]);
+                }
+                break;
+            case OVEST:
+                for (int i = x-1; i >= 0; i--){
+                    if (squaresMatrix[i][y] != null)
+                        squaresByDirection.add(squaresMatrix[i][y]);
+                }
+                break;
         }
         return squaresByDirection;
     }
 
-    public List<Player> getPlayersOnCardinalDirections(BoardSquare referenceSquare){
-        List<BoardSquare> squaresByDirection = getSquaresOnCardinalDirections(referenceSquare);
-        List<Player> playersByDirection = new ArrayList<>();
-        for (BoardSquare square:squaresByDirection){
-            playersByDirection.addAll(getPlayersOnSquare(square));
-        }
-        return playersByDirection;
+    public List<Player> getPlayersByCardinalDirection(BoardSquare referenceSquare, CardinalDirection direction){
+        return convertSquaresIntoPlayers(getBoardSquaresByCardinalDirection(referenceSquare, direction));
     }
 
     public BoardSquare getBoardSquareByCoordinates(Coordinates coordinates) {
         return squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()];
+    }
+
+    public Coordinates getCoordinates(BoardSquare boardSquare){
+        for (int i = 0; i < x_max; i++) {
+            for (int j = 0; j < y_max; j++)
+                if (boardSquare == squaresMatrix[i][j])
+                    return new Coordinates(i, j);
+        }
+        return null;
     }
 
     public List<Player> getPlayersOnSquare(BoardSquare square){
@@ -367,8 +335,50 @@ public class GameBoard {
         return onSquarePlayers;
     }
 
+    public List<Player> getPlayersOnGameBoard(){
+        return new ArrayList<>(playerPositions.keySet());
+    }
+
     public BoardSquare getPlayerPosition(Player player){
         return playerPositions.get(player);
+    }
+
+    private Set<BoardSquare> getOneStepReachableSquares(BoardSquare referenceSquare){ //TODO define exception type
+        Set<BoardSquare> reachableSquares = new HashSet<>();
+        Coordinates coord = referenceSquare.getCoordinates();
+        int x;
+        int y;
+        if (referenceSquare.getNorth() != InterSquareLink.WALL){
+            x = coord.getXCoordinate();
+            y = coord.getYCoordinate()+1;
+            reachableSquares.add(squaresMatrix[x][y]);
+        }
+        if (referenceSquare.getSouth() != InterSquareLink.WALL){
+            x = coord.getXCoordinate();
+            y = coord.getYCoordinate()-1;
+            reachableSquares.add(squaresMatrix[x][y]);
+        }
+        if (referenceSquare.getEast() != InterSquareLink.WALL){
+            x = coord.getXCoordinate()+1;
+            y = coord.getYCoordinate();
+            reachableSquares.add(squaresMatrix[x][y]);
+        }
+        if (referenceSquare.getWest() != InterSquareLink.WALL){
+            x = coord.getXCoordinate()-1;
+            y = coord.getYCoordinate();
+            reachableSquares.add(squaresMatrix[x][y]);
+        }
+
+        return reachableSquares;
+
+    }
+
+    private List<Player> convertSquaresIntoPlayers(List<BoardSquare> boardSquares){
+        List<Player> players = new ArrayList<>();
+        for(BoardSquare square:boardSquares){
+            players.addAll(getPlayersOnSquare(square));
+        }
+        return players;
     }
 
 

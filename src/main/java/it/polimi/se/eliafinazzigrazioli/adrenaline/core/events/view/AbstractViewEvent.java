@@ -2,12 +2,14 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 public abstract class AbstractViewEvent extends AbstractEvent {
 
     protected String player;
-
+    
     public AbstractViewEvent(String player) {
+        super(Messages.MESSAGE_EVENTS_VIEW_DEFAULT);
         this.player = player;
     }
 
