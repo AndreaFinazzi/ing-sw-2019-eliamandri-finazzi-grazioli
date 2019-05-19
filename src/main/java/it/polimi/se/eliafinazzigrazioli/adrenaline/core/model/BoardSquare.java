@@ -13,6 +13,9 @@ public abstract class BoardSquare implements Selectable {
     private InterSquareLink east;
     private InterSquareLink west;
 
+    public BoardSquare() {
+
+    }
     // TODO remove reference to match
     public BoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
         this.room = room;

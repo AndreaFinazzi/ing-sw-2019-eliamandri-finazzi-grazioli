@@ -2,10 +2,14 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
-public class GenericBoardSquare extends BoardSquare {
+import java.io.Serializable;
+
+public class GenericBoardSquare extends BoardSquare implements Serializable {
 
     private AmmoCard collectable;
 
+    public GenericBoardSquare() {
+    }
 
     public GenericBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
         super(room, coordinates, north, south, east, west);

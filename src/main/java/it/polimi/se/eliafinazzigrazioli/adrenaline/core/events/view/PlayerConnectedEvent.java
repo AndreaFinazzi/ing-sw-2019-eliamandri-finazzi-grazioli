@@ -4,6 +4,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public class PlayerConnectedEvent extends AbstractViewEvent {
 
+    private int chosenMap;
+
     public PlayerConnectedEvent(String player) {
         super(player);
     }
@@ -11,6 +13,14 @@ public class PlayerConnectedEvent extends AbstractViewEvent {
     @Override
     public void handle(ViewEventsListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);
+    }
+
+    public int getChosenMap() {
+        return chosenMap;
+    }
+
+    public void setChosenMap(int chosenMap) {
+        this.chosenMap = chosenMap;
     }
 }
 

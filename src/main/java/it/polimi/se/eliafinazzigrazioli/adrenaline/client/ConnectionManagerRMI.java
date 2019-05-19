@@ -1,60 +1,40 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.server.ClientHandlerRMI;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.GenericViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.EventViewListenerRemote;
 
-import java.io.Serializable;
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.Logger;
 
-public class ConnectionManagerRMI extends ConnectionManager implements Remote, Serializable {
+public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientRemoteRMI{
 
-    private static final Logger LOGGER = Logger.getLogger(ConnectionManagerRMI.class.getName ());
     private Registry registry;
-    private ClientHandlerRMI clientHandlerRMI;
-    private AbstractEvent sended;
-    private AbstractViewEvent received;
+
+    private EventViewListenerRemote clientHandlerRMI;
+
+    private String playerName;
 
     public ConnectionManagerRMI(String playerName) throws RemoteException, NotBoundException {
-        super (playerName);
-        registry = LocateRegistry.getRegistry (1099);
-        clientHandlerRMI = (ClientHandlerRMI) registry.lookup ("ClientHandler RMI");
-        UnicastRemoteObject.exportObject (this,0);
-    }
-
-    public void setup() {
-        clientHandlerRMI.setClientRMI (this);
+        this.playerName = playerName;
+        registry = LocateRegistry.getRegistry ();
+        clientHandlerRMI = (EventViewListenerRemote)registry.lookup("ClientHandlerRMI");
+        System.out.println("lookup fatta");
     }
 
     @Override
-    public void send(AbstractViewEvent event) {
-        clientHandlerRMI.setReceived (event);
+    public String getPlayerName() throws RemoteException{
+        return playerName;
     }
 
-    @Override
-    public AbstractEvent receive() {
-       return clientHandlerRMI.getSended ();
+    public void addClient() throws RemoteException{
+        clientHandlerRMI.setClientRMI(this);
     }
 
-    public AbstractEvent getSended() {
-        return sended;
-    }
-
-    public void setSended(AbstractEvent sended) {
-        this.sended = sended;
-    }
-
-    public AbstractViewEvent getReceived() {
-        return received;
-    }
-
-    public void setReceived(AbstractViewEvent received) {
-        this.received = received;
+    public void sendEvent(GenericViewEvent event) throws HandlerNotImplementedException, RemoteException {
+        clientHandlerRMI.handleEvent(event);
     }
 }

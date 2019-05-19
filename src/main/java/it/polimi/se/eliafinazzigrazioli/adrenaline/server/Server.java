@@ -30,13 +30,14 @@ public class Server {
     private MatchController nextMatch;
     private Registry registry;
     private Timer timer;
-
+    private int currentClientID;
 
     private Server() {
         LOGGER.info("Creating Server"); //TODO move to messages
         timer = new Timer();
         playerToMatchMap = new HashMap<>();
         nextMatch = new MatchController();
+        currentClientID = 0;
         try {
             registry = LocateRegistry.createRegistry(1099);
         } catch (RemoteException e) {
@@ -130,8 +131,13 @@ public class Server {
         timer.cancel();
     }
 
-    public Registry getRegistry() {
+    public synchronized Registry getRegistry() {
         return registry;
+    }
+
+    public synchronized int getCurrentClientID() {
+        currentClientID++;
+        return currentClientID;
     }
 
     public static void main(String[] args) {
