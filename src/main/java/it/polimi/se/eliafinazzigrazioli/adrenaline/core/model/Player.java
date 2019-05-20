@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Player implements Selectable {
     private String playerNickname;
+    private String avatar;
     private BoardSquare position;
     private PlayerBoard playerBoard;
     private DamageMark damageMarkDelivered; //Is the type of damage placeholder used by the player
@@ -159,6 +160,11 @@ public class Player implements Selectable {
 
     public void setConnected(boolean connected) {
         this.connected = connected;
+    }
+
+    public void setAvatar(String avatar) {
+        if(this.avatar == null)
+            this.avatar = avatar;
     }
 
     @Override

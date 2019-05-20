@@ -25,11 +25,9 @@ public class MatchController implements EventListenerInterface {
 
     public MatchController() {
         match = new Match();
-
         eventController = new EventController(this);
         playerController = new PlayerController(eventController, this);
         cardController = new CardController(eventController, this);
-
         match.addObserver(eventController);
     }
 
@@ -45,16 +43,8 @@ public class MatchController implements EventListenerInterface {
         return eventController;
     }
 
-    public void addPlayer(String player) {
-        try {
+    public void addPlayer(String player) throws MaxPlayerException, PlayerAlreadyPresentException{
             match.addPlayer(player);
-        } catch (MaxPlayerException e) {
-            // TODO: define handling strategy
-            LOGGER.log(Level.INFO, e.toString(), e);
-        } catch (PlayerAlreadyPresentException e) {
-            // TODO: define handling strategy
-            LOGGER.log(Level.INFO, e.toString(), e);
-        }
     }
 
     public void removePlayer(String nickname) {

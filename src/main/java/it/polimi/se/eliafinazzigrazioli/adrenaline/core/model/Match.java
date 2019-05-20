@@ -94,6 +94,14 @@ public class Match extends Observable {
         return players;
     }
 
+    public List<String> getPlayersNickname(){
+        ArrayList<String> playersNickname = new ArrayList<>();
+        for(Player player : players){
+            playersNickname.add(player.getPlayerNickname());
+        }
+        return playersNickname;
+    }
+
     public Player getPlayer(String nickname) {
         return getPlayer(nickname);
     }
@@ -208,6 +216,8 @@ public class Match extends Observable {
     public void endTurn() {
         notifyObservers(currentPlayer.createEndTurnEvent());
     }
+
+
 
 
 }

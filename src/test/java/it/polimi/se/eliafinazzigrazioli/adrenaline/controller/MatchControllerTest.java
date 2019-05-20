@@ -1,7 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.controller;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Match;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.model.Player;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Match;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,14 +23,14 @@ public class MatchControllerTest {
     }
 
     @Test
-    public void addPlayerTest() {
+    public void addPlayerTest() throws PlayerAlreadyPresentException, MaxPlayerException {
         matchController.addPlayer ("playerOne");
         List<Player> playerList = match.getPlayers ();
         assertTrue (playerList.contains (new Player ("playerOne")));
     }
 
     @Test
-    public void removePlayerTest() {
+    public void removePlayerTest() throws PlayerAlreadyPresentException, MaxPlayerException{
         matchController.addPlayer ("playerOne");
         matchController.addPlayer ("playerTwo");
         matchController.addPlayer ("playerThree");
@@ -45,7 +47,7 @@ public class MatchControllerTest {
     }
 
     @Test
-    public void isReadyTest() {
+    public void isReadyTest() throws PlayerAlreadyPresentException, MaxPlayerException{
         matchController.addPlayer ("playerOne");
         assertFalse (matchController.isReady ());
         matchController.addPlayer ("playerTwo");
@@ -59,7 +61,7 @@ public class MatchControllerTest {
     }
 
     @Test
-    public void isFullTest() {
+    public void isFullTest() throws PlayerAlreadyPresentException, MaxPlayerException{
         matchController.addPlayer ("playerOne");
         assertFalse (matchController.isFull ());
         matchController.addPlayer ("playerTwo");
@@ -73,7 +75,7 @@ public class MatchControllerTest {
     }
 
     @Test
-    public void addPlayerMaxTest() {
+    public void addPlayerMaxTest() throws PlayerAlreadyPresentException, MaxPlayerException{
         matchController.addPlayer ("playerOne");
         matchController.addPlayer ("playerTwo");
         matchController.addPlayer ("playerThree");
@@ -86,7 +88,7 @@ public class MatchControllerTest {
     }
 
     @Test
-    public void addPlayerAlreadyPresentTest() {
+    public void addPlayerAlreadyPresentTest() throws PlayerAlreadyPresentException, MaxPlayerException{
         matchController.addPlayer ("playerOne");
         matchController.addPlayer ("playerOne");
         List<Player> playerList = match.getPlayers ();

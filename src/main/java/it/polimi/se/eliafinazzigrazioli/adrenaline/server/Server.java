@@ -3,6 +3,8 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 // Server main class
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
@@ -61,7 +63,7 @@ public class Server {
     }
 
     //TODO It may not be the best choice to block Server...
-    public synchronized void addPlayer(String player) {
+    public synchronized void addPlayer(String player) throws MaxPlayerException, PlayerAlreadyPresentException {
         stopTimer();
 
         nextMatch.addPlayer(player);
@@ -74,7 +76,7 @@ public class Server {
         }
     }
 
-    public synchronized void addPlayer(String player, AbstractClientHandler clientHandler) {
+    public synchronized void addPlayer(String player, AbstractClientHandler clientHandler) throws MaxPlayerException, PlayerAlreadyPresentException{
         stopTimer();
 
         nextMatch.addPlayer(player);
@@ -103,7 +105,8 @@ public class Server {
         nextMatch = new MatchController();
     }
 
-    public synchronized void addPlayer(String player, MatchController matchController) {
+    public synchronized void addPlayer(String player, MatchController matchController) throws MaxPlayerException,
+            PlayerAlreadyPresentException{
         nextMatch.addPlayer(player);
         mapPlayerToMatch(player, matchController);
     }
@@ -138,6 +141,14 @@ public class Server {
     public synchronized int getCurrentClientID() {
         currentClientID++;
         return currentClientID;
+    }
+
+    public synchronized MatchController getNextMatch() {
+        return nextMatch;
+    }
+
+    public void voteMap(int chosenMap) {
+
     }
 
     public static void main(String[] args) {

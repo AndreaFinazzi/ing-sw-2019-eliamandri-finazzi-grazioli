@@ -1,15 +1,17 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LightModel;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.view.RemoteView;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +25,8 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
     private transient Server server;
     private String playerName;
     static final Logger LOGGER = Logger.getLogger(ClientHandlerRMI.class.getName ());
-
+    private boolean response;
+    private String responseMessage;
 
 
 
@@ -34,7 +37,7 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
 
     @Override
     public int getClientID() throws RemoteException {
-        return 0;
+        return server.getCurrentClientID();
     }
 
     @Override
@@ -71,4 +74,38 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
     public LightModel getLightModel() throws RemoteException {
         return null;
     }
+
+    @Override
+    public void handleEvent(PlayerConnectedEvent event) throws HandlerNotImplementedException, RemoteException {
+        try {
+            server.addPlayer(event.getPlayer());
+            response = true;
+        }catch(PlayerAlreadyPresentException e){
+            response = false;
+            responseMessage = "Player already present";
+        }catch(MaxPlayerException e){
+            response = false;
+            responseMessage = "Max numbers of player";
+        }
+    }
+
+    @Override
+    public boolean response() {
+        return response;
+    }
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    @Override
+    public List<String> getPlayersConnected() throws RemoteException {
+        return server.getNextMatch().getPlayersNicknames();
+    }
+
+    @Override
+    public List<String> getAvatarAvaible() throws RemoteException {
+        return null;
+    }
+
 }

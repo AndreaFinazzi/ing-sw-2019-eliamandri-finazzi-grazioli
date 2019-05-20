@@ -3,7 +3,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
@@ -32,6 +34,10 @@ public class PlayerController implements EventListenerInterface {
     }
 
     public void handleEvent(PlayerConnectedEvent event) {
-        matchController.addPlayer(event.getPlayer());
+        try {
+            matchController.addPlayer(event.getPlayer());
+        }catch(PlayerAlreadyPresentException| MaxPlayerException e){
+            e.printStackTrace();
+        }
     }
 }

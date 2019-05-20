@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 public class PlayerConnectedEvent extends AbstractViewEvent {
 
     private int chosenMap;
+    private String avatar;
 
     public PlayerConnectedEvent(String player) {
         super(player);
@@ -21,6 +22,14 @@ public class PlayerConnectedEvent extends AbstractViewEvent {
 
     public void setChosenMap(int chosenMap) {
         this.chosenMap = chosenMap;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }
 

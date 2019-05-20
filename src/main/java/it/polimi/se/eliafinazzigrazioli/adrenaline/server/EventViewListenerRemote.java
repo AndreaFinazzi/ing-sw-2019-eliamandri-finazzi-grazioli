@@ -8,6 +8,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface EventViewListenerRemote extends Remote {
 
@@ -20,6 +21,14 @@ public interface EventViewListenerRemote extends Remote {
     boolean checkPlayerName() throws RemoteException;
 
     LightModel getLightModel() throws RemoteException;
+
+    boolean response() throws RemoteException;
+
+    String getResponseMessage() throws RemoteException;
+
+    List<String> getPlayersConnected() throws RemoteException;
+
+    List<String> getAvatarAvaible() throws RemoteException;
 
     default void handleEvent(AbstractViewEvent event) throws HandlerNotImplementedException, RemoteException{
         throw new HandlerNotImplementedException();

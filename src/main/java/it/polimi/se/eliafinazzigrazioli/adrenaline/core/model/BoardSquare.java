@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.RuntimeTypeAdapterFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,16 @@ public abstract class BoardSquare implements Selectable {
     private InterSquareLink south;
     private InterSquareLink east;
     private InterSquareLink west;
+
+
+    /**
+     * Class hierarchy definition used to parse the json file.
+     */
+    public static final RuntimeTypeAdapterFactory<BoardSquare> effectStateRuntimeTypeAdapterFactory = RuntimeTypeAdapterFactory.of(BoardSquare.class, "type")
+            .registerSubtype(GenericBoardSquare.class, "GenericBoardSquare")
+            .registerSubtype(SpawnBoardSquare.class, "SpawnBoardSquare");
+
+
 
     public BoardSquare() {
 

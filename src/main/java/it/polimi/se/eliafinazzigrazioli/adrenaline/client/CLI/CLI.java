@@ -1,16 +1,13 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManager;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LightModel;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.GenericViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,8 +20,6 @@ public class CLI {
     private Scanner input;
 
     private int clientId;
-
-    private int chosenMap;
 
     private ConnectionManagerRMI connectionManagerRMI;
 
@@ -40,6 +35,18 @@ public class CLI {
         this.playerName = playerName;
     }
 
+    public void playersConnected(){
+        try {
+            List<String> players = connectionManagerRMI.getPlayersConnected();
+            for(String nickname : players) {
+                System.out.println(nickname);
+            }
+        }catch(RemoteException e){
+            e.printStackTrace();
+        }
+
+    }
+
 
     public void connectionRMI() {
         try {
@@ -51,15 +58,54 @@ public class CLI {
     }
 
     public PlayerConnectedEvent enterGame(){
+        PlayerConnectedEvent playerConnectedEvent;
+        String buffer; int chosen;
         System.out.println("Insert your name");
         //TODO check player already present in lightmodel
         playerName = input.nextLine();
-        return new PlayerConnectedEvent(playerName);
+        playerConnectedEvent = new PlayerConnectedEvent(playerName);
+        do {
+            System.out.print("Chose map:\n1) first map\n2) second map\n3) third map\n4) fourth map\n");
+            buffer = input.nextLine();
+            chosen = Integer.parseInt(buffer);
+        }while(chosen < 1 || chosen > 4);
+        playerConnectedEvent.setChosenMap(chosen);
+        do {
+            System.out.print("Chose avatar:\n1) :D-STRUCT-OR\n2) BANSHEE\n3) DOZER\n4) VIOLET\n5) SPROG\n");
+            buffer = input.nextLine();
+            chosen = Integer.parseInt(buffer);
+        }while(chosen < 1 || chosen > 5);
+
+        switch(chosen){
+            case 1:
+                playerConnectedEvent.setAvatar(":D-STRUCT-OR");
+                break;
+            case 2:
+                playerConnectedEvent.setAvatar("BANSHEE");
+                break;
+            case 3:
+                playerConnectedEvent.setAvatar("DOZER");
+                break;
+            case 4:
+                playerConnectedEvent.setAvatar("VIOLET");
+                break;
+            case 5:
+                playerConnectedEvent.setAvatar("SPROG");
+                break;
+        }
+        return playerConnectedEvent;
     }
 
 
-    public static void main(String[] args) throws RemoteException, NotBoundException, HandlerNotImplementedException {
 
+
+    public static void main(String[] args) {
+        CLI cli = new CLI();
+        cli.connectionRMI();
+        cli.playersConnected();
+        while(!cli.connectionManagerRMI.loginPlayer(cli.enterGame()));
+        cli.playersConnected();
+        System.out.println("finish");
 
 /*
         Registry registry;
