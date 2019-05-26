@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 public class CLI {
     static final Logger LOGGER = Logger.getLogger(CLI.class.getName ());
 
+    //todo
     private String playerName;
 
     private Scanner input;
@@ -27,8 +28,12 @@ public class CLI {
 
     private LightModel lightModel;
 
+    private int clientID;
+
     public CLI() {
         input = new Scanner(System.in);
+        System.out.println("Insert your player name");
+        playerName = input.nextLine();
     }
 
     public void setPlayerName(String playerName) {
@@ -52,17 +57,21 @@ public class CLI {
         try {
             connectionManagerRMI = new ConnectionManagerRMI(playerName);
             connectionManagerRMI.addClient();
+            clientID = connectionManagerRMI.getClientID();
         }catch(RemoteException|NotBoundException e){
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 
+    public void connectionSocket(){
+        connectionManagerSocket = new ConnectionManagerSocket(playerName);
+    }
+
+    //
     public PlayerConnectedEvent enterGame(){
         PlayerConnectedEvent playerConnectedEvent;
         String buffer; int chosen;
-        System.out.println("Insert your name");
         //TODO check player already present in lightmodel
-        playerName = input.nextLine();
         playerConnectedEvent = new PlayerConnectedEvent(playerName);
         do {
             System.out.print("Chose map:\n1) first map\n2) second map\n3) third map\n4) fourth map\n");
@@ -96,8 +105,9 @@ public class CLI {
         return playerConnectedEvent;
     }
 
-
-
+    public int getClientID() {
+        return clientID;
+    }
 
     public static void main(String[] args) {
         CLI cli = new CLI();
@@ -105,6 +115,8 @@ public class CLI {
         cli.playersConnected();
         while(!cli.connectionManagerRMI.loginPlayer(cli.enterGame()));
         cli.playersConnected();
+        System.out.println("My clientID is " + cli.clientID);
+
         System.out.println("finish");
 
 /*

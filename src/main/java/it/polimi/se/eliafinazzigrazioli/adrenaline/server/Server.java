@@ -5,17 +5,16 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +32,7 @@ public class Server {
     private Registry registry;
     private Timer timer;
     private int currentClientID;
+    private HashMap<MapType, Integer> votesMaps;
 
     private Server() {
         LOGGER.info("Creating Server"); //TODO move to messages
@@ -40,11 +40,14 @@ public class Server {
         playerToMatchMap = new HashMap<>();
         nextMatch = new MatchController();
         currentClientID = 0;
+        votesMaps = new HashMap<>();
         try {
             registry = LocateRegistry.createRegistry(1099);
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
+        for(MapType key : MapType.values())
+            votesMaps.put(key, 0);
     }
 
     public void startServerSocket() {
@@ -147,8 +150,54 @@ public class Server {
         return nextMatch;
     }
 
-    public void voteMap(int chosenMap) {
+    // requires 0 <= chosenMap <Rules.GAME_MAX_MAPS
+    public synchronized void voteMap(int chosenMap) {
+        Integer choise;
+        switch(chosenMap) {
+            case 1:
+                choise = votesMaps.get(MapType.ONE);
+                choise++;
+                votesMaps.put(MapType.ONE, choise);
+                break;
 
+            case 2:
+                choise = votesMaps.get(MapType.TWO);
+                choise++;
+                votesMaps.put(MapType.TWO, choise);
+                break;
+
+            case 3:
+                choise = votesMaps.get(MapType.THREE);
+                choise++;
+                votesMaps.put(MapType.THREE, choise);
+                break;
+
+            case 4:
+                choise = votesMaps.get(MapType.FOUR);
+                choise++;
+                votesMaps.put(MapType.FOUR, choise);
+                break;
+        }
+    }
+
+    public synchronized MapType chosenMaps(){
+        int tempMax=0, max=0;
+        ArrayList<MapType> votes = new ArrayList<>();
+        for(MapType key : votesMaps.keySet()){
+            tempMax = votesMaps.get(key);
+            if(tempMax == max) {
+                votes.add(key);
+            }
+            else if(tempMax > max){
+                votes = new ArrayList<>();
+                votes.add(key);
+            }
+
+        }
+        if(votes.size() > 1){
+            return votes.get((int)Math.random() * (votes.size()-1));
+        }
+        else return votes.get(0);
     }
 
     public static void main(String[] args) {

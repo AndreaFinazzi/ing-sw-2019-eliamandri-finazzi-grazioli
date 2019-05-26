@@ -17,7 +17,7 @@ public class ServerRmiManager implements Runnable{
     public void run() {
         try {
             clientHandlerRMI = new ClientHandlerRMI (server);
-            server.getRegistry ().bind ("ClientHandlerRMI", clientHandlerRMI);
+            server.getRegistry().bind ("ClientHandlerRMI", clientHandlerRMI);
 
         }catch (RemoteException|AlreadyBoundException e) {
             e.printStackTrace ();

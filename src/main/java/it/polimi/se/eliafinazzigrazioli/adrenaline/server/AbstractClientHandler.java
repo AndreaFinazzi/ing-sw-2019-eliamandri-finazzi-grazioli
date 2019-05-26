@@ -36,7 +36,7 @@ public abstract class AbstractClientHandler implements Runnable {
         view = new RemoteView(nextReceivedEvent.getMessage());
 
         //Register on server
-        server.addPlayer(view.getPlayer(), this);
+        //server.addPlayer(view.getPlayer(), this);
     }
 
     //TODO: this should do something useful

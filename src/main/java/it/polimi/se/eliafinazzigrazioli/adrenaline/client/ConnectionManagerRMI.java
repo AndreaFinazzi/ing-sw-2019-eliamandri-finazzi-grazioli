@@ -21,6 +21,8 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
 
     private String playerName;
 
+    private int clientID;
+
     public ConnectionManagerRMI(String playerName) throws RemoteException, NotBoundException {
         this.playerName = playerName;
         registry = LocateRegistry.getRegistry ();
@@ -45,6 +47,11 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
         return playerName;
     }
 
+    @Override
+    public void print() throws RemoteException {
+        System.out.println("cacca");
+    }
+
     public List<String> getAvatarAvaible() {
         //TODO
         return null;
@@ -52,6 +59,7 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
 
     public void addClient() throws RemoteException{
         clientHandlerRMI.setClientRMI(this);
+        clientID = clientHandlerRMI.getClientID();
     }
 
     public void sendEvent(GenericViewEvent event) throws HandlerNotImplementedException, RemoteException {
@@ -62,4 +70,7 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
         return clientHandlerRMI.getPlayersConnected();
     }
 
+    public int getClientID() {
+        return clientID;
+    }
 }

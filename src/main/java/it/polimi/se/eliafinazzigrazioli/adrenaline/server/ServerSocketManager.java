@@ -25,12 +25,12 @@ public class ServerSocketManager implements Runnable {
         ExecutorService executor = Executors.newCachedThreadPool ();
         try {
             serverSocket = new ServerSocket (PORT);
-            LOGGER.log (Level.INFO, "serversocket created");
+            LOGGER.log (Level.INFO, "server socket created");
         }catch (IOException e) {
             LOGGER.log (Level.SEVERE, e.toString (), e);
             return;
         }
-        LOGGER.log (Level.INFO, "ServerSocket is ready");
+        LOGGER.log (Level.INFO, "Server Socket is ready");
 
         while (true) {
             try {

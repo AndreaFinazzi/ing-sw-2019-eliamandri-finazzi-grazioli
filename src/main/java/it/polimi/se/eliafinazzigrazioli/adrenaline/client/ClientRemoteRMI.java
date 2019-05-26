@@ -7,5 +7,7 @@ public interface ClientRemoteRMI extends Remote {
 
     public String getPlayerName() throws RemoteException;
 
+    public void print() throws RemoteException;
+
 
 }

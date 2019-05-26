@@ -31,6 +31,7 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
 
 
     public ClientHandlerRMI(Server server) throws RemoteException {
+        //TODO
         listener = new RemoteView("tony");
         this.server = server;
     }
@@ -80,6 +81,13 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
         try {
             server.addPlayer(event.getPlayer());
             response = true;
+            // Test
+            if(clientRMI.getPlayerName().toLowerCase().equals(event.getPlayer().toLowerCase())){
+                for(int i=0; i<1000; i++)
+                    clientRMI.print();
+            }
+
+
         }catch(PlayerAlreadyPresentException e){
             response = false;
             responseMessage = "Player already present";
@@ -87,6 +95,7 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
             response = false;
             responseMessage = "Max numbers of player";
         }
+        server.voteMap(event.getChosenMap());
     }
 
     @Override
