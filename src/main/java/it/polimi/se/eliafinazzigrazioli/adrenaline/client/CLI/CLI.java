@@ -73,6 +73,7 @@ public class CLI {
         String buffer; int chosen;
         //TODO check player already present in lightmodel
         playerConnectedEvent = new PlayerConnectedEvent(playerName);
+        playerConnectedEvent.setClientID(clientID);
         do {
             System.out.print("Chose map:\n1) first map\n2) second map\n3) third map\n4) fourth map\n");
             buffer = input.nextLine();
@@ -115,7 +116,7 @@ public class CLI {
         cli.playersConnected();
         while(!cli.connectionManagerRMI.loginPlayer(cli.enterGame()));
         cli.playersConnected();
-        System.out.println("My clientID is " + cli.clientID);
+        //System.out.println("My clientID is " + cli.clientID);
 
         System.out.println("finish");
 

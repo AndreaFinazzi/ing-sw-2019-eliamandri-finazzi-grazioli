@@ -11,7 +11,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.view.RemoteView;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +22,7 @@ import java.util.logging.Logger;
 public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewListenerRemote {
 
     private boolean setted;
-    private ClientRemoteRMI clientRMI;
+    private Map<Integer, ClientRemoteRMI> clientsRMI;
     private EventListenerInterface listener;
     private transient Server server;
     private String playerName;
@@ -34,6 +36,7 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
         //TODO
         listener = new RemoteView("tony");
         this.server = server;
+        clientsRMI = new HashMap<>();
     }
 
     @Override
@@ -42,9 +45,14 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
     }
 
     @Override
-    public void setClientRMI(ClientRemoteRMI clientRMI) {
-        this.clientRMI = clientRMI;
+    public void addClientRMI(ClientRemoteRMI clientRMI) {
         try{
+            if(clientRMI.getClientID() == 0){
+                LOGGER.log(Level.WARNING, "Client Unknown");
+                return;
+            }
+            Integer key = clientRMI.getClientID();
+            clientsRMI.put(key, clientRMI);
             playerName = clientRMI.getPlayerName();
         }catch(RemoteException e){
             e.printStackTrace();
@@ -52,10 +60,6 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
         LOGGER.log(Level.INFO, "established connection RMI");
     }
 
-    @Override
-    public ClientRemoteRMI getClientRMI() {
-        return clientRMI;
-    }
 
     public boolean isSetted() {
         return setted;
@@ -79,15 +83,14 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
     @Override
     public void handleEvent(PlayerConnectedEvent event) throws HandlerNotImplementedException, RemoteException {
         try {
+            if(event.getClientID() == 0){
+                LOGGER.log(Level.WARNING, "Client Unknown");
+                return;
+            }
+            ClientRemoteRMI client = clientsRMI.get(event.getClientID());
             server.addPlayer(event.getPlayer());
             response = true;
             // Test
-            if(clientRMI.getPlayerName().toLowerCase().equals(event.getPlayer().toLowerCase())){
-                for(int i=0; i<1000; i++)
-                    clientRMI.print();
-            }
-
-
         }catch(PlayerAlreadyPresentException e){
             response = false;
             responseMessage = "Player already present";

@@ -14,9 +14,7 @@ public interface EventViewListenerRemote extends Remote {
 
     int getClientID() throws RemoteException;
 
-    void setClientRMI(ClientRemoteRMI clientRMI) throws RemoteException;
-
-    ClientRemoteRMI getClientRMI() throws RemoteException;
+    void addClientRMI(ClientRemoteRMI clientRMI) throws RemoteException;
 
     boolean checkPlayerName() throws RemoteException;
 

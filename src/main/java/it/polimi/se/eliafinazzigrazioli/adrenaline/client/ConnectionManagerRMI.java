@@ -28,6 +28,7 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
         registry = LocateRegistry.getRegistry ();
         clientHandlerRMI = (EventViewListenerRemote)registry.lookup("ClientHandlerRMI");
         System.out.println("lookup fatta");
+        clientID = clientHandlerRMI.getClientID();
     }
 
     public boolean loginPlayer(PlayerConnectedEvent playerConnectedEvent) {
@@ -48,8 +49,8 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
     }
 
     @Override
-    public void print() throws RemoteException {
-        System.out.println("cacca");
+    public void print(String message) throws RemoteException {
+        System.out.println(message);
     }
 
     public List<String> getAvatarAvaible() {
@@ -58,8 +59,7 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
     }
 
     public void addClient() throws RemoteException{
-        clientHandlerRMI.setClientRMI(this);
-        clientID = clientHandlerRMI.getClientID();
+        clientHandlerRMI.addClientRMI(this);
     }
 
     public void sendEvent(GenericViewEvent event) throws HandlerNotImplementedException, RemoteException {
@@ -70,6 +70,7 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
         return clientHandlerRMI.getPlayersConnected();
     }
 
+    @Override
     public int getClientID() {
         return clientID;
     }
