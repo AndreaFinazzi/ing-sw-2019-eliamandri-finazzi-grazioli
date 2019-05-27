@@ -11,7 +11,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Match extends Observable {
+public class Match implements Observable {
 
     // Players list extra-methods implementations
     private Player.AbstractPlayerList players = new Player.AbstractPlayerList() {
@@ -51,7 +51,7 @@ public class Match extends Observable {
         }
     };
 
-    private GameBoard map;
+    private GameBoard gameBoard;
     private MatchPhase phase;
     private Player currentPlayer;
     private Player firstPlayer;
@@ -59,7 +59,6 @@ public class Match extends Observable {
 
     public Match() {
         phase = MatchPhase.INITIALIZATION;
-        map = new GameBoard(MapType.ONE);
     }
 
 
@@ -82,7 +81,11 @@ public class Match extends Observable {
     }
 
     public void nextCurrentPlayer() {
-        int index = players.indexOf(currentPlayer);
+        //TODO Should be debugged
+        int index = -1;
+        if (turn != 0) {
+            index = players.indexOf(currentPlayer);
+        }
         currentPlayer = players.get((index + 1) % players.size());
     }
 
@@ -175,7 +178,7 @@ public class Match extends Observable {
 
     public void playerMovement(Player player, List<Coordinates> path) {
         try {
-            notifyObservers(map.playerMovement(player, path));
+            notifyObservers(gameBoard.playerMovement(player, path));
         } catch (MovementNotAllowedException e){
             //TODO generate invalid move exception
         }
@@ -184,10 +187,14 @@ public class Match extends Observable {
     /*
      * GameBoard-related methods
      */
-
-    public GameBoard getMap() {
-        return map;
+    public GameBoard getGameBoard() {
+        return gameBoard;
     }
+
+    public void setGameBoard(MapType mapType) {
+        gameBoard = new GameBoard(mapType);
+    }
+
 
     /*
      * Match flow related methods
@@ -201,14 +208,21 @@ public class Match extends Observable {
         this.phase = phase;
     }
 
+    public boolean isEnded() {
+        return phase == MatchPhase.ENDED;
+    }
+
     public int getTurn() {
         return turn;
     }
 
     public void increaseTurn() {
+        nextCurrentPlayer();
         turn++;
     }
 
+
+    //TODO who should create the event?
     public void beginTurn() {
         notifyObservers(currentPlayer.createBeginTurnEvent());
     }

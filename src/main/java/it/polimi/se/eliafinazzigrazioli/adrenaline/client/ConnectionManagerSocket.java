@@ -19,8 +19,8 @@ public class ConnectionManagerSocket extends ConnectionManager {
     private ObjectOutputStream send;
     private ObjectInputStream receveid;
 
-    public ConnectionManagerSocket(String playername) {
-        super (playername);
+    public ConnectionManagerSocket() {
+        super();
         try {
             clientSocket = new Socket (IP_SERVER, PORT_SEVER);
             send = new ObjectOutputStream (clientSocket.getOutputStream ());

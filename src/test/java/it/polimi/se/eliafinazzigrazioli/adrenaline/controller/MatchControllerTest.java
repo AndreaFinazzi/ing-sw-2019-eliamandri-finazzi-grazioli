@@ -76,12 +76,16 @@ public class MatchControllerTest {
 
     @Test
     public void addPlayerMaxTest() throws PlayerAlreadyPresentException, MaxPlayerException{
-        matchController.addPlayer ("playerOne");
-        matchController.addPlayer ("playerTwo");
-        matchController.addPlayer ("playerThree");
-        matchController.addPlayer ("playerFour");
-        matchController.addPlayer ("playerFive");
-        matchController.addPlayer ("playerSix");
+        try {
+            matchController.addPlayer("playerOne");
+            matchController.addPlayer("playerTwo");
+            matchController.addPlayer("playerThree");
+            matchController.addPlayer("playerFour");
+            matchController.addPlayer("playerFive");
+            matchController.addPlayer("playerSix");
+        } catch (MaxPlayerException e) {
+            e.printStackTrace();
+        }
         List<Player> playerList = match.getPlayers ();
         assertEquals (5, playerList.size ());
         assertFalse (playerList.contains (new Player ("playerSix")));

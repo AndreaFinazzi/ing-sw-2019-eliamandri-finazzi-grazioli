@@ -7,7 +7,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnec
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.view.RemoteView;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -34,7 +33,7 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
 
     public ClientHandlerRMI(Server server) throws RemoteException {
         //TODO
-        listener = new RemoteView("tony");
+        //listener = new RemoteView("tony");
         this.server = server;
         clientsRMI = new HashMap<>();
     }
@@ -116,7 +115,7 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
     }
 
     @Override
-    public List<String> getAvatarAvaible() throws RemoteException {
+    public List<String> getAvatarAvailable() throws RemoteException {
         return null;
     }
 

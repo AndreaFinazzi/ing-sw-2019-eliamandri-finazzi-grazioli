@@ -1,8 +1,10 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Match;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MatchPhase;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
@@ -10,10 +12,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
 import java.util.Timer;
-import java.util.logging.Level;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
-public class MatchController implements EventListenerInterface {
+public class MatchController implements EventListenerInterface, Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(MatchController.class.getName());
 
@@ -23,6 +25,8 @@ public class MatchController implements EventListenerInterface {
     private EventController eventController;
     private Timer timer;
 
+    private BlockingQueue<AbstractViewEvent> eventsQueue;
+
     public MatchController() {
         match = new Match();
         eventController = new EventController(this);
@@ -31,9 +35,13 @@ public class MatchController implements EventListenerInterface {
         match.addObserver(eventController);
     }
 
-    public void initMatch() {
+    public void initMatch(MapType choosenMap) {
         //TODO: to implement
         match.setPhase(MatchPhase.PLAYING);
+
+        match.setGameBoard(choosenMap);
+
+        //TODO verify
         match.increaseTurn();
 
         match.beginTurn();
@@ -74,6 +82,21 @@ public class MatchController implements EventListenerInterface {
 
     public ArrayList<String> getPlayersNicknames() {
         return match.getPlayersNicknames();
+    }
+
+    @Override
+    public void run() {
+        AbstractViewEvent nextEvent;
+        try {
+            while (!match.isEnded()) {
+                nextEvent = eventsQueue.take();
+                eventController.update(nextEvent);
+            }
+        } catch (InterruptedException e) {
+            //TODO handle
+        } finally {
+
+        }
     }
 }
 

@@ -1,42 +1,39 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.EventController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.GenericEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.view.RemoteView;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
-public abstract class AbstractClientHandler implements Runnable {
+public abstract class AbstractClientHandler implements Runnable, ModelEventsListenerInterface {
     protected Server server;
     protected static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
     protected AbstractViewEvent nextReceivedEvent;
-    private RemoteView view;
+
+    private BlockingQueue<AbstractViewEvent> eventsQueue;
 
     // register starting match
-    public void bindViewToEventController(EventController eventController) {
-
-        view.addObserver(eventController);
-        eventController.addModelEventsListener(view);
-
+    public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
+        this.eventsQueue = eventsQueue;
+//        eventController.addModelEventsListener(this);
     }
 
     abstract void send(AbstractEvent event);
 
-    abstract AbstractViewEvent receive();
+    protected void received(AbstractViewEvent event) {
+        if (!eventsQueue.offer(event)) {
+            //TODO specific event type needed?
+            send(new GenericEvent(event.getPlayer(), "Events generation failed."));
+        }
+    }
 
     private void setup() {
 
-        //TODO view is not registered yet!
-        send(new GenericEvent(null, "Waiting for nickname"));
-        nextReceivedEvent = (AbstractViewEvent) receive();
-
-        //initialize RemoteView
-        view = new RemoteView(nextReceivedEvent.getMessage());
-
-        //Register on server
-        //server.addPlayer(view.getPlayer(), this);
     }
 
     //TODO: this should do something useful
@@ -47,14 +44,20 @@ public abstract class AbstractClientHandler implements Runnable {
 
         setup();
 
-        // SAMPLE, changeit!
-        //TODO check if correct
-        LOGGER.info(nextReceivedEvent.getMessage());
-        view.notifyObservers(nextReceivedEvent);
-        if (nextReceivedEvent.getMessage().equals("tony"))
-            send(new GenericEvent(null, "test tony "));
-        else
-            send(new GenericEvent(null, "test finazzi"));
+//        // SAMPLE, changeit!
+//        //TODO check if correct
+//        LOGGER.info(nextReceivedEvent.getMessage());
+//        view.notifyObservers(nextReceivedEvent);
+//        if (nextReceivedEvent.getMessage().equals("tony"))
+//            send(new GenericEvent(null, "test tony "));
+//        else
+//            send(new GenericEvent(null, "test finazzi"));
         //server.addPlayer(nextReceivedEvent.getMessage());
+    }
+
+    @Override
+    public void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
+        send(event);
+
     }
 }

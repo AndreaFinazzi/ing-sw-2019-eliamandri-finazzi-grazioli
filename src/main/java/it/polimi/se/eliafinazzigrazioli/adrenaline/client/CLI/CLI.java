@@ -2,6 +2,8 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LightModel;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
 
@@ -12,7 +14,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CLI {
+public class CLI implements RemoteView {
     static final Logger LOGGER = Logger.getLogger(CLI.class.getName ());
 
     //todo
@@ -64,7 +66,7 @@ public class CLI {
     }
 
     public void connectionSocket(){
-        connectionManagerSocket = new ConnectionManagerSocket(playerName);
+        //connectionManagerSocket = new ConnectionManagerSocket(playerName);
     }
 
     //
@@ -132,6 +134,11 @@ public class CLI {
             RMI.handleEvent(new GenericViewEvent("tony", "cpippo"));
 
  */
+
+    }
+
+    @Override
+    public void showBeginTurn(BeginTurnEvent event) {
 
     }
 }

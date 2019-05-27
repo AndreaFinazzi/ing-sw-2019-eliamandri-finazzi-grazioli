@@ -26,6 +26,7 @@ public class PlayerControllerTest {
         eventController = new EventController (matchController);
         playerController = new PlayerController (eventController, matchController);
         matchController.addPlayer ("playerOne");
+        matchController.initMatch(MapType.THREE);
 
         matchController.getPlayers ().get ("playerOne").setPosition (gameBoard.getBoardSquareByCoordinates (
                 new Coordinates (0,0)
@@ -33,7 +34,7 @@ public class PlayerControllerTest {
         playerBoard = new PlayerBoard ();
         Player playerOne = matchController.getPlayers ().get ("playerOne");
 
-        matchController.getMatch ().getMap ().movePlayer (playerOne, gameBoard.getBoardSquareByCoordinates (new Coordinates (0,0)));
+        matchController.getMatch().getGameBoard().movePlayer(playerOne, gameBoard.getBoardSquareByCoordinates(new Coordinates(0, 0)));
         matchController.getPlayers ().get ("playerOne").setPlayerBoard (playerBoard);
     }
 
@@ -46,10 +47,9 @@ public class PlayerControllerTest {
         MovePlayEvent movePlayEvent = new MovePlayEvent ("playerOne", coordinatesList);
         playerController.handleEvent (movePlayEvent);
         Player playerOne = matchController.getPlayers ().get ("playerOne");
-        BoardSquare playerPos = matchController.getMatch ().getMap ().getPlayerPosition (playerOne);
+        BoardSquare playerPos = matchController.getMatch().getGameBoard().getPlayerPosition(playerOne);
         BoardSquare boardSquare = gameBoard.getBoardSquareByCoordinates (new Coordinates (1,1));
         System.out.println (matchController.getMatch ().getPlayers ().size ());
         assertEquals (boardSquare, playerPos);
-
     }
 }

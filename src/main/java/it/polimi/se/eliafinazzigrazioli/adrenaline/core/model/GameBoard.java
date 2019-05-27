@@ -133,6 +133,7 @@ public class GameBoard {
 
     public void movePlayer(Player player, BoardSquare destination){
         playerPositions.put(player, destination);
+        player.setPosition(destination);
     }
 
     public PlayerMovementEvent playerMovement(Player player, List<Coordinates> coordinatesPath) throws MovementNotAllowedException {

@@ -55,4 +55,7 @@ public final class Messages {
     //View
     public static final String MESSAGE_EVENTS_VIEW_DEFAULT = MESSAGES.getProperty("app.events.view.default");
 
+    // Network
+    public static final String MESSAGE_EXCEPTIONS_NETWORK_SOCKET_SEND_FAILED = MESSAGES.getProperty("app.exceptions.network.socket.send_failed", "DEFAULT: Socket send failed!");
+
 }

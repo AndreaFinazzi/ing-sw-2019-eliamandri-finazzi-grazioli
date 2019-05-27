@@ -5,26 +5,30 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractView
 
 import java.util.ArrayList;
 
-public class Observable {
+public interface Observable {
     ArrayList<Observer> observers = new ArrayList<>();
 
-    public void addObserver(Observer observer) {
+    default void addObserver(Observer observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(Observer observer) {
+    default void removeObserver(Observer observer) {
         observers.remove(observer);
     }
 
-    public synchronized void notifyObservers(AbstractViewEvent event) {
-        for (Observer observer : observers) {
-            observer.update(event);
+    default void notifyObservers(AbstractViewEvent event) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.update(event);
+            }
         }
     }
 
-    public synchronized void notifyObservers(AbstractModelEvent event) {
-        for (Observer observer : observers) {
-            observer.update(event);
+    default void notifyObservers(AbstractModelEvent event) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.update(event);
+            }
         }
     }
 

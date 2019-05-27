@@ -9,12 +9,16 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +31,14 @@ public class Server {
 
     private ServerSocketManager serverSocketManager;
     private HashMap<String, MatchController> playerToMatchMap;
+
+    // Match-threads pool
+    private ExecutorService matchesExecutor = Executors.newCachedThreadPool();
+    // Network threads pool
+    private ExecutorService networkExecutor = Executors.newFixedThreadPool(2);
+
+    // Player.username to ClientHandler
+    // TODO change it to support RMI. Player.username to Client.ID
     private HashMap<String, AbstractClientHandler> playerToClientHandler;
     private MatchController nextMatch;
     private Registry registry;
@@ -38,6 +50,7 @@ public class Server {
         LOGGER.info("Creating Server"); //TODO move to messages
         timer = new Timer();
         playerToMatchMap = new HashMap<>();
+
         nextMatch = new MatchController();
         currentClientID = 0;
         votesMaps = new HashMap<>();
@@ -52,13 +65,12 @@ public class Server {
 
     public void startServerSocket() {
         LOGGER.info("Starting socket manager");
-        serverSocketManager = new ServerSocketManager(this, Config.CONFIG_SERVER_SOCKET_PORT);
-        serverSocketManager.startServerSocket();
+        networkExecutor.execute(new ServerSocketManager(this, Config.CONFIG_SERVER_SOCKET_PORT));
     }
 
     public void startServerRMI() {
         LOGGER.info("Starting RMI manager");
-
+        networkExecutor.execute(new ServerRmiManager(this));
     }
 
     private void mapPlayerToMatch(String player, MatchController matchController) {
@@ -96,15 +108,19 @@ public class Server {
     private synchronized void startNextMatch() {
         LOGGER.info("Next match initialization: start");
         // Add next match EventController as an Observer of RemoteViews
-
+        // TODO bind match/queue/clientHandlers
         ArrayList<String> nextPlayingPlayers = nextMatch.getPlayersNicknames();
         for (String player : nextPlayingPlayers) {
-            playerToClientHandler.get(player).bindViewToEventController(nextMatch.getEventController());
+//            playerToClientHandler.get(player).bindViewToEventController(nextMatch.getEventController());
         }
 
-        nextMatch.initMatch();
+        nextMatch.initMatch(chosenMap());
         //TODO: move to Messages
-        LOGGER.info("Game started");
+        LOGGER.info("Game starting");
+        // Kick-off next game
+        matchesExecutor.execute(nextMatch);
+
+        // initialize next starting match
         nextMatch = new MatchController();
     }
 
@@ -180,7 +196,7 @@ public class Server {
         }
     }
 
-    public synchronized MapType chosenMaps(){
+    public synchronized MapType chosenMap() {
         int tempMax=0, max=0;
         ArrayList<MapType> votes = new ArrayList<>();
         for(MapType key : votesMaps.keySet()){
@@ -200,19 +216,21 @@ public class Server {
         else return votes.get(0);
     }
 
+
+    private void close() {
+
+    }
+
     public static void main(String[] args) {
+        LOGGER.info(Messages.MESSAGE_LOGGING_INFO_SERVER_STARTED);
+
         Server server = new Server();
 
-        new Thread(new ServerSocketManager(server, Config.CONFIG_SERVER_SOCKET_PORT)).start();
-
-        new Thread(new ServerRmiManager(server)).start();
-
-        //server.startServerSocket ();
-        //server.startServerRMI ();
-
-
-        //nextMatch.startRecruiting();
-
-        LOGGER.info(Messages.MESSAGE_LOGGING_INFO_SERVER_STARTED);
+        try {
+            server.startServerSocket();
+            server.startServerRMI();
+        } finally {
+            //TODO do something to properly control Server shutdown
+        }
     }
 }

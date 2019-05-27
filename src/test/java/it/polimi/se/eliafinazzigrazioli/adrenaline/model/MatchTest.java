@@ -22,7 +22,7 @@ public class MatchTest {
         assertTrue (match.getCurrentPlayer () == null);
         assertTrue (match.getFirstPlayer () == null);
         assertTrue (match.getTurn () == 0);
-        //assertTrue (match.getMap () == null);
+        //assertTrue (match.getGameBoard () == null);
     }
 
     @Test

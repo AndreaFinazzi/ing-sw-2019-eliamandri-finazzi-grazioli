@@ -2,7 +2,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LightModel;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.WeaponCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
@@ -26,7 +25,7 @@ public interface EventViewListenerRemote extends Remote {
 
     List<String> getPlayersConnected() throws RemoteException;
 
-    List<String> getAvatarAvaible() throws RemoteException;
+    List<String> getAvatarAvailable() throws RemoteException;
 
     default void handleEvent(AbstractViewEvent event) throws HandlerNotImplementedException, RemoteException{
         throw new HandlerNotImplementedException();
