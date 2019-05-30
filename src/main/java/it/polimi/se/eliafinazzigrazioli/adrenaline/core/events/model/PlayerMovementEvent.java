@@ -18,4 +18,8 @@ public class PlayerMovementEvent extends AbstractModelEvent {
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);
     }
+
+    public List<Coordinates> getPath() {
+        return path;
+    }
 }

@@ -27,6 +27,10 @@ public interface EventViewListenerRemote extends Remote {
 
     List<String> getAvatarAvailable() throws RemoteException;
 
+    default void handleEvent(ClientConnectionEvent event) throws HandlerNotImplementedException, RemoteException{
+        throw new HandlerNotImplementedException();
+    }
+
     default void handleEvent(AbstractViewEvent event) throws HandlerNotImplementedException, RemoteException{
         throw new HandlerNotImplementedException();
     }

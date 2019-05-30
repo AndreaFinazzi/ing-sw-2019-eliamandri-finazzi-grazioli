@@ -18,12 +18,9 @@ public abstract class BoardSquare implements Selectable {
     /**
      * Class hierarchy definition used to parse the json file.
      */
-    public static final RuntimeTypeAdapterFactory<BoardSquare> effectStateRuntimeTypeAdapterFactory = RuntimeTypeAdapterFactory.of(BoardSquare.class, "type")
+    public static final RuntimeTypeAdapterFactory<BoardSquare> boardSquareRuntimeTypeAdapterFactory= RuntimeTypeAdapterFactory.of(BoardSquare.class, "type")
             .registerSubtype(GenericBoardSquare.class, "GenericBoardSquare")
             .registerSubtype(SpawnBoardSquare.class, "SpawnBoardSquare");
-
-
-
     public BoardSquare() {
 
     }

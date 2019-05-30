@@ -7,7 +7,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 public abstract class AbstractViewEvent extends AbstractEvent {
 
     protected String player;
-    int clientID;
+    protected int clientID;
     
     public AbstractViewEvent(String player) {
         super(Messages.MESSAGE_EVENTS_VIEW_DEFAULT);

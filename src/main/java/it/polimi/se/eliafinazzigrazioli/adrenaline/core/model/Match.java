@@ -82,10 +82,8 @@ public class Match implements Observable {
 
     public void nextCurrentPlayer() {
         //TODO Should be debugged
-        int index = -1;
-        if (turn != 0) {
-            index = players.indexOf(currentPlayer);
-        }
+        int index = players.indexOf(currentPlayer);
+
         currentPlayer = players.get((index + 1) % players.size());
     }
 

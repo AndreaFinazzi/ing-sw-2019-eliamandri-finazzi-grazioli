@@ -55,4 +55,12 @@ public class ConnectionManagerSocket extends ConnectionManager {
             LOGGER.log (Level.SEVERE, e.toString (), e);
         }
     }
+
+    public void closeConnection() {
+        try {
+            clientSocket.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

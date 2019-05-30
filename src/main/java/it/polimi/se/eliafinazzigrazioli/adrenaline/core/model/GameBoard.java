@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundBoardException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -129,7 +130,12 @@ public class GameBoard {
         playerPositions = new HashMap<>();
     }
 
-
+    public void setPlayerPositions(Player player, BoardSquare position) throws OutOfBoundBoardException{
+        if(position == null)
+            throw new OutOfBoundBoardException("OutOfBoundException");
+        else
+            playerPositions.put(player, position);
+    }
 
     public void movePlayer(Player player, BoardSquare destination){
         playerPositions.put(player, destination);

@@ -1,20 +1,23 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayersSelectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
-    void showBeginTurn(BeginTurnEvent event);
 //    void showPlayerSelection();
 
     //TODO to implement
     @Override
     default void handleEvent(AllowedMovesEvent event) throws HandlerNotImplementedException {
+
         throw new HandlerNotImplementedException();
     }
 
@@ -34,6 +37,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     //TODO to implement
     @Override
     default void handleEvent(CardDrawedEvent event) throws HandlerNotImplementedException {
+
         throw new HandlerNotImplementedException();
     }
 
@@ -88,6 +92,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     //TODO to implement
     @Override
     default void handleEvent(SelectableBoardSquaresEvent event) throws HandlerNotImplementedException {
+        showSelectableEvent(event.getSelectableBoardSquares());
         throw new HandlerNotImplementedException();
     }
 
@@ -129,4 +134,12 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             e.printStackTrace();
         }
     }
+
+    default void notifyLoginRequestEvent(String nickname) {
+            notifyObservers(new LoginRequestEvent(nickname));
+    }
+
+    void showBeginTurn(BeginTurnEvent event);
+
+    void showSelectableEvent(List<Coordinates> selectable);
 }

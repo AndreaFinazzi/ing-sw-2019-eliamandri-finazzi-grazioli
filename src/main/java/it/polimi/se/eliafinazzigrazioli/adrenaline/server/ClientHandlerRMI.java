@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LightModel;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientConnectionEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
@@ -43,16 +44,18 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
         return server.getCurrentClientID();
     }
 
+    /**
+     *
+     * @param clientRMI
+     */
     @Override
     public void addClientRMI(ClientRemoteRMI clientRMI) {
         try{
             if(clientRMI.getClientID() == 0){
-                LOGGER.log(Level.WARNING, "Client Unknown");
-                return;
+                Integer clientID = server.getCurrentClientID();
+                clientRMI.setClientID(clientID);
+                clientsRMI.put(clientID, clientRMI);
             }
-            Integer key = clientRMI.getClientID();
-            clientsRMI.put(key, clientRMI);
-            playerName = clientRMI.getPlayerName();
         }catch(RemoteException e){
             e.printStackTrace();
         }
@@ -77,6 +80,11 @@ public class ClientHandlerRMI extends UnicastRemoteObject implements EventViewLi
     @Override
     public LightModel getLightModel() throws RemoteException {
         return null;
+    }
+
+    @Override
+    public void handleEvent(ClientConnectionEvent event) throws HandlerNotImplementedException, RemoteException {
+
     }
 
     @Override

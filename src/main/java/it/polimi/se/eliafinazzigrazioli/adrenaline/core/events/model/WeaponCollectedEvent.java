@@ -18,4 +18,11 @@ public class WeaponCollectedEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
+    public String getCollectedWeapon() {
+        return collectedWeapon;
+    }
+
+    public String getDropOfWeapon() {
+        return dropOfWeapon;
+    }
 }

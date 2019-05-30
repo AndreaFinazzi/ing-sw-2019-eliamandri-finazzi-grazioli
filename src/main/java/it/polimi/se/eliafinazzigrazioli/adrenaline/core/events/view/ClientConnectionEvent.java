@@ -1,12 +1,12 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
-
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
-public class LoginRequestEvent extends AbstractViewEvent {
+public class ClientConnectionEvent extends AbstractViewEvent {
 
-    public LoginRequestEvent(String player) {
+    public ClientConnectionEvent(String player) {
         super(player);
+        this.clientID= 0;
     }
 
     @Override

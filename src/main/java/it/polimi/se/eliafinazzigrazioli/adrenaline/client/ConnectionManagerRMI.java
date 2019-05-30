@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientConnectionEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.GenericViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
@@ -28,6 +29,16 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
         clientHandlerRMI = (EventViewListenerRemote)registry.lookup("ClientHandlerRMI");
         System.out.println("lookup fatta");
         clientID = clientHandlerRMI.getClientID();
+    }
+
+    public void loginClient(ClientConnectionEvent event){
+        try {
+            clientHandlerRMI.handleEvent(event);
+        } catch(HandlerNotImplementedException e) {
+            e.printStackTrace();
+        } catch(RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean loginPlayer(PlayerConnectedEvent playerConnectedEvent) {
@@ -72,5 +83,10 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
     @Override
     public int getClientID() {
         return clientID;
+    }
+
+    @Override
+    public void setClientID(int clientID) throws RemoteException {
+        this.clientID = clientID;
     }
 }

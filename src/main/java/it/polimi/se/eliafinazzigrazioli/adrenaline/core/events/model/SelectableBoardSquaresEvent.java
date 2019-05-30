@@ -21,4 +21,8 @@ public class SelectableBoardSquaresEvent extends AbstractModelEvent {
         if (this.getPlayer() == listener.getPlayer())
             listener.handleEvent(this);
     }
+
+    public List<Coordinates> getSelectableBoardSquares() {
+        return selectableBoardSquares;
+    }
 }

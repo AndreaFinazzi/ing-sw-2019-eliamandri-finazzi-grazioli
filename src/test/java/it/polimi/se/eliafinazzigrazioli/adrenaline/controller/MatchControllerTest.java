@@ -74,7 +74,7 @@ public class MatchControllerTest {
         assertTrue (matchController.isFull ());
     }
 
-    @Test
+    @Test(expected = MaxPlayerException.class)
     public void addPlayerMaxTest() throws PlayerAlreadyPresentException, MaxPlayerException{
         try {
             matchController.addPlayer("playerOne");

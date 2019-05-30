@@ -11,5 +11,7 @@ public interface ClientRemoteRMI extends Remote {
 
     public int getClientID() throws RemoteException;
 
+    public void setClientID(int clientID) throws RemoteException;
+
 
 }
