@@ -25,7 +25,6 @@ public class PlayerBoardTest {
         }
         assertEquals(1, playerBoard.getScores().size());
         assertEquals(DamageMark.BLUE, playerBoard.getScores().get(0));
-        assertTrue("OK", playerBoard.isFirstBlood());
         assertFalse("not dead", playerBoard.isDeath());
         assertFalse("not Overkilled", playerBoard.isOverkill());
     }
@@ -45,7 +44,6 @@ public class PlayerBoardTest {
             }
         }
         assertEquals(10, playerBoard.getScores().size());
-        assertTrue(playerBoard.isFirstBlood());
         assertFalse(playerBoard.isDeath());
         assertFalse(playerBoard.isOverkill());
 
@@ -57,7 +55,6 @@ public class PlayerBoardTest {
             fail();
         }
         assertEquals(11, playerBoard.getScores().size());
-        assertTrue(playerBoard.isFirstBlood());
         assertTrue("Is death", playerBoard.isDeath());
         assertFalse(playerBoard.isOverkill());
 
@@ -73,7 +70,6 @@ public class PlayerBoardTest {
         for (int i = 0; i < tempList.size(); i++) {
             assertEquals(tempList.get(i), playerBoard.getScores().get(i));
         }
-        assertTrue(playerBoard.isFirstBlood());
         assertTrue("Is death", playerBoard.isDeath());
         assertTrue("is overkill", playerBoard.isOverkill());
     }
@@ -158,7 +154,7 @@ public class PlayerBoardTest {
     }
 
     @Test
-    public void testAddAmmo() {
+    public void testAddAmmos() {
         PlayerBoard playerBoard = new PlayerBoard();
         ArrayList<Ammo> toAdd = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
@@ -169,7 +165,7 @@ public class PlayerBoardTest {
             else if (i >= 20 && i < 30) ;
             toAdd.add(Ammo.YELLOW);
         }
-        playerBoard.addAmmo(toAdd);
+        playerBoard.addAmmos(toAdd);
         assertEquals(3, playerBoard.numAmmoType(Ammo.BLUE));
         assertEquals(3, playerBoard.numAmmoType(Ammo.RED));
         assertEquals(3, playerBoard.numAmmoType(Ammo.YELLOW));
@@ -189,7 +185,7 @@ public class PlayerBoardTest {
             else if (i >= 6 && i < 9) ;
             toAdd.add(Ammo.YELLOW);
         }
-        playerBoard.addAmmo(toAdd);
+        playerBoard.addAmmos(toAdd);
         toSpend.add(Ammo.YELLOW);
         assertEquals(3, playerBoard.numAmmoType(Ammo.YELLOW));
         try {
@@ -227,7 +223,7 @@ public class PlayerBoardTest {
                 toSpend.add(Ammo.YELLOW);
             }
         }
-        playerBoard.addAmmo(toAdd);
+        playerBoard.addAmmos(toAdd);
         assertEquals(9, playerBoard.getAmmos().size());
         try {
             playerBoard.spendAmmo(toSpend);
@@ -264,7 +260,7 @@ public class PlayerBoardTest {
         toAdd.add(Ammo.YELLOW);
         toAdd.add(Ammo.RED);
         toAdd.add(Ammo.BLUE);
-        playerBoard.addAmmo(toAdd);
+        playerBoard.addAmmos(toAdd);
 
         assertEquals(3, playerBoard.getAmmos().size());
         assertEquals(3, playerBoard.getMarks().size());
@@ -274,7 +270,6 @@ public class PlayerBoardTest {
         assertEquals(0, playerBoard.getScores().size());
         assertFalse(playerBoard.isDeath());
         assertFalse(playerBoard.isOverkill());
-        assertFalse(playerBoard.isFirstBlood());
         assertEquals(0, playerBoard.getSkulls());
         assertEquals(3, playerBoard.getAmmos().size());
         assertEquals(3, playerBoard.getMarks().size());
@@ -304,7 +299,7 @@ public class PlayerBoardTest {
         toAdd.add(Ammo.YELLOW);
         toAdd.add(Ammo.RED);
         toAdd.add(Ammo.BLUE);
-        playerBoard.addAmmo(toAdd);
+        playerBoard.addAmmos(toAdd);
 
         assertEquals(3, playerBoard.getAmmos().size());
         assertEquals(3, playerBoard.getMarks().size());
@@ -314,7 +309,6 @@ public class PlayerBoardTest {
         assertEquals(0, playerBoard.getScores().size());
         assertFalse(playerBoard.isDeath());
         assertFalse(playerBoard.isOverkill());
-        assertFalse(playerBoard.isFirstBlood());
         assertEquals(0, playerBoard.getSkulls());
         assertEquals(3, playerBoard.getAmmos().size());
         assertEquals(0, playerBoard.getMarks().size());

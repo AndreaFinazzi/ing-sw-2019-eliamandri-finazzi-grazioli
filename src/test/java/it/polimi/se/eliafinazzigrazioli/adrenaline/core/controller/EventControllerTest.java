@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEven
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.TargetSelectedEvent;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 
@@ -25,15 +26,14 @@ public class EventControllerTest {
 
         eventController = matchController.getEventController();
 
-        collectPlayEvent = new CollectPlayEvent("UserA!");
-        targetSelectedEvent = new TargetSelectedEvent("Mariooooo!", null);
-        movePlayEvent = new MovePlayEvent(null, null);
+        collectPlayEvent = new CollectPlayEvent("UserA!", new ArrayList<>());
+        targetSelectedEvent = new TargetSelectedEvent("Mariooooo!", new ArrayList<>());
+        //movePlayEvent = new MovePlayEvent("UserA!", new ArrayList<>());
 
         eventController.update(collectPlayEvent);
         eventController.update(targetSelectedEvent);
-        eventController.update(movePlayEvent);
+        //eventController.update(movePlayEvent);
 
-        eventController.update(targetSelectedEvent);
         System.out.println("ended");
     }
 }

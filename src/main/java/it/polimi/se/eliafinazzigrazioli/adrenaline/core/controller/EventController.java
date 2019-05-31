@@ -1,13 +1,12 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.ListenerNotFoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.AbstractClientHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +16,9 @@ import java.util.logging.Logger;
 
 public class EventController implements Observer {
     private HashMap<Class<? extends AbstractViewEvent>, ArrayList<ViewEventsListenerInterface>> viewEventsListenerMap;
-    private ArrayList<ModelEventsListenerInterface> modelEventsListenerMap;
+    //private ArrayList<ModelEventsListenerInterface> modelEventsListenerMap;
+
+    private ArrayList<AbstractClientHandler> virtualViews;
 
     private static final Logger LOGGER = Logger.getLogger(EventController.class.getName());
 
@@ -47,14 +48,10 @@ public class EventController implements Observer {
 
     @Override
     public void update(AbstractModelEvent event) {
-        if (modelEventsListenerMap == null) return;
+        if (virtualViews == null) return;
 
-        modelEventsListenerMap.forEach(listener -> {
-                    try {
-                        event.handle(listener);
-                    } catch (HandlerNotImplementedException e) {
-                        LOGGER.log(Level.SEVERE, e.toString(), e);
-                    }
+        virtualViews.forEach(virtualView -> {
+            virtualView.send(event);
                 }
         );
     }
@@ -65,19 +62,18 @@ public class EventController implements Observer {
         if (listeners != null) {
             listeners.add(value);
         } else {
-            listeners = new ArrayList<ViewEventsListenerInterface>();
+            listeners = new ArrayList<>();
             listeners.add(value);
             viewEventsListenerMap.put(key, listeners);
         }
     }
 
-    public void addModelEventsListener(ModelEventsListenerInterface listener) {
-        if (modelEventsListenerMap != null) {
-            modelEventsListenerMap.add(listener);
-        } else {
-            modelEventsListenerMap = new ArrayList<>();
-            modelEventsListenerMap.add(listener);
+    public void addVirtualView(AbstractClientHandler virtualView) {
+        if (virtualViews == null) {
+            virtualViews = new ArrayList<>();
         }
+        if (!virtualViews.contains(virtualView))
+            virtualViews.add(virtualView);
     }
 
     public void removeViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) throws ListenerNotFoundException {
@@ -85,7 +81,7 @@ public class EventController implements Observer {
         if (!listeners.remove(value)) throw new ListenerNotFoundException();
     }
 
-    public void removeModelEventsListener(EventListenerInterface listener) {
-        modelEventsListenerMap.remove(listener);
+    public void removeVirtualView(AbstractClientHandler virtualView) {
+        virtualViews.remove(virtualView);
     }
 }

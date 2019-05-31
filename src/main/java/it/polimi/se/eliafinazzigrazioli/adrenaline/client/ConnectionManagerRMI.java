@@ -18,23 +18,21 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
 
     private ServerRemoteRMI serverRemoteRMI;
 
-    private String playerName;
-
-    public ConnectionManagerRMI(RemoteView view) throws RemoteException, NotBoundException {
-        super(view);
+    public ConnectionManagerRMI(Client client) throws RemoteException, NotBoundException {
+        super(client);
 
         registry = LocateRegistry.getRegistry();
         serverRemoteRMI = (ServerRemoteRMI) registry.lookup("//localhost/ClientHandlerRMI");
-        clientID = serverRemoteRMI.getClientID();
 
-        LOGGER.info("ClientHandlerRMI: Lookup succesfully executed.");
-
+        LOGGER.info("ClientHandlerRMI: Lookup successfully executed.");
 
         //TODO just for debugging purpose
         Scanner input = new Scanner(System.in);
         System.out.println("Tell me which port for RMI: ");
         int port = input.nextInt();
         UnicastRemoteObject.exportObject(this, port);
+
+        performRegistration();
     }
 
     // AbstractConnectionManager
@@ -54,19 +52,32 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
     }
 
     @Override
-    public String getPlayerName() {
-        return playerName;
+    public void performRegistration() {
+        LOGGER.info("Trying to sign up.");
+
+        try {
+            client.setClientID(serverRemoteRMI.askNewClientId());
+            serverRemoteRMI.addClientRMI(this);
+            LOGGER.info("Registration successfully executed. ClientId:\t" + client.getClientID());
+        } catch (RemoteException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+        }
     }
 
-    public void addClient() throws RemoteException {
-        serverRemoteRMI.addClientRMI(this);
+    @Override
+    public String getPlayerName() {
+        return client.getPlayerName();
     }
 
     @Override
     public int getClientID() {
-        return clientID;
+        return client.getClientID();
     }
 
+    @Override
+    public void setClientID(int clientID) throws RemoteException {
+        client.setClientID(clientID);
+    }
 
     @Override
     public void receive(AbstractModelEvent event) throws RemoteException {

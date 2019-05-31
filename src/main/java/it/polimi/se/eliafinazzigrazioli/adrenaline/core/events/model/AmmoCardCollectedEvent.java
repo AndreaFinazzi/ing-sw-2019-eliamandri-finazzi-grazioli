@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 
 import java.util.List;
 
@@ -11,10 +12,16 @@ public class AmmoCardCollectedEvent extends AbstractModelEvent {
     private Ammo powerUpCollectedEquivalentAmmo;
     private List<Ammo> ammosCollected;
 
-    public AmmoCardCollectedEvent(String player, String powerUpCollected, Ammo powerUpCollectedEquivalentAmmo, List<Ammo> ammosCollected) {
+    public AmmoCardCollectedEvent(String player, PowerUpCard powerUpCard, List<Ammo> ammosCollected) {
         super(player);
-        this.powerUpCollected = powerUpCollected;
-        this.powerUpCollectedEquivalentAmmo = powerUpCollectedEquivalentAmmo;
+        if (powerUpCard != null) {
+            this.powerUpCollected = powerUpCard.getPowerUpType();
+            this.powerUpCollectedEquivalentAmmo = powerUpCard.getEquivalentAmmo();
+        }
+        else {
+            this.powerUpCollected = null;
+            this.powerUpCollectedEquivalentAmmo = null;
+        }
         this.ammosCollected = ammosCollected;
     }
 

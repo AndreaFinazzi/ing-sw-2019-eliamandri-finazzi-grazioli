@@ -11,5 +11,7 @@ public interface ClientRemoteRMI extends Remote {
 
     int getClientID() throws RemoteException;
 
+    void setClientID(int clientID) throws RemoteException;
+
     void receive(AbstractModelEvent event) throws RemoteException;
 }

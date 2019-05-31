@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundBoardException;
@@ -139,31 +141,55 @@ public class GameBoard {
 
     public void movePlayer(Player player, BoardSquare destination) {
         playerPositions.put(player, destination);
-        player.setPosition(destination);
     }
 
-    public PlayerMovementEvent playerMovement(Player player, List<Coordinates> coordinatesPath) throws MovementNotAllowedException {
-        if (player.getPlayerBoard().getNumberOfMovementsAllowed() < coordinatesPath.size()) {
-            throw new MovementNotAllowedException("MovementNotAllowedException: number of steps exceeds allowed movements");
-            //TODO define appropriate message for the exception
-        }
-        List<BoardSquare> boardSquaresPath = new ArrayList<>();
-        BoardSquare playerPostion = getPlayerPosition(player);
-        coordinatesPath.forEach(coordinates -> {
-            boardSquaresPath.add(getBoardSquareByCoordinates(coordinates));
-        });
-        for (BoardSquare boardSquare : boardSquaresPath) {
-            if (!getOneStepReachableSquares(playerPostion).contains(boardSquare))
-                throw new MovementNotAllowedException("MovementNotAllowedExeption: provided path is not valid");
-            //TODO define appropriate message for the exception
-            playerPostion = boardSquare;
-        }
-        movePlayer(player, playerPostion);
 
+    /**
+     * Method called by match to perform player movement
+     * @param player
+     * @param coordinatesPath
+     * @return
+     */
+
+    public PlayerMovementEvent playerMovement(Player player, List<Coordinates> coordinatesPath) {
+        List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(coordinatesPath);
+        movePlayer(player, boardSquaresPath.get(boardSquaresPath.size()-1));
         return new PlayerMovementEvent(player.getPlayerNickname(), coordinatesPath);
     }
 
-    public List<BoardSquare> getRoomSquares(Room room) {
+    /**
+     * Returns true if a valid path is given. A valid path is to be considered a list of squares where
+     * the first element is adjacent(squares with a wall in the middle are not considered adjacent) to the current player
+     * position and every other element is adjacent to the previous one.
+     * @param player : The player who should perform the movement along given path.
+     * @param path : List of boardSquares. Not null value is required
+     * @param maxMoves
+     * @return
+     */
+    public boolean pathIsValid(Player player, List<Coordinates> path, int maxMoves){
+        if (maxMoves > path.size())
+            return false;
+        if (path.size() == 0)
+            return true;
+        List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(path);
+        BoardSquare playerPosition = getPlayerPosition(player);
+        for (BoardSquare boardSquare:boardSquaresPath){
+            if (!getOneStepReachableSquares(playerPosition).contains(boardSquare))
+                return false;
+            playerPosition = boardSquare;
+        }
+        return true;
+    }
+
+    private List<BoardSquare> coordinatesToBoardSquares(List<Coordinates> coordinatesList) {
+        List<BoardSquare> boardSquares = new ArrayList<>();
+        coordinatesList.forEach(coordinates -> {
+            boardSquares.add(getBoardSquareByCoordinates(coordinates));
+        });
+        return boardSquares;
+    }
+
+    public List<BoardSquare> getRoomSquares(Room room){
         List<BoardSquare> roomSquares = new ArrayList<BoardSquare>();
         for (int i = 0; i < x_max; i++) {
             for (int j = 0; j < y_max; j++) {
@@ -271,7 +297,6 @@ public class GameBoard {
         return new ArrayList<>(belowMaxDistanceSquares);
 
     }
-
     public List<Player> getPlayersByDistance(BoardSquare referenceSquare, int maxDistance, int minDistance) throws Exception { //TODO define exception type
         return convertSquaresIntoPlayers(getSquaresByDistance(referenceSquare, maxDistance, minDistance));
     }
@@ -307,8 +332,8 @@ public class GameBoard {
                         squaresByDirection.add(squaresMatrix[i][y]);
                 }
                 break;
-            case OVEST:
-                for (int i = x - 1; i >= 0; i--) {
+            case WEST:
+                for (int i = x-1; i >= 0; i--){
                     if (squaresMatrix[i][y] != null)
                         squaresByDirection.add(squaresMatrix[i][y]);
                 }

@@ -7,9 +7,10 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface ServerRemoteRMI extends Remote {
+
     void receive(AbstractViewEvent event) throws RemoteException;
 
-    int getClientID() throws RemoteException;
+    int askNewClientId() throws RemoteException;
 
     void addClientRMI(ClientRemoteRMI clientRMI) throws RemoteException;
 }

@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractMod
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface Observable {
     ArrayList<Observer> observers = new ArrayList<>();
@@ -30,6 +31,13 @@ public interface Observable {
                 observer.update(event);
             }
         }
+    }
+
+    default void notifyObservers(List<AbstractModelEvent> eventsList) {
+        for (AbstractModelEvent event: eventsList)
+            for (Observer observer : observers) {
+                observer.update(event);
+            }
     }
 
 }

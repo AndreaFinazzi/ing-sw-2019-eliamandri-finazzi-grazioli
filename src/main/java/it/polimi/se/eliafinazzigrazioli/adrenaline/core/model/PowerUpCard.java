@@ -2,16 +2,22 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 public class PowerUpCard {
 
+    private final String powerUpType;
     private final Ammo equivalentAmmo;
     private PowerUpEffect effect;
 
-    public PowerUpCard(Ammo equivalentAmmo, PowerUpEffect effect) {
+    public PowerUpCard(String powerUpType, Ammo equivalentAmmo, PowerUpEffect effect) {
+        this.powerUpType = powerUpType;
         this.equivalentAmmo = equivalentAmmo;
         this.effect = effect;
     }
 
     public Ammo getEquivalentAmmo() {
         return equivalentAmmo;
+    }
+
+    public String getPowerUpType() {
+        return powerUpType;
     }
 
     public void activate() {

@@ -1,5 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.WeaponCollectSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
@@ -16,6 +19,33 @@ public class SpawnBoardSquare extends BoardSquare {
         super(room, coordinates, north, south, east, west);
     }
 
+
+    /**
+     * For the spawn square the item collected depends on the choice of the user so the execution of the method consists
+     * of the generation of an event containing the names of the selectable cards.
+     * @param player
+     * @param deck
+     * @return
+     */
+    @Override
+    public AbstractModelEvent collect(Player player, PowerUpsDeck deck) {
+        return new WeaponCollectSelectionRequestEvent(player.getPlayerNickname());
+    }
+
+    /**
+     * Returns true the player owns enough ammos to buy at least one of the weaponCards in the slots.
+     * @param player
+     * @return
+     */
+    @Override
+    public boolean collectActionIsValid(Player player) {
+        for (WeaponCard weaponCard: weaponSlots){
+            if (player.canSpend(weaponCard.getLoader())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public ArrayList<WeaponCard> getWeapons() {
         return weaponSlots;
@@ -53,6 +83,11 @@ public class SpawnBoardSquare extends BoardSquare {
                     spawnBS.getWest().equals(this.getWest());
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override

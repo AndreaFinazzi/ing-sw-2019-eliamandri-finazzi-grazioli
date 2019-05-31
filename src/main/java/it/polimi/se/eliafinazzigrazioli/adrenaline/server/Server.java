@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 // Server main class
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ConnectionResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
@@ -27,7 +28,7 @@ public class Server {
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     private ServerSocketManager serverSocketManager;
-    private HashMap<String, MatchBuilder> playerToMatchMap;
+    private HashMap<AbstractClientHandler, MatchBuilder> playerToMatchMap;
 
     // Match-threads pool
     private ExecutorService matchesExecutor = Executors.newCachedThreadPool();
@@ -41,6 +42,7 @@ public class Server {
     private Registry registry;
     private Timer timer;
     private int currentClientID;
+    private boolean online;
 
     private Server() {
         LOGGER.info("Creating Server"); //TODO move to messages
@@ -70,22 +72,42 @@ public class Server {
         networkExecutor.execute(new ServerRMIManager(this));
     }
 
-    private void mapPlayerToMatch(String player, MatchBuilder matchController) {
-        playerToMatchMap.put(player, matchController);
+    private void mapPlayerToMatch(AbstractClientHandler clientHandler, MatchBuilder matchController) {
+        playerToMatchMap.put(clientHandler, matchController);
     }
 
     //TODO It may not be the best choice to block Server...
-    public synchronized void addPlayer(String player) throws MaxPlayerException, PlayerAlreadyPresentException {
+    public synchronized void addPlayer(String player, AbstractClientHandler clientHandler) throws MaxPlayerException, PlayerAlreadyPresentException {
         stopTimer();
 
         nextMatch.getMatchController().addPlayer(player);
-        mapPlayerToMatch(player, nextMatch);
+        mapPlayerToMatch(clientHandler, nextMatch);
 
         if (nextMatch.getMatchController().isFull()) {
             startNextMatch();
         } else if (nextMatch.getMatchController().isReady()) {
             startTimer();
         }
+    }
+
+    public synchronized void addPlayer(AbstractClientHandler clientHandler) {
+        stopTimer();
+
+        nextMatch.getMatchController().addPlayer(clientHandler);
+        clientHandler.setEventsQueue(nextMatch.getEventsQueue());
+
+        mapPlayerToMatch(clientHandler, nextMatch);
+        clientHandler.send(new ConnectionResponseEvent("Username required."));
+    }
+
+    public synchronized void addPlayer(int clientID, AbstractClientHandler clientHandler) {
+        stopTimer();
+
+        nextMatch.getMatchController().addPlayer(clientHandler);
+        clientHandler.setEventsQueue(nextMatch.getEventsQueue());
+
+        mapPlayerToMatch(clientHandler, nextMatch);
+        clientHandler.send(clientID, new ConnectionResponseEvent("Username required."));
     }
 
     private synchronized void startNextMatch() {
@@ -152,5 +174,13 @@ public class Server {
         } finally {
             //TODO do something to properly control Server shutdown
         }
+    }
+
+    public boolean isUp() {
+        return online;
+    }
+
+    public void setUp(boolean online) {
+        this.online = online;
     }
 }

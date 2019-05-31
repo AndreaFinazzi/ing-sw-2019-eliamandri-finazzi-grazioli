@@ -5,8 +5,15 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public class LoginRequestEvent extends AbstractViewEvent {
 
-    public LoginRequestEvent(String player) {
+    int sourceClientID;
+
+    public LoginRequestEvent(int clientID, String player) {
         super(player);
+        this.sourceClientID = clientID;
+    }
+
+    public int getSourceClientID() {
+        return sourceClientID;
     }
 
     @Override

@@ -1,7 +1,10 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LoginResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
@@ -9,6 +12,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Match;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MatchPhase;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.AbstractClientHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +20,7 @@ import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
-public class MatchController implements EventListenerInterface, Runnable {
+public class MatchController implements ViewEventsListenerInterface {
 
     private static final Logger LOGGER = Logger.getLogger(MatchController.class.getName());
 
@@ -35,6 +39,8 @@ public class MatchController implements EventListenerInterface, Runnable {
         eventController = new EventController(this);
         playerController = new PlayerController(eventController, this);
         cardController = new CardController(eventController, this);
+
+        eventController.addViewEventsListener(LoginRequestEvent.class, this);
 
         match.addObserver(eventController);
     }
@@ -57,6 +63,10 @@ public class MatchController implements EventListenerInterface, Runnable {
 
     public void addPlayer(String player) throws MaxPlayerException, PlayerAlreadyPresentException {
         match.addPlayer(player);
+    }
+
+    public void addPlayer(AbstractClientHandler clientHandler) {
+        eventController.addVirtualView(clientHandler);
     }
 
     public void removePlayer(String nickname) {
@@ -120,18 +130,24 @@ public class MatchController implements EventListenerInterface, Runnable {
 
 
     @Override
-    public void run() {
-        AbstractViewEvent nextEvent;
-        try {
-            while (!match.isEnded()) {
-                nextEvent = eventsQueue.take();
-                eventController.update(nextEvent);
-            }
-        } catch (InterruptedException e) {
-            //TODO handle
-        } finally {
+    public void handleEvent(LoginRequestEvent event) throws HandlerNotImplementedException {
+        LoginResponseEvent responseEvent = new LoginResponseEvent(event.getSourceClientID());
+        ;
 
+        try {
+            addPlayer(event.getPlayer());
+            responseEvent.setSuccess(true);
+            responseEvent.setMessage("Welcome to Adrenaline, " + event.getPlayer());
+
+        } catch (MaxPlayerException e) {
+            responseEvent.setSuccess(false);
+            responseEvent.setMessage("MaxPlayerException thrown");
+
+        } catch (PlayerAlreadyPresentException e) {
+            responseEvent.setSuccess(false);
+            responseEvent.setMessage("Username already in game, try with a different nick!");
         }
+        eventController.update(responseEvent);
     }
 }
 

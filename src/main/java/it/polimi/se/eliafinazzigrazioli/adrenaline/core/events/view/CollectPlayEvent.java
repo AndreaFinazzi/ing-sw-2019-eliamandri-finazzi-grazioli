@@ -1,12 +1,21 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+
+import java.util.List;
 
 public class CollectPlayEvent extends AbstractViewEvent {
 
+    private List<Coordinates> path;
 
-    public CollectPlayEvent(String player) {
+    public CollectPlayEvent(String player, List<Coordinates> path) {
         super(player);
+        this.path = path;
+    }
+
+    public List<Coordinates> getPath() {
+        return path;
     }
 
     @Override

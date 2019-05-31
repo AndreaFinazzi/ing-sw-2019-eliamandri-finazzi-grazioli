@@ -14,6 +14,19 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
 //    void showPlayerSelection();
 
+    @Override
+    default void handleEvent(LoginResponseEvent event) throws HandlerNotImplementedException {
+        System.out.println(event.getMessage());
+        if (!event.isSuccessful()) {
+            login();
+        }
+    }
+
+    @Override
+    default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
+
+    }
+
     //TODO to implement
     @Override
     default void handleEvent(AllowedMovesEvent event) throws HandlerNotImplementedException {
@@ -39,6 +52,17 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     default void handleEvent(CardDrawedEvent event) throws HandlerNotImplementedException {
 
         throw new HandlerNotImplementedException();
+    }
+
+    @Override
+    default void handleEvent(CardReloadedEvent event) throws HandlerNotImplementedException {
+
+    }
+
+    @Override
+    default void handleEvent(ConnectionResponseEvent event) throws HandlerNotImplementedException {
+        System.out.println(event.getMessage());
+        login();
     }
 
     //TODO to implement
@@ -139,7 +163,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
 
     default void notifyLoginRequestEvent(String nickname) {
-        notifyObservers(new LoginRequestEvent(nickname));
+        notifyObservers(new LoginRequestEvent(getClientID(), nickname));
     }
 
     void showBeginTurn(BeginTurnEvent event);

@@ -19,8 +19,8 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
     private ObjectOutputStream sender;
     private ObjectInputStream receiver;
 
-    public ConnectionManagerSocket(RemoteView view) {
-        super(view);
+    public ConnectionManagerSocket(Client client) {
+        super(client);
         try {
             clientSocket = new Socket(IP_SERVER, PORT_SEVER);
             sender = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -59,11 +59,16 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
         }).start();
     }
 
+    @Override
+    public void performRegistration() {
+
+    }
+
     public void closeConnection() {
         try {
             clientSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 }

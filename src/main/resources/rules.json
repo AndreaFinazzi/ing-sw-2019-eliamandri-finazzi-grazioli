@@ -7,7 +7,6 @@
         "max_damage": 12,
         "max_marks": 12,
         "dead_shoot": 11,
-        "first_shoot": 1,
         "max_ammo": 3,
         "death_scores": [
           8,
@@ -31,6 +30,24 @@
         "x_max": 4,
         "y_max": 3
       }
+    },
+    "turn" : {
+      "max_moves_simple" : 3,
+      "max_moves_collecting" : 1,
+      "max_moves_shooting" : 0
+    },
+    "movement_adrenalinic_action" : {
+      "moves_surplus" : 0,
+      "min_damages" : 1000
+    },
+    "shooting_adrenalinic_action" : {
+      "moves_surplus" : 1,
+      "min_damages" : 6
+    },
+    "collection_adrenalinic_action" : {
+      "moves_surplus" : 1,
+      "min_damages" : 3
     }
+
   }
 }

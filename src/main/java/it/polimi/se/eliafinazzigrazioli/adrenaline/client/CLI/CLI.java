@@ -30,6 +30,7 @@ public class CLI implements RemoteView {
 
     public CLI() {
         input = new Scanner(System.in);
+        this.clientID = clientID;
     }
 
     public void login() {
@@ -97,5 +98,14 @@ public class CLI implements RemoteView {
     @Override
     public void run() {
 
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
+
+    @Override
+    public int getClientID() {
+        return clientID;
     }
 }

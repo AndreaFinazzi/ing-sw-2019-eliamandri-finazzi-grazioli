@@ -4,5 +4,5 @@ public enum CardinalDirection {
     NORTH,
     SOUTH,
     EAST,
-    OVEST
+    WEST
 }

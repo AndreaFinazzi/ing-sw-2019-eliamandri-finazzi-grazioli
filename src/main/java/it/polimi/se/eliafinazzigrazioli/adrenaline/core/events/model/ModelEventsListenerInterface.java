@@ -5,6 +5,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public interface ModelEventsListenerInterface extends EventListenerInterface {
 
+    int getClientID();
+
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
@@ -25,6 +27,14 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(CardReloadedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    default void handleEvent(ConnectionResponseEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
     default void handleEvent(ConnectionTimeoutEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
@@ -34,6 +44,10 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     }
 
     default void handleEvent(FinalFrenzyBeginEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    default void handleEvent(LoginResponseEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 
@@ -80,5 +94,4 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     default void handleEvent(WeaponCollectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
 }

@@ -9,32 +9,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerBoard {
+
+
     private int skulls;
-    private boolean firstBlood;
     private boolean death;
     private boolean overkill;
     private ArrayList<DamageMark> damages;
     private ArrayList<DamageMark> marks;
     private ArrayList<Ammo> ammos;
     private ArrayList<Integer> deathScores;
-    private int numberOfMovementsAllowed;
-    private int adrenalinicMovementSurplus;
+    int movementsAllowed;
+    int movementsBeforeCollectingAllowed;
+    int movementsBeforeShootingAllowed;
+
 
     public PlayerBoard() {
         this.damages = new ArrayList<>();
         this.marks = new ArrayList<>();
         this.ammos = new ArrayList<>();
         deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
-        numberOfMovementsAllowed = 3;
+        movementsAllowed = Rules.MAX_MOVEMENTS;
+        movementsBeforeCollectingAllowed = Rules.MAX_MOVEMENTS_BEFORE_COLLECTION;
+        movementsBeforeShootingAllowed = Rules.MAX_MOVEMENTS_BEFORE_SHOOTING;
     }
 
     public void addDamage(DamageMark damage) throws OutOfBoundException {
         if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
             throw new OutOfBoundException(Messages.MESSAGE_EXCEPTIONS_GAME_PLAYER_DAMAGES_OUT_OF_BOUND);
         damages.add(damage);
-        if (damages.size() == Rules.PLAYER_BOARD_FIRST_SHOOT)
-            firstBlood = true;
-        else if (damages.size() == Rules.PLAYER_BOARD_DEAD_SHOOT)
+        if (damages.size() == Rules.PLAYER_BOARD_DEAD_SHOOT)
             death = true;
         else if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
             overkill = true;
@@ -43,9 +46,36 @@ public class PlayerBoard {
     public void addMark(DamageMark mark) throws OutOfBoundException {
         if (marks.size() == Rules.PLAYER_BOARD_MAX_MARKS || numMarkType(mark) >= Rules.PLAYER_BOARD_MAX_MARKS_PER_TYPE)
             throw new OutOfBoundException(Messages.MESSAGE_EXCEPTIONS_GAME_PLAYER_MARKS_OUT_OF_BOUND);
-
         marks.add(mark);
     }
+
+    /**
+     * Methods to obtain movement parameters
+     *
+     */
+
+    public int simpleMovementMaxMoves() {
+        int max_movements = Rules.MAX_MOVEMENTS;
+        if (damages.size() >= Rules.MOVEMENT_ADRENALINIC_ACTION_MIN_DAMAGE)
+            max_movements += Rules.MOVEMENT_ADRENALINIC_ACTION_MOVES_SURPLUS;
+        return max_movements;
+    }
+
+    public int preCollectionMaxMoves() {
+        int max_movements = Rules.MAX_MOVEMENTS_BEFORE_COLLECTION;
+        if (damages.size() >= Rules.COLLECTING_ADRENALINIC_ACTION_MIN_DAMAGE)
+            max_movements += Rules.COLLECTING_ADRENALINIC_ACTION_MOVES_SURPLUS;
+        return max_movements;
+    }
+
+    public int preShootingMaxMoves() {
+        int max_movements = Rules.MAX_MOVEMENTS_BEFORE_SHOOTING;
+        if (damages.size() >= Rules.SHOOTING_ADRENALINIC_ACTION_MIN_DAMAGE)
+            max_movements += Rules.SHOOTING_ADRENALINIC_ACTION_MOVES_SURPLUS;
+        return max_movements;
+    }
+
+
 
     public int numMarkType(DamageMark type) {
         int cont = 0;
@@ -63,7 +93,6 @@ public class PlayerBoard {
     public void cleanPlayerBoard() {
         damages.clear();
         death = false;
-        firstBlood = false;
         overkill = false;
         skulls = 0;
     }
@@ -83,6 +112,8 @@ public class PlayerBoard {
             marks.clear();
     }
 
+    // Ammo exchange methods
+
     public void spendAmmo(List<Ammo> toSpend) throws AmmoNotAvailableException {
         if (!ammos.containsAll(toSpend))
             throw new AmmoNotAvailableException();
@@ -91,21 +122,27 @@ public class PlayerBoard {
         }
     }
 
-    public void addAmmo(List<Ammo> toAdd) {
-        for (Ammo tempAmmo : toAdd) {
-            if (numAmmoType(tempAmmo) < Rules.PLAYER_BOARD_MAX_AMMO)
-                ammos.add(tempAmmo);
-        }
+    public void addAmmos(List<Ammo> toAdd) {
+        for (Ammo tempAmmo : toAdd)
+            addAmmo(tempAmmo);
     }
 
-    public int getNumberOfMovementsAllowed() {
-        int numberOfMovements = numberOfMovementsAllowed;
-        //TODO define logic for adrenalinic movement
-        return numberOfMovements;
+    public void addAmmo(Ammo ammo){
+        if (numAmmoType(ammo) < Rules.PLAYER_BOARD_MAX_AMMO)
+            ammos.add(ammo);
     }
 
     public ArrayList<Ammo> getAmmos() {
         return ammos;
+    }
+
+    public int numAmmoType(Ammo ammo) {
+        int cont = 0;
+        for (Ammo tempAmmo : ammos) {
+            if (tempAmmo.equals(ammo))
+                cont++;
+        }
+        return cont;
     }
 
     public int getSkulls() {
@@ -122,19 +159,6 @@ public class PlayerBoard {
         return damages;
     }
 
-    public int numAmmoType(Ammo ammo) {
-        int cont = 0;
-        for (Ammo tempAmmo : ammos) {
-            if (tempAmmo.equals(ammo))
-                cont++;
-        }
-        return cont;
-    }
-
-    public boolean isFirstBlood() {
-        return firstBlood;
-    }
-
     public boolean isDeath() {
         return death;
     }
@@ -147,12 +171,10 @@ public class PlayerBoard {
     public String toString() {
         return "PlayerBoard{" +
                 "skulls=" + skulls +
-                ", firstBlood=" + firstBlood +
                 ", death=" + death +
                 ", overkill=" + overkill +
-                ", numberOfMovementsAllowed=" + numberOfMovementsAllowed +
-                ", adrenalinicMovementSurplus=" + adrenalinicMovementSurplus +
-                ", deathScore= " + deathScores.get(0) +
+                ", movementsAllowed=" + movementsAllowed +
+                ", deathScore= " +deathScores.get (0) +
                 '}';
     }
 }

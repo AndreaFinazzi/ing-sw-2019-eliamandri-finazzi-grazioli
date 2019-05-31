@@ -14,6 +14,10 @@ import java.util.logging.Logger;
 public class Client {
     private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 
+
+    private int clientID;
+    private String playerName;
+
     private AbstractConnectionManager connectionManager;
     private RemoteView view;
 
@@ -36,7 +40,25 @@ public class Client {
         this.connectionManager = connectionManager;
     }
 
+    public int getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
     public void init() {
+        view.addObserver(connectionManager);
+
         connectionManager.listen();
         new Thread(view).start();
     }
@@ -56,11 +78,11 @@ public class Client {
 
         System.out.println("to RMI or not to RMI? [Y/n]");
         command = input.nextLine();
-        if (command == "n" || command == "no" || command == "not") {
-            client.setConnectionManager(new ConnectionManagerSocket(client.getView()));
+        if (command.equals("n") || command.equals("no") || command.equals("not")) {
+            client.setConnectionManager(new ConnectionManagerSocket(client));
         } else {
             try {
-                client.setConnectionManager(new ConnectionManagerRMI(client.getView()));
+                client.setConnectionManager(new ConnectionManagerRMI(client));
             } catch (RemoteException e) {
                 LOGGER.log(Level.SEVERE, e.toString(), e);
             } catch (NotBoundException e) {
@@ -68,7 +90,7 @@ public class Client {
             }
         }
 
-        client.connectionManager.listen();
-        client.getView().login();
+        client.init();
     }
+
 }

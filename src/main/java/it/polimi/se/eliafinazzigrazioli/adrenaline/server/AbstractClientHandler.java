@@ -1,21 +1,24 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.GenericEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
-public abstract class AbstractClientHandler implements Runnable, ModelEventsListenerInterface {
+public abstract class AbstractClientHandler implements Runnable {
     protected Server server;
     protected static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
     protected AbstractViewEvent nextReceivedEvent;
 
     private BlockingQueue<AbstractViewEvent> eventsQueue;
+
+    public abstract void send(AbstractModelEvent event);
+
+    public abstract void send(int clientID, AbstractModelEvent event);
+
+    public abstract void send(String player, AbstractModelEvent event);
 
     // register starting match
     public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
@@ -23,7 +26,9 @@ public abstract class AbstractClientHandler implements Runnable, ModelEventsList
 //        eventController.addModelEventsListener(this);
     }
 
-    abstract void send(AbstractEvent event);
+    protected void signPlayerToNextMatch(AbstractClientHandler clientHandler) {
+        server.addPlayer(clientHandler);
+    }
 
     protected void received(AbstractViewEvent event) {
         if (!eventsQueue.offer(event)) {
@@ -40,24 +45,7 @@ public abstract class AbstractClientHandler implements Runnable, ModelEventsList
     //TODO: add message constants to dedicated class
     @Override
     public void run() {
-        LOGGER.info("Client initialized: waiting for player's nickname");
-
+        LOGGER.info("ClientHandler initialized");
         setup();
-
-//        // SAMPLE, changeit!
-//        //TODO check if correct
-//        LOGGER.info(nextReceivedEvent.getMessage());
-//        view.notifyObservers(nextReceivedEvent);
-//        if (nextReceivedEvent.getMessage().equals("tony"))
-//            send(new GenericEvent(null, "test tony "));
-//        else
-//            send(new GenericEvent(null, "test finazzi"));
-        //server.addPlayer(nextReceivedEvent.getMessage());
-    }
-
-    @Override
-    public void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
-        send(event);
-
     }
 }

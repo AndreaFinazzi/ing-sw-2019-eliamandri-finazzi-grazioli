@@ -38,6 +38,17 @@ public class Player implements Selectable {
         powerUps = new ArrayList<>();
     }
 
+
+    public Player(String playerNickname, DamageMark damageMarkDelivered) {
+        this.playerNickname = playerNickname;
+        this.damageMarkDelivered = damageMarkDelivered;
+        weapons = new ArrayList<>();
+        powerUps = new ArrayList<>();
+    }
+
+
+
+
     @Override
     public List<Selectable> getVisible(SelectableType selType, boolean notVisible, GameBoard gameBoard) {
         return position.getVisible(selType, notVisible, gameBoard);
@@ -90,10 +101,46 @@ public class Player implements Selectable {
     }
 
     //TODO define type excpetion
-    public void addPowerUp(PowerUpCard powerUpCard) throws Exception {
-        if (powerUps.size() == Rules.PLAYER_CARDS_MAX_POWER_UPS)
-            throw new Exception();
-        powerUps.add(powerUpCard);
+    public void addPowerUp(PowerUpCard powerUpCard) {
+        if (powerUps.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && powerUpCard != null)
+            powerUps.add(powerUpCard);
+    }
+
+    public void addAmmos(List<Ammo> ammoList){
+        playerBoard.addAmmos(ammoList);
+    }
+
+    /**
+     * Given a color of the ammos returns the sum of the ammos and equivalent powerUps of that color.
+     * @param ammoType
+     * @return
+     */
+    public int ammosNum(Ammo ammoType){
+        int numOfAmmos = playerBoard.numAmmoType(ammoType);
+        for (PowerUpCard powerUpCard: powerUps) {
+            if (powerUpCard.getEquivalentAmmo().equals(ammoType))
+                numOfAmmos++;
+        }
+        return numOfAmmos;
+    }
+
+    /**
+     * Returns true only if the player can somehow (with ammos or with powerUps) pay the given price.
+     * @param price
+     * @return
+     */
+    public boolean canSpend(List<Ammo> price){
+        for (Ammo ammoType: Ammo.values()){
+            int ammosNum = 0;
+            for (Ammo ammoToSpend: price){
+                if (ammoType.equals(ammoToSpend))
+                    ammosNum++;
+            }
+            if (ammosNum > ammosNum(ammoType)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public WeaponCard getWeaponByName(String weaponName) {
@@ -188,6 +235,11 @@ public class Player implements Selectable {
             return player.getPlayerNickname().equals(this.playerNickname);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public AbstractModelEvent createBeginTurnEvent() {

@@ -1,7 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ConnectionResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
@@ -19,28 +20,46 @@ public class ClientHandlerSocket extends AbstractClientHandler implements Observ
     private ObjectInputStream receiver;
     private Server server;
 
+    private String playerName;
+    private int clientId;
+
     private static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
 
 
     public ClientHandlerSocket(Server server, Socket socket) {
         this.server = server;
         this.socket = socket;
+        clientId = server.getCurrentClientID();
         try {
             sender = new ObjectOutputStream(socket.getOutputStream());
             receiver = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
+
+        send(new ConnectionResponseEvent(clientId, "Welcome message"));
     }
 
     @Override
-    void send(AbstractEvent event) {
+    public void send(AbstractModelEvent event) {
         try {
             sender.writeObject(event);
             sender.flush();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
+    }
+
+    @Override
+    public void send(int clientID, AbstractModelEvent event) {
+        if (clientID == this.clientId) {
+            send(event);
+        }
+    }
+
+    @Override
+    public void send(String player, AbstractModelEvent event) {
+
     }
 
     @Override

@@ -32,15 +32,15 @@ public class ServerSocketManager implements Runnable {
         }
         LOGGER.log(Level.INFO, "Server Socket is ready");
 
-        while (true) {
-            try {
-                LOGGER.log(Level.INFO, "Waiting a connection");
+        try {
+            while (server.isUp()) {
+                LOGGER.log(Level.INFO, "Waiting a connection...");
                 Socket socket = serverSocket.accept();
+                LOGGER.log(Level.INFO, "New client connected.");
                 executor.submit(new ClientHandlerSocket(server, socket));
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-                break;
             }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 

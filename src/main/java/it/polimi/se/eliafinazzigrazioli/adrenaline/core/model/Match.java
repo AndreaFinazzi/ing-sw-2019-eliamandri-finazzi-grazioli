@@ -1,9 +1,11 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -55,6 +57,8 @@ public class Match implements Observable {
     private MatchPhase phase;
     private Player currentPlayer;
     private Player firstPlayer;
+    private PowerUpsDeck powerUpsDeck;
+    private WeaponsDeck weaponsDeck;
     private int turn = 0;
 
     public Match() {
@@ -78,6 +82,14 @@ public class Match implements Observable {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public PowerUpsDeck getPowerUpsDeck() {
+        return powerUpsDeck;
+    }
+
+    public WeaponsDeck getWeaponsDeck() {
+        return weaponsDeck;
     }
 
     public void nextCurrentPlayer() {
@@ -174,12 +186,17 @@ public class Match implements Observable {
 
     }
 
+    /**
+     * Given a a boardSquare list and a player the method performs the movement of the player along the square list notifying
+     * it or notifies the client that the provided path is not valid.
+     * @param player
+     * @param path
+     */
     public void playerMovement(Player player, List<Coordinates> path) {
-        try {
+        if (path != null && path.size() > 0)
             notifyObservers(gameBoard.playerMovement(player, path));
-        } catch (MovementNotAllowedException e) {
-            //TODO generate invalid move exception
-        }
+        else
+            notifyObservers(new NotAllowedPlayEvent(player.getPlayerNickname()));
     }
 
     /*

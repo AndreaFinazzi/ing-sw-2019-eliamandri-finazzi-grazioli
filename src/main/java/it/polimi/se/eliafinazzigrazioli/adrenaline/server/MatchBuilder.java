@@ -14,21 +14,44 @@ public class MatchBuilder implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(MatchBuilder.class.getName());
 
-    public MatchController getMatchController() {
-        return matchController;
+    private MatchController matchController;
+
+    private BlockingQueue<AbstractViewEvent> eventsQueue;
+
+    public BlockingQueue<AbstractViewEvent> getEventsQueue() {
+        return eventsQueue;
     }
 
-    private MatchController matchController;
-    private ArrayList<Integer> clients;
-    private BlockingQueue<AbstractViewEvent> eventsQueue;
+    public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
+        this.eventsQueue = eventsQueue;
+    }
+
 
     public MatchBuilder() {
         eventsQueue = new LinkedBlockingQueue<>();
         matchController = new MatchController();
-        this.clients = clients;
+        //this.clients = clients;  This line assigns clients to itself TODO correct assignment
 
+        new Thread(() -> {
+
+            AbstractViewEvent nextEvent;
+            try {
+                while (!matchController.getMatch().isEnded()) {
+                    nextEvent = eventsQueue.take();
+                    matchController.getEventController().update(nextEvent);
+                }
+            } catch (InterruptedException e) {
+                //TODO handle
+            } finally {
+
+            }
+
+        }).start();
     }
 
+    public MatchController getMatchController() {
+        return matchController;
+    }
 
     public void startMatch() {
         // Add next match EventController as an Observer of RemoteViews

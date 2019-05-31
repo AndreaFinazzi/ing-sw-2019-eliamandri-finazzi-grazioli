@@ -28,6 +28,11 @@ public class Coordinates {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "(" +
                 +xCoordinate +

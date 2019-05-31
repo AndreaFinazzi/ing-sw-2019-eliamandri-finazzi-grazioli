@@ -11,29 +11,27 @@ public abstract class AbstractConnectionManager implements Observer {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractConnectionManager.class.getName());
 
-    protected int clientID;
-    protected String playerName;
-    protected RemoteView view;
+    protected Client client;
 
-    public AbstractConnectionManager(RemoteView view) {
-        this.view = view;
-        this.playerName = playerName;
+
+    public AbstractConnectionManager(Client client) {
+        this.client = client;
+        //this.playerName = playerName; Useless assignment TODO check necessity of name in the constructor
+        client.getView().addObserver(this);
     }
 
     public abstract void send(AbstractViewEvent event);
 
     public abstract void listen();
 
+    public abstract void performRegistration();
+
     public void received(AbstractModelEvent event) {
         update(event);
     }
 
     public String getPlayerName() {
-        return playerName;
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+        return client.getPlayerName();
     }
 
     // Outgoing events
@@ -48,7 +46,7 @@ public abstract class AbstractConnectionManager implements Observer {
     public void update(AbstractModelEvent event) {
         //Visitor pattern
         try {
-            event.handle(view);
+            event.handle(client.getView());
         } catch (HandlerNotImplementedException e) {
             e.printStackTrace();
         }

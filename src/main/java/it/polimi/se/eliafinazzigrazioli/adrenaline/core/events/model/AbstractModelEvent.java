@@ -5,7 +5,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 public abstract class AbstractModelEvent extends AbstractEvent {
-    private String player;
+    protected String player;
+    protected int clientID;
 
     public AbstractModelEvent(String player) {
         super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);

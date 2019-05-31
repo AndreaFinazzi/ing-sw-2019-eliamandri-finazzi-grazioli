@@ -9,23 +9,43 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
 
 
 public class GUI extends Application implements RemoteView {
 
     String[] args;
+    Stage primaryStage;
+
+
+    private int clientID;
 
     public GUI(String[] args) {
         this.args = args;
     }
 
     @Override
+    public int getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
+
+    @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Adrenaline");
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle("Adrenaline");
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/login.fxml"));
-        BorderPane root = loader.load();
+        BorderPane root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);
@@ -52,4 +72,5 @@ public class GUI extends Application implements RemoteView {
     public void run() {
         launch(args);
     }
+
 }
