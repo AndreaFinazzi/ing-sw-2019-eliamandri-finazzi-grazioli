@@ -32,12 +32,12 @@ public class DamageActionEffectState extends ActionEffectState {
         Player toDamage;
         try {
             toDamage = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(toAffectPlayerSelectionOrder);
-        }catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             toDamage = null;
         }
-        if (toDamage != null){
+        if (toDamage != null) {
             PlayerBoard playerBoard = toDamage.getPlayerBoard();
-            for(int i=0; i<damageAmount; i++){
+            for (int i = 0; i < damageAmount; i++) {
                 try {
                     playerBoard.addDamage(currentPlayer.getDamageMarkDelivered());
                     //TODO change addDamage method's return for events like suddenDeath and 'infierire' and addition to events
@@ -45,11 +45,10 @@ public class DamageActionEffectState extends ActionEffectState {
                     //TODO held exception
                 }
             }
-            for(int i=0; i<markAmount; i++){
+            for (int i = 0; i < markAmount; i++) {
                 try {
                     playerBoard.addMark(currentPlayer.getDamageMarkDelivered());
-                }
-                catch (OutOfBoundException e) {
+                } catch (OutOfBoundException e) {
                     //TODO held exception
                 }
             }

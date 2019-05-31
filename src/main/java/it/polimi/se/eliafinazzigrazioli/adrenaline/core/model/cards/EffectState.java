@@ -13,7 +13,6 @@ public abstract class EffectState {
     private boolean isFinal = false;
 
 
-
     /**
      * Class hierarchy definition used to parse the json file.
      */
@@ -28,8 +27,6 @@ public abstract class EffectState {
             .registerSubtype(PreselectionBasedSelectorEffectState.class, "PreselectionBasedSelectorEffectState")
             .registerSubtype(MoveActionEffectState.class, "MoveActionEffectState")
             .registerSubtype(DamageActionEffectState.class, "DamageActionEffectState");
-
-
 
 
     public abstract List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer);

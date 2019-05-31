@@ -8,6 +8,6 @@ public class AmmoNotAvailableException extends Exception {
     }
 
     public AmmoNotAvailableException(String message) {
-        super (message);
+        super(message);
     }
 }

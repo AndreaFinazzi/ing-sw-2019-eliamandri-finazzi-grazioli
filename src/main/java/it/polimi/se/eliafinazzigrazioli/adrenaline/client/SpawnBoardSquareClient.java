@@ -25,7 +25,7 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
     }
 
     public void addWeapon(String weaponCard) {
-        if(weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && weaponCards.contains(weaponCard)){
+        if (weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && weaponCards.contains(weaponCard)) {
             weaponCards.add(weaponCard);
         }
     }

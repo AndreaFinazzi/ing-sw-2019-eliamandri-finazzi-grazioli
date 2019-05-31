@@ -1,7 +1,10 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.BoardSquare;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.SelectableType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.EffectState;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -24,17 +27,17 @@ public class SelectionRequestEffectState extends EffectState {
     @Override
     public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
         List<AbstractModelEvent> events = new ArrayList<>();
-        if (userSelectionRequired){
-            switch (selectionType){
+        if (userSelectionRequired) {
+            switch (selectionType) {
                 case PLAYER:
                     List<String> selectablePlayers = new ArrayList<>();
-                    for (Player player: invoker.getActiveEffect().getToSelectPlayers())
+                    for (Player player : invoker.getActiveEffect().getToSelectPlayers())
                         selectablePlayers.add(player.getPlayerNickname());
                     events.add(new SelectablePlayersEvent(currentPlayer.getPlayerNickname(), selectablePlayers, maxSelectableItems));
                     break;
                 case BOARDSQUARE:
                     List<Coordinates> selectableSquares = new ArrayList<>();
-                    for (BoardSquare boardSquare: invoker.getActiveEffect().getToSelectBoardSquares())
+                    for (BoardSquare boardSquare : invoker.getActiveEffect().getToSelectBoardSquares())
                         selectableSquares.add(gameBoard.getCoordinates(boardSquare));
                     events.add(new SelectableBoardSquaresEvent(currentPlayer.getPlayerNickname(), selectableSquares, maxSelectableItems));
                     break;
@@ -45,8 +48,7 @@ public class SelectionRequestEffectState extends EffectState {
                     events.add(new SelectDirectionEvent(currentPlayer.getPlayerNickname()));
                     break;
             }
-        }
-        else {
+        } else {
             invoker.getActiveEffect().automaticSelection();
         }
         invoker.getActiveEffect().selectionReset();

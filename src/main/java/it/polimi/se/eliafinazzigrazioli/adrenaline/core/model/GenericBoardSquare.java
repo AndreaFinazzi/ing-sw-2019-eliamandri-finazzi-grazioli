@@ -32,7 +32,7 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof GenericBoardSquare) {
-            GenericBoardSquare genericBS = (GenericBoardSquare)obj;
+            GenericBoardSquare genericBS = (GenericBoardSquare) obj;
             return genericBS.getRoom().equals(this.getRoom()) &&
                     genericBS.getCoordinates().equals(this.getCoordinates()) &&
                     genericBS.getNorth().equals(this.getNorth()) &&
@@ -46,6 +46,6 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
     @Override
     public String toString() {
         return "GenericBoardSquare { " +
-        super.toString () + "\n";
+                super.toString() + "\n";
     }
 }

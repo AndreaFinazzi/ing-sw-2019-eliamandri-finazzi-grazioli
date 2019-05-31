@@ -30,7 +30,7 @@ public class WeaponCardTest {
         List<EffectState> states = new ArrayList<>(Arrays.asList(
                 new VisibilitySelectorEffectState(true, "ehi", 1, SelectableType.PLAYER, SelectableType.PLAYER),
                 new PreselectionBasedSelectorEffectState("bla", 3, null, true),
-                new SelectionRequestEffectState(false, SelectableType.PLAYER,0)
+                new SelectionRequestEffectState(false, SelectableType.PLAYER, 0)
         ));
         RuntimeTypeAdapterFactory<EffectState> effectStateRuntimeTypeAdapterFactory = RuntimeTypeAdapterFactory.of(EffectState.class, "type")
                 .registerSubtype(SelectorEffectState.class, "SelectorEffectState")
@@ -46,7 +46,8 @@ public class WeaponCardTest {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapterFactory(effectStateRuntimeTypeAdapterFactory)
                 .create();
-        Type effectStateListType = new TypeToken<List<EffectState>>(){}.getType();
+        Type effectStateListType = new TypeToken<List<EffectState>>() {
+        }.getType();
         String json = gson.toJson(states, effectStateListType);
         System.out.println(json);
         states = gson.fromJson(json, effectStateListType);
@@ -138,7 +139,8 @@ public class WeaponCardTest {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapterFactory(effectStateRuntimeTypeAdapterFactory)
                 .create();
-        Type weaponCardType = new TypeToken<WeaponCard>(){}.getType();
+        Type weaponCardType = new TypeToken<WeaponCard>() {
+        }.getType();
         WeaponCard card = gson.fromJson(json, weaponCardType);
         System.out.println(card);
     }
@@ -147,7 +149,7 @@ public class WeaponCardTest {
     public void jsonParserTest() {
         try {
             System.out.println(WeaponCard.jsonParser("Electroscythe"));
-        } catch (WeaponFileNotFoundException e){
+        } catch (WeaponFileNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -158,7 +160,7 @@ public class WeaponCardTest {
         WeaponCard card;
         try {
             card = WeaponCard.jsonParser("LockRefile");
-        } catch (WeaponFileNotFoundException e){
+        } catch (WeaponFileNotFoundException e) {
             System.out.println(e.getMessage());
         }
 

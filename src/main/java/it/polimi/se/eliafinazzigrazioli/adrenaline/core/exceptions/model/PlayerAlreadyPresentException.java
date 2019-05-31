@@ -5,7 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 public class PlayerAlreadyPresentException extends Exception {
 
     public PlayerAlreadyPresentException(String message) {
-        super (message);
+        super(message);
     }
 
     public PlayerAlreadyPresentException() {

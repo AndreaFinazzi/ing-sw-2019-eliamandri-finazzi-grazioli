@@ -3,12 +3,11 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InRoomSelectorEffectState extends SelectorEffectState{
+public class InRoomSelectorEffectState extends SelectorEffectState {
 
     public InRoomSelectorEffectState(String referenceSource, int sourceSelectionOrder, SelectableType referenceType, SelectableType selectionType) {
         super(referenceSource, sourceSelectionOrder, selectionType, referenceType);

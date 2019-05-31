@@ -8,7 +8,7 @@ public abstract class AbstractViewEvent extends AbstractEvent {
 
     protected String player;
     protected int clientID;
-    
+
     public AbstractViewEvent(String player) {
         super(Messages.MESSAGE_EVENTS_VIEW_DEFAULT);
         this.player = player;

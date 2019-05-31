@@ -2,10 +2,8 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 // Server main class
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
@@ -13,7 +11,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,7 +27,7 @@ public class Server {
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     private ServerSocketManager serverSocketManager;
-    private HashMap<String, MatchController> playerToMatchMap;
+    private HashMap<String, MatchBuilder> playerToMatchMap;
 
     // Match-threads pool
     private ExecutorService matchesExecutor = Executors.newCachedThreadPool();
@@ -40,27 +37,27 @@ public class Server {
     // Player.username to ClientHandler
     // TODO change it to support RMI. Player.username to Client.ID
     private HashMap<String, AbstractClientHandler> playerToClientHandler;
-    private MatchController nextMatch;
+    private MatchBuilder nextMatch;
     private Registry registry;
     private Timer timer;
     private int currentClientID;
-    private HashMap<MapType, Integer> votesMaps;
 
     private Server() {
         LOGGER.info("Creating Server"); //TODO move to messages
         timer = new Timer();
         playerToMatchMap = new HashMap<>();
 
-        nextMatch = new MatchController();
+        nextMatch = new MatchBuilder();
         currentClientID = 0;
-        votesMaps = new HashMap<>();
         try {
             registry = LocateRegistry.createRegistry(1099);
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
-        for(MapType key : MapType.values())
-            votesMaps.put(key, 0);
+    }
+
+    public synchronized MatchBuilder getNextMatch() {
+        return nextMatch;
     }
 
     public void startServerSocket() {
@@ -70,10 +67,10 @@ public class Server {
 
     public void startServerRMI() {
         LOGGER.info("Starting RMI manager");
-        networkExecutor.execute(new ServerRmiManager(this));
+        networkExecutor.execute(new ServerRMIManager(this));
     }
 
-    private void mapPlayerToMatch(String player, MatchController matchController) {
+    private void mapPlayerToMatch(String player, MatchBuilder matchController) {
         playerToMatchMap.put(player, matchController);
     }
 
@@ -81,53 +78,27 @@ public class Server {
     public synchronized void addPlayer(String player) throws MaxPlayerException, PlayerAlreadyPresentException {
         stopTimer();
 
-        nextMatch.addPlayer(player);
+        nextMatch.getMatchController().addPlayer(player);
         mapPlayerToMatch(player, nextMatch);
 
-        if (nextMatch.isFull()) {
+        if (nextMatch.getMatchController().isFull()) {
             startNextMatch();
-        } else if (nextMatch.isReady()) {
-            startTimer();
-        }
-    }
-
-    public synchronized void addPlayer(String player, AbstractClientHandler clientHandler) throws MaxPlayerException, PlayerAlreadyPresentException{
-        stopTimer();
-
-        nextMatch.addPlayer(player);
-        mapPlayerToMatch(player, nextMatch);
-        playerToClientHandler.put(player, clientHandler);
-
-        if (nextMatch.isFull()) {
-            startNextMatch();
-        } else if (nextMatch.isReady()) {
+        } else if (nextMatch.getMatchController().isReady()) {
             startTimer();
         }
     }
 
     private synchronized void startNextMatch() {
         LOGGER.info("Next match initialization: start");
-        // Add next match EventController as an Observer of RemoteViews
-        // TODO bind match/queue/clientHandlers
-        ArrayList<String> nextPlayingPlayers = nextMatch.getPlayersNicknames();
-        for (String player : nextPlayingPlayers) {
-//            playerToClientHandler.get(player).bindViewToEventController(nextMatch.getEventController());
-        }
 
-        nextMatch.initMatch(chosenMap());
         //TODO: move to Messages
         LOGGER.info("Game starting");
+
         // Kick-off next game
         matchesExecutor.execute(nextMatch);
 
         // initialize next starting match
-        nextMatch = new MatchController();
-    }
-
-    public synchronized void addPlayer(String player, MatchController matchController) throws MaxPlayerException,
-            PlayerAlreadyPresentException{
-        nextMatch.addPlayer(player);
-        mapPlayerToMatch(player, matchController);
+        nextMatch = new MatchBuilder();
     }
 
     public void removePlayer(String player) {
@@ -138,6 +109,8 @@ public class Server {
         playerToMatchMap.remove(player.getPlayerNickname());
     }
 
+
+    // ####################### TIMER #######################
     public void startTimer() {
         LOGGER.info("Timer tarted"); //TODO move to messages
         timer.schedule(new TimerTask() {
@@ -153,6 +126,8 @@ public class Server {
         timer.cancel();
     }
 
+
+    // ####################### RMI #######################
     public synchronized Registry getRegistry() {
         return registry;
     }
@@ -161,61 +136,6 @@ public class Server {
         currentClientID++;
         return currentClientID;
     }
-
-    public synchronized MatchController getNextMatch() {
-        return nextMatch;
-    }
-
-    // requires 0 <= chosenMap <Rules.GAME_MAX_MAPS
-    public synchronized void voteMap(int chosenMap) {
-        Integer choise;
-        switch(chosenMap) {
-            case 1:
-                choise = votesMaps.get(MapType.ONE);
-                choise++;
-                votesMaps.put(MapType.ONE, choise);
-                break;
-
-            case 2:
-                choise = votesMaps.get(MapType.TWO);
-                choise++;
-                votesMaps.put(MapType.TWO, choise);
-                break;
-
-            case 3:
-                choise = votesMaps.get(MapType.THREE);
-                choise++;
-                votesMaps.put(MapType.THREE, choise);
-                break;
-
-            case 4:
-                choise = votesMaps.get(MapType.FOUR);
-                choise++;
-                votesMaps.put(MapType.FOUR, choise);
-                break;
-        }
-    }
-
-    public synchronized MapType chosenMap() {
-        int tempMax=0, max=0;
-        ArrayList<MapType> votes = new ArrayList<>();
-        for(MapType key : votesMaps.keySet()){
-            tempMax = votesMaps.get(key);
-            if(tempMax == max) {
-                votes.add(key);
-            }
-            else if(tempMax > max){
-                votes = new ArrayList<>();
-                votes.add(key);
-            }
-
-        }
-        if(votes.size() > 1){
-            return votes.get((int)Math.random() * (votes.size()-1));
-        }
-        else return votes.get(0);
-    }
-
 
     private void close() {
 

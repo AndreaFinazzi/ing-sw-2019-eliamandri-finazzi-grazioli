@@ -6,7 +6,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.SelectableType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.EffectState;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
 public abstract class SelectorEffectState extends EffectState {
 
@@ -30,7 +29,7 @@ public abstract class SelectorEffectState extends EffectState {
         this.referenceType = null;
     }
 
-    protected BoardSquare getReference(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) throws Exception{ //TODO define exception type
+    protected BoardSquare getReference(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) throws Exception { //TODO define exception type
         BoardSquare reference;
         if (referenceSource == null)
             reference = gameBoard.getPlayerPosition(currentPlayer);

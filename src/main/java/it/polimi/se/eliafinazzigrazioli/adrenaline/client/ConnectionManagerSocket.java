@@ -1,6 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
 import java.io.IOException;
@@ -10,56 +10,59 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ConnectionManagerSocket extends ConnectionManager {
+public class ConnectionManagerSocket extends AbstractConnectionManager {
 
     private static final String IP_SERVER = "localhost";
     private static final int PORT_SEVER = 9999;
-    private static final Logger LOGGER = Logger.getLogger (ConnectionManagerSocket.class.getName ());
+    private static final Logger LOGGER = Logger.getLogger(ConnectionManagerSocket.class.getName());
     private Socket clientSocket;
-    private ObjectOutputStream send;
-    private ObjectInputStream receveid;
+    private ObjectOutputStream sender;
+    private ObjectInputStream receiver;
 
-    public ConnectionManagerSocket() {
-        super();
+    public ConnectionManagerSocket(RemoteView view) {
+        super(view);
         try {
-            clientSocket = new Socket (IP_SERVER, PORT_SEVER);
-            send = new ObjectOutputStream (clientSocket.getOutputStream ());
-            receveid = new ObjectInputStream (clientSocket.getInputStream ());
+            clientSocket = new Socket(IP_SERVER, PORT_SEVER);
+            sender = new ObjectOutputStream(clientSocket.getOutputStream());
+            receiver = new ObjectInputStream(clientSocket.getInputStream());
         } catch (IOException e) {
-            LOGGER.log (Level.SEVERE, e.toString (), e);
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
-    }
-
-    @Override
-    public AbstractEvent receive() {
-        AbstractEvent event;
-        Object object;
-        try {
-            object = receveid.readObject ();
-            if (object == null)
-                throw new NullPointerException ();
-            event = (AbstractEvent) object;
-        } catch (IOException | ClassNotFoundException e) {
-            LOGGER.log (Level.SEVERE, e.toString (), e);
-            throw new NullPointerException ();
-        }
-        return event;
     }
 
     @Override
     public void send(AbstractViewEvent event) {
         try {
-            send.writeObject (event);
-            send.flush ();
+            sender.writeObject(event);
+            sender.flush();
         } catch (IOException e) {
-            LOGGER.log (Level.SEVERE, e.toString (), e);
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
+    }
+
+    @Override
+    public void listen() {
+        new Thread(() -> {
+            AbstractModelEvent event;
+            while (true) {
+                try {
+                    event = (AbstractModelEvent) receiver.readObject();
+                    received(event);
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                } catch (ClassNotFoundException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                } catch (ClassCastException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                }
+            }
+        }).start();
     }
 
     public void closeConnection() {
         try {
             clientSocket.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

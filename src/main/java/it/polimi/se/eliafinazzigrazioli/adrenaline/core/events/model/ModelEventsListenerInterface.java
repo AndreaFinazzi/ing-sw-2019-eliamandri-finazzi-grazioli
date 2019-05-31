@@ -3,8 +3,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
-import java.rmi.Remote;
-
 public interface ModelEventsListenerInterface extends EventListenerInterface {
 
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {

@@ -24,11 +24,11 @@ public class PreselectionBasedSelectorEffectState extends SelectorEffectState {
     public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
         List<Player> selectedPlayers = new ArrayList<>();
         List<Player> players = gameBoard.getPlayersOnGameBoard();
-        for (Map.Entry<String, List<Integer>> effectIndexesEntry: previousSelected.entrySet()){
-            for (Integer selectionOrder: effectIndexesEntry.getValue()){
+        for (Map.Entry<String, List<Integer>> effectIndexesEntry : previousSelected.entrySet()) {
+            for (Integer selectionOrder : effectIndexesEntry.getValue()) {
                 try {
                     selectedPlayers.add(invoker.getEffectByName(effectIndexesEntry.getKey()).getSelectedPlayer(selectionOrder));
-                } catch (IndexOutOfBoundsException e){
+                } catch (IndexOutOfBoundsException e) {
 
                 }
             }

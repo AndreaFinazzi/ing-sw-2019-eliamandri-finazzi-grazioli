@@ -6,14 +6,9 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.RuntimeTypeAdapterFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -47,14 +42,14 @@ public class WeaponCard extends Card {
         String jsonString;
         try {
             jsonString = new String(Files.readAllBytes(Paths.get(filePath)));
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             throw new WeaponFileNotFoundException();
         }
         Gson gson = new GsonBuilder()
                 .registerTypeAdapterFactory(EffectState.effectStateRuntimeTypeAdapterFactory)
                 .create();
-        Type weaponCardType = new TypeToken<WeaponCard>(){}.getType();
+        Type weaponCardType = new TypeToken<WeaponCard>() {
+        }.getType();
         return gson.fromJson(jsonString, weaponCardType);
     }
 
@@ -62,7 +57,7 @@ public class WeaponCard extends Card {
         this.activeEffect = activeEffect;
     }
 
-    public WeaponCard(){
+    public WeaponCard() {
         weaponName = "Lock Refile";
         cardColor = Ammo.BLUE;
         loader = new ArrayList<>(Arrays.asList(Ammo.BLUE));
@@ -77,7 +72,7 @@ public class WeaponCard extends Card {
         return activeEffect;
     }
 
-    public void setActiveEffect(String effectName){
+    public void setActiveEffect(String effectName) {
         activeEffect = getEffectByName(effectName);
     }
 
@@ -97,32 +92,32 @@ public class WeaponCard extends Card {
         //TODO
     }
 
-    public boolean isLoaded(){
+    public boolean isLoaded() {
         return loaded;
     }
 
-    public WeaponEffect getEffectByName(String effectName){
-        for (WeaponEffect effect: effects){
+    public WeaponEffect getEffectByName(String effectName) {
+        for (WeaponEffect effect : effects) {
             if (effect.getEffectName().equals(effectName))
                 return effect;
         }
         return null;
     }
 
-    public void initialize(){
+    public void initialize() {
         activeEffect = null;
-        for (WeaponEffect effect: effects){
+        for (WeaponEffect effect : effects) {
             effect.initialize();
         }
     }
 
-    public List<String> getCallableEffects(){
+    public List<String> getCallableEffects() {
         return callableEffects;
     }
 
     @Override
     public String toString() {
-        return "Name: " + weaponName + "\nColor: " + cardColor +"\nLoader: " + loader.toString() + "\nEffects: " + effects ;
+        return "Name: " + weaponName + "\nColor: " + cardColor + "\nLoader: " + loader.toString() + "\nEffects: " + effects;
     }
 
 }

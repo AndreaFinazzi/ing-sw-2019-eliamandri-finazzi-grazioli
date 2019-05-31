@@ -3,13 +3,11 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.EffectState;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.InRoomSelectorEffectState;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class InRoomSelectorEffectStateTest {
@@ -47,8 +45,6 @@ public class InRoomSelectorEffectStateTest {
 
 
         //effectState.execute(weaponCard, gameBoard, playerOne);
-
-
 
 
     }

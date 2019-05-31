@@ -26,7 +26,8 @@ public class SelectableTypeTest {
     public void selectableTypeDeserializationTest() {
         String selectableTypesJson = "['BOARDSQUARE', 'PLAYER', 'ROOM', null]";
         Gson gson = new Gson();
-        Type selectableTypeListType = new TypeToken<List<SelectableType>>(){}.getType();
+        Type selectableTypeListType = new TypeToken<List<SelectableType>>() {
+        }.getType();
         List<SelectableType> selectableTypes = gson.fromJson(selectableTypesJson, selectableTypeListType);
         System.out.println(selectableTypes.get(2).getClass());
     }
@@ -39,7 +40,8 @@ public class SelectableTypeTest {
         ammoStringMap.put(Ammo.BLUE, "blue");
         Gson gson = new Gson();
         String json = gson.toJson(ammoStringMap);
-        Type mapType = new  TypeToken<Map<Ammo, String>>(){}.getType();
+        Type mapType = new TypeToken<Map<Ammo, String>>() {
+        }.getType();
         ammoStringMap = gson.fromJson(json, mapType);
         System.out.println(ammoStringMap.values());
     }

@@ -1,83 +1,65 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientConnectionEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.GenericViewEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.server.EventViewListenerRemote;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.ServerRemoteRMI;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
 
-public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientRemoteRMI {
+public class ConnectionManagerRMI extends AbstractConnectionManager implements ClientRemoteRMI {
 
     private Registry registry;
 
-    private EventViewListenerRemote clientHandlerRMI;
+    private ServerRemoteRMI serverRemoteRMI;
 
     private String playerName;
 
-    private int clientID;
+    public ConnectionManagerRMI(RemoteView view) throws RemoteException, NotBoundException {
+        super(view);
 
-    public ConnectionManagerRMI(String playerName) throws RemoteException, NotBoundException {
-        this.playerName = playerName;
-        registry = LocateRegistry.getRegistry ();
-        clientHandlerRMI = (EventViewListenerRemote)registry.lookup("ClientHandlerRMI");
-        System.out.println("lookup fatta");
-        clientID = clientHandlerRMI.getClientID();
+        registry = LocateRegistry.getRegistry();
+        serverRemoteRMI = (ServerRemoteRMI) registry.lookup("//localhost/ClientHandlerRMI");
+        clientID = serverRemoteRMI.getClientID();
+
+        LOGGER.info("ClientHandlerRMI: Lookup succesfully executed.");
+
+
+        //TODO just for debugging purpose
+        Scanner input = new Scanner(System.in);
+        System.out.println("Tell me which port for RMI: ");
+        int port = input.nextInt();
+        UnicastRemoteObject.exportObject(this, port);
     }
 
-    public void loginClient(ClientConnectionEvent event){
+    // AbstractConnectionManager
+    @Override
+    public void send(AbstractViewEvent event) {
         try {
-            clientHandlerRMI.handleEvent(event);
-        } catch(HandlerNotImplementedException e) {
-            e.printStackTrace();
-        } catch(RemoteException e) {
-            e.printStackTrace();
+            LOGGER.info("Client ConnectionManagerRMI sending event: " + event);
+            serverRemoteRMI.receive(event);
+        } catch (RemoteException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
-    }
-
-    public boolean loginPlayer(PlayerConnectedEvent playerConnectedEvent) {
-        try {
-                clientHandlerRMI.handleEvent(playerConnectedEvent);
-                if(!clientHandlerRMI.response())
-                    System.out.println(clientHandlerRMI.getResponseMessage());
-                return clientHandlerRMI.response();
-        }catch(RemoteException|HandlerNotImplementedException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     @Override
-    public String getPlayerName() throws RemoteException{
+    public void listen() {
+        LOGGER.info("Client ConnectionManagerRMI ready.");
+    }
+
+    @Override
+    public String getPlayerName() {
         return playerName;
     }
 
-    @Override
-    public void print(String message) throws RemoteException {
-        System.out.println(message);
-    }
-
-    public List<String> getAvatarAvaible() {
-        //TODO
-        return null;
-    }
-
-    public void addClient() throws RemoteException{
-        clientHandlerRMI.addClientRMI(this);
-    }
-
-    public void sendEvent(GenericViewEvent event) throws HandlerNotImplementedException, RemoteException {
-        clientHandlerRMI.handleEvent(event);
-    }
-
-    public List<String> getPlayersConnected() throws RemoteException {
-        return clientHandlerRMI.getPlayersConnected();
+    public void addClient() throws RemoteException {
+        serverRemoteRMI.addClientRMI(this);
     }
 
     @Override
@@ -85,8 +67,10 @@ public class ConnectionManagerRMI extends UnicastRemoteObject implements ClientR
         return clientID;
     }
 
+
     @Override
-    public void setClientID(int clientID) throws RemoteException {
-        this.clientID = clientID;
+    public void receive(AbstractModelEvent event) throws RemoteException {
+        LOGGER.info("Client ConnectionManagerRMI receiving: " + event);
+        received(event);
     }
 }

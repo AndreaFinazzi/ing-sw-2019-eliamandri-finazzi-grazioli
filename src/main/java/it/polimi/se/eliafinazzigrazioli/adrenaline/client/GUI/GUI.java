@@ -2,17 +2,22 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 
 public class GUI extends Application implements RemoteView {
 
+    String[] args;
+
     public GUI(String[] args) {
-        launch(args);
+        this.args = args;
     }
 
     @Override
@@ -29,7 +34,22 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void login() {
+
+    }
+
+    @Override
     public void showBeginTurn(BeginTurnEvent event) {
 
+    }
+
+    @Override
+    public void showSelectableEvent(List<Coordinates> selectable) {
+
+    }
+
+    @Override
+    public void run() {
+        launch(args);
     }
 }

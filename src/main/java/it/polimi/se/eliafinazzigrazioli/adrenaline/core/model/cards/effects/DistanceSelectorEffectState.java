@@ -6,7 +6,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.SelectableType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +26,7 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
         BoardSquare reference = null;
         try {
             reference = getReference(invoker, gameBoard, currentPlayer);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //TODO held exception
         }
         switch (selectionType) {
@@ -36,7 +34,7 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
                 List<BoardSquare> boardSquaresToSelect = null;
                 try {
                     boardSquaresToSelect = new ArrayList<>(gameBoard.getSquaresByDistance(reference, maxDistance, minDistance));
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
                 invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);
@@ -45,7 +43,7 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
                 List<Player> playersToSelect = null;
                 try {
                     playersToSelect = new ArrayList<>(gameBoard.getPlayersByDistance(reference, maxDistance, minDistance));
-                } catch (Exception e){
+                } catch (Exception e) {
 
                 }
                 invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);

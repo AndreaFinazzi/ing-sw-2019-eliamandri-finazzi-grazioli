@@ -67,26 +67,27 @@ public class PlayerBoard {
         overkill = false;
         skulls = 0;
     }
+
     public void decreaseDeathScore() {
-        if(deathScores.size () > 1)
-            deathScores.remove (0);
+        if (deathScores.size() > 1)
+            deathScores.remove(0);
     }
 
     public Integer getDeathScore() {
-        return deathScores.get (0);
+        return deathScores.get(0);
     }
 
     public void cleanPlayerBoard(boolean cleanMark) {
-        cleanPlayerBoard ();
+        cleanPlayerBoard();
         if (cleanMark)
-            marks.clear ();
+            marks.clear();
     }
 
     public void spendAmmo(List<Ammo> toSpend) throws AmmoNotAvailableException {
         if (!ammos.containsAll(toSpend))
             throw new AmmoNotAvailableException();
-        for (Ammo ammo: toSpend) {
-            ammos.remove (ammo);
+        for (Ammo ammo : toSpend) {
+            ammos.remove(ammo);
         }
     }
 
@@ -97,7 +98,7 @@ public class PlayerBoard {
         }
     }
 
-    public int getNumberOfMovementsAllowed(){
+    public int getNumberOfMovementsAllowed() {
         int numberOfMovements = numberOfMovementsAllowed;
         //TODO define logic for adrenalinic movement
         return numberOfMovements;
@@ -151,7 +152,7 @@ public class PlayerBoard {
                 ", overkill=" + overkill +
                 ", numberOfMovementsAllowed=" + numberOfMovementsAllowed +
                 ", adrenalinicMovementSurplus=" + adrenalinicMovementSurplus +
-                ", deathScore= " +deathScores.get (0) +
+                ", deathScore= " + deathScores.get(0) +
                 '}';
     }
 }

@@ -1,7 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 
 public class WeaponToUseSelectedEvent extends AbstractViewEvent {
 

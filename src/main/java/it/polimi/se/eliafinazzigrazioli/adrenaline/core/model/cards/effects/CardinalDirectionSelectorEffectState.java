@@ -3,7 +3,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +24,7 @@ public class CardinalDirectionSelectorEffectState extends SelectorEffectState {
         CardinalDirection direction = invoker.getEffectByName(directionSource).getSelectedDirection(directionSelectionOrder);
         try {
             reference = getReference(invoker, gameBoard, currentPlayer);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //TODO held exception
         }
         switch (selectionType) {
@@ -34,7 +32,7 @@ public class CardinalDirectionSelectorEffectState extends SelectorEffectState {
                 List<Player> playersToSelect = null;
                 try {
                     playersToSelect = new ArrayList<>(gameBoard.getPlayersByCardinalDirection(reference, direction));
-                } catch (Exception e){
+                } catch (Exception e) {
 
                 }
                 invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
@@ -43,7 +41,7 @@ public class CardinalDirectionSelectorEffectState extends SelectorEffectState {
                 List<BoardSquare> boardSquaresToSelect = null;
                 try {
                     boardSquaresToSelect = new ArrayList<>(gameBoard.getBoardSquaresByCardinalDirection(reference, direction));
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
                 invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);

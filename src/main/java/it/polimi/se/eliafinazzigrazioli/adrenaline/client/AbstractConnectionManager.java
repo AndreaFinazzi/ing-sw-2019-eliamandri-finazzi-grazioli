@@ -1,23 +1,32 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 
-public abstract class ConnectionManager implements Observer {
+import java.util.logging.Logger;
 
+public abstract class AbstractConnectionManager implements Observer {
+
+    protected static final Logger LOGGER = Logger.getLogger(AbstractConnectionManager.class.getName());
+
+    protected int clientID;
     protected String playerName;
-    private RemoteView view;
+    protected RemoteView view;
 
-    public ConnectionManager() {
+    public AbstractConnectionManager(RemoteView view) {
+        this.view = view;
         this.playerName = playerName;
     }
 
     public abstract void send(AbstractViewEvent event);
 
-    public abstract AbstractEvent receive();
+    public abstract void listen();
+
+    public void received(AbstractModelEvent event) {
+        update(event);
+    }
 
     public String getPlayerName() {
         return playerName;
@@ -26,7 +35,6 @@ public abstract class ConnectionManager implements Observer {
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
-
 
     // Outgoing events
     @Override

@@ -1,123 +1,155 @@
 {
-  "weaponName" : "Machine Gun",
-  "basic effect" : "BLUE",
-  "loader" : ["RED"],
-  "effects" : [
+  "weaponName": "Machine Gun",
+  "basic effect": "BLUE",
+  "loader": [
+    "RED"
+  ],
+  "effects": [
     {
-      "effectName" : "basic effect",
-      "effectDescription" : "Choose 1 or 2 targets you can see and deal 1 damage to each.",
-      "price" : [],
-      "effectStates" : [
+      "effectName": "basic effect",
+      "effectDescription": "Choose 1 or 2 targets you can see and deal 1 damage to each.",
+      "price": [],
+      "effectStates": [
         {
-          "type" : "VisibilitySelectorEffectState",
-          "notVisible" : false,
-          "referenceSource" : null,
-          "sourceSelectionOrder" : -1,
-          "selectionType" : "PLAYER",
-          "referenceType" : "PLAYER"
-        }, {
-          "type" : "SelectionRequestEffectState",
-          "userSelectionRequired" : true,
-          "selectionType" : "PLAYER",
-          "maxSelectableItems" : 2
-        }, {
-          "type" : "DamageActionEffectState",
-          "damageAmount" : 1,
-          "markAmount" : 0,
-          "playerToAffectSource" : "basic effect",
-          "toAffectPlayerSelectionOrder" : 0
-        }, {
-          "type" : "DamageActionEffectState",
-          "damageAmount" : 1,
-          "markAmount" : 0,
-          "playerToAffectSource" : "basic effect",
-          "toAffectPlayerSelectionOrder" : 1
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 2
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic effect",
+          "toAffectPlayerSelectionOrder": 0
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic effect",
+          "toAffectPlayerSelectionOrder": 1
         }
       ],
-      "nextCallableEffects" : [
+      "nextCallableEffects": [
         "with focus shot"
       ]
-    }, {
-      "effectName" : "with focus shot",
-      "effectDescription" : "Deal 1 additional damage to one of those targets.",
-      "price" : ["YELLOW"],
-      "effectStates" : [
-        {
-          "type" : "PreselectionBasedSelectorEffectState",
-          "previouslySelectedMap": {
-            "basic effect" : [0, 1]
-          },
-          "alreadySelected" : true
-        }, {
-          "type" : "SelectionRequestEffectState",
-          "userSelectionRequired" : true,
-          "selectionType" : "PLAYER",
-          "maxSelectableItems" : 1
-        }, {
-          "type" : "DamageActionEffectState",
-          "damageAmount" : 1,
-          "markAmount" : 0,
-          "playerToAffectSource" : "with focus shot",
-          "toAffectPlayerSelectionOrder" : 0
-        }
-      ],
-      "nextCallableEffects" : "with turret tripod"
     },
     {
-      "effectName" : "with turret tripod",
-      "effectDescription" : "Deal 1 additional damage to the other of those targets and/or deal 1 damage to a different target you can see.",
-      "price" : ["BLUE"],
-      "effectStates" : [
+      "effectName": "with focus shot",
+      "effectDescription": "Deal 1 additional damage to one of those targets.",
+      "price": [
+        "YELLOW"
+      ],
+      "effectStates": [
         {
-          "type" : "PreselectionBasedSelectorEffectState",
+          "type": "PreselectionBasedSelectorEffectState",
           "previouslySelectedMap": {
-            "basic effect" : [0, 1]
+            "basic effect": [
+              0,
+              1
+            ]
           },
-          "alreadySelected" : true
-        }, {
-          "type" : "PreselectionBasedSelectorEffectState",
+          "alreadySelected": true
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "with focus shot",
+          "toAffectPlayerSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": "with turret tripod"
+    },
+    {
+      "effectName": "with turret tripod",
+      "effectDescription": "Deal 1 additional damage to the other of those targets and/or deal 1 damage to a different target you can see.",
+      "price": [
+        "BLUE"
+      ],
+      "effectStates": [
+        {
+          "type": "PreselectionBasedSelectorEffectState",
           "previouslySelectedMap": {
-            "with focus shot" : [0]
+            "basic effect": [
+              0,
+              1
+            ]
           },
-          "alreadySelected" : false
-        }, {
-          "type" : "SelectionRequestEffectState",
-          "userSelectionRequired" : false,
-          "selectionType" : "PLAYER",
-          "maxSelectableItems" : -1
-        }, {
-          "type" : "DamageActionEffectState",
-          "damageAmount" : 1,
-          "markAmount" : 0,
-          "playerToAffectSource" : "with turret tripod",
-          "toAffectPlayerSelectionOrder" : 0
-        }, {
-          "type" : "VisibilitySelectorEffectState",
-          "notVisible" : false,
-          "referenceSource" : null,
-          "sourceSelectionOrder" : -1,
-          "selectionType" : "PLAYER",
-          "referenceType" : "PLAYER"
-        }, {
-          "type" : "PreselectionBasedSelectorEffectState",
+          "alreadySelected": true
+        },
+        {
+          "type": "PreselectionBasedSelectorEffectState",
           "previouslySelectedMap": {
-            "basic effect" : [0, 1]
+            "with focus shot": [
+              0
+            ]
           },
-          "alreadySelected" : false
-        }, {
-          "type" : "SelectionRequestEffectState",
-          "userSelectionRequired" : true,
-          "selectionType" : "PLAYER",
-          "maxSelectableItems" : 1
-        }, {
-          "type" : "DamageActionEffectState",
-          "damageAmount" : 1,
-          "markAmount" : 0,
-          "playerToAffectSource" : "with turret tripod",
-          "toAffectPlayerSelectionOrder" : 0
+          "alreadySelected": false
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": false,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": -1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "with turret tripod",
+          "toAffectPlayerSelectionOrder": 0
+        },
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "PreselectionBasedSelectorEffectState",
+          "previouslySelectedMap": {
+            "basic effect": [
+              0,
+              1
+            ]
+          },
+          "alreadySelected": false
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "with turret tripod",
+          "toAffectPlayerSelectionOrder": 0
         }
       ]
     }
   ],
-  "callableEffects" : ["basic effect"]
+  "callableEffects": [
+    "basic effect"
+  ]
 }

@@ -1,12 +1,10 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,15 +12,14 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClientHandlerSocket  implements Runnable, ViewEventsListenerInterface {
+public class ClientHandlerSocket extends AbstractClientHandler implements Observable {
 
     private Socket socket;
     private ObjectOutputStream sender;
     private ObjectInputStream receiver;
     private Server server;
 
-    private AbstractViewEvent event;
-    private static final Logger LOGGER = Logger.getLogger (ClientHandlerSocket.class.getName ());
+    private static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
 
 
     public ClientHandlerSocket(Server server, Socket socket) {
@@ -31,35 +28,37 @@ public class ClientHandlerSocket  implements Runnable, ViewEventsListenerInterfa
         try {
             sender = new ObjectOutputStream(socket.getOutputStream());
             receiver = new ObjectInputStream(socket.getInputStream());
-        }catch (IOException e) {
-            LOGGER.log (Level.SEVERE, e.toString (), e);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 
     @Override
-    public void handleEvent(PlayerConnectedEvent event) throws HandlerNotImplementedException {
-        System.out.println("funzione!!!!");
+    void send(AbstractEvent event) {
         try {
-            sender.writeObject("funziona");
-        }catch(IOException e){
-            e.printStackTrace();
+            sender.writeObject(event);
+            sender.flush();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 
     @Override
     public void run() {
-        do {
-            try {
-                    System.out.println("entrato");
+        new Thread(() -> {
+            AbstractViewEvent event;
+            while (true) {
+                try {
                     event = (AbstractViewEvent) receiver.readObject();
-                    event.handle(this);
-                    Thread.sleep(1000);
-            } catch (EOFException e) {
-                System.out.println("Me ne esco");
-                return;
-            } catch(ClassCastException|IOException|ClassNotFoundException| HandlerNotImplementedException| InterruptedException e){
-                e.printStackTrace();
+                    received(event);
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                } catch (ClassNotFoundException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                } catch (ClassCastException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                }
             }
-        } while (event != null);
+        }).start();
     }
 }

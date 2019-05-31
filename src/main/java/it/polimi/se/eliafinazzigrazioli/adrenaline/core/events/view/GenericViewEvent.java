@@ -6,27 +6,27 @@ public class GenericViewEvent extends AbstractViewEvent {
 
     public GenericViewEvent(String player, String message) {
         super(player);
-        super.setMessage (message);
+        super.setMessage(message);
     }
 
     @Override
     public String getPlayer() {
-        return super.getPlayer ();
+        return super.getPlayer();
     }
 
     @Override
     public void setPlayer(String player) {
-        super.setPlayer (player);
+        super.setPlayer(player);
     }
 
     @Override
     public String getMessage() {
-        return super.getMessage ();
+        return super.getMessage();
     }
 
     @Override
     public void setMessage(String message) {
-        super.setMessage (message);
+        super.setMessage(message);
     }
 
     @Override

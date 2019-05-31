@@ -11,6 +11,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
@@ -25,6 +26,8 @@ public class MatchController implements EventListenerInterface, Runnable {
     private EventController eventController;
     private Timer timer;
 
+    private HashMap<MapType, Integer> votesMaps;
+
     private BlockingQueue<AbstractViewEvent> eventsQueue;
 
     public MatchController() {
@@ -32,6 +35,7 @@ public class MatchController implements EventListenerInterface, Runnable {
         eventController = new EventController(this);
         playerController = new PlayerController(eventController, this);
         cardController = new CardController(eventController, this);
+
         match.addObserver(eventController);
     }
 
@@ -51,12 +55,12 @@ public class MatchController implements EventListenerInterface, Runnable {
         return eventController;
     }
 
-    public void addPlayer(String player) throws MaxPlayerException, PlayerAlreadyPresentException{
-            match.addPlayer(player);
+    public void addPlayer(String player) throws MaxPlayerException, PlayerAlreadyPresentException {
+        match.addPlayer(player);
     }
 
     public void removePlayer(String nickname) {
-        match.removePlayer (nickname);
+        match.removePlayer(nickname);
     }
 
     public void startRecruiting() {
@@ -83,6 +87,37 @@ public class MatchController implements EventListenerInterface, Runnable {
     public ArrayList<String> getPlayersNicknames() {
         return match.getPlayersNicknames();
     }
+
+    // requires 0 <= chosenMap <Rules.GAME_MAX_MAPS
+    public synchronized void voteMap(int chosenMap) {
+        Integer choise;
+        switch (chosenMap) {
+            case 1:
+                choise = votesMaps.get(MapType.ONE);
+                choise++;
+                votesMaps.put(MapType.ONE, choise);
+                break;
+
+            case 2:
+                choise = votesMaps.get(MapType.TWO);
+                choise++;
+                votesMaps.put(MapType.TWO, choise);
+                break;
+
+            case 3:
+                choise = votesMaps.get(MapType.THREE);
+                choise++;
+                votesMaps.put(MapType.THREE, choise);
+                break;
+
+            case 4:
+                choise = votesMaps.get(MapType.FOUR);
+                choise++;
+                votesMaps.put(MapType.FOUR, choise);
+                break;
+        }
+    }
+
 
     @Override
     public void run() {

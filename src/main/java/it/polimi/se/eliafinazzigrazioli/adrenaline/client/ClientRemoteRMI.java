@@ -1,17 +1,15 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface ClientRemoteRMI extends Remote {
 
-    public String getPlayerName() throws RemoteException;
+    String getPlayerName() throws RemoteException;
 
-    public void print(String message) throws RemoteException;
+    int getClientID() throws RemoteException;
 
-    public int getClientID() throws RemoteException;
-
-    public void setClientID(int clientID) throws RemoteException;
-
-
+    void receive(AbstractModelEvent event) throws RemoteException;
 }

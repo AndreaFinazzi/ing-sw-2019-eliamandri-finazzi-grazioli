@@ -10,7 +10,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface RemoteView extends ModelEventsListenerInterface, Observable {
+public interface RemoteView extends ModelEventsListenerInterface, Observable, Runnable {
 
 //    void showPlayerSelection();
 
@@ -126,6 +126,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         throw new HandlerNotImplementedException();
     }
 
+    void login();
+
     //OUTGOING communications
     default void notifyPlayerSelectedEvent(ArrayList<String> selectedPlayers) {
         try {
@@ -135,8 +137,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
+
     default void notifyLoginRequestEvent(String nickname) {
-            notifyObservers(new LoginRequestEvent(nickname));
+        notifyObservers(new LoginRequestEvent(nickname));
     }
 
     void showBeginTurn(BeginTurnEvent event);

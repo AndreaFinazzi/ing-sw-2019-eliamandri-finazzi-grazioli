@@ -95,9 +95,9 @@ public class Match implements Observable {
         return players;
     }
 
-    public List<String> getPlayersNickname(){
+    public List<String> getPlayersNickname() {
         ArrayList<String> playersNickname = new ArrayList<>();
-        for(Player player : players){
+        for (Player player : players) {
             playersNickname.add(player.getPlayerNickname());
         }
         return playersNickname;
@@ -157,17 +157,17 @@ public class Match implements Observable {
         }
     }
 
-    public void weaponToUseSelected(Player player, String weaponSelected){
-        if (player != currentPlayer){
+    public void weaponToUseSelected(Player player, String weaponSelected) {
+        if (player != currentPlayer) {
             //TODO throw exception or generate event
             return;
         }
         WeaponCard weaponCard = currentPlayer.getWeaponByName(weaponSelected);
-        if (weaponCard == null){
+        if (weaponCard == null) {
             //TODO throw exception or generate event
             return;
         }
-        if (!weaponCard.isLoaded()){
+        if (!weaponCard.isLoaded()) {
             //TODO throw exception or generate event
             return;
         }
@@ -177,7 +177,7 @@ public class Match implements Observable {
     public void playerMovement(Player player, List<Coordinates> path) {
         try {
             notifyObservers(gameBoard.playerMovement(player, path));
-        } catch (MovementNotAllowedException e){
+        } catch (MovementNotAllowedException e) {
             //TODO generate invalid move exception
         }
     }
@@ -228,8 +228,6 @@ public class Match implements Observable {
     public void endTurn() {
         notifyObservers(currentPlayer.createEndTurnEvent());
     }
-
-
 
 
 }

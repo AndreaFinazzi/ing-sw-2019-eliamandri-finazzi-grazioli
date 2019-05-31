@@ -1,12 +1,10 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.controller;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.CollectPlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.MovePlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.events.view.TargetSelectedEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.exceptions.events.ListenerNotFoundException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.TargetSelectedEvent;
 import org.junit.Test;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -34,12 +32,6 @@ public class EventControllerTest {
         eventController.update(collectPlayEvent);
         eventController.update(targetSelectedEvent);
         eventController.update(movePlayEvent);
-
-        try {
-            eventController.removeEventListener(TargetSelectedEvent.class, matchController);
-        } catch (ListenerNotFoundException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-        }
 
         eventController.update(targetSelectedEvent);
         System.out.println("ended");

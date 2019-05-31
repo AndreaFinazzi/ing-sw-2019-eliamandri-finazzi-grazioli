@@ -6,7 +6,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.BoardSquare;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +33,9 @@ public class MoveActionEffectState extends ActionEffectState {
             } catch (IndexOutOfBoundsException e) {
                 toMove = null;
             }
-        }
-        else
+        } else
             toMove = currentPlayer;
-        if (toMove != null){
+        if (toMove != null) {
             gameBoard.movePlayer(toMove, destination);
             events.add(new PlayerMovedByWeaponEvent(currentPlayer.getPlayerNickname(), invoker.getWeaponName(), toMove.getPlayerNickname()));
             return events;

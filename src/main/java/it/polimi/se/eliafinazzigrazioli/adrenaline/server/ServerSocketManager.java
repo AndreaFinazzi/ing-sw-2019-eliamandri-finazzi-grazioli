@@ -12,7 +12,7 @@ public class ServerSocketManager implements Runnable {
 
     private final int PORT;
     private Server server;
-    private static final Logger LOGGER = Logger.getLogger(ServerSocketManager.class.getName ());
+    private static final Logger LOGGER = Logger.getLogger(ServerSocketManager.class.getName());
     private ServerSocket serverSocket;
 
     public ServerSocketManager(Server server, int PORT) {
@@ -21,24 +21,24 @@ public class ServerSocketManager implements Runnable {
     }
 
     public void startServerSocket() {
-        System.out.println ("Server socket is started...");
-        ExecutorService executor = Executors.newCachedThreadPool ();
+        System.out.println("Server socket is started...");
+        ExecutorService executor = Executors.newCachedThreadPool();
         try {
-            serverSocket = new ServerSocket (PORT);
-            LOGGER.log (Level.INFO, "server socket created");
-        }catch (IOException e) {
-            LOGGER.log (Level.SEVERE, e.toString (), e);
+            serverSocket = new ServerSocket(PORT);
+            LOGGER.log(Level.INFO, "server socket created");
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
             return;
         }
-        LOGGER.log (Level.INFO, "Server Socket is ready");
+        LOGGER.log(Level.INFO, "Server Socket is ready");
 
         while (true) {
             try {
-                LOGGER.log (Level.INFO, "Waiting a connection");
-                Socket socket = serverSocket.accept ();
+                LOGGER.log(Level.INFO, "Waiting a connection");
+                Socket socket = serverSocket.accept();
                 executor.submit(new ClientHandlerSocket(server, socket));
             } catch (IOException e) {
-                LOGGER.log (Level.SEVERE, e.toString (), e);
+                LOGGER.log(Level.SEVERE, e.toString(), e);
                 break;
             }
         }

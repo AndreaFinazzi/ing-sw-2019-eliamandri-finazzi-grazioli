@@ -58,7 +58,7 @@ public class SpawnBoardSquare extends BoardSquare {
     @Override
     public String toString() {
         return "SpawnBoardSquare {" +
-                super.toString () +"\n";
+                super.toString() + "\n";
 
     }
 }

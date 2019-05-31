@@ -58,7 +58,7 @@ public interface ViewEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(ClientConnectionEvent event) throws HandlerNotImplementedException{
+    default void handleEvent(ClientConnectionEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 

@@ -21,7 +21,7 @@ public class Coordinates {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Coordinates) {
-            Coordinates coordinates = (Coordinates)obj;
+            Coordinates coordinates = (Coordinates) obj;
             return xCoordinate == coordinates.getXCoordinate() && yCoordinate == coordinates.getYCoordinate();
         }
         return false;
@@ -30,7 +30,7 @@ public class Coordinates {
     @Override
     public String toString() {
         return "(" +
-                 + xCoordinate +
+                +xCoordinate +
                 "," + yCoordinate +
                 ')';
     }

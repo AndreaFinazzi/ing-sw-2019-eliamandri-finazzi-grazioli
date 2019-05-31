@@ -24,7 +24,8 @@ public class AmmoTest {
     public void ammoDeserializationTest() {
         String jsonAmmos = "['RED', 'RED', 'YELLOW', 'BLUE']";
         Gson gson = new Gson();
-        Type ammoListType = new TypeToken<List<Ammo>>(){}.getType();
+        Type ammoListType = new TypeToken<List<Ammo>>() {
+        }.getType();
         List<Ammo> ammos = gson.fromJson(jsonAmmos, ammoListType);
         System.out.println(ammos);
     }

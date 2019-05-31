@@ -16,7 +16,7 @@ public class AbstractServerEvent extends AbstractEvent {
     }
 
     public void setClientID(int clientID) {
-        if(this.clientID == 0) {
+        if (this.clientID == 0) {
             this.clientID = clientID;
         }
     }

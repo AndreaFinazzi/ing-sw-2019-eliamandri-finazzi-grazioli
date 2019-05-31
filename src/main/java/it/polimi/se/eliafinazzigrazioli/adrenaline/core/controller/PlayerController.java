@@ -4,14 +4,11 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEven
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PlayerController implements EventListenerInterface {
     //private Map<String, Player> players = new HashMap<>();
@@ -26,8 +23,8 @@ public class PlayerController implements EventListenerInterface {
 
     @Override
     public void handleEvent(MovePlayEvent event) {
-        Player currentPlayer = matchController.getPlayers ().get(event.getPlayer());
-        System.out.println (currentPlayer);
+        Player currentPlayer = matchController.getPlayers().get(event.getPlayer());
+        System.out.println(currentPlayer);
         List<Coordinates> path = event.getPath();
         if (path != null && path.size() > 0)
             matchController.getMatch().playerMovement(currentPlayer, path);
@@ -36,7 +33,7 @@ public class PlayerController implements EventListenerInterface {
     public void handleEvent(PlayerConnectedEvent event) {
         try {
             matchController.addPlayer(event.getPlayer());
-        }catch(PlayerAlreadyPresentException| MaxPlayerException e){
+        } catch (PlayerAlreadyPresentException | MaxPlayerException e) {
             e.printStackTrace();
         }
     }

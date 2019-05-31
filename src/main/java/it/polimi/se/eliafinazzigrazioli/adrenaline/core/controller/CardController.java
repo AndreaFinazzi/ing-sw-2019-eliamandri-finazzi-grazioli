@@ -3,7 +3,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 
 // TODO implement controller
 public class CardController implements ViewEventsListenerInterface {

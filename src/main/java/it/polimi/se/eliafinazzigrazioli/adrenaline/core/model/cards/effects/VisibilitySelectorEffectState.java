@@ -3,12 +3,11 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class VisibilitySelectorEffectState extends SelectorEffectState{
+public class VisibilitySelectorEffectState extends SelectorEffectState {
 
     final private boolean notVisible;
 
@@ -22,8 +21,7 @@ public class VisibilitySelectorEffectState extends SelectorEffectState{
         BoardSquare reference = null;
         try {
             reference = getReference(invoker, gameBoard, currentPlayer);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //TODO held exception
         }
         switch (selectionType) {
@@ -42,9 +40,6 @@ public class VisibilitySelectorEffectState extends SelectorEffectState{
         }
         return null;
     }
-
-
-
 
 
     public SelectableType getReferenceType() {

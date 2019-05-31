@@ -44,13 +44,13 @@ public class Player implements Selectable {
     }
 
     @Override
-    public List<Selectable> getByDistance(SelectableType selType, int maxDistance, int minDistance, GameBoard gameBoard){
-        return position.getByDistance(selType, maxDistance, minDistance ,gameBoard);
+    public List<Selectable> getByDistance(SelectableType selType, int maxDistance, int minDistance, GameBoard gameBoard) {
+        return position.getByDistance(selType, maxDistance, minDistance, gameBoard);
     }
 
     @Override
     public List<Selectable> getByRoom(SelectableType selType, GameBoard gameBoard, List<Player> p) {
-        return position.getByRoom(selType ,new GameBoard(MapType.ONE), p);
+        return position.getByRoom(selType, new GameBoard(MapType.ONE), p);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Player implements Selectable {
         return playerBoard;
     }
 
-    public List<WeaponCard> getWeapons(){
+    public List<WeaponCard> getWeapons() {
         return weapons;
     }
 
@@ -96,8 +96,8 @@ public class Player implements Selectable {
         powerUps.add(powerUpCard);
     }
 
-    public WeaponCard getWeaponByName(String weaponName){
-        for (WeaponCard weaponCard: weapons) {
+    public WeaponCard getWeaponByName(String weaponName) {
+        for (WeaponCard weaponCard : weapons) {
             if (weaponName.equals(weaponCard.getWeaponName()))
                 return weaponCard;
         }
@@ -163,7 +163,7 @@ public class Player implements Selectable {
     }
 
     public void setAvatar(String avatar) {
-        if(this.avatar == null)
+        if (this.avatar == null)
             this.avatar = avatar;
     }
 

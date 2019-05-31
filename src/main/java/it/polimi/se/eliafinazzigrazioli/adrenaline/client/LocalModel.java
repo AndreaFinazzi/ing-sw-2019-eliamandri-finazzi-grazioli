@@ -33,10 +33,10 @@ public class LocalModel {
 
     public void updateWeapons(String collectedWeapon, String dropOfWeapon) {
 
-        if(!weaponCards.remove(dropOfWeapon))
+        if (!weaponCards.remove(dropOfWeapon))
             System.out.println("Invalid drop");
 
-        if(weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && !weaponCards.contains(collectedWeapon))
+        if (weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && !weaponCards.contains(collectedWeapon))
             weaponCards.add(collectedWeapon);
         else
             System.out.println("Invalid collect");
