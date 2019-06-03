@@ -1,23 +1,25 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.Card;
 
-public class CardSelectedEvent extends AbstractViewEvent {
+public class ClientDisconnectionEvent extends AbstractViewEvent {
 
-    private String card;
 
-    public CardSelectedEvent(String player, String card) {
+    public ClientDisconnectionEvent(String player) {
         super(player);
-        this.card = card;
     }
 
-    public String getCard() {
-        return card;
+    public ClientDisconnectionEvent(int clientID) {
+        super(clientID);
+    }
+
+    public ClientDisconnectionEvent(int clientID, String player) {
+        super(clientID, player);
     }
 
     @Override
     public void handle(ViewEventsListenerInterface listener) throws HandlerNotImplementedException {
-        listener.handleEvent(this);
+
     }
+
 }

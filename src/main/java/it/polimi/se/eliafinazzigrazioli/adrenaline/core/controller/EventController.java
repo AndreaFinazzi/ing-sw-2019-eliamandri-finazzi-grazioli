@@ -32,6 +32,8 @@ public class EventController implements Observer {
 
     @Override
     public void update(AbstractViewEvent event) {
+        LOGGER.info("Updating eventController");
+
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(event.getClass());
 
         if (listeners == null) return;
@@ -51,7 +53,7 @@ public class EventController implements Observer {
         if (virtualViews == null) return;
 
         virtualViews.forEach(virtualView -> {
-            virtualView.send(event);
+            virtualView.sendToAll(event);
                 }
         );
     }

@@ -19,4 +19,7 @@ public class SelectableEffectsEvent extends AbstractModelEvent {
             listener.handleEvent(this);
     }
 
+    public List<String> getCallableEffects() {
+        return callableEffects;
+    }
 }

@@ -65,6 +65,17 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
     }
 
     @Override
+    public void disconnect() {
+        if (serverRemoteRMI != null) {
+            try {
+                serverRemoteRMI.removeClientRMI(this);
+            } catch (RemoteException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+            }
+        }
+    }
+
+    @Override
     public String getPlayerName() {
         return client.getPlayerName();
     }

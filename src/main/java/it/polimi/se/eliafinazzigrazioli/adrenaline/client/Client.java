@@ -68,29 +68,39 @@ public class Client {
         String command;
         Client client = new Client(args);
 
-        System.out.println("to CLI or not to CLI? [Y/n]");
-        command = input.nextLine();
-        if (command == "n" || command == "no" || command == "not") {
-            client.setView(new GUI(args));
-        } else {
-            client.setView(new CLI());
-        }
-
-        System.out.println("to RMI or not to RMI? [Y/n]");
-        command = input.nextLine();
-        if (command.equals("n") || command.equals("no") || command.equals("not")) {
-            client.setConnectionManager(new ConnectionManagerSocket(client));
-        } else {
-            try {
-                client.setConnectionManager(new ConnectionManagerRMI(client));
-            } catch (RemoteException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-            } catch (NotBoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
+        try {
+            System.out.println("to CLI or not to CLI? [Y/n]");
+            command = input.nextLine();
+            if (command.equals("n") || command.equals("no") || command.equals("not")) {
+                client.setView(new GUI(args, client));
+            } else {
+                client.setView(new CLI(client));
             }
-        }
 
-        client.init();
+            System.out.println("to RMI or not to RMI? [Y/n]");
+            command = input.nextLine();
+            if (command.equals("n") || command.equals("no") || command.equals("not")) {
+                client.setConnectionManager(new ConnectionManagerSocket(client));
+            } else {
+                try {
+                    client.setConnectionManager(new ConnectionManagerRMI(client));
+                } catch (RemoteException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                } catch (NotBoundException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                }
+            }
+
+            client.init();
+        } finally {
+//            client.disconnect();
+        }
+    }
+
+    private void disconnect() {
+        if (connectionManager != null) {
+            connectionManager.disconnect();
+        }
     }
 
 }

@@ -13,4 +13,6 @@ public interface ServerRemoteRMI extends Remote {
     int askNewClientId() throws RemoteException;
 
     void addClientRMI(ClientRemoteRMI clientRMI) throws RemoteException;
+
+    void removeClientRMI(ClientRemoteRMI clientRMI) throws RemoteException;
 }

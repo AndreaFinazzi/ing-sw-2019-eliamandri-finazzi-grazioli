@@ -18,6 +18,22 @@ public class MatchBuilder implements Runnable {
 
     private BlockingQueue<AbstractViewEvent> eventsQueue;
 
+    Thread eventsConsumer = new Thread(() -> {
+
+        AbstractViewEvent nextEvent;
+        try {
+            while (!matchController.getMatch().isEnded()) {
+                nextEvent = eventsQueue.take();
+                matchController.getEventController().update(nextEvent);
+            }
+        } catch (InterruptedException e) {
+            //TODO handle
+        } finally {
+
+        }
+
+    });
+
     public BlockingQueue<AbstractViewEvent> getEventsQueue() {
         return eventsQueue;
     }
@@ -32,24 +48,12 @@ public class MatchBuilder implements Runnable {
         matchController = new MatchController();
         //this.clients = clients;  This line assigns clients to itself TODO correct assignment
 
-        new Thread(() -> {
-
-            AbstractViewEvent nextEvent;
-            try {
-                while (!matchController.getMatch().isEnded()) {
-                    nextEvent = eventsQueue.take();
-                    matchController.getEventController().update(nextEvent);
-                }
-            } catch (InterruptedException e) {
-                //TODO handle
-            } finally {
-
-            }
-
-        }).start();
+        eventsConsumer.setName("EventsConsumerThread");
+        eventsConsumer.start();
     }
 
     public MatchController getMatchController() {
+        LOGGER.info("Getting matchController");
         return matchController;
     }
 

@@ -26,6 +26,8 @@ public abstract class AbstractConnectionManager implements Observer {
 
     public abstract void performRegistration();
 
+    public abstract void disconnect();
+
     public void received(AbstractModelEvent event) {
         update(event);
     }
@@ -51,4 +53,5 @@ public abstract class AbstractConnectionManager implements Observer {
             e.printStackTrace();
         }
     }
+
 }

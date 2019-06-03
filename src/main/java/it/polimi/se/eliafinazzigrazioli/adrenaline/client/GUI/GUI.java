@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -19,19 +20,20 @@ public class GUI extends Application implements RemoteView {
     Stage primaryStage;
 
 
-    private int clientID;
+    private Client client;
 
-    public GUI(String[] args) {
+    public GUI(String[] args, Client client) {
         this.args = args;
+        this.client = client;
     }
 
     @Override
     public int getClientID() {
-        return clientID;
+        return client.getClientID();
     }
 
     public void setClientID(int clientID) {
-        this.clientID = clientID;
+        client.setClientID(clientID);
     }
 
     @Override
@@ -64,7 +66,27 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showSelectableEvent(List<Coordinates> selectable) {
+    public void showSelectableSquare(List<Coordinates> selectable) {
+
+    }
+
+    @Override
+    public void selectSelectableSquare(List<Coordinates> selectable) {
+
+    }
+
+    @Override
+    public void selectSelectableEffect(List<String> callableEffects) {
+
+    }
+
+    @Override
+    public void choseAction() {
+
+    }
+
+    @Override
+    public void selectWeaponCard() {
 
     }
 

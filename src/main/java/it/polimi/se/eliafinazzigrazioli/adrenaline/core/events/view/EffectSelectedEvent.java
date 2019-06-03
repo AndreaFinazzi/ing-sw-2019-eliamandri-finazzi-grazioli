@@ -5,14 +5,14 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect
 
 public class EffectSelectedEvent extends AbstractViewEvent {
 
-    private WeaponEffect effect;
+    private String effect;
 
-    public EffectSelectedEvent(String player, WeaponEffect effect) {
+    public EffectSelectedEvent(String player, String effect) {
         super(player);
         this.effect = effect;
     }
 
-    public WeaponEffect getEffect() {
+    public String getEffect() {
         return effect;
     }
 

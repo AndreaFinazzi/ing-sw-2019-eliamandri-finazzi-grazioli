@@ -4,12 +4,13 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public class LoginResponseEvent extends AbstractModelEvent {
 
-    int tsrgetClientID;
+    int targetClientID;
     boolean successful = false;
 
-    public LoginResponseEvent(int tsrgetClientID) {
+    public LoginResponseEvent(int targetClientID) {
         super(null);
-        this.tsrgetClientID = tsrgetClientID;
+        this.targetClientID = targetClientID;
+        this.privateEvent = true;
     }
 
     public boolean isSuccessful() {
@@ -22,7 +23,7 @@ public class LoginResponseEvent extends AbstractModelEvent {
 
     @Override
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
-        if (listener.getClientID() == tsrgetClientID) {
+        if (listener.getClientID() == targetClientID) {
             listener.handleEvent(this);
         }
     }

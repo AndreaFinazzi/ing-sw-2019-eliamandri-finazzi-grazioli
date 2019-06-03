@@ -4,22 +4,11 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public class ConnectionResponseEvent extends AbstractModelEvent {
 
-    private int clientId;
-
-    public int getClientId() {
-        return clientId;
+    public ConnectionResponseEvent(int clientID, String message) {
+        super(null, message);
+        this.clientID = clientID;
+        privateEvent = true;
     }
-
-
-    public ConnectionResponseEvent(String message) {
-        super(message);
-    }
-
-    public ConnectionResponseEvent(int clientId, String message) {
-        super(message);
-        this.clientId = clientId;
-    }
-
 
     @Override
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {

@@ -1,8 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayersSelectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
@@ -43,6 +42,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     //TODO to implement
     @Override
     default void handleEvent(BeginTurnEvent event) throws HandlerNotImplementedException {
+        choseAction();
 //        showBeginTurn(event);
 //        showPlayerSelection();
     }
@@ -116,8 +116,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     //TODO to implement
     @Override
     default void handleEvent(SelectableBoardSquaresEvent event) throws HandlerNotImplementedException {
-        showSelectableEvent(event.getSelectableBoardSquares());
-        throw new HandlerNotImplementedException();
+        selectSelectableSquare(event.getSelectableBoardSquares());
     }
 
     //TODO to implement
@@ -150,6 +149,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(SelectableEffectsEvent event) throws HandlerNotImplementedException {
+        selectSelectableEffect(event.getCallableEffects());
+    }
+
     void login();
 
     //OUTGOING communications
@@ -161,12 +164,52 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         }
     }
 
+    default void notifyCardSelected(String card) {
+        try {
+            notifyObservers(new CardSelectedEvent(getPlayer(), card));
+        } catch(HandlerNotImplementedException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     default void notifyLoginRequestEvent(String nickname) {
         notifyObservers(new LoginRequestEvent(getClientID(), nickname));
     }
 
+    default void notifySelectedSquare(Coordinates coordinates) {
+        try {
+            notifyObservers(new SquareSelectedEvent(getPlayer(), coordinates));
+        } catch(HandlerNotImplementedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    default void notifySelectedEffects(String effect) {
+        try {
+            notifyObservers(new EffectSelectedEvent(getPlayer(), effect));
+        } catch(HandlerNotImplementedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    default void notifySelectedWeaponCard(String weapon) {
+        try {
+            notifyObservers(new CardSelectedEvent(getPlayer(), weapon));
+        }catch(HandlerNotImplementedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void choseAction();
+
+    void selectWeaponCard();
+
     void showBeginTurn(BeginTurnEvent event);
 
-    void showSelectableEvent(List<Coordinates> selectable);
+    void showSelectableSquare(List<Coordinates> selectable);
+
+    void selectSelectableSquare(List<Coordinates> selectable);
+
+    void selectSelectableEffect(List<String> callableEffects);
 }

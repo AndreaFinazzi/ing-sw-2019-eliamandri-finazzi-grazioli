@@ -27,7 +27,7 @@ public class ClientHandlerSocket extends AbstractClientHandler implements Observ
 
 
     public ClientHandlerSocket(Server server, Socket socket) {
-        this.server = server;
+        super(server);
         this.socket = socket;
         clientId = server.getCurrentClientID();
         try {
@@ -37,29 +37,35 @@ public class ClientHandlerSocket extends AbstractClientHandler implements Observ
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
 
-        send(new ConnectionResponseEvent(clientId, "Welcome message"));
+        sendTo(clientId, new ConnectionResponseEvent(clientId, "Welcome message"));
     }
 
     @Override
-    public void send(AbstractModelEvent event) {
-        try {
-            sender.writeObject(event);
-            sender.flush();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-        }
+    public void sendToAll(AbstractModelEvent event) {
+        send(event);
     }
 
     @Override
-    public void send(int clientID, AbstractModelEvent event) {
+    public void sendTo(int clientID, AbstractModelEvent event) {
         if (clientID == this.clientId) {
             send(event);
         }
     }
 
     @Override
-    public void send(String player, AbstractModelEvent event) {
+    public void sendTo(String player, AbstractModelEvent event) {
+        if (player == playerName) {
+            send(event);
+        }
+    }
 
+    private void send(AbstractModelEvent event) {
+        try {
+            sender.writeObject(event);
+            sender.flush();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+        }
     }
 
     @Override

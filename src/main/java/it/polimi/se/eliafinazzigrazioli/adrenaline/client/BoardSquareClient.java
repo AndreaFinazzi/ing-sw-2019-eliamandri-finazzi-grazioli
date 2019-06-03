@@ -25,4 +25,16 @@ public class BoardSquareClient {
     public Room getRoom() {
         return room;
     }
+
+    @Override
+    public String toString() {
+        return "BoardSquareClient{" +
+                "coordinates=" + coordinates +
+                ", room=" + room +
+                ", north=" + north +
+                ", south=" + south +
+                ", east=" + east +
+                ", west=" + west +
+                '}';
+    }
 }

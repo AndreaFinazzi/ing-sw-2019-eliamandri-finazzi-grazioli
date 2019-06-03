@@ -5,7 +5,11 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 public abstract class AbstractModelEvent extends AbstractEvent {
+
+    protected boolean privateEvent = false;
+
     protected String player;
+
     protected int clientID;
 
     public AbstractModelEvent(String player) {
@@ -20,6 +24,22 @@ public abstract class AbstractModelEvent extends AbstractEvent {
 
     public String getPlayer() {
         return player;
+    }
+
+    public int getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
+
+    public boolean isPrivateEvent() {
+        return privateEvent;
+    }
+
+    public void setPrivateEvent(boolean privateEvent) {
+        this.privateEvent = privateEvent;
     }
 
     /*

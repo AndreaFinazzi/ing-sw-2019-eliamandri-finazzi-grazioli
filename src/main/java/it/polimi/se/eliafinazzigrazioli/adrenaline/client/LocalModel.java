@@ -17,10 +17,10 @@ public class LocalModel {
     private List<AmmoCard> ammoCards;
 
     //Public information
-    private GameBoard gameBoard;
+    private ClientGameBoard gameBoard;
     private List<String> players;
     private Map<String, PlayerBoard> playerBoards;
-    private Map<String, BoardSquare> playersPosition;
+    private Map<String, BoardSquareClient> playersPosition;
 
     public LocalModel() {
         weaponCards = new ArrayList<>();
@@ -42,14 +42,40 @@ public class LocalModel {
             System.out.println("Invalid collect");
     }
 
+    public List<String> getWeaponCards() {
+        return weaponCards;
+    }
+
+    public List<PowerUpCard> getPowerUpCards() {
+        return powerUpCards;
+    }
+
+    public List<AmmoCard> getAmmoCards() {
+        return ammoCards;
+    }
+
+    public List<String> getPlayers() {
+        return players;
+    }
+
+    public Map<String, PlayerBoard> getPlayerBoards() {
+        return playerBoards;
+    }
+
+    public Map<String, BoardSquareClient> getPlayersPosition() {
+        return playersPosition;
+    }
+
     public void updatePowerUpCards() {
         //TODO
     }
 
     public void updatePlayersPosition(String player, Coordinates finalDestination) {
-        BoardSquare position = gameBoard.getBoardSquareByCoordinates(finalDestination);
+        BoardSquareClient position = gameBoard.getBoardSquareByCoordinates(finalDestination);
         playersPosition.put(player, position);
     }
 
-
+    public ClientGameBoard getGameBoard() {
+        return gameBoard;
+    }
 }

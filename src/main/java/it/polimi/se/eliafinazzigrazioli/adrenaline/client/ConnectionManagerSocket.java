@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientDisconnectionEvent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -62,6 +63,11 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
     @Override
     public void performRegistration() {
 
+    }
+
+    @Override
+    public void disconnect() {
+        send(new ClientDisconnectionEvent(client.getClientID(), client.getPlayerName()));
     }
 
     public void closeConnection() {

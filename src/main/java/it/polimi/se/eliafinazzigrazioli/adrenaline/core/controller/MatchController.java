@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ConnectionResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LoginResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
@@ -16,6 +17,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.server.AbstractClientHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
@@ -29,6 +31,8 @@ public class MatchController implements ViewEventsListenerInterface {
     private CardController cardController;
     private EventController eventController;
     private Timer timer;
+
+    private Map<Integer, String> clientIDToPlayerMap = new HashMap<>();
 
     private HashMap<MapType, Integer> votesMaps;
 
@@ -58,6 +62,7 @@ public class MatchController implements ViewEventsListenerInterface {
     }
 
     public EventController getEventController() {
+        LOGGER.info("Getting eventController");
         return eventController;
     }
 
@@ -65,8 +70,14 @@ public class MatchController implements ViewEventsListenerInterface {
         match.addPlayer(player);
     }
 
-    public void addPlayer(AbstractClientHandler clientHandler) {
+    public void addPlayer(int clientID, String player) throws MaxPlayerException, PlayerAlreadyPresentException {
+        match.addPlayer(player);
+    }
+
+    public void signClient(Integer clientID, AbstractClientHandler clientHandler) {
         eventController.addVirtualView(clientHandler);
+        clientIDToPlayerMap.put(clientID, null);
+        eventController.update(new ConnectionResponseEvent(clientID, "Username required."));
     }
 
     public void removePlayer(String nickname) {
@@ -132,10 +143,10 @@ public class MatchController implements ViewEventsListenerInterface {
     @Override
     public void handleEvent(LoginRequestEvent event) throws HandlerNotImplementedException {
         LoginResponseEvent responseEvent = new LoginResponseEvent(event.getSourceClientID());
-        ;
+        responseEvent.setClientID(event.getClientID());
 
         try {
-            addPlayer(event.getPlayer());
+            addPlayer(event.getClientID(), event.getPlayer());
             responseEvent.setSuccess(true);
             responseEvent.setMessage("Welcome to Adrenaline, " + event.getPlayer());
 

@@ -3,9 +3,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 // Server main class
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ConnectionResponseEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
@@ -28,7 +25,8 @@ public class Server {
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     private ServerSocketManager serverSocketManager;
-    private HashMap<AbstractClientHandler, MatchBuilder> playerToMatchMap;
+    private HashMap<Integer, MatchBuilder> playerToMatchMap = new HashMap<>();
+    private HashMap<Integer, AbstractClientHandler> clientIDToClientHandlerMap = new HashMap<>();
 
     // Match-threads pool
     private ExecutorService matchesExecutor = Executors.newCachedThreadPool();
@@ -37,20 +35,17 @@ public class Server {
 
     // Player.username to ClientHandler
     // TODO change it to support RMI. Player.username to Client.ID
-    private HashMap<String, AbstractClientHandler> playerToClientHandler;
     private MatchBuilder nextMatch;
     private Registry registry;
-    private Timer timer;
-    private int currentClientID;
     private boolean online;
+    private Timer timer = new Timer();
+    private int currentClientID = 0;
 
     private Server() {
         LOGGER.info("Creating Server"); //TODO move to messages
-        timer = new Timer();
-        playerToMatchMap = new HashMap<>();
 
         nextMatch = new MatchBuilder();
-        currentClientID = 0;
+
         try {
             registry = LocateRegistry.createRegistry(1099);
         } catch (RemoteException e) {
@@ -59,6 +54,7 @@ public class Server {
     }
 
     public synchronized MatchBuilder getNextMatch() {
+        LOGGER.info("Getting nextMatch");
         return nextMatch;
     }
 
@@ -72,17 +68,22 @@ public class Server {
         networkExecutor.execute(new ServerRMIManager(this));
     }
 
-    private void mapPlayerToMatch(AbstractClientHandler clientHandler, MatchBuilder matchController) {
-        playerToMatchMap.put(clientHandler, matchController);
+    private void mapPlayerToMatch(Integer clientID, MatchBuilder matchController) {
+        playerToMatchMap.put(clientID, matchController);
     }
 
-    //TODO It may not be the best choice to block Server...
-    public synchronized void addPlayer(String player, AbstractClientHandler clientHandler) throws MaxPlayerException, PlayerAlreadyPresentException {
+
+    public synchronized void addClient(int clientID, AbstractClientHandler clientHandler) {
         stopTimer();
 
-        nextMatch.getMatchController().addPlayer(player);
-        mapPlayerToMatch(clientHandler, nextMatch);
+        nextMatch.getMatchController().signClient(clientID, clientHandler);
+        clientHandler.setEventsQueue(nextMatch.getEventsQueue());
 
+        mapPlayerToMatch(clientID, nextMatch);
+
+        clientHandler.sendTo(clientID, new ConnectionResponseEvent(clientID, "Username required."));
+
+        //TODO verify
         if (nextMatch.getMatchController().isFull()) {
             startNextMatch();
         } else if (nextMatch.getMatchController().isReady()) {
@@ -90,25 +91,11 @@ public class Server {
         }
     }
 
-    public synchronized void addPlayer(AbstractClientHandler clientHandler) {
-        stopTimer();
+    public void removeClient(int clientID) {
 
-        nextMatch.getMatchController().addPlayer(clientHandler);
-        clientHandler.setEventsQueue(nextMatch.getEventsQueue());
-
-        mapPlayerToMatch(clientHandler, nextMatch);
-        clientHandler.send(new ConnectionResponseEvent("Username required."));
+        clientIDToClientHandlerMap.remove(clientID);
     }
 
-    public synchronized void addPlayer(int clientID, AbstractClientHandler clientHandler) {
-        stopTimer();
-
-        nextMatch.getMatchController().addPlayer(clientHandler);
-        clientHandler.setEventsQueue(nextMatch.getEventsQueue());
-
-        mapPlayerToMatch(clientHandler, nextMatch);
-        clientHandler.send(clientID, new ConnectionResponseEvent("Username required."));
-    }
 
     private synchronized void startNextMatch() {
         LOGGER.info("Next match initialization: start");
@@ -121,14 +108,6 @@ public class Server {
 
         // initialize next starting match
         nextMatch = new MatchBuilder();
-    }
-
-    public void removePlayer(String player) {
-        playerToMatchMap.remove(player);
-    }
-
-    public void removePlayer(Player player) {
-        playerToMatchMap.remove(player.getPlayerNickname());
     }
 
 
@@ -148,7 +127,6 @@ public class Server {
         timer.cancel();
     }
 
-
     // ####################### RMI #######################
     public synchronized Registry getRegistry() {
         return registry;
@@ -163,6 +141,14 @@ public class Server {
 
     }
 
+    public boolean isUp() {
+        return online;
+    }
+
+    public void setUp(boolean online) {
+        this.online = online;
+    }
+
     public static void main(String[] args) {
         LOGGER.info(Messages.MESSAGE_LOGGING_INFO_SERVER_STARTED);
 
@@ -174,13 +160,8 @@ public class Server {
         } finally {
             //TODO do something to properly control Server shutdown
         }
-    }
 
-    public boolean isUp() {
-        return online;
-    }
-
-    public void setUp(boolean online) {
-        this.online = online;
+        Thread currentThread = Thread.currentThread();
+        currentThread.setName("MAIN SERVER THREAD");
     }
 }

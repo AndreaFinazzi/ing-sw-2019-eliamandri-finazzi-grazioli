@@ -8,17 +8,21 @@ import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
 public abstract class AbstractClientHandler implements Runnable {
-    protected Server server;
+    protected transient Server server;
     protected static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
     protected AbstractViewEvent nextReceivedEvent;
 
-    private BlockingQueue<AbstractViewEvent> eventsQueue;
+    protected BlockingQueue<AbstractViewEvent> eventsQueue;
 
-    public abstract void send(AbstractModelEvent event);
+    public AbstractClientHandler(Server server) {
+        this.server = server;
+    }
 
-    public abstract void send(int clientID, AbstractModelEvent event);
+    public abstract void sendToAll(AbstractModelEvent event);
 
-    public abstract void send(String player, AbstractModelEvent event);
+    public abstract void sendTo(int clientID, AbstractModelEvent event);
+
+    public abstract void sendTo(String player, AbstractModelEvent event);
 
     // register starting match
     public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
@@ -26,14 +30,17 @@ public abstract class AbstractClientHandler implements Runnable {
 //        eventController.addModelEventsListener(this);
     }
 
-    protected void signPlayerToNextMatch(AbstractClientHandler clientHandler) {
-        server.addPlayer(clientHandler);
-    }
+//    protected void signPlayerToNextMatch(AbstractClientHandler clientHandler) {
+//        server.addClient(clientHandler);
+//    }
 
     protected void received(AbstractViewEvent event) {
-        if (!eventsQueue.offer(event)) {
+        if (eventsQueue == null) {
+            LOGGER.info("Trying to directly update eventController");
+            server.getNextMatch().getMatchController().getEventController().update(event);
+        } else if (!eventsQueue.offer(event)) {
             //TODO specific event type needed?
-            send(new GenericEvent(event.getPlayer(), "Events generation failed."));
+            sendTo(event.getPlayer(), new GenericEvent(event.getPlayer(), "Events generation failed."));
         }
     }
 

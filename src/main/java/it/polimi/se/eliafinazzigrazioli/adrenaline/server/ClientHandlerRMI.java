@@ -1,9 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientDisconnectionEvent;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -16,20 +16,16 @@ import java.util.logging.Logger;
 // RMI SERVER
 public class ClientHandlerRMI extends AbstractClientHandler implements ServerRemoteRMI {
 
-    private boolean setted;
-    private Map<Integer, ClientRemoteRMI> clientsRMI;
-    private EventListenerInterface listener;
-    private transient Server server;
-    private String playerName;
     static final Logger LOGGER = Logger.getLogger(ClientHandlerRMI.class.getName());
-    private boolean response;
-    private String responseMessage;
+
+    private Map<Integer, ClientRemoteRMI> clientsRMI;
+    private boolean set;
 
 
     public ClientHandlerRMI(Server server) throws RemoteException {
         //TODO
         //listener = new RemoteView("tony");
-        this.server = server;
+        super(server);
         clientsRMI = new HashMap<>();
 
         UnicastRemoteObject.exportObject(this, 1099);
@@ -45,14 +41,15 @@ public class ClientHandlerRMI extends AbstractClientHandler implements ServerRem
      */
     @Override
     public void addClientRMI(ClientRemoteRMI clientRMI) throws RemoteException {
+        int clientID = clientRMI.getClientID();
         try {
-            if (clientRMI.getClientID() == 0) {
-                Integer clientID = server.getCurrentClientID();
-                clientRMI.setClientID(clientRMI.getClientID());
+            if (clientID == 0) {
+                clientID = server.getCurrentClientID();
+                clientRMI.setClientID(clientID);
             }
-            clientsRMI.put(clientRMI.getClientID(), clientRMI);
+            clientsRMI.put(clientID, clientRMI);
 
-            server.addPlayer(clientRMI.getClientID(), this);
+            server.addClient(clientID, this);
 
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -60,27 +57,42 @@ public class ClientHandlerRMI extends AbstractClientHandler implements ServerRem
         LOGGER.log(Level.INFO, "established connection RMI");
     }
 
-    public boolean isSetted() {
-        return setted;
+    @Override
+    public void removeClientRMI(ClientRemoteRMI clientRMI) throws RemoteException {
+        int clientID = clientRMI.getClientID();
+        clientsRMI.remove(clientID);
+        server.removeClient(clientID);
+
+        eventsQueue.offer(new ClientDisconnectionEvent(clientID));
     }
 
-    public void setSetted(boolean setted) {
-        this.setted = setted;
+    public boolean isSet() {
+        return set;
     }
 
-    public String getResponseMessage() {
-        return responseMessage;
+    public void setSet(boolean set) {
+        this.set = set;
     }
 
     @Override
-    public void send(AbstractModelEvent event) {
-        for (ClientRemoteRMI client : clientsRMI.values()) {
-            send(client, event);
+    public void sendToAll(AbstractModelEvent event) {
+        if (event.isPrivateEvent()) {
+
+            if (event.getClientID() != 0) {
+                sendTo(event.getClientID(), event);
+            } else if ((event.getPlayer() != null) && (event.getPlayer().equals(""))) {
+                throw new NullPointerException("Private event has no player ID!");
+            } else
+                sendTo(event.getPlayer(), event);
+        } else {
+            for (ClientRemoteRMI client : clientsRMI.values()) {
+                send(client, event);
+            }
         }
     }
 
     @Override
-    public void send(int clientID, AbstractModelEvent event) {
+    public void sendTo(int clientID, AbstractModelEvent event) {
         ClientRemoteRMI targetClient = clientsRMI.get(clientID);
 
         if (targetClient != null)
@@ -88,7 +100,7 @@ public class ClientHandlerRMI extends AbstractClientHandler implements ServerRem
     }
 
     @Override
-    public void send(String player, AbstractModelEvent event) {
+    public void sendTo(String player, AbstractModelEvent event) {
         // TODO implement
     }
 

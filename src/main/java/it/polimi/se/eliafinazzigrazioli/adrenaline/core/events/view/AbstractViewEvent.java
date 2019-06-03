@@ -14,6 +14,17 @@ public abstract class AbstractViewEvent extends AbstractEvent {
         this.player = player;
     }
 
+    public AbstractViewEvent(int clientID) {
+        super(Messages.MESSAGE_EVENTS_VIEW_DEFAULT);
+        this.clientID = clientID;
+    }
+
+    public AbstractViewEvent(int clientID, String player) {
+        super(Messages.MESSAGE_EVENTS_VIEW_DEFAULT);
+        this.clientID = clientID;
+        this.player = player;
+    }
+
     public int getClientID() {
         return clientID;
     }
