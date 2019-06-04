@@ -3,6 +3,8 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class CLI implements RemoteView {
     public CLI(Client client) {
         input = new Scanner(System.in);
         this.client = client;
+        localModel = new LocalModel();
     }
 
     public void login() {
@@ -96,6 +99,11 @@ public class CLI implements RemoteView {
     }
 
     @Override
+    public void buildLocalMap(MapType mapType) {
+        localModel.generatesGameBoard(mapType);
+    }
+
+    @Override
     public void choseAction() {
         int choice;
         do {
@@ -110,11 +118,12 @@ public class CLI implements RemoteView {
 
         switch(choice) {
             case 1:
-                //todo
+                notifyMovesRequestEvent();
                 break;
 
             case 2:
                 selectWeaponCard();
+                //wait response with selectable effect
                 break;
 
             case 3:
@@ -189,6 +198,44 @@ public class CLI implements RemoteView {
 
     }
 
+    @Override
+    public void showMap() {
+        System.out.println(" ________________________________________________________________");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.printf("|\t  Color  \t|\t  Color  \t|\t  Color  \t|\t  Color  \t|\n");
+        System.out.println("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.print(" ________________");
+        System.out.print("________________");
+        System.out.print("________________");
+        System.out.println("________________");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.printf("|\t  Color  \t|\t  Color  \t|\t  Color  \t|\t  Color  \t|\n");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.print(" ________________");
+        System.out.print("________________");
+        System.out.print("________________");
+        System.out.println("________________");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.printf("|\t  Color  \t|\t  Color  \t|\t  Color  \t|\t  Color  \t|\n");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
+        System.out.print(" ________________");
+        System.out.print("________________");
+        System.out.print("________________");
+        System.out.println("________________");
+    }
+
+    @Override
+    public void updatePlayerPosition(String nickname, Coordinates coordinates) {
+        System.out.println(nickname + " position it's changed");
+        BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(coordinates);
+        localModel.getPlayersPosition().put(nickname, boardSquareClient);
+    }
 
     @Override
     public void run() {

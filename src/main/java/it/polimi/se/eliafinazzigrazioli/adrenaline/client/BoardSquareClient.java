@@ -4,7 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
-public class BoardSquareClient {
+public abstract class BoardSquareClient {
 
     protected Coordinates coordinates;
     protected Room room;
@@ -24,6 +24,22 @@ public class BoardSquareClient {
 
     public Room getRoom() {
         return room;
+    }
+
+    public InterSquareLink getNorth() {
+        return north;
+    }
+
+    public InterSquareLink getSouth() {
+        return south;
+    }
+
+    public InterSquareLink getEast() {
+        return east;
+    }
+
+    public InterSquareLink getWest() {
+        return west;
     }
 
     @Override

@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -87,6 +88,21 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void selectWeaponCard() {
+
+    }
+
+    @Override
+    public void updatePlayerPosition(String nickname, Coordinates coordinates) {
+
+    }
+
+    @Override
+    public void buildLocalMap(MapType mapType) {
+
+    }
+
+    @Override
+    public void showMap() {
 
     }
 

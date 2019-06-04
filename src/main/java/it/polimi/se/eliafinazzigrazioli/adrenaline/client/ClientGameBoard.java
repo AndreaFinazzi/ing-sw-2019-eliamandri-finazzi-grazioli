@@ -154,4 +154,11 @@ public class ClientGameBoard {
         return squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()];
     }
 
+    public int getX_max() {
+        return x_max;
+    }
+
+    public int getY_max() {
+        return y_max;
+    }
 }

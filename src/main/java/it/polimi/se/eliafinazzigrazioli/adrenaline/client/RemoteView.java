@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
@@ -98,7 +99,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     //TODO to implement
     @Override
     default void handleEvent(PlayerMovementEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
+        int last = event.getPath().size() - 1;
+        Coordinates finalPosition = event.getPath().get(last);
+        updatePlayerPosition(event.getPlayer(), finalPosition);
     }
 
     //TODO to implement
@@ -153,6 +156,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         selectSelectableEffect(event.getCallableEffects());
     }
 
+    default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
+
+    }
+
     void login();
 
     //OUTGOING communications
@@ -201,7 +208,21 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         }
     }
 
+    default void notifyMovesRequestEvent() {
+        try {
+            notifyObservers(new MovesRequestEvent(getPlayer()));
+        } catch(HandlerNotImplementedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void buildLocalMap(MapType mapType);
+
+    void showMap();
+
     void choseAction();
+
+    void updatePlayerPosition(String nickname, Coordinates coordinates);
 
     void selectWeaponCard();
 

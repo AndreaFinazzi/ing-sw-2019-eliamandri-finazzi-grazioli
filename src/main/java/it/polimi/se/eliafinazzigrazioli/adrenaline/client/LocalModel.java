@@ -31,6 +31,10 @@ public class LocalModel {
         playerBoards = new HashMap<>();
     }
 
+    public void generatesGameBoard(MapType mapType) {
+        gameBoard = new ClientGameBoard(mapType);
+    }
+
     public void updateWeapons(String collectedWeapon, String dropOfWeapon) {
 
         if (!weaponCards.remove(dropOfWeapon))
@@ -68,11 +72,6 @@ public class LocalModel {
 
     public void updatePowerUpCards() {
         //TODO
-    }
-
-    public void updatePlayersPosition(String player, Coordinates finalDestination) {
-        BoardSquareClient position = gameBoard.getBoardSquareByCoordinates(finalDestination);
-        playersPosition.put(player, position);
     }
 
     public ClientGameBoard getGameBoard() {
