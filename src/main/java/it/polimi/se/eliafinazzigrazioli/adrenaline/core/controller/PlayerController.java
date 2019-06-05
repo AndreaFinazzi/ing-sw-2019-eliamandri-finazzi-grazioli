@@ -29,7 +29,7 @@ public class PlayerController implements EventListenerInterface {
 
     @Override
     public void handleEvent(MovePlayEvent event) {
-        Match match = matchController.getMatch();
+/*        Match match = matchController.getMatch();
         Player currentPlayer = matchController.getPlayers().get(event.getPlayer());
         List<Coordinates> path = event.getPath();
         GameBoard gameBoard = match.getGameBoard();
@@ -39,11 +39,12 @@ public class PlayerController implements EventListenerInterface {
         }
 
         match.notifyObservers(gameBoard.playerMovement(currentPlayer, path));
-
+*/
     }
 
     @Override
     public void handleEvent(CollectPlayEvent event) {
+/*
         List<AbstractModelEvent> eventList = new ArrayList<>();
         Match match = matchController.getMatch();
         Player currentPlayer = matchController.getPlayers().get(event.getPlayer());
@@ -69,7 +70,7 @@ public class PlayerController implements EventListenerInterface {
         eventList.add(gameBoard.getBoardSquareByCoordinates(path.get(path.size()-1)).collect(currentPlayer, match.getPowerUpsDeck()));
 
         match.notifyObservers(eventList);
-
+*/
     }
 
 

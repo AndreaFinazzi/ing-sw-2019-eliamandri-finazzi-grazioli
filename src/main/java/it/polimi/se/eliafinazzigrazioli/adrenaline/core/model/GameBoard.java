@@ -161,16 +161,15 @@ public class GameBoard {
      * Returns true if a valid path is given. A valid path is to be considered a list of squares where
      * the first element is adjacent(squares with a wall in the middle are not considered adjacent) to the current player
      * position and every other element is adjacent to the previous one.
+     * Another validation requirement is that the length of the given path is no bigger then the maximum number of
+     * movements allowed in case no other action is performed.
      * @param player : The player who should perform the movement along given path.
      * @param path : List of boardSquares. Not null value is required
-     * @param maxMoves
      * @return
      */
-    public boolean pathIsValid(Player player, List<Coordinates> path, int maxMoves){
-        if (maxMoves > path.size())
+    public boolean pathIsValid(Player player, List<Coordinates> path){
+        if (player.getPlayerBoard().simpleMovementMaxMoves() > path.size())
             return false;
-        if (path.size() == 0)
-            return true;
         List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(path);
         BoardSquare playerPosition = getPlayerPosition(player);
         for (BoardSquare boardSquare:boardSquaresPath){
