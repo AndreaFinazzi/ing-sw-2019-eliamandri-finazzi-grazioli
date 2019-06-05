@@ -1,6 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.RuntimeTypeAdapterFactory;
@@ -40,9 +40,8 @@ public abstract class BoardSquare implements Selectable {
     }
 
 
-    abstract public AbstractModelEvent collect(Player player, PowerUpsDeck deck);
+    abstract public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck);
 
-    abstract public boolean collectActionIsValid(Player player);
 
 
     @Override

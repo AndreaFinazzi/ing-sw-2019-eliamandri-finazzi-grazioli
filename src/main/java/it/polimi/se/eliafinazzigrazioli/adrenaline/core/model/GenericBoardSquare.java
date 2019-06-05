@@ -1,6 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -21,20 +20,18 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
 
 
     @Override
-    public AbstractModelEvent collect(Player player, PowerUpsDeck deck) {
-        PowerUpCard collectedCard = deck.drawCard();
+    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck) {
         AmmoCard collected = collectable;
         collectable = null;
-        player.addPowerUp(collectedCard);
+        PowerUpCard collectedPowerUp = null;
+        if (collected == null)
+            return null;
         player.addAmmos(collected.getAmmos());
-        return new AmmoCardCollectedEvent(player.getPlayerNickname(), collectedCard, collected.getAmmos());
-    }
-
-    @Override
-    public boolean collectActionIsValid(Player player) {
-        if (collectable == null)
-            return false;
-        return true;
+        if (collected.containsPowerUpCard()) {
+            collectedPowerUp = deck.drawCard();
+            player.addPowerUp(collectedPowerUp);
+        }
+        return new AmmoCardCollectedEvent(player.getPlayerNickname(), collectedPowerUp, collected.getAmmos());
     }
 
     //TODO define type exception

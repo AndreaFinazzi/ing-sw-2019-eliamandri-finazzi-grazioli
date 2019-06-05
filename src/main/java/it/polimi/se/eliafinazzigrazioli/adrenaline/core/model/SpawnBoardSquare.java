@@ -1,7 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.WeaponCollectSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -21,31 +20,17 @@ public class SpawnBoardSquare extends BoardSquare {
 
 
     /**
-     * For the spawn square the item collected depends on the choice of the user so the execution of the method consists
-     * of the generation of an event containing the names of the selectable cards.
+     * For a spawn square the collect action is not planned so the methods can only return a null event. The null return value
+     * is used by the TurnController to know whether the collect action has been performed or not.
      * @param player
      * @param deck
      * @return
      */
     @Override
-    public AbstractModelEvent collect(Player player, PowerUpsDeck deck) {
-        return new WeaponCollectSelectionRequestEvent(player.getPlayerNickname());
+    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck) {
+        return null;
     }
 
-    /**
-     * Returns true the player owns enough ammos to buy at least one of the weaponCards in the slots.
-     * @param player
-     * @return
-     */
-    @Override
-    public boolean collectActionIsValid(Player player) {
-        for (WeaponCard weaponCard: weaponSlots){
-            if (player.canSpend(weaponCard.getLoader())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public ArrayList<WeaponCard> getWeapons() {
         return weaponSlots;
