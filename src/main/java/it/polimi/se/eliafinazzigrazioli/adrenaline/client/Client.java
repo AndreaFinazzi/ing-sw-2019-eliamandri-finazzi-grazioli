@@ -57,8 +57,6 @@ public class Client {
     }
 
     public void init() {
-        view.addObserver(connectionManager);
-
         connectionManager.listen();
         new Thread(view).start();
     }
@@ -93,7 +91,7 @@ public class Client {
 
             client.init();
         } finally {
-//            client.disconnect();
+            client.disconnect();
         }
     }
 

@@ -142,11 +142,10 @@ public class MatchController implements ViewEventsListenerInterface {
 
     @Override
     public void handleEvent(LoginRequestEvent event) throws HandlerNotImplementedException {
-        LoginResponseEvent responseEvent = new LoginResponseEvent(event.getSourceClientID());
-        responseEvent.setClientID(event.getClientID());
+        LoginResponseEvent responseEvent = new LoginResponseEvent(event.getClientID());
 
         try {
-            addPlayer(event.getClientID(), event.getPlayer());
+            match.addPlayer(event.getPlayer());
             responseEvent.setSuccess(true);
             responseEvent.setMessage("Welcome to Adrenaline, " + event.getPlayer());
 

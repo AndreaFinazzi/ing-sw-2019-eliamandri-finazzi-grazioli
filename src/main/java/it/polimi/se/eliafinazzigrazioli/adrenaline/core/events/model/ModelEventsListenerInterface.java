@@ -51,6 +51,10 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(MatchStartedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
     default void handleEvent(NotAllowedPlayEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }

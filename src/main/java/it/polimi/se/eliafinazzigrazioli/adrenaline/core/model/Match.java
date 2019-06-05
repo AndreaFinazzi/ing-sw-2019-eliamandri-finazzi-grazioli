@@ -37,6 +37,7 @@ public class Match implements Observable {
         @Override
         public Player add(String nickname) {
             Player newPlayer = new Player(nickname);
+            newPlayer.setConnected(true);
             add(newPlayer);
             return newPlayer;
         }
@@ -155,10 +156,6 @@ public class Match implements Observable {
                 firstPlayer = tempPlayer;
                 currentPlayer = tempPlayer;
             }
-        }
-
-        if (players.size() == Rules.GAME_MAX_PLAYERS) {
-
         }
     }
 

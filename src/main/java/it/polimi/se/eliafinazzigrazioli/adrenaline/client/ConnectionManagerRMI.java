@@ -21,8 +21,8 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
     public ConnectionManagerRMI(Client client) throws RemoteException, NotBoundException {
         super(client);
 
-        registry = LocateRegistry.getRegistry();
-        serverRemoteRMI = (ServerRemoteRMI) registry.lookup("//localhost/ClientHandlerRMI");
+        registry = LocateRegistry.getRegistry(1099);
+        serverRemoteRMI = (ServerRemoteRMI) registry.lookup("ClientHandlerRMI");
 
         LOGGER.info("ClientHandlerRMI: Lookup successfully executed.");
 

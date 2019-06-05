@@ -12,6 +12,15 @@ public abstract class AbstractModelEvent extends AbstractEvent {
 
     protected int clientID;
 
+    public AbstractModelEvent() {
+        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
+    }
+
+    public AbstractModelEvent(int clientID) {
+        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
+        this.clientID = clientID;
+    }
+
     public AbstractModelEvent(String player) {
         super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
         this.player = player;

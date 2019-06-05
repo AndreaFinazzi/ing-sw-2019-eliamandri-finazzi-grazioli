@@ -94,7 +94,11 @@ public class MatchControllerTest {
     @Test
     public void addPlayerAlreadyPresentTest() throws PlayerAlreadyPresentException, MaxPlayerException {
         matchController.addPlayer("playerOne");
-        matchController.addPlayer("playerOne");
+        try {
+            matchController.addPlayer("playerOne");
+        } catch (PlayerAlreadyPresentException e) {
+
+        }
         List<Player> playerList = match.getPlayers();
         assertEquals(1, playerList.size());
         assertTrue(playerList.contains(new Player("playerOne")));

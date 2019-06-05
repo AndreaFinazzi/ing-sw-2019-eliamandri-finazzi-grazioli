@@ -2,7 +2,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 // Server main class
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ConnectionResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
@@ -47,13 +46,15 @@ public class Server {
         nextMatch = new MatchBuilder();
 
         try {
+//            System.setProperty("java.rmi.server.hostname", "192.168.43.185");
+//
             registry = LocateRegistry.createRegistry(1099);
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 
-    public synchronized MatchBuilder getNextMatch() {
+    public MatchBuilder getNextMatch() {
         LOGGER.info("Getting nextMatch");
         return nextMatch;
     }
@@ -80,8 +81,6 @@ public class Server {
         clientHandler.setEventsQueue(nextMatch.getEventsQueue());
 
         mapPlayerToMatch(clientID, nextMatch);
-
-        clientHandler.sendTo(clientID, new ConnectionResponseEvent(clientID, "Username required."));
 
         //TODO verify
         if (nextMatch.getMatchController().isFull()) {
