@@ -20,6 +20,11 @@ public class SpawnBoardSquare extends BoardSquare {
     }
 
 
+    @Override
+    public boolean isSpawnPoint() {
+        return true;
+    }
+
     /**
      * For a spawn square the collect action is not planned so the methods can only return a null event. The null return value
      * is used by the TurnController to know whether the collect action has been performed or not.

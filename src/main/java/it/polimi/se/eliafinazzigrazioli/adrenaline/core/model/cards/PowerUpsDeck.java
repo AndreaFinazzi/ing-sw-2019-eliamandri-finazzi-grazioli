@@ -20,4 +20,8 @@ public class PowerUpsDeck extends Deck<PowerUpCard> {
         discardedPowerUps = new ArrayList<>();
     }
 
+    public void discardPowerUp(PowerUpCard powerUpCard){
+        discardedPowerUps.add(powerUpCard);
+    }
+
 }

@@ -1,27 +1,28 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCollectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedPlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.BoardSquare;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Match;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TurnController implements ViewEventsListenerInterface {
 
     private Match match;
     private Player currentPlayer;
-    private BoardSquare startingPosition;
     private int actionsPerformed;
-    private int movementsPerformed;
+
 
     public TurnController(EventController eventController, Match match) {
         this.match = match;
@@ -31,9 +32,7 @@ public class TurnController implements ViewEventsListenerInterface {
 
     public void beginTurn(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
-        startingPosition = match.getGameBoard().getPlayerPosition(currentPlayer);
         actionsPerformed = 0;
-        movementsPerformed = 0;
     }
 
     /**
@@ -63,7 +62,6 @@ public class TurnController implements ViewEventsListenerInterface {
             return;
         }
 
-        movementsPerformed += path.size();
         match.notifyObservers(gameBoard.playerMovement(currentPlayer, path));
 
     }
@@ -95,6 +93,28 @@ public class TurnController implements ViewEventsListenerInterface {
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
     }
 
+    @Override
+    public void handleEvent(SpawnPowerUpSelected event) throws HandlerNotImplementedException {
+        List<AbstractModelEvent> events = new ArrayList<>();
+        GameBoard gameBoard = match.getGameBoard();
+        events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard().getEquivalentAmmo()));
+        events.add(currentPlayer.addPowerUp(event.getToKeep()));
+        match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
+        events.add(new BeginTurnEvent(currentPlayer.getPlayerNickname()));
+    }
 
 
+    @Override
+    public void handleEvent(EndTurnRequestEvent event) throws HandlerNotImplementedException {
+        //todo points assignment and end turn resets
+        match.nextCurrentPlayer();
+        beginTurn(match.getCurrentPlayer());
+        if (match.getTurn() != 0)
+            match.notifyObservers(new BeginTurnEvent(match.getCurrentPlayer().getPlayerNickname()));
+        else {
+            PowerUpsDeck deck = match.getPowerUpsDeck();
+            match.notifyObservers(new SpawnSelectionRequestEvent(match.getCurrentPlayer().getPlayerNickname(),
+                    Arrays.asList(deck.drawCard(), deck.drawCard())));
+        }
+    }
 }

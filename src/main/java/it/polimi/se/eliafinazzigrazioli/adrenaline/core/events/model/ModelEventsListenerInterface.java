@@ -102,4 +102,11 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
+
+    default void handleEvent(SpawnSelectionRequestEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+
+
 }

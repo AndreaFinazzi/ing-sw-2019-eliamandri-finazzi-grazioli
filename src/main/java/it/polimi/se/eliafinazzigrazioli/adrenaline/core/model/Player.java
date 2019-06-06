@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PowerUpCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -101,9 +102,10 @@ public class Player implements Selectable {
     }
 
     //TODO define type excpetion
-    public void addPowerUp(PowerUpCard powerUpCard) {
+    public PowerUpCollectedEvent addPowerUp(PowerUpCard powerUpCard) {
         if (powerUps.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && powerUpCard != null)
             powerUps.add(powerUpCard);
+        return new PowerUpCollectedEvent(playerNickname, powerUpCard);
     }
 
     public void addAmmos(List<Ammo> ammoList){

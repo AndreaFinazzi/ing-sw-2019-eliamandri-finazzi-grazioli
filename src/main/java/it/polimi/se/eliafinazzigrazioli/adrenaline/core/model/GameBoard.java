@@ -1,9 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerMovementEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerSpawnedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundBoardException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -144,6 +143,31 @@ public class GameBoard {
         playerPositions.put(player, destination);
     }
 
+
+
+    public PlayerSpawnedEvent spawnPlayer(Player player, Ammo ammoColor) {
+        List<BoardSquare> room;
+        BoardSquare spawnBoardSquare = null;
+        switch (ammoColor) {
+            case YELLOW:
+                room = getRoomSquares(Room.YELLOW);
+                break;
+            case BLUE:
+                room = getRoomSquares(Room.BLUE);
+                break;
+            case RED:
+                room = getRoomSquares(Room.BLUE);
+                break;
+            default:
+                room = null;
+        }
+        for (BoardSquare boardSquare: room)
+            if (boardSquare.isSpawnPoint())
+                spawnBoardSquare = boardSquare;
+
+        movePlayer(player, spawnBoardSquare);
+        return new PlayerSpawnedEvent(player.getPlayerNickname(), spawnBoardSquare.getCoordinates());
+    }
 
     /**
      * Method called by match to perform player movement

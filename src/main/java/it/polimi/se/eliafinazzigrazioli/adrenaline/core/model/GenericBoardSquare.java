@@ -21,6 +21,11 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
 
 
     @Override
+    public boolean isSpawnPoint() {
+        return false;
+    }
+
+    @Override
     public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path) {
         AmmoCard collected = collectable;
         collectable = null;
