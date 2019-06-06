@@ -40,7 +40,7 @@ public abstract class BoardSquare implements Selectable {
     }
 
 
-    abstract public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck);
+    abstract public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path);
 
 
 

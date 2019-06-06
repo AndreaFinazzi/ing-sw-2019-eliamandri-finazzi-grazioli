@@ -78,24 +78,23 @@ public class TurnController implements ViewEventsListenerInterface {
      */
     @Override
     public void handleEvent(CollectPlayEvent event) {
+        List<Coordinates> path = event.getPath();
         GameBoard gameBoard = match.getGameBoard();
         BoardSquare playerPosition = gameBoard.getPlayerPosition(currentPlayer);
         AmmoCardCollectedEvent generatedEvent;
         if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE || movementsPerformed > currentPlayer.getPlayerBoard().preCollectionMaxMoves()) {
-            generatedEvent = playerPosition.collect(currentPlayer, match.getPowerUpsDeck());
+            generatedEvent = playerPosition.collect(currentPlayer, match.getPowerUpsDeck(), path);
+            if (generatedEvent == null)
+                match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
+            else {
+                actionsPerformed++;
+                match.notifyObservers(generatedEvent);
+            }
         }
-        else {
+        else
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
-            return;
-        }
-        if (generatedEvent == null)
-            match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
-        else {
-            actionsPerformed++;
-            startingPosition = playerPosition;
-            movementsPerformed = 0;
-            match.notifyObservers(generatedEvent);
-        }
-
     }
+
+
+
 }

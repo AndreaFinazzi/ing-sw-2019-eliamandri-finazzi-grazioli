@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedP
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MovementNotAllowedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundBoardException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -178,6 +179,13 @@ public class GameBoard {
             playerPosition = boardSquare;
         }
         return true;
+    }
+
+    public AbstractModelEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path) {
+        List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(path);
+        BoardSquare destination = boardSquaresPath.get(boardSquaresPath.size()-1);
+        movePlayer(player, boardSquaresPath.get(boardSquaresPath.size()-1));
+        return destination.collect(player, deck, path);
     }
 
     private List<BoardSquare> coordinatesToBoardSquares(List<Coordinates> coordinatesList) {

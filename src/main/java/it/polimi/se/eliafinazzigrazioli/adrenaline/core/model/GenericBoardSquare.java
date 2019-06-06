@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class GenericBoardSquare extends BoardSquare implements Serializable {
 
@@ -20,7 +21,7 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
 
 
     @Override
-    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck) {
+    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path) {
         AmmoCard collected = collectable;
         collectable = null;
         PowerUpCard collectedPowerUp = null;
@@ -31,7 +32,7 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
             collectedPowerUp = deck.drawCard();
             player.addPowerUp(collectedPowerUp);
         }
-        return new AmmoCardCollectedEvent(player.getPlayerNickname(), collectedPowerUp, collected.getAmmos());
+        return new AmmoCardCollectedEvent(player.getPlayerNickname(), collectedPowerUp, collected.getAmmos(), path);
     }
 
     //TODO define type exception

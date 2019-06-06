@@ -6,6 +6,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SpawnBoardSquare extends BoardSquare {
 
@@ -27,7 +28,7 @@ public class SpawnBoardSquare extends BoardSquare {
      * @return
      */
     @Override
-    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck) {
+    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path) {
         return null;
     }
 
