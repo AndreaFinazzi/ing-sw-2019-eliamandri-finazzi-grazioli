@@ -6,10 +6,9 @@ public class PowerUpCard {
     private final Ammo equivalentAmmo;
     private PowerUpEffect effect;
 
-    public PowerUpCard(String powerUpType, Ammo equivalentAmmo, PowerUpEffect effect) {
+    public PowerUpCard(String powerUpType, Ammo equivalentAmmo) {
         this.powerUpType = powerUpType;
         this.equivalentAmmo = equivalentAmmo;
-        this.effect = effect;
     }
 
     public Ammo getEquivalentAmmo() {
