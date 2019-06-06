@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayEvent;
@@ -57,7 +58,7 @@ public class TurnController implements ViewEventsListenerInterface {
         }
 
 
-        if (!gameBoard.pathIsValid(currentPlayer, path) || path.size() + movementsPerformed > Rules.MAX_MOVEMENTS){
+        if (!gameBoard.pathIsValid(currentPlayer, path) || path.size() > Rules.MAX_MOVEMENTS){
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
             return;
         }
@@ -80,10 +81,9 @@ public class TurnController implements ViewEventsListenerInterface {
     public void handleEvent(CollectPlayEvent event) {
         List<Coordinates> path = event.getPath();
         GameBoard gameBoard = match.getGameBoard();
-        BoardSquare playerPosition = gameBoard.getPlayerPosition(currentPlayer);
-        AmmoCardCollectedEvent generatedEvent;
-        if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE || movementsPerformed > currentPlayer.getPlayerBoard().preCollectionMaxMoves()) {
-            generatedEvent = playerPosition.collect(currentPlayer, match.getPowerUpsDeck(), path);
+        AbstractModelEvent generatedEvent;
+        if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE || path.size() > currentPlayer.getPlayerBoard().preCollectionMaxMoves()) {
+            generatedEvent = gameBoard.collect(currentPlayer, match.getPowerUpsDeck(), path);
             if (generatedEvent == null)
                 match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
             else {
