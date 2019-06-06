@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Deck<CardType> {
 
-    List<CardType> cards;
+    protected List<CardType> cards;
 
     public CardType drawCard() {
         return cards.remove(new Random().nextInt(cards.size()));
