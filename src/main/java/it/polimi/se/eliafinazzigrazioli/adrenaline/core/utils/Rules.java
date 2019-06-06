@@ -72,6 +72,9 @@ public final class Rules {
     public static final int COLLECTING_ADRENALINIC_ACTION_MOVES_SURPLUS = COLLECTING_ADRENALINIC_ACTION.get("moves_surplus").asInt(1);
     public static final int COLLECTING_ADRENALINIC_ACTION_MIN_DAMAGE = COLLECTING_ADRENALINIC_ACTION.get("min_damages").asInt(3);
 
+    // POWER UPS
+    private static final JsonNode POWER_UPS = RULES.get("power_ups");
+    private static final int POWER_UPS_PER_COLOR = RULES.get("cards_per_color").asInt(2);
 
     // GAME_BOARD
     private static final JsonNode GAME_BOARD = GAME.get("board");

@@ -22,6 +22,9 @@
         "max_power_ups": 3
       }
     },
+    "power_ups" : {
+      "cards_per_color" : 2
+    },
     "game": {
       "min_players": 3,
       "max_players": 5,
