@@ -50,7 +50,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     //TODO to implement
     @Override
-    default void handleEvent(CardDrawedEvent event) throws HandlerNotImplementedException {
+    default void handleEvent(WeaponCardDrawedEvent event) throws HandlerNotImplementedException {
 
         throw new HandlerNotImplementedException();
     }
@@ -87,7 +87,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     //TODO to implement
     @Override
     default void handleEvent(NotAllowedPlayEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
+        //todo showMessage(event.getMessage())
+        choseAction();
+
     }
 
     //TODO to implement
@@ -157,10 +159,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     }
 
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
+        buildLocalMap(event.getMapType());
 
     }
-
-    void login();
 
     //OUTGOING communications
     default void notifyPlayerSelectedEvent(ArrayList<String> selectedPlayers) {
@@ -208,13 +209,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         }
     }
 
-    default void notifyMovesRequestEvent() {
-        try {
-            notifyObservers(new MovesRequestEvent(getPlayer()));
-        } catch(HandlerNotImplementedException e) {
-            e.printStackTrace();
-        }
+    default void notifyRequestMove(int clientID, String playerName) {
+            notifyObservers(new RequestMovePlayEvent(clientID, playerName));
     }
+
 
     void buildLocalMap(MapType mapType);
 
@@ -233,4 +231,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     void selectSelectableSquare(List<Coordinates> selectable);
 
     void selectSelectableEffect(List<String> callableEffects);
+
+    void showPlayerMovement(String playerName, List<Coordinates> path);
+
+    void login();
+
+    void showMessage(String message);
 }

@@ -23,7 +23,7 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(CardDrawedEvent event) throws HandlerNotImplementedException {
+    default void handleEvent(WeaponCardDrawedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 

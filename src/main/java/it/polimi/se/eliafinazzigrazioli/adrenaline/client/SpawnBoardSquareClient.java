@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -10,7 +11,8 @@ import java.util.List;
 
 public class SpawnBoardSquareClient extends BoardSquareClient {
 
-    private List<String> weaponCards;
+
+    private List<WeaponCardClient> weaponCards;
     private boolean ammoCard;
 
     public SpawnBoardSquareClient(Room room, Coordinates coordinates, InterSquareLink north,
@@ -20,21 +22,41 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         weaponCards = new ArrayList<>();
     }
 
-    public List<String> getWeaponCards() {
+    public List<WeaponCardClient> getWeaponCards() {
         return weaponCards;
     }
 
-    public void addWeapon(String weaponCard) {
+    public void addWeapon(WeaponCardClient weaponCard) {
         if (weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && weaponCards.contains(weaponCard)) {
             weaponCards.add(weaponCard);
         }
     }
 
-    public String remove(String weaponCard) {
+    public WeaponCardClient remove(WeaponCardClient weaponCard) {
         int index = weaponCards.indexOf(weaponCard);
-        String tempWeaponcard = weaponCards.get(index);
+        WeaponCardClient tempWeaponcard = weaponCards.get(index);
         weaponCards.remove(weaponCard);
         return tempWeaponcard;
+    }
+
+    @Override
+    public boolean isSpawnBoard() {
+        return true;
+    }
+
+    @Override
+    public boolean addWeaponCard(WeaponCardClient weapon) {
+        if(weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && !weaponCards.contains(weapon)){
+            weaponCards.add(weapon);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    @Override
+    public boolean addAmmoCard(AmmoCardClient ammo) {
+        return false;
     }
 
     public boolean isAmmoCard() {

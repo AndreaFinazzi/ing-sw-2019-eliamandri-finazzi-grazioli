@@ -62,6 +62,11 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void showPlayerMovement(String playerName, List<Coordinates> path) {
+
+    }
+
+    @Override
     public void showBeginTurn(BeginTurnEvent event) {
 
     }
@@ -103,6 +108,11 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showMap() {
+
+    }
+
+    @Override
+    public void showMessage(String message) {
 
     }
 

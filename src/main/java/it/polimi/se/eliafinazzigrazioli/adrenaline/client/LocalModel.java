@@ -1,7 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
@@ -12,15 +12,16 @@ import java.util.Map;
 public class LocalModel {
 
     //Private information
-    private List<String> weaponCards;
-    private List<PowerUpCard> powerUpCards;
-    private List<AmmoCard> ammoCards;
+    private List<WeaponCardClient> weaponCards;
+    private List<PowerUpCardClient> powerUpCards;
+    private List<AmmoCardClient> ammoCards;
 
     //Public information
     private ClientGameBoard gameBoard;
     private List<String> players;
     private Map<String, PlayerBoard> playerBoards;
     private Map<String, BoardSquareClient> playersPosition;
+    private List<BoardSquareClient> listSpawn;
 
     public LocalModel() {
         weaponCards = new ArrayList<>();
@@ -33,9 +34,10 @@ public class LocalModel {
 
     public void generatesGameBoard(MapType mapType) {
         gameBoard = new ClientGameBoard(mapType);
+        listSpawn = gameBoard.getSpawnBoardSquareClient();
     }
 
-    public void updateWeapons(String collectedWeapon, String dropOfWeapon) {
+    public void updateWeapons(WeaponCardClient collectedWeapon, WeaponCardClient dropOfWeapon) {
 
         if (!weaponCards.remove(dropOfWeapon))
             System.out.println("Invalid drop");
@@ -46,15 +48,19 @@ public class LocalModel {
             System.out.println("Invalid collect");
     }
 
-    public List<String> getWeaponCards() {
+    public List<WeaponCardClient> getWeaponCards() {
         return weaponCards;
     }
 
-    public List<PowerUpCard> getPowerUpCards() {
+    public List<PowerUpCardClient> getPowerUpCards() {
         return powerUpCards;
     }
 
-    public List<AmmoCard> getAmmoCards() {
+    public void updateWeaponsSpawn(WeaponCardClient weaponCardClient, Room room) {
+
+    }
+
+    public List<AmmoCardClient> getAmmoCards() {
         return ammoCards;
     }
 

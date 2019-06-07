@@ -42,6 +42,23 @@ public abstract class BoardSquareClient {
         return west;
     }
 
+    public boolean isSpawnBoard(){
+        return false;
+    }
+
+    public boolean addWeaponCard(WeaponCardClient weapon){
+        return false;
+    }
+
+    public boolean addAmmoCard(AmmoCardClient ammo){
+        return false;
+    }
+
+    //if return value is null, play is not valid
+    public AmmoCardClient collectAmmoCard() {
+        return null;
+    }
+
     @Override
     public String toString() {
         return "BoardSquareClient{" +

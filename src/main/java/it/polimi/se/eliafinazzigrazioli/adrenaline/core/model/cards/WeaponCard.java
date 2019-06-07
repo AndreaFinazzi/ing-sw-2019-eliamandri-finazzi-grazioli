@@ -5,10 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.RuntimeTypeAdapterFactory;
 
@@ -18,9 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class WeaponCard extends Card {
 
@@ -120,9 +115,22 @@ public class WeaponCard extends Card {
         }
     }
 
+    public Map<String, String> getEffectsDescription(){
+        Map<String, String> effectsDescription = new HashMap<>();
+        for(WeaponEffect weaponEffect : effects){
+            effectsDescription.put(weaponEffect.getEffectName(), weaponEffect.getEffectDescription());
+        }
+        return effectsDescription;
+    }
+
     public List<String> getCallableEffects(){
         return callableEffects;
     }
+
+    public Ammo getCardColor() {
+        return cardColor;
+    }
+
 
     @Override
     public String toString() {

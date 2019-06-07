@@ -257,4 +257,11 @@ public class WeaponEffect {
         beginningSelectionBuilding = true;
     }
 
+    public String getEffectDescription() {
+        return effectDescription;
+    }
+
+    public List<Ammo> getPrice() {
+        return price;
+    }
 }

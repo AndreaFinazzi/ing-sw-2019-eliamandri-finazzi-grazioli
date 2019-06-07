@@ -154,6 +154,17 @@ public class ClientGameBoard {
         return squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()];
     }
 
+    public List<BoardSquareClient> getSpawnBoardSquareClient() {
+        List<BoardSquareClient> listSpawn = new ArrayList<>();
+        for(int i=0; i<x_max; i++) {
+            for(int j=0; j<y_max; j++) {
+                if(squaresMatrix[i][j] != null && squaresMatrix[i][j].isSpawnBoard())
+                    listSpawn.add(squaresMatrix[i][j]);
+            }
+        }
+        return listSpawn;
+    }
+
     public int getX_max() {
         return x_max;
     }

@@ -101,6 +101,8 @@ public class CLI implements RemoteView {
     @Override
     public void buildLocalMap(MapType mapType) {
         localModel.generatesGameBoard(mapType);
+        System.out.println("Map is chosen is: " + mapType);
+        //todo showmap();
     }
 
     @Override
@@ -118,7 +120,7 @@ public class CLI implements RemoteView {
 
         switch(choice) {
             case 1:
-                notifyMovesRequestEvent();
+                notifyRequestMove(client.getClientID(), client.getPlayerName());
                 break;
 
             case 2:
@@ -134,9 +136,9 @@ public class CLI implements RemoteView {
 
     @Override
     public void selectWeaponCard() {
-        List<String> weapons = localModel.getWeaponCards();
+        List<WeaponCardClient> weapons = localModel.getWeaponCards();
         int count = 1;
-        for(String weapon : weapons){
+        for(WeaponCardClient weapon : weapons){
             System.out.println(count + ") " + weapon);
             count++;
         }
@@ -147,7 +149,7 @@ public class CLI implements RemoteView {
             String temp = input.nextLine();
             choice = Integer.parseInt(temp);
         }while( choice < 1 || choice > count );
-        String weapon = weapons.get(choice-1);
+        String weapon = weapons.get(choice-1).getWeaponName();
         notifySelectedWeaponCard(weapon);
     }
 
@@ -195,6 +197,11 @@ public class CLI implements RemoteView {
 
     @Override
     public void showBeginTurn(BeginTurnEvent event) {
+
+    }
+
+    @Override
+    public void showPlayerMovement(String playerName, List<Coordinates> path) {
 
     }
 
@@ -249,5 +256,10 @@ public class CLI implements RemoteView {
     @Override
     public int getClientID() {
         return client.getClientID();
+    }
+
+    @Override
+    public void showMessage(String message) {
+        System.out.println(message);
     }
 }
