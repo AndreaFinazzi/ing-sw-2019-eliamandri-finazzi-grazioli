@@ -74,7 +74,7 @@ public final class Rules {
 
     // POWER UPS
     private static final JsonNode POWER_UPS = RULES.get("power_ups");
-    public static final int POWER_UPS_PER_COLOR = RULES.get("cards_per_color").asInt(2);
+    public static final int POWER_UPS_PER_COLOR = POWER_UPS.get("cards_per_color").asInt(2);
 
     // GAME_BOARD
     private static final JsonNode GAME_BOARD = GAME.get("board");
