@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
@@ -48,11 +49,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 //        showPlayerSelection();
     }
 
-    //TODO to implement
     @Override
     default void handleEvent(WeaponCardDrawedEvent event) throws HandlerNotImplementedException {
-
-        throw new HandlerNotImplementedException();
+        WeaponCardClient weaponCardClient = new WeaponCardClient(event.getWeaponName(), event.getEffectsDescription());
+        updateWeaponOnMap(weaponCardClient, event.getCoordinates());
     }
 
     @Override
@@ -62,7 +62,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     @Override
     default void handleEvent(ConnectionResponseEvent event) throws HandlerNotImplementedException {
-        System.out.println(event.getMessage());
+        showMessage(event.getMessage());
         login();
     }
 
@@ -87,7 +87,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     //TODO to implement
     @Override
     default void handleEvent(NotAllowedPlayEvent event) throws HandlerNotImplementedException {
-        //todo showMessage(event.getMessage())
+        showMessage(event.getMessage());
         choseAction();
 
     }
@@ -151,7 +151,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     //TODO to implement
     @Override
     default void handleEvent(WeaponCollectedEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
+        collectWeapon(event.getCollectedWeapon(), event.getDropOfWeapon());
     }
 
     default void handleEvent(SelectableEffectsEvent event) throws HandlerNotImplementedException {
@@ -161,6 +161,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
         buildLocalMap(event.getMapType());
 
+    }
+
+    default void handleEvent(SpawnSelectionRequestEvent event) throws HandlerNotImplementedException {
+        List<PowerUpCard> cards = event.getSelectableCards();
+        PowerUpCard toKeep = selectPowerUpToKeep(cards);
+        cards.remove(toKeep);
+        PowerUpCard spawnCard = cards.get(0);
+        notifyObservers(new SpawnPowerUpSelected(getPlayer(), toKeep, cards.get(0)));
     }
 
     //OUTGOING communications
@@ -213,6 +221,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
             notifyObservers(new RequestMovePlayEvent(clientID, playerName));
     }
 
+    void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates);
 
     void buildLocalMap(MapType mapType);
 
@@ -223,6 +232,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     void updatePlayerPosition(String nickname, Coordinates coordinates);
 
     void selectWeaponCard();
+
+    void collectWeapon(String collectedWeapon, String dropOfWeapon);
 
     void showBeginTurn(BeginTurnEvent event);
 
@@ -237,4 +248,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     void login();
 
     void showMessage(String message);
+
+    PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards);
+
+
 }

@@ -3,8 +3,8 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.util.List;
@@ -196,6 +196,24 @@ public class CLI implements RemoteView {
     }
 
     @Override
+    public void collectWeapon(String collectedWeapon, String dropOfWeapon) {
+
+    }
+
+    @Override
+    public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
+        System.out.println("You have collected this Weapon card");
+        System.out.println(weaponCardClient);
+        if(localModel.getGameBoard().getBoardSquareByCoordinates(coordinates).addWeaponCard(weaponCardClient)) {
+            System.out.println(weaponCardClient);
+            System.out.println("is drawed on coordinates: " + coordinates);
+        }
+        else
+            System.out.println("ops, something didn't work");
+
+    }
+
+    @Override
     public void showBeginTurn(BeginTurnEvent event) {
 
     }
@@ -237,11 +255,32 @@ public class CLI implements RemoteView {
         System.out.println("________________");
     }
 
+
+
     @Override
     public void updatePlayerPosition(String nickname, Coordinates coordinates) {
         System.out.println(nickname + " position it's changed");
         BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(coordinates);
         localModel.getPlayersPosition().put(nickname, boardSquareClient);
+    }
+
+    @Override
+    public PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards) {
+        System.out.println("Choose your ");
+        int count = 1;
+        for(PowerUpCard temp : cards){
+            System.out.println(count + ") " + temp.getPowerUpType() + " " + temp.getEquivalentAmmo());
+            count++;
+        }
+        System.out.println("Insert your choice");
+        count--;
+        int choice;
+        do {
+            String temp = input.nextLine();
+            choice = Integer.parseInt(temp);
+        }while( choice < 1 || choice > count );
+        localModel.addPowerUp(cards.get(choice-1));
+        return cards.get(choice-1);
     }
 
     @Override

@@ -45,6 +45,11 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
     }
 
     @Override
+    public List<WeaponCardClient> getWeapons() {
+        return weaponCards;
+    }
+
+    @Override
     public boolean addWeaponCard(WeaponCardClient weapon) {
         if(weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && !weaponCards.contains(weapon)){
             weaponCards.add(weapon);

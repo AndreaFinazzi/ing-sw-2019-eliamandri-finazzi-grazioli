@@ -98,7 +98,7 @@ public class TurnController implements ViewEventsListenerInterface {
         List<AbstractModelEvent> events = new ArrayList<>();
         GameBoard gameBoard = match.getGameBoard();
         events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard().getEquivalentAmmo()));
-        events.add(currentPlayer.addPowerUp(event.getToKeep()));
+        currentPlayer.addPowerUp(event.getToKeep());
         match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
         events.add(new BeginTurnEvent(currentPlayer.getPlayerNickname()));
     }

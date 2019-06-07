@@ -2,8 +2,10 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -113,6 +115,21 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showMessage(String message) {
+
+    }
+
+    @Override
+    public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
+
+    }
+
+    @Override
+    public PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards) {
+        return null;
+    }
+
+    @Override
+    public void collectWeapon(String collectedWeapon, String dropOfWeapon) {
 
     }
 

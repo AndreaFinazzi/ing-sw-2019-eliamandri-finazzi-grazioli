@@ -4,6 +4,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
+import java.util.List;
+
 public abstract class BoardSquareClient {
 
     protected Coordinates coordinates;
@@ -44,6 +46,10 @@ public abstract class BoardSquareClient {
 
     public boolean isSpawnBoard(){
         return false;
+    }
+
+    public List<WeaponCardClient> getWeapons(){
+        return null;
     }
 
     public boolean addWeaponCard(WeaponCardClient weapon){

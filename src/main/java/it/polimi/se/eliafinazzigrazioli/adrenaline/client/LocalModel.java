@@ -1,7 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.Map;
 public class LocalModel {
 
     //Private information
-    private List<WeaponCardClient> weaponCards;
+    private List<WeaponCardClient> weaponCards; //user's weapon
     private List<PowerUpCardClient> powerUpCards;
     private List<AmmoCardClient> ammoCards;
 
@@ -48,6 +47,15 @@ public class LocalModel {
             System.out.println("Invalid collect");
     }
 
+    public boolean addPowerUp(PowerUpCard card) {
+        PowerUpCardClient powerUpCardClient = new PowerUpCardClient(card);
+        if(powerUpCards.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && !powerUpCards.contains(powerUpCardClient)){
+            powerUpCards.add(powerUpCardClient);
+            return true;
+        }
+        return false;
+    }
+
     public List<WeaponCardClient> getWeaponCards() {
         return weaponCards;
     }
@@ -78,6 +86,20 @@ public class LocalModel {
 
     public void updatePowerUpCards() {
         //TODO
+    }
+
+    //todo
+    public WeaponCardClient getWeaponCardByNameOnMap(String weaponName) {
+        for(BoardSquareClient square : listSpawn){
+            List<WeaponCardClient> list = square.getWeapons();
+            if(list != null) {
+                for(int i=0; i<list.size(); i++) {
+                    if(list.get(i).getWeaponName().equals(weaponName))
+                        return list.get(i);
+                }
+            }
+        }
+        return null;
     }
 
     public ClientGameBoard getGameBoard() {
