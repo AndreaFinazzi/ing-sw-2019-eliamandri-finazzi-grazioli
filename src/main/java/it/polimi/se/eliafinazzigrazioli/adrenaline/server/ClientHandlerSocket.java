@@ -2,7 +2,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ConnectionResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
@@ -36,8 +35,6 @@ public class ClientHandlerSocket extends AbstractClientHandler implements Observ
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
-
-        sendTo(clientId, new ConnectionResponseEvent(clientId, "Welcome message"));
     }
 
     @Override

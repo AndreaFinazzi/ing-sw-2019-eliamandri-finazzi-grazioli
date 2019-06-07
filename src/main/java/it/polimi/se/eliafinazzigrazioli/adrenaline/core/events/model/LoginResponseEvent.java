@@ -1,10 +1,17 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
+
+import java.util.ArrayList;
 
 public class LoginResponseEvent extends AbstractModelEvent {
 
-    boolean successful = false;
+    private boolean successful = false;
+
+    private ArrayList<Avatar> availableAvatars;
+
+    private Avatar assignedAvatar;
 
     public LoginResponseEvent(int clientID) {
         super(clientID);
@@ -17,6 +24,22 @@ public class LoginResponseEvent extends AbstractModelEvent {
 
     public void setSuccess(boolean successful) {
         this.successful = successful;
+    }
+
+    public void setAvailableAvatars(ArrayList<Avatar> availableAvatars) {
+        this.availableAvatars = availableAvatars;
+    }
+
+    public ArrayList<Avatar> getAvailableAvatars() {
+        return availableAvatars;
+    }
+
+    public Avatar getAssignedAvatar() {
+        return assignedAvatar;
+    }
+
+    public void setAssignedAvatar(Avatar assignedAvatar) {
+        this.assignedAvatar = assignedAvatar;
     }
 
     @Override

@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -19,7 +20,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     default void handleEvent(LoginResponseEvent event) throws HandlerNotImplementedException {
         System.out.println(event.getMessage());
         if (!event.isSuccessful()) {
-            login();
+            login(event.getAvailableAvatars());
         }
     }
 
@@ -63,7 +64,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     @Override
     default void handleEvent(ConnectionResponseEvent event) throws HandlerNotImplementedException {
         showMessage(event.getMessage());
-        login();
+        login(event.getAvailableAvatars());
     }
 
     //TODO to implement
@@ -163,6 +164,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     }
 
+    void login(ArrayList<Avatar> availableAvatars);
+
     default void handleEvent(SpawnSelectionRequestEvent event) throws HandlerNotImplementedException {
         List<PowerUpCard> cards = event.getSelectableCards();
         PowerUpCard toKeep = selectPowerUpToKeep(cards);
@@ -189,8 +192,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     }
 
 
-    default void notifyLoginRequestEvent(String nickname) {
-        notifyObservers(new LoginRequestEvent(getClientID(), nickname));
+    default void notifyLoginRequestEvent(String nickname, Avatar avatar) {
+        notifyObservers(new LoginRequestEvent(getClientID(), nickname, avatar));
     }
 
     default void notifySelectedSquare(Coordinates coordinates) {
@@ -244,8 +247,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     void selectSelectableEffect(List<String> callableEffects);
 
     void showPlayerMovement(String playerName, List<Coordinates> path);
-
-    void login();
 
     void showMessage(String message);
 

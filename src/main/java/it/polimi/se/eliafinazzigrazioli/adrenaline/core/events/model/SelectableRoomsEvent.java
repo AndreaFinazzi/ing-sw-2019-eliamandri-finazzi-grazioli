@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SelectableRoomsEvent extends AbstractModelEvent {
 
@@ -16,7 +17,7 @@ public class SelectableRoomsEvent extends AbstractModelEvent {
 
     @Override
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
-        if (this.getPlayer() == listener.getPlayer())
+        if (Objects.equals(this.getPlayer(), listener.getPlayer()))
             listener.handleEvent(this);
     }
 }

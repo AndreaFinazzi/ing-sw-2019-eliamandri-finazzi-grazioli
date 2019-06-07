@@ -178,6 +178,7 @@ public class GameBoard {
 
     public PlayerMovementEvent playerMovement(Player player, List<Coordinates> coordinatesPath) {
         List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(coordinatesPath);
+
         movePlayer(player, boardSquaresPath.get(boardSquaresPath.size()-1));
         return new PlayerMovementEvent(player.getPlayerNickname(), coordinatesPath);
     }

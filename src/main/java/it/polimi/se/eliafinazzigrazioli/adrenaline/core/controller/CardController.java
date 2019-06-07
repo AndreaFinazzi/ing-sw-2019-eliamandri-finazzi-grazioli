@@ -10,7 +10,7 @@ public class CardController implements ViewEventsListenerInterface {
 
     public CardController(EventController eventController, MatchController matchController) {
         this.matchController = matchController;
-        //listen to interesting events
+        //init to interesting events
         eventController.addViewEventsListener(CardSelectedEvent.class, this);
         eventController.addViewEventsListener(EffectSelectedEvent.class, this);
         eventController.addViewEventsListener(TargetSelectedEvent.class, this);

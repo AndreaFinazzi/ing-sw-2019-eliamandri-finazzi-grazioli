@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedPlayEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
@@ -11,6 +12,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Match implements Observable {
@@ -60,6 +62,7 @@ public class Match implements Observable {
     private Player firstPlayer;
     private PowerUpsDeck powerUpsDeck;
     private WeaponsDeck weaponsDeck;
+    private ArrayList<Avatar> availableAvatars = new ArrayList<>(Arrays.asList(Avatar.values()));
     private int turn = 0;
 
     public Match() {
@@ -141,8 +144,9 @@ public class Match implements Observable {
         }
     }
 
-    public void addPlayer(String nickname) throws MaxPlayerException, PlayerAlreadyPresentException {
+    public synchronized Player addPlayer(String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException, AvatarNotAvailableException {
         Player tempPlayer = players.get(nickname);
+
         if (tempPlayer != null) {
             if (tempPlayer.isConnected())
                 throw new PlayerAlreadyPresentException();
@@ -152,11 +156,18 @@ public class Match implements Observable {
             throw new MaxPlayerException();
         } else {
             tempPlayer = players.add(nickname);
+            if (availableAvatars.contains(avatar))
+                tempPlayer.setAvatar(avatar);
+            else
+                throw new AvatarNotAvailableException();
+            availableAvatars.remove(avatar);
             if (players.size() == 1) {
                 firstPlayer = tempPlayer;
                 currentPlayer = tempPlayer;
             }
         }
+
+        return tempPlayer;
     }
 
     public void removePlayer(String nickname) {
@@ -244,4 +255,7 @@ public class Match implements Observable {
     }
 
 
+    public ArrayList<Avatar> getAvailableAvatars() {
+        return availableAvatars;
+    }
 }

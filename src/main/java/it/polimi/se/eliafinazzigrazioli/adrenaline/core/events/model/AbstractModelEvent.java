@@ -47,9 +47,9 @@ public abstract class AbstractModelEvent extends AbstractEvent {
         return privateEvent;
     }
 
-    public void setPrivateEvent(boolean privateEvent) {
-        this.privateEvent = privateEvent;
-    }
+//    public void setPrivateEvent(boolean privateEvent) {
+//        this.privateEvent = privateEvent;
+//    }
 
     /*
      *   Due to Java method overloading static behaviour, is necessary to implement handle(listener:EventListenerInterface) for each concrete event type.

@@ -49,7 +49,7 @@ public class ClientHandlerRMI extends AbstractClientHandler implements ServerRem
             }
             clientsRMI.put(clientID, clientRMI);
 
-            server.addClient(clientID, this);
+            server.signIn(clientID, this);
 
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -63,7 +63,7 @@ public class ClientHandlerRMI extends AbstractClientHandler implements ServerRem
         clientsRMI.remove(clientID);
         server.removeClient(clientID);
 
-        eventsQueue.offer(new ClientDisconnectionEvent(clientID));
+        eventsQueue.add(new ClientDisconnectionEvent(clientID));
     }
 
     public boolean isSet() {

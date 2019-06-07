@@ -42,7 +42,8 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
     }
 
     @Override
-    public void listen() {
+    public void init() {
+        performRegistration();
         new Thread(() -> {
             AbstractModelEvent event;
             while (true) {

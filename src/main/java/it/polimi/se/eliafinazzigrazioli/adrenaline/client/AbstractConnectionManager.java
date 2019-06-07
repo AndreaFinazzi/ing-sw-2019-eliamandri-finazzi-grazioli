@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.GenericViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 
@@ -22,14 +23,20 @@ public abstract class AbstractConnectionManager implements Observer {
 
     public abstract void send(AbstractViewEvent event);
 
-    public abstract void listen();
+    public abstract void init();
 
     public abstract void performRegistration();
 
     public abstract void disconnect();
 
     public void received(AbstractModelEvent event) {
-        update(event);
+        if (client.getEventsQueue() == null) {
+            LOGGER.info("Trying to directly update eventController");
+            update(event);
+        } else if (!client.getEventsQueue().offer(event)) {
+            //TODO specific event type needed?
+            send(new GenericViewEvent(client.getPlayerName(), "Events generation failed."));
+        }
     }
 
     public String getPlayerName() {

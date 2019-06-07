@@ -2,72 +2,92 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 // Necessary to handle events queue
-public class MatchBuilder implements Runnable {
+public class MatchBuilder {
 
     private static final Logger LOGGER = Logger.getLogger(MatchBuilder.class.getName());
 
-    private MatchController matchController;
+    private MatchController nextMatch;
 
-    private BlockingQueue<AbstractViewEvent> eventsQueue;
+    private HashMap<MatchController, BlockingQueue<AbstractViewEvent>> matchToQueueMap = new HashMap<>();
 
-    Thread eventsConsumer = new Thread(() -> {
+    private ServerEventsConsumer nextConsumer;
 
-        AbstractViewEvent nextEvent;
-        try {
-            while (!matchController.getMatch().isEnded()) {
-                nextEvent = eventsQueue.take();
-                matchController.getEventController().update(nextEvent);
-            }
-        } catch (InterruptedException e) {
-            //TODO handle
-        } finally {
+    // Match-threads pools
+    private ExecutorService matchesExecutor = Executors.newCachedThreadPool();
+    private ExecutorService consumersExecutor = Executors.newCachedThreadPool();
 
-        }
-
-    });
-
-    public BlockingQueue<AbstractViewEvent> getEventsQueue() {
-        return eventsQueue;
-    }
-
-    public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
-        this.eventsQueue = eventsQueue;
-    }
-
+    private Timer timer = new Timer();
 
     public MatchBuilder() {
-        eventsQueue = new LinkedBlockingQueue<>();
-        matchController = new MatchController();
-        //this.clients = clients;  This line assigns clients to itself TODO correct assignment
-
-        eventsConsumer.setName("EventsConsumerThread");
-        eventsConsumer.start();
+        instantiateNewMatch();
     }
 
-    public MatchController getMatchController() {
-        LOGGER.info("Getting matchController");
-        return matchController;
+    // ####################### TIMER #######################
+    public void startTimer() {
+        LOGGER.info("Timer started"); //TODO move to messages
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LOGGER.info("New game timeout occurred, starting next match"); //TODO move to messages
+                startNextMatch();
+            }
+        }, Config.CONFIG_SERVER_NEW_GAME_TIMEOUT);
     }
 
-    public void startMatch() {
-        // Add next match EventController as an Observer of RemoteViews
-        // TODO bind match/queue/clientHandlers
-        ArrayList<String> nextPlayingPlayers = matchController.getPlayersNicknames();
-        for (String player : nextPlayingPlayers) {
-            // playerToClientHandler.get(player).bindViewToEventController(nextMatch.getEventController());
+    public void stopTimer() {
+        LOGGER.info("Timer stopped"); //TODO move to messages
+
+        timer.cancel();
+        timer = new Timer();
+    }
+
+    private void instantiateNewMatch() {
+        LOGGER.info("Next match initialization started.");
+
+        // initialize next starting match
+        nextMatch = new MatchController();
+        matchToQueueMap.put(nextMatch, new LinkedBlockingQueue<>());
+
+        nextConsumer = new ServerEventsConsumer(matchToQueueMap.get(nextMatch), nextMatch);
+
+        consumersExecutor.execute(nextConsumer);
+    }
+
+    public synchronized void signNewClient(int clientID, AbstractClientHandler clientHandler) {
+        stopTimer();
+
+        nextMatch.signClient(clientID, clientHandler);
+        clientHandler.setEventsQueue(matchToQueueMap.get(nextMatch));
+
+        //TODO verify
+        if (nextMatch.isFull()) {
+            startNextMatch();
+        } else if (nextMatch.isReady()) {
+            startTimer();
         }
+
     }
 
-    @Override
-    public void run() {
-        matchController.initMatch(MapType.ONE);
+    private synchronized void startNextMatch() {
+
+        //TODO: move to Messages
+        LOGGER.info("Game starting");
+
+        // Kick-off next game
+        matchesExecutor.execute(nextMatch);
+
+        instantiateNewMatch();
     }
 }

@@ -1,20 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Match;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlayerController implements EventListenerInterface {
     //private Map<String, Player> players = new HashMap<>();
@@ -22,8 +10,8 @@ public class PlayerController implements EventListenerInterface {
 
     public PlayerController(EventController eventController, MatchController matchController) {
         this.matchController = matchController;
-        //listen to interesting events
-        eventController.addViewEventsListener(PlayerConnectedEvent.class, this);
+        //init to interesting events
+//        eventController.addViewEventsListener(PlayerConnectedEvent.class, this);
         eventController.addViewEventsListener(MovePlayEvent.class, this);
     }
 
@@ -74,12 +62,12 @@ public class PlayerController implements EventListenerInterface {
     }
 
 
-    @Override
-    public void handleEvent(PlayerConnectedEvent event) {
-        try {
-            matchController.addPlayer(event.getPlayer());
-        } catch (PlayerAlreadyPresentException | MaxPlayerException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Override
+//    public void handleEvent(PlayerConnectedEvent event) {
+//        try {
+//            matchController.addPlayer(event.getPlayer());
+//        } catch (PlayerAlreadyPresentException | MaxPlayerException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

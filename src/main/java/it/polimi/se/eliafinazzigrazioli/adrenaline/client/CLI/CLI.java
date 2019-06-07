@@ -3,10 +3,13 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -33,11 +36,28 @@ public class CLI implements RemoteView {
         localModel = new LocalModel();
     }
 
-    public void login() {
+    public void login(ArrayList<Avatar> availableAvatars) {
         System.out.println("Insert your player name");
         playerName = input.nextLine();
 
-        notifyLoginRequestEvent(playerName);
+        System.out.println("choose one of the following avatars:\n" + serializeArray(availableAvatars));
+        int avatarIndex = input.nextInt();
+        input.nextLine();
+
+        notifyLoginRequestEvent(playerName, availableAvatars.get(avatarIndex));
+    }
+
+    private <T> String serializeArray(ArrayList<T> list) {
+        Iterator<T> iterator = list.iterator();
+        int index = 0;
+        String result = "";
+
+        while (iterator.hasNext()) {
+            result = result.concat(String.format("%d)\t%s%n", index, iterator.next()));
+            index++;
+        }
+
+        return result;
     }
 
     public void setPlayerName(String playerName) {
@@ -283,11 +303,6 @@ public class CLI implements RemoteView {
         return cards.get(choice-1);
     }
 
-    @Override
-    public void run() {
-
-    }
-
     public void setClientID(int clientID) {
         client.setClientID(clientID);
     }
@@ -301,4 +316,10 @@ public class CLI implements RemoteView {
     public void showMessage(String message) {
         System.out.println(message);
     }
+
+    @Override
+    public void run() {
+
+    }
+
 }

@@ -45,6 +45,7 @@ public final class Messages {
     //Match
     public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_PLAYER_ALREADY_PRESENT = MESSAGES.getProperty("app.exceptions.game.match.player_already_present", "DEFAULT: Player is already connected");
     public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_PLAYERS_OUT_OF_BOUND = MESSAGES.getProperty("app.exceptions.game.match.players_out_of_bounds", "DEFAULT: Players out of bound");
+    public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_AVATAR_NOT_AVAILABLE = MESSAGES.getProperty("app.exceptions.game.match.avatar_not_available", "DEFAULT: Avatar not available");
 
     //WeaponCard
     public static final String MESSAGE_EXCEPTIONS_GAME_WEAPON_CARD_WEAPON_FILE_NOT_FOUND = MESSAGES.getProperty("app.exceptions.game.match.weapon_file_not_found", "DEFAULT: Weapon doesn't exist");

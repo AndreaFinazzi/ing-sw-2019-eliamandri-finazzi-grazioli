@@ -20,7 +20,7 @@ public class EventControllerTest {
     private MovePlayEvent movePlayEvent;
 
     @Test
-    public void testCasting() {
+    public void visitorTest() {
 
         MatchController matchController = new MatchController();
 

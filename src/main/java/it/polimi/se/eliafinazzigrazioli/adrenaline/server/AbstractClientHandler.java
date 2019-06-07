@@ -37,7 +37,6 @@ public abstract class AbstractClientHandler implements Runnable {
     protected void received(AbstractViewEvent event) {
         if (eventsQueue == null) {
             LOGGER.info("Trying to directly update eventController");
-            server.getNextMatch().getMatchController().getEventController().update(event);
         } else if (!eventsQueue.offer(event)) {
             //TODO specific event type needed?
             sendTo(event.getPlayer(), new GenericEvent(event.getPlayer(), "Events generation failed."));

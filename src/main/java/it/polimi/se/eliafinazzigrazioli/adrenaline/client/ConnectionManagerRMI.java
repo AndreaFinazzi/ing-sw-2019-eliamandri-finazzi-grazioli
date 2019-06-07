@@ -32,7 +32,6 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
         int port = input.nextInt();
         UnicastRemoteObject.exportObject(this, port);
 
-        performRegistration();
     }
 
     // AbstractConnectionManager
@@ -47,7 +46,8 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
     }
 
     @Override
-    public void listen() {
+    public void init() {
+        performRegistration();
         LOGGER.info("Client ConnectionManagerRMI ready.");
     }
 

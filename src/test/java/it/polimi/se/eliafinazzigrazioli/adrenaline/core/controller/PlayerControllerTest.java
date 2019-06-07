@@ -9,8 +9,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
 public class PlayerControllerTest {
 
     private PlayerController playerController;
@@ -24,7 +22,7 @@ public class PlayerControllerTest {
         matchController = new MatchController();
         eventController = new EventController(matchController);
         playerController = new PlayerController(eventController, matchController);
-        matchController.addPlayer("playerOne");
+        matchController.addPlayer("playerOne", Avatar.BANSHEE);
         matchController.initMatch(MapType.ONE);
         gameBoard = matchController.getMatch().getGameBoard();
         gameBoard.setPlayerPositions(matchController.getPlayers().get("playerOne"),
@@ -42,7 +40,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void hadleEventTest() {
+    public void handleEventTest() {
         List<Coordinates> coordinatesList = new ArrayList<>();
         coordinatesList.add(new Coordinates(1, 0));
         coordinatesList.add(new Coordinates(1, 1));
