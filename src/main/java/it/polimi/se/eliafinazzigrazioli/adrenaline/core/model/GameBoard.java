@@ -1,8 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerMovementEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerSpawnedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerSpawnedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundBoardException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -145,7 +145,8 @@ public class GameBoard {
 
 
 
-    public PlayerSpawnedEvent spawnPlayer(Player player, Ammo ammoColor) {
+    public PlayerSpawnedEvent spawnPlayer(Player player, PowerUpCard powerUpCard) {
+        Ammo ammoColor = powerUpCard.getEquivalentAmmo();
         List<BoardSquare> room;
         BoardSquare spawnBoardSquare = null;
         switch (ammoColor) {
@@ -166,7 +167,7 @@ public class GameBoard {
                 spawnBoardSquare = boardSquare;
 
         movePlayer(player, spawnBoardSquare);
-        return new PlayerSpawnedEvent(player.getPlayerNickname(), spawnBoardSquare.getCoordinates());
+        return new PlayerSpawnedEvent(player.getPlayerNickname(), spawnBoardSquare.getCoordinates(), powerUpCard);
     }
 
     /**

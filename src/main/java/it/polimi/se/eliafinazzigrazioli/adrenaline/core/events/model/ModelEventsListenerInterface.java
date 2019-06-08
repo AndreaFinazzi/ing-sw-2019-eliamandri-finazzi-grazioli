@@ -1,6 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
 public interface ModelEventsListenerInterface extends EventListenerInterface {

@@ -26,6 +26,12 @@ public abstract class AbstractModelEvent extends AbstractEvent {
         this.player = player;
     }
 
+    public AbstractModelEvent(String player,boolean privateEvent){
+        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
+        this.player = player;
+        this.privateEvent = privateEvent;
+    }
+
     public AbstractModelEvent(String player, String message) {
         super(message);
         this.player = player;

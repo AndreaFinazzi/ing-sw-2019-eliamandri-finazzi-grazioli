@@ -1,5 +1,7 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 

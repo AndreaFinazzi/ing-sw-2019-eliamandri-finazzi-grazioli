@@ -219,14 +219,14 @@ public class MatchTest {
         GameBoard gameBoard = match.getGameBoard();
         assertEquals(3, match.getPlayers().size());
 
-        gameBoard.spawnPlayer(match.getPlayer("SGrez"), Ammo.BLUE);
+        gameBoard.spawnPlayer(match.getPlayer("SGrez"), new PowerUpCard(null, Ammo.BLUE));
         assertEquals(new Coordinates(2, 2), gameBoard.getPlayerPosition(match.getPlayer("SGrez")).getCoordinates());
 
-        gameBoard.spawnPlayer(match.getPlayer("ToniIlBello"), Ammo.RED);
+        gameBoard.spawnPlayer(match.getPlayer("ToniIlBello"), new PowerUpCard(null, Ammo.RED));
         assertEquals(new Coordinates(0, 1), gameBoard.getPlayerPosition(match.getPlayer("ToniIlBello")).getCoordinates());
 
 
-        gameBoard.spawnPlayer(match.getPlayer("FinazIlDuro-X("), Ammo.YELLOW);
+        gameBoard.spawnPlayer(match.getPlayer("FinazIlDuro-X("), new PowerUpCard(null, Ammo.YELLOW));
         assertEquals(new Coordinates(3, 0), gameBoard.getPlayerPosition(match.getPlayer("FinazIlDuro-X(")).getCoordinates());
 
 

@@ -108,9 +108,11 @@ public class Player implements Selectable {
 
     //TODO define type excpetion
     public PowerUpCollectedEvent addPowerUp(PowerUpCard powerUpCard) {
-        if (powerUps.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && powerUpCard != null)
+        if (powerUps.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && powerUpCard != null){
             powerUps.add(powerUpCard);
-        return new PowerUpCollectedEvent(playerNickname, powerUpCard);
+            return new PowerUpCollectedEvent(playerNickname, powerUpCard, false);
+        }
+        return new PowerUpCollectedEvent(playerNickname, powerUpCard, true);
     }
 
     public void addAmmos(List<Ammo> ammoList){

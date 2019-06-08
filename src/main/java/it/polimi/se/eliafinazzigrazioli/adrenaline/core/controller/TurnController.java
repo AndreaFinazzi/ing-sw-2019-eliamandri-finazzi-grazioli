@@ -2,8 +2,10 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.NotAllowedPlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.FurtherActionEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.TurnConcludingActionsEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
@@ -17,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TurnController implements ViewEventsListenerInterface {
+//TODO DEFINE AND INSERT MESSAGES, IN PARTICULAR FOR NOT ALLOWED PLAY EVENT BECAUSE IT IS THROWN IN A VARIETY OF SITUATIONS
 
+public class TurnController implements ViewEventsListenerInterface {
     private Match match;
+
     private Player currentPlayer;
     private int actionsPerformed;
 
@@ -36,6 +40,27 @@ public class TurnController implements ViewEventsListenerInterface {
     }
 
     /**
+     * Handles the event generated when the player has to select a power up to spawn when the game begins. It spawns
+     * the player on the map and adds the other power up to the player, contextually generating:
+     * -{@code PlayerSpawnedEvent}
+     * -{@code PowerUpCollectedEvent}
+     * -{@code BeginTurnEvent}
+     * and notifying them to the views.
+     * @param event
+     * @throws HandlerNotImplementedException
+     */
+    @Override
+    public void handleEvent(SpawnPowerUpSelected event) throws HandlerNotImplementedException {
+        List<AbstractModelEvent> events = new ArrayList<>();
+        GameBoard gameBoard = match.getGameBoard();
+        events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard()));
+        events.add(currentPlayer.addPowerUp(event.getToKeep()));
+        match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
+        events.add(new BeginTurnEvent(currentPlayer.getPlayerNickname()));
+        match.notifyObservers(events);
+    }
+
+    /**
      * Handles a request of movement by the player. The handler guaranties that the movement is performed only if the
      * total number of moves (counting also possible moves performed before) doesn't exceed the total number of moves allowed and
      * that the total number of actions allowed is not exceeded.
@@ -48,21 +73,24 @@ public class TurnController implements ViewEventsListenerInterface {
     public void handleEvent(MovePlayEvent event) {
         List<Coordinates> path = event.getPath();
         GameBoard gameBoard = match.getGameBoard();
-
+        List<AbstractModelEvent> events = new ArrayList<>();
         // If this condition is verified it means that something isn't correct in the execution of the client
         // or alternatively this control can be used regularly to inhibit further actions
-        if (actionsPerformed >= Rules.MAX_ACTIONS_AVAILABLE) {
+        if (actionsPerformed >= Rules.MAX_ACTIONS_AVAILABLE)
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
-            return;
-        }
 
-
-        if (!gameBoard.pathIsValid(currentPlayer, path) || path.size() > Rules.MAX_MOVEMENTS){
+        else if (!gameBoard.pathIsValid(currentPlayer, path) || path.size() > Rules.MAX_MOVEMENTS)
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
-            return;
-        }
 
-        match.notifyObservers(gameBoard.playerMovement(currentPlayer, path));
+        else{
+            actionsPerformed++;
+            events.add(gameBoard.playerMovement(currentPlayer, path));
+            if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE)
+                events.add(new FurtherActionEvent(currentPlayer.getPlayerNickname(), Rules.MAX_ACTIONS_AVAILABLE - actionsPerformed));
+            else
+                events.add(new TurnConcludingActionsEvent(currentPlayer.getPlayerNickname()));
+            match.notifyObservers(events);
+        }
 
     }
 
@@ -92,17 +120,6 @@ public class TurnController implements ViewEventsListenerInterface {
         else
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
     }
-
-    @Override
-    public void handleEvent(SpawnPowerUpSelected event) throws HandlerNotImplementedException {
-        List<AbstractModelEvent> events = new ArrayList<>();
-        GameBoard gameBoard = match.getGameBoard();
-        events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard().getEquivalentAmmo()));
-        currentPlayer.addPowerUp(event.getToKeep());
-        match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
-        events.add(new BeginTurnEvent(currentPlayer.getPlayerNickname()));
-    }
-
 
     @Override
     public void handleEvent(EndTurnRequestEvent event) throws HandlerNotImplementedException {
