@@ -156,7 +156,7 @@ public class GameBoard {
                 room = getRoomSquares(Room.BLUE);
                 break;
             case RED:
-                room = getRoomSquares(Room.BLUE);
+                room = getRoomSquares(Room.RED);
                 break;
             default:
                 room = null;

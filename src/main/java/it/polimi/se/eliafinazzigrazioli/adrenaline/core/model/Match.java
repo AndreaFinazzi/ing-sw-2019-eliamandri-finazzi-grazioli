@@ -54,6 +54,14 @@ public class Match implements Observable {
             }
             return null;
         }
+
+        public int size() {
+            int cont = 0;
+            for (Player player: players)
+                cont++;
+            return cont;
+        }
+
     };
 
     private GameBoard gameBoard;
@@ -67,6 +75,8 @@ public class Match implements Observable {
 
     public Match() {
         phase = MatchPhase.INITIALIZATION;
+        powerUpsDeck = new PowerUpsDeck();
+        weaponsDeck = new WeaponsDeck();
     }
 
 
@@ -120,7 +130,7 @@ public class Match implements Observable {
     }
 
     public Player getPlayer(String nickname) {
-        return getPlayer(nickname);
+        return players.get(nickname);
     }
 
     public ArrayList<String> getPlayersNicknames() {

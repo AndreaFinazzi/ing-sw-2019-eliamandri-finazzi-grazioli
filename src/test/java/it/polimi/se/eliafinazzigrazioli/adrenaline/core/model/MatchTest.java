@@ -1,7 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.TestSupportClasses;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -205,6 +207,31 @@ public class MatchTest {
             assertEquals(oldTurn + 1, match.getTurn());
             oldTurn = match.getTurn();
         }
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void matchInstantiationTest() {
+        TestSupportClasses.instanceMatch(MapType.ONE, 3);
+        Match match = TestSupportClasses.match;
+        GameBoard gameBoard = match.getGameBoard();
+        assertEquals(3, match.getPlayers().size());
+
+        gameBoard.spawnPlayer(match.getPlayer("SGrez"), Ammo.BLUE);
+        assertEquals(new Coordinates(2, 2), gameBoard.getPlayerPosition(match.getPlayer("SGrez")).getCoordinates());
+
+        gameBoard.spawnPlayer(match.getPlayer("ToniIlBello"), Ammo.RED);
+        assertEquals(new Coordinates(0, 1), gameBoard.getPlayerPosition(match.getPlayer("ToniIlBello")).getCoordinates());
+
+
+        gameBoard.spawnPlayer(match.getPlayer("FinazIlDuro-X("), Ammo.YELLOW);
+        assertEquals(new Coordinates(3, 0), gameBoard.getPlayerPosition(match.getPlayer("FinazIlDuro-X(")).getCoordinates());
+
+
+
+
     }
 }
 
