@@ -26,6 +26,10 @@ public class LoginResponseEvent extends AbstractModelEvent {
         this.successful = successful;
     }
 
+    public void setPlayer(String playerName) {
+        this.player = playerName;
+    }
+
     public void setAvailableAvatars(ArrayList<Avatar> availableAvatars) {
         this.availableAvatars = availableAvatars;
     }
@@ -44,8 +48,6 @@ public class LoginResponseEvent extends AbstractModelEvent {
 
     @Override
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
-        if (listener.getClientID() == clientID) {
-            listener.handleEvent(this);
-        }
+        listener.handleEvent(this);
     }
 }

@@ -1,25 +1,19 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.PlayerConnectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CLI implements RemoteView {
     static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
     //TODO
-    private String playerName;
-
     private Scanner input;
 
     private ConnectionManagerRMI connectionManagerRMI;
@@ -36,15 +30,36 @@ public class CLI implements RemoteView {
         localModel = new LocalModel();
     }
 
+    @Override
+    public void error(Exception e) {
+        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+
     public void login(ArrayList<Avatar> availableAvatars) {
         System.out.println("Insert your player name");
-        playerName = input.nextLine();
+        String playerName = input.nextLine();
 
         System.out.println("choose one of the following avatars:\n" + serializeArray(availableAvatars));
-        int avatarIndex = input.nextInt();
-        input.nextLine();
 
-        notifyLoginRequestEvent(playerName, availableAvatars.get(avatarIndex));
+        notifyLoginRequestEvent(playerName, availableAvatars.get(nextInt()));
+    }
+
+    @Override
+    public void mapVote(ArrayList<MapType> availableMaps) {
+        showMessage("Vote one of the following maps: ");
+        showMessage(serializeArray(availableMaps));
+
+        notifyMapVoteEvent(availableMaps.get(nextInt()));
+    }
+
+    @Override
+    public void updatePlayerInfo(String player) {
+        client.setPlayerName(player);
+    }
+
+    @Override
+    public void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap) {
+        //TODO
     }
 
     private <T> String serializeArray(ArrayList<T> list) {
@@ -60,49 +75,11 @@ public class CLI implements RemoteView {
         return result;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
+    private int nextInt() {
+        int nextInt = input.nextInt();
+        input.nextLine();
 
-
-    //
-    public PlayerConnectedEvent enterGame() {
-        PlayerConnectedEvent playerConnectedEvent;
-        String buffer;
-        int chosen;
-        //TODO check player already present in lightmodel
-        playerConnectedEvent = new PlayerConnectedEvent(playerName);
-        playerConnectedEvent.setClientID(client.getClientID());
-        do {
-            System.out.print("Chose map:\n1) first map\n2) second map\n3) third map\n4) fourth map\n");
-            buffer = input.nextLine();
-            chosen = Integer.parseInt(buffer);
-        } while (chosen < 1 || chosen > 4);
-        playerConnectedEvent.setChosenMap(chosen);
-        do {
-            System.out.print("Chose avatar:\n1) :D-STRUCT-OR\n2) BANSHEE\n3) DOZER\n4) VIOLET\n5) SPROG\n");
-            buffer = input.nextLine();
-            chosen = Integer.parseInt(buffer);
-        } while (chosen < 1 || chosen > 5);
-
-        switch (chosen) {
-            case 1:
-                playerConnectedEvent.setAvatar(":D-STRUCT-OR");
-                break;
-            case 2:
-                playerConnectedEvent.setAvatar("BANSHEE");
-                break;
-            case 3:
-                playerConnectedEvent.setAvatar("DOZER");
-                break;
-            case 4:
-                playerConnectedEvent.setAvatar("VIOLET");
-                break;
-            case 5:
-                playerConnectedEvent.setAvatar("SPROG");
-                break;
-        }
-        return playerConnectedEvent;
+        return nextInt;
     }
 
     @Override
@@ -221,6 +198,11 @@ public class CLI implements RemoteView {
     }
 
     @Override
+    public void showBeginTurn(String currentPlayer) {
+        showMessage("The current player is: " + currentPlayer);
+    }
+
+    @Override
     public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
         System.out.println("You have collected this Weapon card");
         System.out.println(weaponCardClient);
@@ -230,11 +212,6 @@ public class CLI implements RemoteView {
         }
         else
             System.out.println("ops, something didn't work");
-
-    }
-
-    @Override
-    public void showBeginTurn(BeginTurnEvent event) {
 
     }
 
@@ -303,8 +280,9 @@ public class CLI implements RemoteView {
         return cards.get(choice-1);
     }
 
-    public void setClientID(int clientID) {
-        client.setClientID(clientID);
+    @Override
+    public String getPlayer() {
+        return client.getPlayerName();
     }
 
     @Override

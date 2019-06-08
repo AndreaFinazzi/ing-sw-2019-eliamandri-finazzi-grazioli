@@ -3,7 +3,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.WeaponCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
@@ -16,10 +15,15 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class GUI extends Application implements RemoteView {
+
+    static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
 
     String[] args;
     Stage primaryStage;
@@ -30,6 +34,11 @@ public class GUI extends Application implements RemoteView {
     public GUI(String[] args, Client client) {
         this.args = args;
         this.client = client;
+    }
+
+    @Override
+    public String getPlayer() {
+        return client.getPlayerName();
     }
 
     @Override
@@ -67,11 +76,6 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showBeginTurn(BeginTurnEvent event) {
-
-    }
-
-    @Override
     public void showSelectableSquare(List<Coordinates> selectable) {
 
     }
@@ -102,7 +106,27 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void error(Exception e) {
+        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+
+    @Override
     public void login(ArrayList<Avatar> availableAvatars) {
+
+    }
+
+    @Override
+    public void mapVote(ArrayList<MapType> availableMaps) {
+
+    }
+
+    @Override
+    public void updatePlayerInfo(String player) {
+        client.setPlayerName(player);
+    }
+
+    @Override
+    public void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap) {
 
     }
 
@@ -133,6 +157,11 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void collectWeapon(String collectedWeapon, String dropOfWeapon) {
+
+    }
+
+    @Override
+    public void showBeginTurn(String currentPlayer) {
 
     }
 

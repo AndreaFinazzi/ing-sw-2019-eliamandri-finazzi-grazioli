@@ -18,8 +18,7 @@ public class SelectableBoardSquaresEvent extends AbstractModelEvent {
 
     @Override
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
-        if (this.getPlayer() == listener.getPlayer())
-            listener.handleEvent(this);
+        listener.handleEvent(this);
     }
 
     public List<Coordinates> getSelectableBoardSquares() {

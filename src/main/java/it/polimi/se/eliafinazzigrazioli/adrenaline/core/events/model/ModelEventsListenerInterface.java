@@ -5,7 +5,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public interface ModelEventsListenerInterface extends EventListenerInterface {
 
-    int getClientID();
 
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();

@@ -10,6 +10,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public interface RemoteView extends ModelEventsListenerInterface, Observable, Runnable {
@@ -21,7 +22,16 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         System.out.println(event.getMessage());
         if (!event.isSuccessful()) {
             login(event.getAvailableAvatars());
+        } else {
+            updatePlayerInfo(event.getPlayer());
         }
+    }
+
+    @Override
+    default void handleEvent(MatchStartedEvent event) throws HandlerNotImplementedException {
+        updateMatchPlayers(event.getPlayerToAvatarMap());
+
+        mapVote(event.getAvailableMaps());
     }
 
     @Override
@@ -29,25 +39,28 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     }
 
+
     //TODO to implement
+
     @Override
     default void handleEvent(AllowedMovesEvent event) throws HandlerNotImplementedException {
 
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(AmmoCardCollectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(BeginTurnEvent event) throws HandlerNotImplementedException {
-        choseAction();
-//        showBeginTurn(event);
-//        showPlayerSelection();
+        if (event.getPlayer().equals(getPlayer()))
+            choseAction();
+        else
+            showBeginTurn(event.getPlayer());
     }
 
     @Override
@@ -67,89 +80,87 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         login(event.getAvailableAvatars());
     }
 
+
     //TODO to implement
+
     @Override
     default void handleEvent(ConnectionTimeoutEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(EndTurnEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(FinalFrenzyBeginEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(NotAllowedPlayEvent event) throws HandlerNotImplementedException {
         showMessage(event.getMessage());
         choseAction();
 
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(PlayerDamagedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(PlayerMovementEvent event) throws HandlerNotImplementedException {
         int last = event.getPath().size() - 1;
         Coordinates finalPosition = event.getPath().get(last);
         updatePlayerPosition(event.getPlayer(), finalPosition);
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(PlayerShotEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 
     //TODO to implement
-    @Override
-    default void handleEvent(PlayerUpdateEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
     //TODO to implement
+
     @Override
     default void handleEvent(SelectableBoardSquaresEvent event) throws HandlerNotImplementedException {
         selectSelectableSquare(event.getSelectableBoardSquares());
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(SelectablePlayersEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(SelectableRoomsEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(SelectableTargetEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(SuddenDeathEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(WeaponCollectedEvent event) throws HandlerNotImplementedException {
         collectWeapon(event.getCollectedWeapon(), event.getDropOfWeapon());
@@ -164,8 +175,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     }
 
-    void login(ArrayList<Avatar> availableAvatars);
-
     default void handleEvent(SpawnSelectionRequestEvent event) throws HandlerNotImplementedException {
         List<PowerUpCard> cards = event.getSelectableCards();
         PowerUpCard toKeep = selectPowerUpToKeep(cards);
@@ -174,55 +183,60 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         notifyObservers(new SpawnPowerUpSelected(getPlayer(), toKeep, cards.get(0)));
     }
 
+
+    @Override
+    default void handleEvent(PlayerUpdateEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    void error(Exception e);
+
+    String getPlayer();
+
+    int getClientID();
+
+    void login(ArrayList<Avatar> availableAvatars);
+
+    void mapVote(ArrayList<MapType> availableMaps);
+
+
     //OUTGOING communications
-    default void notifyPlayerSelectedEvent(ArrayList<String> selectedPlayers) {
-        try {
-            notifyObservers(new PlayersSelectedEvent(getPlayer(), selectedPlayers));
-        } catch (HandlerNotImplementedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    default void notifyCardSelected(String card) {
-        try {
-            notifyObservers(new CardSelectedEvent(getPlayer(), card));
-        } catch(HandlerNotImplementedException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     default void notifyLoginRequestEvent(String nickname, Avatar avatar) {
         notifyObservers(new LoginRequestEvent(getClientID(), nickname, avatar));
     }
 
+    default void notifyMapVoteEvent(MapType mapType) {
+        notifyObservers(new MapVoteEvent(getClientID(), getPlayer(), mapType));
+    }
+
+    default void notifyPlayerSelectedEvent(ArrayList<String> selectedPlayers) {
+        notifyObservers(new PlayersSelectedEvent(getPlayer(), selectedPlayers));
+    }
+
+    default void notifyCardSelected(String card) {
+        notifyObservers(new CardSelectedEvent(getPlayer(), card));
+    }
+
     default void notifySelectedSquare(Coordinates coordinates) {
-        try {
-            notifyObservers(new SquareSelectedEvent(getPlayer(), coordinates));
-        } catch(HandlerNotImplementedException e) {
-            e.printStackTrace();
-        }
+        notifyObservers(new SquareSelectedEvent(getPlayer(), coordinates));
     }
 
     default void notifySelectedEffects(String effect) {
-        try {
-            notifyObservers(new EffectSelectedEvent(getPlayer(), effect));
-        } catch(HandlerNotImplementedException e) {
-            e.printStackTrace();
-        }
+        notifyObservers(new EffectSelectedEvent(getPlayer(), effect));
     }
 
     default void notifySelectedWeaponCard(String weapon) {
-        try {
-            notifyObservers(new CardSelectedEvent(getPlayer(), weapon));
-        }catch(HandlerNotImplementedException e) {
-            e.printStackTrace();
-        }
+        notifyObservers(new CardSelectedEvent(getPlayer(), weapon));
     }
 
     default void notifyRequestMove(int clientID, String playerName) {
-            notifyObservers(new RequestMovePlayEvent(clientID, playerName));
+        notifyObservers(new RequestMovePlayEvent(clientID, playerName));
     }
+
+    //    Local model
+    void updatePlayerInfo(String player);
+
+    void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap);
 
     void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates);
 
@@ -238,7 +252,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     void collectWeapon(String collectedWeapon, String dropOfWeapon);
 
-    void showBeginTurn(BeginTurnEvent event);
+    void showBeginTurn(String currentPlayer);
 
     void showSelectableSquare(List<Coordinates> selectable);
 
