@@ -2,9 +2,11 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -14,6 +16,8 @@ public class CLI implements RemoteView {
     static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
     //TODO
+    private String playerName;
+
     private Scanner input;
 
     private ConnectionManagerRMI connectionManagerRMI;
@@ -129,6 +133,94 @@ public class CLI implements RemoteView {
                 //todo
                 break;
         }
+    }
+
+    public void collectPlay() {
+        List<Coordinates> path = generatesPath(Rules.MAX_MOVEMENTS_BEFORE_COLLECTION);
+        Coordinates finalCoordinates = path.get(path.size()-1); // Last element
+        BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(finalCoordinates);
+        if(boardSquareClient.isSpawnBoard()) {
+            //new Weapon collect event
+        }
+        else {
+            //new ammoCard collect event
+        }
+    }
+
+    public List<Coordinates> generatesPath(int maxStep) {
+        BoardSquareClient currentPose = localModel.getPlayerPositionByName(this.playerName);
+        BoardSquareClient nextPose;
+        List<Coordinates> path = new ArrayList<>();
+        int x, y;
+        int step = 0;
+        int chose = 0;
+        if(currentPose == null) {
+            return null;
+        }
+        System.out.println("You are in " + currentPose);
+        do {
+            int count;
+            do {
+                count = 0;
+                System.out.println("Insert your choose: ");
+                if(currentPose.getNorth().equals(InterSquareLink.SAMEROOM) || currentPose.getNorth().equals(InterSquareLink.DOOR)) {
+                    count++;
+                    System.out.println(count + ") Up");
+                }
+                if(currentPose.getEast().equals(InterSquareLink.SAMEROOM) || currentPose.getEast().equals(InterSquareLink.DOOR)) {
+                    count++;
+                    System.out.println(count + ") Right");
+                }
+                if(currentPose.getSouth().equals(InterSquareLink.SAMEROOM) || currentPose.getSouth().equals(InterSquareLink.DOOR)) {
+                    count++;
+                    System.out.println(count + ") South");
+                }
+                if(currentPose.getWest().equals(InterSquareLink.SAMEROOM) || currentPose.getWest().equals(InterSquareLink.DOOR)) {
+                    count++;
+                    System.out.println(count + ") Left");
+                }
+                count++;
+                System.out.println(count + ") Stop");
+                String string = input.nextLine();
+                chose = Integer.parseInt(string);
+            }while(chose < 1 || chose > count);
+
+            Coordinates currentCoordinates = currentPose.getCoordinates();
+            x = currentCoordinates.getXCoordinate();
+            y = currentCoordinates.getYCoordinate();
+
+            switch(chose) {
+                case 1:
+                    y++;
+                    step++;
+                    break;
+
+                case 2:
+                    x++;
+                    step++;
+                    break;
+
+                case  3:
+                    y--;
+                    step++;
+                    break;
+
+                case 4:
+                    x--;
+                    step++;
+                    break;
+                case 5:
+                    System.out.println("Creates path!");
+                    break;
+            }
+            currentCoordinates = new Coordinates(x,y);
+            currentPose = localModel.getGameBoard().getBoardSquareByCoordinates(currentCoordinates);
+            if(chose != 5)
+                path.add(new Coordinates(x,y));
+            else if(chose == 5 && step == 0)
+                return null;
+        } while(step < maxStep);
+        return path;
     }
 
     @Override
@@ -276,7 +368,6 @@ public class CLI implements RemoteView {
             String temp = input.nextLine();
             choice = Integer.parseInt(temp);
         }while( choice < 1 || choice > count );
-        localModel.addPowerUp(cards.get(choice-1));
         return cards.get(choice-1);
     }
 

@@ -84,6 +84,12 @@ public class LocalModel {
         return playersPosition;
     }
 
+    public BoardSquareClient getPlayerPositionByName(String playerName) {
+        if(!playersPosition.containsKey(playerName))
+            return null;
+        return playersPosition.get(playerName);
+    }
+
     public void updatePowerUpCards() {
         //TODO
     }

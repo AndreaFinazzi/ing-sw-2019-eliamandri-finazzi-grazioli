@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

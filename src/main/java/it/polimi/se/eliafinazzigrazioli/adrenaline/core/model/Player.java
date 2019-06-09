@@ -7,6 +7,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PowerUpColl
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player implements Selectable {
@@ -164,18 +165,16 @@ public class Player implements Selectable {
         return playerNickname;
     }
 
-    public void addWeapon(WeaponCard weapon){
-        //TODO
+    public BoardSquare getPosition() {
+        return position;
     }
 
-    public List<PowerUpCard> getPowerUps(){
-        //TODO
-        return null;
+    public void setPosition(BoardSquare position) {
+        this.position = position;
     }
 
-    public void addPowerUp(PowerUpCard powerUpCard){
-        //TODO
-
+    public boolean isConnected() {
+        return connected;
     }
 
     public void connect() {

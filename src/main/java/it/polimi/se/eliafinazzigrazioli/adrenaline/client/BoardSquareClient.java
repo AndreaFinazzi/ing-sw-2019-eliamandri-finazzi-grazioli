@@ -60,6 +60,10 @@ public abstract class BoardSquareClient {
         return false;
     }
 
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
     //if return value is null, play is not valid
     public AmmoCardClient collectAmmoCard() {
         return null;

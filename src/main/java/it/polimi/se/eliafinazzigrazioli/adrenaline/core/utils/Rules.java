@@ -53,7 +53,7 @@ public final class Rules {
     // TURN
     private static final JsonNode TURN = RULES.get("turn");
     public static final int MAX_MOVEMENTS = TURN.get("max_moves_simple").asInt(3);
-    public static final int MAX_MOVEMENTS_BEFORE_COLLECTION = TURN.get("max_moves_collecting").asInt(1);
+    public static final int MAX_MOVEMENTS_BEFORE_COLLECTION = TURN.get("max_moves_collecting").asInt(2);
     public static final int MAX_MOVEMENTS_BEFORE_SHOOTING = TURN.get("max_moves_shooting").asInt(0);
     public static final int MAX_ACTIONS_AVAILABLE = TURN.get("max_actions_available").asInt(2);
 

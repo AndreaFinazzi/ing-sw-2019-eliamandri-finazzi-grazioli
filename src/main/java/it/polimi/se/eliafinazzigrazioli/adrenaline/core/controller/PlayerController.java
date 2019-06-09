@@ -4,8 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayE
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
 
-public class PlayerController implements EventListenerInterface {
-    //private Map<String, Player> players = new HashMap<>();
+public class PlayerController implements ViewEventsListenerInterface {
     private MatchController matchController;
 
     public PlayerController(EventController eventController, MatchController matchController) {

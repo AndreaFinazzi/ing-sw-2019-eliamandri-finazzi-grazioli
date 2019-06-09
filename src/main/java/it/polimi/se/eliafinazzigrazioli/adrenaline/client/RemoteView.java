@@ -18,8 +18,6 @@ import java.util.List;
 
 public interface RemoteView extends ModelEventsListenerInterface, Observable, Runnable {
 
-//    void showPlayerSelection();
-
     @Override
     default void handleEvent(LoginResponseEvent event) throws HandlerNotImplementedException {
         System.out.println(event.getMessage());
@@ -39,7 +37,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     @Override
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
-
+        throw new HandlerNotImplementedException();
     }
 
 
@@ -183,7 +181,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
         PowerUpCard toKeep = selectPowerUpToKeep(cards);
         cards.remove(toKeep);
         PowerUpCard spawnCard = cards.get(0);
-        notifyObservers(new SpawnPowerUpSelected(getPlayer(), toKeep, cards.get(0)));
+        notifyObservers(new SpawnPowerUpSelected(getPlayer(), toKeep, spawnCard));
     }
 
 
