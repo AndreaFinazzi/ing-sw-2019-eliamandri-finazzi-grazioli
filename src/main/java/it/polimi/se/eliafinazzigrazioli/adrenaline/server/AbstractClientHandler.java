@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public abstract class AbstractClientHandler implements Runnable {
     protected transient Server server;
-    protected static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
+    protected static final Logger LOGGER = Logger.getLogger(AbstractClientHandler.class.getName());
     protected AbstractViewEvent nextReceivedEvent;
 
     protected BlockingQueue<AbstractViewEvent> eventsQueue;
@@ -21,8 +21,6 @@ public abstract class AbstractClientHandler implements Runnable {
     public abstract void sendToAll(AbstractModelEvent event);
 
     public abstract void sendTo(int clientID, AbstractModelEvent event);
-
-    public abstract void sendTo(String player, AbstractModelEvent event);
 
     // register starting match
     public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
@@ -39,7 +37,7 @@ public abstract class AbstractClientHandler implements Runnable {
             LOGGER.info("Trying to directly update eventController");
         } else if (!eventsQueue.offer(event)) {
             //TODO specific event type needed?
-            sendTo(event.getPlayer(), new GenericEvent(event.getPlayer(), "Events generation failed."));
+            sendTo(event.getClientID(), new GenericEvent(event.getPlayer(), "Events generation failed."));
         }
     }
 

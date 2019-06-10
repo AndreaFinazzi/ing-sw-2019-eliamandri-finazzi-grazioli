@@ -161,6 +161,7 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
             responseEvent.setPlayer(player.getPlayerNickname());
             responseEvent.setAssignedAvatar(player.getAvatar());
             responseEvent.setMessage("Welcome to Adrenaline, " + event.getPlayer());
+            clientIDToPlayerMap.put(player.getClientID(), player.getPlayerNickname());
 
         } catch (MaxPlayerException e) {
             responseEvent.setSuccess(false);

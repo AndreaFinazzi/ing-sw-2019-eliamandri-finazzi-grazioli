@@ -6,6 +6,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.*;
@@ -27,6 +28,7 @@ public class CLI implements RemoteView {
     private LocalModel localModel;
 
     private Client client;
+    private List<Observer> observers = new ArrayList<>();
 
     public CLI(Client client) {
         input = new Scanner(System.in);
@@ -391,4 +393,8 @@ public class CLI implements RemoteView {
 
     }
 
+    @Override
+    public List<Observer> getObservers() {
+        return observers;
+    }
 }

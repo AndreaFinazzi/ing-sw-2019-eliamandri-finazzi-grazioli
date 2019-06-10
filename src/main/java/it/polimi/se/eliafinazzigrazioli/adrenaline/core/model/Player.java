@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player implements Selectable {
-    private String playerNickname;
+    private int clientID;
 
+    private String playerNickname;
     private Avatar avatar;
 
     private BoardSquare position;
+
     private PlayerBoard playerBoard;
     private DamageMark damageMarkDelivered; //Is the type of damage placeholder used by the player
     private boolean suspended;
@@ -23,7 +25,6 @@ public class Player implements Selectable {
     private boolean placed;
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
-
     // Define additional methods, granting access to players list by nickname (unique key)
     // These are implemented in anonymous class in Match
     public abstract static class AbstractPlayerList extends ArrayList<Player> {
@@ -34,7 +35,10 @@ public class Player implements Selectable {
 
         public abstract Player add(String nickname);
 
+        public abstract Player add(int clientID, String nickname);
+
         public abstract Player remove(String nickname);
+
 
     }
     public Player(String playerNickname) {
@@ -43,6 +47,12 @@ public class Player implements Selectable {
         powerUps = new ArrayList<>();
     }
 
+    public Player(int clientID, String playerNickname) {
+        this.playerNickname = playerNickname;
+        this.clientID = clientID;
+        weapons = new ArrayList<>();
+        powerUps = new ArrayList<>();
+    }
 
     public Player(String playerNickname, DamageMark damageMarkDelivered) {
         this.playerNickname = playerNickname;
@@ -51,6 +61,14 @@ public class Player implements Selectable {
         powerUps = new ArrayList<>();
     }
 
+
+    public int getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
 
     public Avatar getAvatar() {
         return avatar;

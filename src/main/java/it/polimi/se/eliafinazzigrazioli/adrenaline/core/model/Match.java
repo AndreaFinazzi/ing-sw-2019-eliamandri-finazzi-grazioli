@@ -9,6 +9,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
@@ -45,6 +46,14 @@ public class Match implements Observable {
         }
 
         @Override
+        public Player add(int clientID, String nickname) {
+            Player newPlayer = new Player(clientID, nickname);
+            newPlayer.setConnected(true);
+            add(newPlayer);
+            return newPlayer;
+        }
+
+        @Override
         public Player remove(String nickname) {
             for (Player player : this) {
                 if (player.getPlayerNickname().equals(nickname)) {
@@ -63,6 +72,8 @@ public class Match implements Observable {
         }
 
     };
+
+    private ArrayList<Observer> observers = new ArrayList<>();
 
     private GameBoard gameBoard;
     private MatchPhase phase;
@@ -154,6 +165,7 @@ public class Match implements Observable {
         }
     }
 
+    //TODO should be removed
     public synchronized Player addPlayer(String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException, AvatarNotAvailableException {
         Player tempPlayer = players.get(nickname);
 
@@ -179,6 +191,33 @@ public class Match implements Observable {
 
         return tempPlayer;
     }
+
+    public synchronized Player addPlayer(int clientID, String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException, AvatarNotAvailableException {
+        Player tempPlayer = players.get(nickname);
+
+        if (tempPlayer != null) {
+            if (tempPlayer.isConnected())
+                throw new PlayerAlreadyPresentException();
+            else
+                tempPlayer.connect();
+        } else if (players.size() >= Rules.GAME_MAX_PLAYERS) {
+            throw new MaxPlayerException();
+        } else {
+            tempPlayer = players.add(clientID, nickname);
+            if (availableAvatars.contains(avatar))
+                tempPlayer.setAvatar(avatar);
+            else
+                throw new AvatarNotAvailableException();
+            availableAvatars.remove(avatar);
+            if (players.size() == 1) {
+                firstPlayer = tempPlayer;
+                currentPlayer = tempPlayer;
+            }
+        }
+
+        return tempPlayer;
+    }
+
 
     public void removePlayer(String nickname) {
         Player tempPlayer = players.get(nickname);
@@ -267,5 +306,10 @@ public class Match implements Observable {
 
     public ArrayList<Avatar> getAvailableAvatars() {
         return availableAvatars;
+    }
+
+    @Override
+    public List<Observer> getObservers() {
+        return observers;
     }
 }
