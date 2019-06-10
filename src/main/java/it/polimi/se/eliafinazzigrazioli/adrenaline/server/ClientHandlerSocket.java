@@ -4,11 +4,14 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +26,7 @@ public class ClientHandlerSocket extends AbstractClientHandler implements Observ
     private int clientId;
 
     private static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
+    private List<Observer> observers = new ArrayList<>();
 
 
     public ClientHandlerSocket(Server server, Socket socket) {
@@ -45,13 +49,6 @@ public class ClientHandlerSocket extends AbstractClientHandler implements Observ
     @Override
     public void sendTo(int clientID, AbstractModelEvent event) {
         if (clientID == this.clientId) {
-            send(event);
-        }
-    }
-
-    @Override
-    public void sendTo(String player, AbstractModelEvent event) {
-        if (player == playerName) {
             send(event);
         }
     }
@@ -82,5 +79,10 @@ public class ClientHandlerSocket extends AbstractClientHandler implements Observ
                 }
             }
         }).start();
+    }
+
+    @Override
+    public List<Observer> getObservers() {
+        return observers;
     }
 }

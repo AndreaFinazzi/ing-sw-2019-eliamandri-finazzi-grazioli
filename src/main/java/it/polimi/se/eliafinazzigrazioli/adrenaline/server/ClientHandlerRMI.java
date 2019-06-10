@@ -80,10 +80,9 @@ public class ClientHandlerRMI extends AbstractClientHandler implements ServerRem
 
             if (event.getClientID() != 0) {
                 sendTo(event.getClientID(), event);
-            } else if ((event.getPlayer() != null) && (event.getPlayer().equals(""))) {
-                throw new NullPointerException("Private event has no player ID!");
-            } else
-                sendTo(event.getPlayer(), event);
+            } else {
+                throw new NullPointerException("Private event has no client ID!");
+            }
         } else {
             for (ClientRemoteRMI client : clientsRMI.values()) {
                 send(client, event);
@@ -97,11 +96,6 @@ public class ClientHandlerRMI extends AbstractClientHandler implements ServerRem
 
         if (targetClient != null)
             send(targetClient, event);
-    }
-
-    @Override
-    public void sendTo(String player, AbstractModelEvent event) {
-        // TODO implement
     }
 
     private void send(ClientRemoteRMI client, AbstractModelEvent event) {
