@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractMod
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
 public class NotAllowedPlayEvent extends AbstractModelEvent {
 
@@ -11,6 +12,10 @@ public class NotAllowedPlayEvent extends AbstractModelEvent {
 
     public NotAllowedPlayEvent(String player) {
         super(player, true);
+    }
+
+    public NotAllowedPlayEvent(Player player) {
+        super(true, player.getPlayerNickname(), player.getClientID());
     }
 
     @Override

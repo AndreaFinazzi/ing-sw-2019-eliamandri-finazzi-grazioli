@@ -253,7 +253,7 @@ public class Match implements Observable {
         if (path != null && path.size() > 0)
             notifyObservers(gameBoard.playerMovement(player, path));
         else
-            notifyObservers(new NotAllowedPlayEvent(player.getPlayerNickname()));
+            notifyObservers(new NotAllowedPlayEvent(player));
     }
 
     /*

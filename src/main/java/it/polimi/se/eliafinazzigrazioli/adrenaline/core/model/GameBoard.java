@@ -167,7 +167,7 @@ public class GameBoard {
                 spawnBoardSquare = boardSquare;
 
         movePlayer(player, spawnBoardSquare);
-        return new PlayerSpawnedEvent(player.getPlayerNickname(), spawnBoardSquare.getCoordinates(), powerUpCard);
+        return new PlayerSpawnedEvent(player, spawnBoardSquare.getCoordinates(), powerUpCard);
     }
 
     /**
@@ -181,7 +181,7 @@ public class GameBoard {
         List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(coordinatesPath);
 
         movePlayer(player, boardSquaresPath.get(boardSquaresPath.size()-1));
-        return new PlayerMovementEvent(player.getPlayerNickname(), coordinatesPath);
+        return new PlayerMovementEvent(player, coordinatesPath);
     }
 
     /**

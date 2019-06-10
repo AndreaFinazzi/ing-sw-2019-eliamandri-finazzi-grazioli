@@ -77,18 +77,18 @@ public class TurnController implements ViewEventsListenerInterface {
         // If this condition is verified it means that something isn't correct in the execution of the client
         // or alternatively this control can be used regularly to inhibit further actions
         if (actionsPerformed >= Rules.MAX_ACTIONS_AVAILABLE)
-            match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
+            match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
 
         else if (!gameBoard.pathIsValid(currentPlayer, path) || path.size() > Rules.MAX_MOVEMENTS)
-            match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
+            match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
 
         else{
             actionsPerformed++;
             events.add(gameBoard.playerMovement(currentPlayer, path));
             if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE)
-                events.add(new FurtherActionEvent(currentPlayer.getPlayerNickname(), Rules.MAX_ACTIONS_AVAILABLE - actionsPerformed));
+                events.add(new FurtherActionEvent(currentPlayer, Rules.MAX_ACTIONS_AVAILABLE - actionsPerformed));
             else
-                events.add(new TurnConcludingActionsEvent(currentPlayer.getPlayerNickname()));
+                events.add(new TurnConcludingActionsEvent(currentPlayer));
             match.notifyObservers(events);
         }
 
@@ -111,14 +111,14 @@ public class TurnController implements ViewEventsListenerInterface {
         if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE || path.size() > currentPlayer.getPlayerBoard().preCollectionMaxMoves()) {
             generatedEvent = gameBoard.collect(currentPlayer, match.getPowerUpsDeck(), path);
             if (generatedEvent == null)
-                match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
+                match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
             else {
                 actionsPerformed++;
                 match.notifyObservers(generatedEvent);
             }
         }
         else
-            match.notifyObservers(new NotAllowedPlayEvent(currentPlayer.getPlayerNickname()));
+            match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
     }
 
     @Override
@@ -130,8 +130,7 @@ public class TurnController implements ViewEventsListenerInterface {
             match.notifyObservers(new BeginTurnEvent(match.getCurrentPlayer().getPlayerNickname()));
         else {
             PowerUpsDeck deck = match.getPowerUpsDeck();
-            match.notifyObservers(new SpawnSelectionRequestEvent(match.getCurrentPlayer().getPlayerNickname(),
-                    Arrays.asList(deck.drawCard(), deck.drawCard())));
+            match.notifyObservers(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), Arrays.asList(deck.drawCard(), deck.drawCard())));
         }
     }
 }

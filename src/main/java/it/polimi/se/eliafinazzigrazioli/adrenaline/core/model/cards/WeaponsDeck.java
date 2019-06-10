@@ -14,7 +14,7 @@ public class WeaponsDeck extends Deck<String> {
      */
     public WeaponsDeck() {
         cards = new ArrayList<>();
-        File weaponsFolder = new File("src\\main\\resources\\weaponCardJsons");
+        File weaponsFolder = new File("src\\main\\resources\\jsonFiles\\weaponCardJsons");
         File[] listOfCardFiles = weaponsFolder.listFiles();
         for (int i = 0; i < listOfCardFiles.length; i++)
             cards.add(listOfCardFiles[i].getName());
