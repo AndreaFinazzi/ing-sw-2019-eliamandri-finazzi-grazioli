@@ -6,6 +6,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 public abstract class AbstractModelEvent extends AbstractEvent {
 
+    private int matchID;
+
     protected boolean privateEvent = false;
 
     protected String player;
@@ -58,15 +60,23 @@ public abstract class AbstractModelEvent extends AbstractEvent {
         return clientID;
     }
 
-    public void setClientID(int clientID) {
-        this.clientID = clientID;
+    public int getMatchID() {
+        return matchID;
     }
 
     public boolean isPrivateEvent() {
         return privateEvent;
     }
 
-//    public void setPrivateEvent(boolean privateEvent) {
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
+
+    public void setMatchID(int matchID) {
+        this.matchID = matchID;
+    }
+
+    //    public void setPrivateEvent(boolean privateEvent) {
 //        this.privateEvent = privateEvent;
 //    }
 

@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
@@ -72,6 +73,8 @@ public class Match implements Observable {
         }
 
     };
+
+    private int matchID;
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
@@ -311,5 +314,26 @@ public class Match implements Observable {
     @Override
     public List<Observer> getObservers() {
         return observers;
+    }
+
+    @Override
+    public void notifyObservers(AbstractModelEvent event) {
+        synchronized (observers) {
+            for (Observer observer : getObservers()) {
+                event.setMatchID(matchID);
+                observer.update(event);
+            }
+        }
+    }
+
+    @Override
+    public void notifyObservers(List<AbstractModelEvent> eventsList) {
+        synchronized (observers) {
+            for (AbstractModelEvent event : eventsList)
+                for (Observer observer : getObservers()) {
+                    event.setMatchID(matchID);
+                    observer.update(event);
+                }
+        }
     }
 }
