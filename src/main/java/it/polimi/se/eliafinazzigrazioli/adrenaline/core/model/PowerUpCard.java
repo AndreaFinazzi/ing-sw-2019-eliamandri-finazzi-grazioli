@@ -1,6 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-public class PowerUpCard {
+import java.io.Serializable;
+
+public class PowerUpCard implements Serializable {
 
     private final String powerUpType;
     private final Ammo equivalentAmmo;

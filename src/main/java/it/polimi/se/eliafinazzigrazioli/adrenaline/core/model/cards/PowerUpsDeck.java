@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class PowerUpsDeck extends Deck<PowerUpCard> {
 
-    private List<PowerUpCard> discardedPowerUps;
+    private List<PowerUpCard> discardedPowerUps = new ArrayList<>();
 
     public PowerUpsDeck(List<PowerUpCard> cards) {
         this.cards = cards;

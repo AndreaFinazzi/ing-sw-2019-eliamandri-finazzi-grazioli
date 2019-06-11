@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LoginRespon
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.MatchStartedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MapVoteEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.SpawnPowerUpSelected;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
@@ -24,6 +25,7 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
     private Match match;
     private PlayerController playerController;
     private CardController cardController;
+    private TurnController turnController;
     private EventController eventController;
     private Timer timer;
 
@@ -42,8 +44,11 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         playerController = new PlayerController(eventController, this);
         cardController = new CardController(eventController, this);
 
+        turnController = new TurnController(eventController, match);
+
         eventController.addViewEventsListener(LoginRequestEvent.class, this);
         eventController.addViewEventsListener(MapVoteEvent.class, this);
+        eventController.addViewEventsListener(SpawnPowerUpSelected.class, this);
 
         match.addObserver(eventController);
     }
@@ -52,12 +57,11 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         //TODO: to implement
         match.setPhase(MatchPhase.PLAYING);
 
-        match.setGameBoard(chosenMap);
+        //match.setGameBoard(chosenMap);
 
         //TODO verify
-        match.increaseTurn();
 
-        match.beginTurn();
+        match.beginMatch(chosenMap);
     }
 
     public EventController getEventController() {
@@ -156,7 +160,7 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
     public void handleEvent(LoginRequestEvent event) throws HandlerNotImplementedException {
         LoginResponseEvent responseEvent = new LoginResponseEvent(event.getClientID());
         try {
-            Player player = match.addPlayer(event.getPlayer(), event.getChosenAvatar());
+            Player player = match.addPlayer(event.getClientID(), event.getPlayer(), event.getChosenAvatar());
             responseEvent.setSuccess(true);
             responseEvent.setPlayer(player.getPlayerNickname());
             responseEvent.setAssignedAvatar(player.getAvatar());

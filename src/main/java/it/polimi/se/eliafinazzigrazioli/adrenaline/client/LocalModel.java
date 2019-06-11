@@ -19,7 +19,6 @@ public class LocalModel {
     private ClientGameBoard gameBoard;
     private List<String> players;
     private Map<String, PlayerBoard> playerBoards;
-    private Map<String, BoardSquareClient> playersPosition;
     private List<BoardSquareClient> listSpawn;
 
     public LocalModel() {
@@ -78,16 +77,6 @@ public class LocalModel {
 
     public Map<String, PlayerBoard> getPlayerBoards() {
         return playerBoards;
-    }
-
-    public Map<String, BoardSquareClient> getPlayersPosition() {
-        return playersPosition;
-    }
-
-    public BoardSquareClient getPlayerPositionByName(String playerName) {
-        if(!playersPosition.containsKey(playerName))
-            return null;
-        return playersPosition.get(playerName);
     }
 
     public void updatePowerUpCards() {

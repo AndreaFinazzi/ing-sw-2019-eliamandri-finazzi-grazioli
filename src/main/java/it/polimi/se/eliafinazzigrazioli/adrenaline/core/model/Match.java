@@ -2,6 +2,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.SpawnPowerUpSelected;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
@@ -297,9 +300,23 @@ public class Match implements Observable {
     }
 
 
+    /**
+     * This method initializes the match and notifies the BeginMatchEvent which contains all the information to
+     * instantiate the client copy of the match.
+     */
+    public void beginMatch(MapType mapType) {
+        //todo preparation of the setup of the model, (weapons, power ups, deadPath....)
+        currentPlayer = firstPlayer;
+        gameBoard = new GameBoard(mapType);
+
+        notifyObservers(new BeginMatchEvent(mapType));
+        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
+
+    }
+
     //TODO who should create the event?
     public void beginTurn() {
-        notifyObservers(currentPlayer.createBeginTurnEvent());
+        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
     }
 
     public void endTurn() {

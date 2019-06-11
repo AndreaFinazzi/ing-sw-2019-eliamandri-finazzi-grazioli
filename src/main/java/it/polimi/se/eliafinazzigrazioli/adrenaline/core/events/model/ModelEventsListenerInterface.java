@@ -3,7 +3,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.EventListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerSpawnedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
 public interface ModelEventsListenerInterface extends EventListenerInterface {
@@ -108,6 +110,21 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     default void handleEvent(SpawnSelectionRequestEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
+
+    default void handleEvent(BeginMatchEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    default void handleEvent(PlayerSpawnedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    default void handleEvent(PowerUpCollectedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+
+
 
 
 

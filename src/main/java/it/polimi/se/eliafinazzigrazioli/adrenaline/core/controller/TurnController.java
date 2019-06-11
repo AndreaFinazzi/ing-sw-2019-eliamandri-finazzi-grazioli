@@ -32,6 +32,7 @@ public class TurnController implements ViewEventsListenerInterface {
         this.match = match;
         eventController.addViewEventsListener(MovePlayEvent.class, this);
         eventController.addViewEventsListener(CollectPlayEvent.class, this);
+        eventController.addViewEventsListener(SpawnPowerUpSelected.class, this);
     }
 
     public void beginTurn(Player currentPlayer) {
@@ -53,6 +54,7 @@ public class TurnController implements ViewEventsListenerInterface {
     public void handleEvent(SpawnPowerUpSelected event) throws HandlerNotImplementedException {
         List<AbstractModelEvent> events = new ArrayList<>();
         GameBoard gameBoard = match.getGameBoard();
+        Player currentPlayer = match.getCurrentPlayer();
         events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard()));
         events.add(currentPlayer.addPowerUp(event.getToKeep()));
         match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());

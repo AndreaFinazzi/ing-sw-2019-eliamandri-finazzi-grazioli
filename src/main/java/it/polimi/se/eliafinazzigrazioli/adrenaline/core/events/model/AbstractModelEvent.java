@@ -12,7 +12,7 @@ public abstract class AbstractModelEvent extends AbstractEvent {
 
     protected String player;
 
-    protected int clientID;
+    protected int clientID = -1;
 
     public AbstractModelEvent() {
         super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);

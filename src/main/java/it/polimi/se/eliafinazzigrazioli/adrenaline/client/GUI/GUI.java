@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.LocalModel;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
@@ -31,6 +32,8 @@ public class GUI extends Application implements RemoteView {
 
     private Client client;
     private List<Observer> observers = new ArrayList<>();
+
+    private LocalModel localModel;
 
     public GUI(String[] args, Client client) {
         this.args = args;
@@ -70,6 +73,10 @@ public class GUI extends Application implements RemoteView {
         primaryStage.show();
     }
 
+    @Override
+    public LocalModel getLocalModel() {
+        return localModel;
+    }
 
     @Override
     public void showPlayerMovement(String playerName, List<Coordinates> path) {

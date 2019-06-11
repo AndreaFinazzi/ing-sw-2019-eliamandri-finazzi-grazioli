@@ -13,7 +13,7 @@ public class ClientGameBoard {
     private BoardSquareClient[][] squaresMatrix;
     private int x_max = Rules.GAME_BOARD_X_MAX;
     private int y_max = Rules.GAME_BOARD_Y_MAX;
-    private Map<Player, BoardSquare> playerPositions;
+    private Map<String, BoardSquareClient> playerPositions = new HashMap<>();
 
     public ClientGameBoard(MapType mapType) {
         if (mapType.equals(MapType.ONE)) {
@@ -129,6 +129,10 @@ public class ClientGameBoard {
         }
     }
 
+    public void setPlayerPosition (String player, Coordinates coordinates) {
+        playerPositions.put(player, squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()]);
+    }
+
     public List<BoardSquareClient> getRoomSquares(Room room) {
         List<BoardSquareClient> roomSquares = new ArrayList<>();
         for (int i = 0; i < x_max; i++) {
@@ -140,6 +144,16 @@ public class ClientGameBoard {
             }
         }
         return roomSquares;
+    }
+
+    public BoardSquareClient getPlayerPositionByName(String playerName) {
+        if(!playerPositions.containsKey(playerName))
+            return null;
+        return playerPositions.get(playerName);
+    }
+
+    public Map<String, BoardSquareClient> getPlayersPosition() {
+        return playerPositions;
     }
 
     public Coordinates getCoordinates(BoardSquareClient boardSquare) {

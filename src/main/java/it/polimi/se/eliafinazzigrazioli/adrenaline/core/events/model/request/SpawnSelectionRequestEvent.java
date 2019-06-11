@@ -14,6 +14,7 @@ public class SpawnSelectionRequestEvent extends AbstractModelEvent {
 
     public SpawnSelectionRequestEvent(String player, List<PowerUpCard> selectableCards) {
         super(player, true);
+
         this.selectableCards = selectableCards;
     }
 

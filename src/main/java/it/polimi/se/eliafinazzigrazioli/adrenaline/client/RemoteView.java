@@ -3,7 +3,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerSpawnedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
@@ -17,6 +19,36 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface RemoteView extends ModelEventsListenerInterface, Observable, Runnable {
+
+
+    @Override
+    default void handleEvent(PowerUpCollectedEvent event) throws HandlerNotImplementedException {
+        LocalModel localModel = getLocalModel();
+        if (event.getPlayer().equals(getPlayer())){
+            localModel.addPowerUp(event.getCollectedCard());
+            showPowerUpCollection(getPlayer(), event.getCollectedCard(), false);
+        }
+        else {
+            //todo add to local model info about other players' hand, here it's goinna be powerUps++
+            showPowerUpCollection(getPlayer(), event.getCollectedCard(), true);
+        }
+
+
+    }
+
+    @Override
+    default void handleEvent(PlayerSpawnedEvent event) throws HandlerNotImplementedException {
+        LocalModel localModel = getLocalModel();
+        String player = event.getPlayer();
+        localModel.getGameBoard().setPlayerPosition(player, event.getSpawnPoint());
+        showSpawn(player, event.getSpawnPoint(), event.getDiscardedPowerUp(), !player.equals(getPlayer()));
+    }
+
+    @Override
+    default void handleEvent(BeginMatchEvent event) throws HandlerNotImplementedException {
+        buildLocalMap(event.getMapType());
+        //todo to complete with info about the match and relative visualization
+    }
 
     @Override
     default void handleEvent(LoginResponseEvent event) throws HandlerNotImplementedException {
@@ -177,7 +209,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     }
 
     default void handleEvent(SpawnSelectionRequestEvent event) throws HandlerNotImplementedException {
-        List<PowerUpCard> cards = event.getSelectableCards();
+        List<PowerUpCard> cards = new ArrayList<>(event.getSelectableCards());
         PowerUpCard toKeep = selectPowerUpToKeep(cards);
         cards.remove(toKeep);
         PowerUpCard spawnCard = cards.get(0);
@@ -235,6 +267,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     }
 
     //    Local model
+
+    LocalModel getLocalModel();
+
     void updatePlayerInfo(String player);
 
     void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap);
@@ -265,7 +300,23 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     void showMessage(String message);
 
+    default void showSpawn(String player, Coordinates spawnPoint, PowerUpCard spawnCard, boolean isOpponent) {
+        if (isOpponent)
+            System.out.println("Player " + player + " spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
+        else
+            System.out.println("You spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
+    }
+
+    default void showPowerUpCollection(String player, PowerUpCard cardCollected, boolean isOpponent) {
+        if (isOpponent)
+            System.out.println("Player " + player + " collected a powerup\n");
+        else
+            System.out.println("You collected" + cardCollected.toString() + "!\n");
+    }
+
     PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards);
+
+
 
 
 }

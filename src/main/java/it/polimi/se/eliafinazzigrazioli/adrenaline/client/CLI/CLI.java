@@ -37,6 +37,11 @@ public class CLI implements RemoteView {
     }
 
     @Override
+    public LocalModel getLocalModel() {
+        return localModel;
+    }
+
+    @Override
     public void error(Exception e) {
         LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
@@ -150,7 +155,7 @@ public class CLI implements RemoteView {
     }
 
     public List<Coordinates> generatesPath(int maxStep) {
-        BoardSquareClient currentPose = localModel.getPlayerPositionByName(this.playerName);
+        BoardSquareClient currentPose = localModel.getGameBoard().getPlayerPositionByName(this.playerName);
         BoardSquareClient nextPose;
         List<Coordinates> path = new ArrayList<>();
         int x, y;
@@ -351,8 +356,7 @@ public class CLI implements RemoteView {
     @Override
     public void updatePlayerPosition(String nickname, Coordinates coordinates) {
         System.out.println(nickname + " position it's changed");
-        BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(coordinates);
-        localModel.getPlayersPosition().put(nickname, boardSquareClient);
+        localModel.getGameBoard().setPlayerPosition(nickname, coordinates);
     }
 
     @Override
