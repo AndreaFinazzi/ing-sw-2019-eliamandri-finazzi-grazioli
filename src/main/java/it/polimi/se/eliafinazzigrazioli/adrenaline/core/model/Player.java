@@ -52,6 +52,7 @@ public class Player implements Selectable {
         this.clientID = clientID;
         weapons = new ArrayList<>();
         powerUps = new ArrayList<>();
+        playerBoard = new PlayerBoard();
     }
 
     public Player(String playerNickname, DamageMark damageMarkDelivered) {

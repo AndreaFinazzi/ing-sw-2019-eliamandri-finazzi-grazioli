@@ -58,7 +58,13 @@ public class TurnController implements ViewEventsListenerInterface {
         events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard()));
         events.add(currentPlayer.addPowerUp(event.getToKeep()));
         match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
-        events.add(new BeginTurnEvent(currentPlayer.getPlayerNickname()));
+        events.add(new BeginTurnEvent(
+                currentPlayer.getPlayerNickname(),
+                currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
+                currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
+                currentPlayer.getPlayerBoard().preShootingMaxMoves()));
+        for (AbstractModelEvent toSend: events)
+
         match.notifyObservers(events);
     }
 
@@ -88,7 +94,13 @@ public class TurnController implements ViewEventsListenerInterface {
             actionsPerformed++;
             events.add(gameBoard.playerMovement(currentPlayer, path));
             if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE)
-                events.add(new FurtherActionEvent(currentPlayer, Rules.MAX_ACTIONS_AVAILABLE - actionsPerformed));
+                events.add(new FurtherActionEvent(
+                        currentPlayer,
+                        Rules.MAX_ACTIONS_AVAILABLE - actionsPerformed,
+                        currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
+                        currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
+                        currentPlayer.getPlayerBoard().preShootingMaxMoves()
+                ));
             else
                 events.add(new TurnConcludingActionsEvent(currentPlayer));
             match.notifyObservers(events);

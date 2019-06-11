@@ -7,6 +7,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
 public class FurtherActionEvent extends AbstractModelEvent {
 
+    private int simpleMovesMax;
+    private int collectingMovesMax;
+    private int shootingMovesMax;
+
     private int actionsRemained;
 
     public FurtherActionEvent(String player, int actionsRemained) {
@@ -19,6 +23,14 @@ public class FurtherActionEvent extends AbstractModelEvent {
         this.actionsRemained = actionsRemained;
     }
 
+    public FurtherActionEvent(Player player, int actionsRemained, int simpleMovesMax, int collectingMovesMax, int shootingMovesMax) {
+        super(true, player.getPlayerNickname(), player.getClientID());
+        this.actionsRemained = actionsRemained;
+        this.simpleMovesMax = simpleMovesMax;
+        this.collectingMovesMax = collectingMovesMax;
+        this.shootingMovesMax = shootingMovesMax;
+    }
+
 
 
     @Override
@@ -28,5 +40,17 @@ public class FurtherActionEvent extends AbstractModelEvent {
 
     public int getActionsRemained() {
         return actionsRemained;
+    }
+
+    public int getSimpleMovesMax() {
+        return simpleMovesMax;
+    }
+
+    public int getCollectingMovesMax() {
+        return collectingMovesMax;
+    }
+
+    public int getShootingMovesMax() {
+        return shootingMovesMax;
     }
 }

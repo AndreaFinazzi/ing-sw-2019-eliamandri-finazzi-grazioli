@@ -66,6 +66,7 @@ public class CLI implements RemoteView {
     @Override
     public void updatePlayerInfo(String player) {
         client.setPlayerName(player);
+        this.playerName = player;
     }
 
     @Override
@@ -114,7 +115,7 @@ public class CLI implements RemoteView {
     }
 
     @Override
-    public void choseAction() {
+    public int choseAction() {
         int choice;
         do {
             System.out.println("Choose your action: ");
@@ -125,25 +126,11 @@ public class CLI implements RemoteView {
             if(choice < 1 || choice > 3)
                 System.out.println("Not valid action");
         } while(choice < 1 || choice > 3);
-
-        switch(choice) {
-            case 1:
-                notifyRequestMove(client.getClientID(), client.getPlayerName());
-                break;
-
-            case 2:
-                selectWeaponCard();
-                //wait response with selectable effect
-                break;
-
-            case 3:
-                //todo
-                break;
-        }
+        return choice;
     }
 
     public void collectPlay() {
-        List<Coordinates> path = generatesPath(Rules.MAX_MOVEMENTS_BEFORE_COLLECTION);
+        List<Coordinates> path = getPathFromUser(Rules.MAX_MOVEMENTS_BEFORE_COLLECTION);
         Coordinates finalCoordinates = path.get(path.size()-1); // Last element
         BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(finalCoordinates);
         if(boardSquareClient.isSpawnBoard()) {
@@ -154,13 +141,14 @@ public class CLI implements RemoteView {
         }
     }
 
-    public List<Coordinates> generatesPath(int maxStep) {
+    @Override
+    public List<Coordinates> getPathFromUser(int maxSteps) {
         BoardSquareClient currentPose = localModel.getGameBoard().getPlayerPositionByName(this.playerName);
-        BoardSquareClient nextPose;
         List<Coordinates> path = new ArrayList<>();
+        Map<Integer, Integer> allowChoice = new HashMap<>();
         int x, y;
         int step = 0;
-        int chose = 0;
+        int choice;
         if(currentPose == null) {
             return null;
         }
@@ -173,30 +161,36 @@ public class CLI implements RemoteView {
                 if(currentPose.getNorth().equals(InterSquareLink.SAMEROOM) || currentPose.getNorth().equals(InterSquareLink.DOOR)) {
                     count++;
                     System.out.println(count + ") Up");
+                    allowChoice.put(count, 1);
                 }
                 if(currentPose.getEast().equals(InterSquareLink.SAMEROOM) || currentPose.getEast().equals(InterSquareLink.DOOR)) {
                     count++;
                     System.out.println(count + ") Right");
+                    allowChoice.put(count, 2);
                 }
                 if(currentPose.getSouth().equals(InterSquareLink.SAMEROOM) || currentPose.getSouth().equals(InterSquareLink.DOOR)) {
                     count++;
-                    System.out.println(count + ") South");
+                    System.out.println(count + ") Down");
+                    allowChoice.put(count, 3);
                 }
                 if(currentPose.getWest().equals(InterSquareLink.SAMEROOM) || currentPose.getWest().equals(InterSquareLink.DOOR)) {
                     count++;
                     System.out.println(count + ") Left");
+                    allowChoice.put(count, 4);
                 }
                 count++;
                 System.out.println(count + ") Stop");
+                allowChoice.put(count, 5);
                 String string = input.nextLine();
-                chose = Integer.parseInt(string);
-            }while(chose < 1 || chose > count);
+                choice = Integer.parseInt(string);
+            }while(choice < 1 || choice > count);
 
+            choice = allowChoice.get(choice);
             Coordinates currentCoordinates = currentPose.getCoordinates();
             x = currentCoordinates.getXCoordinate();
             y = currentCoordinates.getYCoordinate();
 
-            switch(chose) {
+            switch(choice) {
                 case 1:
                     y++;
                     step++;
@@ -222,11 +216,11 @@ public class CLI implements RemoteView {
             }
             currentCoordinates = new Coordinates(x,y);
             currentPose = localModel.getGameBoard().getBoardSquareByCoordinates(currentCoordinates);
-            if(chose != 5)
+            if(choice != 5)
                 path.add(new Coordinates(x,y));
-            else if(chose == 5 && step == 0)
+            else if(choice == 5 && step == 0)
                 return null;
-        } while(step < maxStep);
+        } while(step < maxSteps && choice == 5);
         return path;
     }
 

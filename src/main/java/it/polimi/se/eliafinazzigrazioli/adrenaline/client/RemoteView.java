@@ -90,10 +90,32 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     @Override
     default void handleEvent(BeginTurnEvent event) throws HandlerNotImplementedException {
-        if (event.getPlayer().equals(getPlayer()))
-            choseAction();
+        if (event.getPlayer().equals(getPlayer())) {
+            AbstractViewEvent generatedEvent = null;
+            List<Coordinates> path = null;
+            while (generatedEvent == null) {
+                int choice = choseAction();
+                switch(choice) {
+                    case 1:
+                        path = getPathFromUser(event.getSimpleMovesMax());
+                        generatedEvent = new MovePlayEvent(getPlayer(), path);
+                        break;
+
+                    case 2:
+                        //selectWeaponCard();
+                        //wait response with selectable effect
+                        break;
+
+                    case 3:
+                        //todo
+                        break;
+                }
+            }
+            notifyObservers(generatedEvent);
+        }
+
         else
-            showBeginTurn(event.getPlayer());
+        showBeginTurn(event.getPlayer());
     }
 
     @Override
@@ -280,8 +302,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     void showMap();
 
-    void choseAction();
-
     void updatePlayerPosition(String nickname, Coordinates coordinates);
 
     void selectWeaponCard();
@@ -316,6 +336,15 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards);
 
+
+
+    //SHOW METHODS
+
+    //INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS
+
+    List<Coordinates> getPathFromUser(int maxSteps);
+
+    int choseAction();
 
 
 

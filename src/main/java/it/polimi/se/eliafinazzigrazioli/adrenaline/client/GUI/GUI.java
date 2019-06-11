@@ -99,8 +99,8 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void choseAction() {
-
+    public int choseAction() {
+        return -1;
     }
 
     @Override
@@ -181,5 +181,11 @@ public class GUI extends Application implements RemoteView {
     @Override
     public List<Observer> getObservers() {
         return observers;
+    }
+
+    @Override
+    public List<Coordinates> getPathFromUser(int maxSteps) {
+
+        return null;
     }
 }

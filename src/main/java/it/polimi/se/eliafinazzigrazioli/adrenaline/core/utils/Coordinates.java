@@ -1,6 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils;
 
-public class Coordinates {
+import java.io.Serializable;
+
+public class Coordinates implements Serializable {
 
     private final int xCoordinate;
     private final int yCoordinate;
