@@ -209,7 +209,11 @@ public class GameBoard {
 
     public AbstractModelEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path) {
         List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(path);
-        BoardSquare destination = boardSquaresPath.get(boardSquaresPath.size()-1);
+        BoardSquare destination = null;
+        if (path.size() == 0)
+            destination = getPlayerPosition(player);
+        else
+            boardSquaresPath.get(boardSquaresPath.size()-1);
         movePlayer(player, boardSquaresPath.get(boardSquaresPath.size()-1));
         return destination.collect(player, deck, path);
     }

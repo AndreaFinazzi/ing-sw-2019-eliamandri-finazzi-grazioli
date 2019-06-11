@@ -109,6 +109,7 @@ public class TurnController implements ViewEventsListenerInterface {
     public void handleEvent(CollectPlayEvent event) {
         List<Coordinates> path = event.getPath();
         GameBoard gameBoard = match.getGameBoard();
+        Player currentPlayer = match.getCurrentPlayer();
         AbstractModelEvent generatedEvent;
         if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE || path.size() > currentPlayer.getPlayerBoard().preCollectionMaxMoves()) {
             generatedEvent = gameBoard.collect(currentPlayer, match.getPowerUpsDeck(), path);

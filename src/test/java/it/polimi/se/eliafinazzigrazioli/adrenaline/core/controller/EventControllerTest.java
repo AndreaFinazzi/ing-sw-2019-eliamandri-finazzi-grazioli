@@ -30,7 +30,7 @@ public class EventControllerTest {
         targetSelectedEvent = new TargetSelectedEvent("Mariooooo!", new ArrayList<>());
         //movePlayEvent = new MovePlayEvent("UserA!", new ArrayList<>());
 
-        eventController.update(collectPlayEvent);
+        //eventController.update(collectPlayEvent);
         eventController.update(targetSelectedEvent);
         //eventController.update(movePlayEvent);
 
