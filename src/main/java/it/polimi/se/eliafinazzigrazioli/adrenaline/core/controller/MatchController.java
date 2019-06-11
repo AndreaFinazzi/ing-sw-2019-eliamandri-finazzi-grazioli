@@ -48,7 +48,6 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
         eventController.addViewEventsListener(LoginRequestEvent.class, this);
         eventController.addViewEventsListener(MapVoteEvent.class, this);
-        eventController.addViewEventsListener(SpawnPowerUpSelected.class, this);
 
         match.addObserver(eventController);
     }

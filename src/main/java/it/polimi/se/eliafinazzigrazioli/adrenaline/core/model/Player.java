@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractMod
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PowerUpCollectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -127,12 +128,13 @@ public class Player implements Selectable {
     }
 
     //TODO define type excpetion
-    public PowerUpCollectedEvent addPowerUp(PowerUpCard powerUpCard) {
+    public PowerUpCollectedEvent addPowerUp(PowerUpCard powerUpCard, PowerUpsDeck deck) {
         if (powerUps.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && powerUpCard != null){
             powerUps.add(powerUpCard);
-            return new PowerUpCollectedEvent(playerNickname, powerUpCard, false);
+            return new PowerUpCollectedEvent(playerNickname, powerUpCard, true);
         }
-        return new PowerUpCollectedEvent(playerNickname, powerUpCard, true);
+        deck.discardPowerUp(powerUpCard);
+        return new PowerUpCollectedEvent(playerNickname, powerUpCard, false);
     }
 
     public void addAmmos(List<Ammo> ammoList){

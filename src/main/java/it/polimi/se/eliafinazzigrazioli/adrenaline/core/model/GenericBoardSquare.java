@@ -35,7 +35,7 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
         player.addAmmos(collected.getAmmos());
         if (collected.containsPowerUpCard()) {
             collectedPowerUp = deck.drawCard();
-            player.addPowerUp(collectedPowerUp);
+            player.addPowerUp(collectedPowerUp, deck);
         }
         return new AmmoCardCollectedEvent(player.getPlayerNickname(), collectedPowerUp, collected.getAmmos(), path);
     }

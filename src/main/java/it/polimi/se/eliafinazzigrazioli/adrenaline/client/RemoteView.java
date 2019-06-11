@@ -92,7 +92,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     default void handleEvent(BeginTurnEvent event) throws HandlerNotImplementedException {
         if (event.getPlayer().equals(getPlayer())) {
             AbstractViewEvent generatedEvent = null;
-            List<Coordinates> path = null;
+            List<Coordinates> path;
             while (generatedEvent == null) {
                 int choice = choseAction();
                 switch(choice) {
@@ -172,9 +172,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     @Override
     default void handleEvent(PlayerMovementEvent event) throws HandlerNotImplementedException {
-        int last = event.getPath().size() - 1;
-        Coordinates finalPosition = event.getPath().get(last);
-        updatePlayerPosition(event.getPlayer(), finalPosition);
+        ClientGameBoard gameBoard = getLocalModel().getGameBoard();
+        List<Coordinates> path = event.getPath();
+        Coordinates finalPositionCoordinates = path.get(path.size()-1);
+        gameBoard.setPlayerPosition(getPlayer(), finalPositionCoordinates);
+        showPlayerMovement(event.getPlayer(), path);
     }
     //TODO to implement
 
@@ -316,8 +318,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     void selectSelectableEffect(List<String> callableEffects);
 
-    void showPlayerMovement(String playerName, List<Coordinates> path);
-
     void showMessage(String message);
 
     default void showSpawn(String player, Coordinates spawnPoint, PowerUpCard spawnCard, boolean isOpponent) {
@@ -338,7 +338,17 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
 
 
+
     //SHOW METHODS
+
+    default void showPlayerMovement(String player, List<Coordinates> path) {
+        if (player.equals(getPlayer()))
+            System.out.println("You moved to square" + getLocalModel().getGameBoard().getBoardSquareByCoordinates(path.get(path.size()-1)) + " through the path: ");
+        else
+            System.out.println("Player" + player + "moved to square" + getLocalModel().getGameBoard().getBoardSquareByCoordinates(path.get(path.size()-1)) + " through the path: ");
+        for (Coordinates coordinates: path)
+            System.out.println(getLocalModel().getGameBoard().getBoardSquareByCoordinates(coordinates));
+    }
 
     //INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS
 

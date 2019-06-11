@@ -220,7 +220,7 @@ public class CLI implements RemoteView {
                 path.add(new Coordinates(x,y));
             else if(choice == 5 && step == 0)
                 return null;
-        } while(step < maxSteps && choice == 5);
+        } while(step < maxSteps && choice != 5);
         return path;
     }
 
@@ -308,10 +308,6 @@ public class CLI implements RemoteView {
 
     }
 
-    @Override
-    public void showPlayerMovement(String playerName, List<Coordinates> path) {
-
-    }
 
     @Override
     public void showMap() {

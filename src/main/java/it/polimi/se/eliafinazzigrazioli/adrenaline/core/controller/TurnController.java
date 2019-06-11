@@ -56,14 +56,13 @@ public class TurnController implements ViewEventsListenerInterface {
         GameBoard gameBoard = match.getGameBoard();
         Player currentPlayer = match.getCurrentPlayer();
         events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard()));
-        events.add(currentPlayer.addPowerUp(event.getToKeep()));
+        events.add(currentPlayer.addPowerUp(event.getToKeep(), match.getPowerUpsDeck()));
         match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
         events.add(new BeginTurnEvent(
                 currentPlayer.getPlayerNickname(),
                 currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
                 currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
                 currentPlayer.getPlayerBoard().preShootingMaxMoves()));
-        for (AbstractModelEvent toSend: events)
 
         match.notifyObservers(events);
     }
@@ -78,10 +77,11 @@ public class TurnController implements ViewEventsListenerInterface {
      * @param event
      */
     @Override
-    public void handleEvent(MovePlayEvent event) {
+    public void handleEvent(MovePlayEvent event) throws HandlerNotImplementedException {
         List<Coordinates> path = event.getPath();
         GameBoard gameBoard = match.getGameBoard();
         List<AbstractModelEvent> events = new ArrayList<>();
+        Player currentPlayer = match.getCurrentPlayer();
         // If this condition is verified it means that something isn't correct in the execution of the client
         // or alternatively this control can be used regularly to inhibit further actions
         if (actionsPerformed >= Rules.MAX_ACTIONS_AVAILABLE)

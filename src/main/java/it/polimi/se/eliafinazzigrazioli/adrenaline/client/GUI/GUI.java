@@ -79,7 +79,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showPlayerMovement(String playerName, List<Coordinates> path) {
+    public void showPlayerMovement(String player, List<Coordinates> path) {
 
     }
 
