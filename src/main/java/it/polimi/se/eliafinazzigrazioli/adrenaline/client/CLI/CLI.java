@@ -122,7 +122,12 @@ public class CLI implements RemoteView {
             System.out.println("1) Move");
             System.out.println("2) Shoot");
             System.out.println("3) Collect");
-            choice = Integer.parseInt(input.nextLine());
+            try {
+                choice = Integer.parseInt(input.nextLine());
+            } catch(NumberFormatException e) {
+                System.out.println("Invalid choice");
+                choice = -1;
+            }
             if(choice < 1 || choice > 3)
                 System.out.println("Not valid action");
         } while(choice < 1 || choice > 3);
@@ -182,7 +187,12 @@ public class CLI implements RemoteView {
                 System.out.println(count + ") Stop");
                 allowChoice.put(count, 5);
                 String string = input.nextLine();
-                choice = Integer.parseInt(string);
+                try {
+                    choice = Integer.parseInt(string);
+                } catch(NumberFormatException e) {
+                    System.out.println("Invalid choice");
+                    choice = -1;
+                }
             }while(choice < 1 || choice > count);
 
             choice = allowChoice.get(choice);
@@ -237,7 +247,12 @@ public class CLI implements RemoteView {
         int choice;
         do {
             String temp = input.nextLine();
-            choice = Integer.parseInt(temp);
+            try {
+                choice = Integer.parseInt(temp);
+            } catch(NumberFormatException e) {
+                System.out.println("Invalid choose");
+                choice = -1;
+            }
         }while( choice < 1 || choice > count );
         String weapon = weapons.get(choice-1).getWeaponName();
         notifySelectedWeaponCard(weapon);
@@ -260,7 +275,12 @@ public class CLI implements RemoteView {
         int choice;
         do {
             String temp = input.nextLine();
-            choice = Integer.parseInt(temp);
+            try {
+                choice = Integer.parseInt(temp);
+            } catch(NumberFormatException e) {
+                System.out.println("Invalid choice");
+                choice = -1;
+            }
         }while( choice < 1 || choice > count );
         Coordinates square = selectable.get(choice-1);
         notifySelectedSquare(square);
@@ -279,7 +299,12 @@ public class CLI implements RemoteView {
         int choice;
         do {
             String temp = input.nextLine();
-            choice = Integer.parseInt(temp);
+            try {
+                choice = Integer.parseInt(temp);
+            } catch(NumberFormatException e) {
+                System.out.println("Invalid choice");
+                choice = -1;
+            }
         }while( choice < 1 || choice > count );
         String temp = callableEffects.get(count);
         notifySelectedEffects(temp);
@@ -362,7 +387,12 @@ public class CLI implements RemoteView {
         int choice;
         do {
             String temp = input.nextLine();
-            choice = Integer.parseInt(temp);
+            try {
+                choice = Integer.parseInt(temp);
+            } catch(NumberFormatException e) {
+                System.out.println("Invalid choice");
+                choice = -1;
+            }
         }while( choice < 1 || choice > count );
         return cards.get(choice-1);
     }

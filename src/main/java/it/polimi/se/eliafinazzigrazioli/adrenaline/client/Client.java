@@ -108,7 +108,7 @@ public class Client {
         try {
             System.out.println("to CLI or not to CLI? [Y/n]");
             command = input.nextLine();
-            if (command.equals("n") || command.equals("no") || command.equals("not")) {
+            if (command.equalsIgnoreCase("n") || command.equalsIgnoreCase("no") || command.equalsIgnoreCase("not")) {
                 client.setView(new GUI(args, client));
             } else {
                 client.setView(new CLI(client));
@@ -116,7 +116,7 @@ public class Client {
 
             System.out.println("to RMI or not to RMI? [Y/n]");
             command = input.nextLine();
-            if (command.equals("n") || command.equals("no") || command.equals("not")) {
+            if (command.toLowerCase().equalsIgnoreCase("n") || command.equalsIgnoreCase("no") || command.equalsIgnoreCase("not")) {
                 client.setConnectionManager(new ConnectionManagerSocket(client));
             } else {
                 try {

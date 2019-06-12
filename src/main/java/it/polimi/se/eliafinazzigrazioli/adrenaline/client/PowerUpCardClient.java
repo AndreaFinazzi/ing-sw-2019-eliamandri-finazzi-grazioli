@@ -20,4 +20,12 @@ public class PowerUpCardClient {
     public Ammo getEquivalentAmmo() {
         return equivalentAmmo;
     }
+
+    @Override
+    public String toString() {
+        return "PowerUpCardClient{" +
+                "powerUpType='" + powerUpType + '\'' +
+                ", equivalentAmmo=" + equivalentAmmo +
+                '}';
+    }
 }

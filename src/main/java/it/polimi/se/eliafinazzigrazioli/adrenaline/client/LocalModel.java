@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
@@ -63,8 +64,12 @@ public class LocalModel {
         return powerUpCards;
     }
 
-    public void updateWeaponsSpawn(WeaponCardClient weaponCardClient, Room room) {
-
+    public boolean updateWeaponsSpawn(WeaponCardClient weaponCardClient, Coordinates pose) {
+        BoardSquareClient boardSquareClient = getGameBoard().getBoardSquareByCoordinates(pose);
+        if(boardSquareClient != null && boardSquareClient.isSpawnBoard()) {
+            return boardSquareClient.addWeaponCard(weaponCardClient);
+        }
+        return false;
     }
 
     public List<AmmoCardClient> getAmmoCards() {
@@ -83,7 +88,6 @@ public class LocalModel {
         //TODO
     }
 
-    //todo
     public WeaponCardClient getWeaponCardByNameOnMap(String weaponName) {
         for(BoardSquareClient square : listSpawn){
             List<WeaponCardClient> list = square.getWeapons();

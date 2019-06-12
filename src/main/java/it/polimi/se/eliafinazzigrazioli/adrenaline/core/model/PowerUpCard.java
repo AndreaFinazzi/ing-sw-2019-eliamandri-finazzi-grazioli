@@ -7,6 +7,8 @@ public class PowerUpCard implements Serializable {
     private final String powerUpType;
     private final Ammo equivalentAmmo;
     private PowerUpEffect effect;
+    private String descrption;
+    private boolean toPay;
 
     public PowerUpCard(String powerUpType, Ammo equivalentAmmo) {
         this.powerUpType = powerUpType;
@@ -23,6 +25,14 @@ public class PowerUpCard implements Serializable {
 
     public void activate() {
         effect.activate();
+    }
+
+    public String getDescrption() {
+        return descrption;
+    }
+
+    public boolean isToPay() {
+        return toPay;
     }
 
     @Override
