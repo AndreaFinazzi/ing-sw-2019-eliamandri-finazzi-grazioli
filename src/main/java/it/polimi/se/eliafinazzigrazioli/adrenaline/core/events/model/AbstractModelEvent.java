@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.AbstractEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 public abstract class AbstractModelEvent extends AbstractEvent {
@@ -50,6 +51,19 @@ public abstract class AbstractModelEvent extends AbstractEvent {
         this.privateEvent = privateEvent;
         this.player = player;
         this.clientID = clientID;
+    }
+
+    public AbstractModelEvent(Player player) {
+        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
+        this.player = player.getPlayerNickname();
+        this.clientID = player.getClientID();
+    }
+
+    public AbstractModelEvent(boolean privateEvent, Player player) {
+        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
+        this.privateEvent = privateEvent;
+        this.player = player.getPlayerNickname();
+        this.clientID = player.getClientID();
     }
 
     public String getPlayer() {

@@ -1,22 +1,16 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
 public class BeginTurnEvent extends AbstractModelEvent {
-
-    private int simpleMovesMax;
-    private int collectingMovesMax;
-    private int shootingMovesMax;
 
     public BeginTurnEvent(String player) {
         super(player);
     }
 
-    public BeginTurnEvent(String player, int simpleMovesMax, int collectingMovesMax, int shootingMovesMax) {
+    public BeginTurnEvent(Player player) {
         super(player);
-        this.simpleMovesMax = simpleMovesMax;
-        this.collectingMovesMax = collectingMovesMax;
-        this.shootingMovesMax = shootingMovesMax;
     }
 
     @Override
@@ -24,15 +18,4 @@ public class BeginTurnEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
-    public int getSimpleMovesMax() {
-        return simpleMovesMax;
-    }
-
-    public int getCollectingMovesMax() {
-        return collectingMovesMax;
-    }
-
-    public int getShootingMovesMax() {
-        return shootingMovesMax;
-    }
 }

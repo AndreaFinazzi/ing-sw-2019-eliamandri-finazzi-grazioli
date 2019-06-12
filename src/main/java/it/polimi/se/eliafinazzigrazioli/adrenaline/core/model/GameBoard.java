@@ -195,8 +195,6 @@ public class GameBoard {
      * @return
      */
     public boolean pathIsValid(Player player, List<Coordinates> path){
-        if (player.getPlayerBoard().simpleMovementMaxMoves() > path.size())
-            return false;
         List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(path);
         BoardSquare playerPosition = getPlayerPosition(player);
         for (BoardSquare boardSquare:boardSquaresPath){

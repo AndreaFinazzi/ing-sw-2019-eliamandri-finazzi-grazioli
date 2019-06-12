@@ -5,13 +5,13 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEvents
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
-public class TurnConcludingActionsEvent extends AbstractModelEvent {
+public class ReloadWeaponsRequestEvent extends AbstractModelEvent {
 
-    public TurnConcludingActionsEvent(String player) {
+    public ReloadWeaponsRequestEvent(String player) {
         super(player, true);
     }
 
-    public TurnConcludingActionsEvent(Player player) {
+    public ReloadWeaponsRequestEvent(Player player) {
         super(true, player.getPlayerNickname(), player.getClientID());
     }
 

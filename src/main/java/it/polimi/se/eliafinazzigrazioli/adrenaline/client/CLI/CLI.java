@@ -131,6 +131,7 @@ public class CLI implements RemoteView {
             if(choice < 1 || choice > 3)
                 System.out.println("Not valid action");
         } while(choice < 1 || choice > 3);
+
         return choice;
     }
 
@@ -313,11 +314,6 @@ public class CLI implements RemoteView {
     @Override
     public void collectWeapon(String collectedWeapon, String dropOfWeapon) {
 
-    }
-
-    @Override
-    public void showBeginTurn(String currentPlayer) {
-        showMessage("The current player is: " + currentPlayer);
     }
 
     @Override

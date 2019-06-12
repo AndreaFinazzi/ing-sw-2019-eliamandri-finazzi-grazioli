@@ -2,10 +2,10 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.FurtherActionEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.TurnConcludingActionsEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ReloadWeaponsRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
@@ -18,25 +18,29 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 //TODO DEFINE AND INSERT MESSAGES, IN PARTICULAR FOR NOT ALLOWED PLAY EVENT BECAUSE IT IS THROWN IN A VARIETY OF SITUATIONS
 
 public class TurnController implements ViewEventsListenerInterface {
+
+    private static final Logger LOGGER = Logger.getLogger(MatchController.class.getName());
+
     private Match match;
 
-    private Player currentPlayer;
     private int actionsPerformed;
 
 
     public TurnController(EventController eventController, Match match) {
         this.match = match;
+        this.actionsPerformed = 0;
         eventController.addViewEventsListener(MovePlayEvent.class, this);
         eventController.addViewEventsListener(CollectPlayEvent.class, this);
         eventController.addViewEventsListener(SpawnPowerUpSelected.class, this);
+        eventController.addViewEventsListener(ReloadWeaponEvent.class, this);
     }
 
-    public void beginTurn(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
+    public void beginTurn() {
         actionsPerformed = 0;
     }
 
@@ -58,8 +62,9 @@ public class TurnController implements ViewEventsListenerInterface {
         events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard()));
         events.add(currentPlayer.addPowerUp(event.getToKeep(), match.getPowerUpsDeck()));
         match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
-        events.add(new BeginTurnEvent(
-                currentPlayer.getPlayerNickname(),
+        events.add(new ActionRequestEvent(
+                currentPlayer,
+                Rules.MAX_ACTIONS_AVAILABLE,
                 currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
                 currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
                 currentPlayer.getPlayerBoard().preShootingMaxMoves()));
@@ -78,23 +83,27 @@ public class TurnController implements ViewEventsListenerInterface {
      */
     @Override
     public void handleEvent(MovePlayEvent event) throws HandlerNotImplementedException {
+        Player currentPlayer = match.getCurrentPlayer();
+        if (!currentPlayer.getPlayerNickname().equals(event.getPlayer())) {
+            LOGGER.info("Player " + event.getPlayer() + " tried to move out of his turn!");
+            return;
+        }
         List<Coordinates> path = event.getPath();
         GameBoard gameBoard = match.getGameBoard();
         List<AbstractModelEvent> events = new ArrayList<>();
-        Player currentPlayer = match.getCurrentPlayer();
         // If this condition is verified it means that something isn't correct in the execution of the client
         // or alternatively this control can be used regularly to inhibit further actions
         if (actionsPerformed >= Rules.MAX_ACTIONS_AVAILABLE)
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
 
-        else if (!gameBoard.pathIsValid(currentPlayer, path) || path.size() > Rules.MAX_MOVEMENTS)
+        else if (!gameBoard.pathIsValid(currentPlayer, path) || path.size() > currentPlayer.getPlayerBoard().simpleMovementMaxMoves())
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
 
         else{
             actionsPerformed++;
             events.add(gameBoard.playerMovement(currentPlayer, path));
             if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE)
-                events.add(new FurtherActionEvent(
+                events.add(new ActionRequestEvent(
                         currentPlayer,
                         Rules.MAX_ACTIONS_AVAILABLE - actionsPerformed,
                         currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
@@ -102,7 +111,7 @@ public class TurnController implements ViewEventsListenerInterface {
                         currentPlayer.getPlayerBoard().preShootingMaxMoves()
                 ));
             else
-                events.add(new TurnConcludingActionsEvent(currentPlayer));
+                events.add(new ReloadWeaponsRequestEvent(currentPlayer));
             match.notifyObservers(events);
         }
 
@@ -137,10 +146,21 @@ public class TurnController implements ViewEventsListenerInterface {
     }
 
     @Override
+    public void handleEvent(ReloadWeaponEvent event) throws HandlerNotImplementedException {
+        if (event.getWeapon() == null) {
+            beginTurn();
+            match.nextTurn();
+        }
+        else {
+            //todo payment logic and further reload request
+        }
+    }
+
+    @Override
     public void handleEvent(EndTurnRequestEvent event) throws HandlerNotImplementedException {
         //todo points assignment and end turn resets
         match.nextCurrentPlayer();
-        beginTurn(match.getCurrentPlayer());
+        beginTurn();
         if (match.getTurn() != 0)
             match.notifyObservers(new BeginTurnEvent(match.getCurrentPlayer().getPlayerNickname()));
         else {

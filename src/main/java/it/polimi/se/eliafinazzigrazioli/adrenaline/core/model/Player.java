@@ -280,7 +280,7 @@ public class Player implements Selectable {
 
     //TODO should be transformed in initTurn method
     public EndTurnEvent createEndTurnEvent() {
-        return new EndTurnEvent(playerNickname);
+        return new EndTurnEvent(this);
     }
 
 }

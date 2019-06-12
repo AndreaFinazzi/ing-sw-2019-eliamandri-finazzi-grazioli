@@ -1,6 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
@@ -224,6 +227,35 @@ public class Match implements Observable {
         return tempPlayer;
     }
 
+    public void nextTurn() {
+        List<AbstractModelEvent> events = new ArrayList<>();
+
+        events.add(new EndTurnEvent(currentPlayer));
+
+        //todo all next turn setup (points, replace cards...)
+
+
+        nextCurrentPlayer();
+        if (currentPlayer == firstPlayer)
+            turn++;
+
+        events.add(new BeginTurnEvent(currentPlayer));
+        if (turn == 0)
+            events.add(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
+        else {
+            PlayerBoard playerBoard = currentPlayer.getPlayerBoard();
+            events.add(new ActionRequestEvent(
+                    currentPlayer,
+                    Rules.MAX_ACTIONS_AVAILABLE,
+                    playerBoard.simpleMovementMaxMoves(),
+                    playerBoard.preCollectionMaxMoves(),
+                    playerBoard.preShootingMaxMoves()));
+        }
+
+
+        notifyObservers(events);
+
+    }
 
     public void removePlayer(String nickname) {
         Player tempPlayer = players.get(nickname);
@@ -249,18 +281,6 @@ public class Match implements Observable {
 
     }
 
-    /**
-     * Given a a boardSquare list and a player the method performs the movement of the player along the square list notifying
-     * it or notifies the client that the provided path is not valid.
-     * @param player
-     * @param path
-     */
-    public void playerMovement(Player player, List<Coordinates> path) {
-        if (path != null && path.size() > 0)
-            notifyObservers(gameBoard.playerMovement(player, path));
-        else
-            notifyObservers(new NotAllowedPlayEvent(player));
-    }
 
     /*
      * GameBoard-related methods
@@ -310,8 +330,8 @@ public class Match implements Observable {
         gameBoard = new GameBoard(mapType);
 
         notifyObservers(new BeginMatchEvent(mapType));
+        notifyObservers(new BeginTurnEvent(currentPlayer));
         notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
-
     }
 
     //TODO who should create the event?

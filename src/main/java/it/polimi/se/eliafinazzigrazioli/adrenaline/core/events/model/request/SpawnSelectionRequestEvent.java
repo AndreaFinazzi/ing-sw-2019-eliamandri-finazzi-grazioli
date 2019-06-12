@@ -19,7 +19,7 @@ public class SpawnSelectionRequestEvent extends AbstractModelEvent {
     }
 
     public SpawnSelectionRequestEvent(Player player, List<PowerUpCard> selectableCards) {
-        super(true, player.getPlayerNickname(), player.getClientID());
+        super(true, player);
         this.selectableCards = selectableCards;
     }
 
