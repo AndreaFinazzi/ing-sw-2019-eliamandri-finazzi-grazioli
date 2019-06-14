@@ -354,26 +354,29 @@ public class ClientGameBoard {
         String color;
 
         for(Avatar avatar : avatars) {
-            if(avatar.getDamageMark().equals(DamageMark.GREEN)){
-                color = ANSI_GREEN;
+            // perchè è null???
+            if(avatar!=null) {
+                if(avatar.getDamageMark().equals(DamageMark.GREEN)){
+                    color = ANSI_GREEN;
+                }
+                else if(avatar.getDamageMark().equals(DamageMark.YELLOW)){
+                    color = ANSI_YELLOW;
+                }
+                else if(avatar.getDamageMark().equals(DamageMark.BLUE)){
+                    color = ANSI_BLUE;
+                }
+                else if(avatar.getDamageMark().equals(DamageMark.GRAY)){
+                    color = ANSI_WHITE;
+                }
+                else{ //Purple
+                    color = ANSI_PURPLE;
+                }
+                do {
+                    x = random.nextInt(DIM_X-2) +1;
+                    y = random.nextInt(DIM_Y-2) +1;
+                } while(!squareText[x][y].equals(" "));
+                squareText[x][y] = color + "@";
             }
-            else if(avatar.getDamageMark().equals(DamageMark.YELLOW)){
-                color = ANSI_YELLOW;
-            }
-            else if(avatar.getDamageMark().equals(DamageMark.BLUE)){
-                color = ANSI_BLUE;
-            }
-            else if(avatar.getDamageMark().equals(DamageMark.GRAY)){
-                color = ANSI_WHITE;
-            }
-            else{ //Purple
-                color = ANSI_PURPLE;
-            }
-            do {
-                x = random.nextInt(DIM_X-2) +1;
-                y = random.nextInt(DIM_Y-2) +1;
-            } while(!squareText[x][y].equals(" "));
-            squareText[x][y] = color + "@";
 
         }
     }
