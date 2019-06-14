@@ -1,0 +1,38 @@
+#contactText {
+    -fx-text-fill: white;
+    -fx-background-color: #2d30e6;
+    -fx-background-inset: 5px;
+}
+
+#gridPane {
+    -fx-background-color: rgba(57, 57, 57, 0.8);
+    -fx-background-radius: 6;
+
+    -fx-border-style: solid;
+    -fx-border-color: linear-gradient(to right, #bf4e1c 0%, #eda386 50%, #bb3e7f 75%, #93ceed 100%);
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-border-insets: -1;
+
+    /*-fx-border-image-source: url("../img/assets/adrenaline/adrenaline-title.png") round;*/
+    /*-fx-border-image-repeat: stretch;*/
+    /*-fx-border-image-insets: -10;*/
+    /*-fx-border-image-slice: 10%;*/
+    /*-fx-border-image-width: 10;*/
+}
+
+#rootPane {
+    -fx-background-image: url("../img/assets/adrenaline/background_wide.jpg");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+#credentials-label {
+    -fx-text-fill: white;
+}
+
+/*.login-bp {*/
+/*    -fx-background-image: url("/client/GUI/img/assets/adrenaline/background_wide.jpg");*/
+/*}*/

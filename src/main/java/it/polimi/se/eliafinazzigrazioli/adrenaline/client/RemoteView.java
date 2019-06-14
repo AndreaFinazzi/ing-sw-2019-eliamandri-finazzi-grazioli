@@ -20,17 +20,17 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
-public interface RemoteView extends ModelEventsListenerInterface, Observable, Runnable {
+public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     @Override
     default void handleEvent(LoginResponseEvent event) throws HandlerNotImplementedException {
-        System.out.println(event.getMessage());
+        showMessage(event.getMessage());
         if (!event.isSuccessful()) {
             login(event.getAvailableAvatars());
         } else {
             updatePlayerInfo(event.getPlayer());
+            loginSuccessful();
         }
     }
 
@@ -71,6 +71,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
 
     @Override
     default void handleEvent(ActionRequestEvent event) throws HandlerNotImplementedException {
+        //TODO useless
+//        getLocalModel().getGameBoard().setPlayerPosition(getPlayer(), new Coordinates(2, 2));
+
         if (event.getPlayer().equals(getPlayer())) {
             List<Coordinates> path = new ArrayList<>();
             new Thread(() -> {
@@ -95,7 +98,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
                     }
                 }
                 notifyObservers(generatedEvent);
-            }).run();
+            }).start();
         }
     }
 
@@ -268,6 +271,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable, Ru
     int getClientID();
 
     void login(ArrayList<Avatar> availableAvatars);
+
+    void loginSuccessful();
 
     void mapVote(ArrayList<MapType> availableMaps);
 

@@ -91,7 +91,6 @@ public class Client {
         eventsConsumer.start();
 
         connectionManager.init();
-        new Thread(view).start();
     }
 
     private void disconnect() {
@@ -102,21 +101,24 @@ public class Client {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        String command;
+        String commandView, commandNetwork;
         Client client = new Client(args);
 
         try {
             System.out.println("to CLI or not to CLI? [Y/n]");
-            command = input.nextLine();
-            if (command.equalsIgnoreCase("n") || command.equalsIgnoreCase("no") || command.equalsIgnoreCase("not")) {
-                client.setView(new GUI(args, client));
+            commandView = input.nextLine();
+            if (commandView.equals("n") || commandView.equals("no") || commandView.equals("not")) {
+                GUI guiView = GUI.getInstance(args);
+                guiView.setClient(client);
+                client.setView(guiView);
+
             } else {
                 client.setView(new CLI(client));
             }
 
             System.out.println("to RMI or not to RMI? [Y/n]");
-            command = input.nextLine();
-            if (command.toLowerCase().equalsIgnoreCase("n") || command.equalsIgnoreCase("no") || command.equalsIgnoreCase("not")) {
+            commandNetwork = input.nextLine();
+            if (commandNetwork.equals("n") || commandNetwork.equals("no") || commandNetwork.equals("not")) {
                 client.setConnectionManager(new ConnectionManagerSocket(client));
             } else {
                 try {

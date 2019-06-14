@@ -1,0 +1,90 @@
+#rootGridPane {
+    -fx-background-image: url("../img/assets/adrenaline/background_table_1.JPG");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+
+/*DON'T CHANGE THIS! */
+#mainBoardBorderPane {
+    -fx-background-image: url("../img/assets/maps/Map_FOUR.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: contain;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+
+}
+
+/*DON'T CHANGE THIS! */
+
+#gameBoardGridPane {
+
+}
+
+.blueWeaponCard {
+    -fx-image: url("../img/assets/cards/AD_weapons_IT_0226.png");
+    -fx-rotate: -90;
+    -fx-scale-shape: true;
+}
+
+.yellowWeaponCard {
+    -fx-image: url("../img/assets/cards/AD_weapons_IT_0226.png");
+    /*-fx-rotate: 90;*/
+    -fx-scale-shape: true;
+}
+
+.redWeaponCard {
+    -fx-image: url("../img/assets/cards/AD_weapons_IT_0226.png");
+    /*-fx-rotate: 90;*/
+    -fx-scale-shape: true;
+}
+
+#blueWeaponCard1 {
+
+}
+
+#playerBoard1 {
+    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_YELLOW.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+#playerBoard2 {
+    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_BLUE.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+#playerBoard3 {
+    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_PURPLE.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+#playerBoard4 {
+    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_GREY.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+#myPlayerBoard {
+    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_GREEN.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+
+.playerInfoTextArea {
+}

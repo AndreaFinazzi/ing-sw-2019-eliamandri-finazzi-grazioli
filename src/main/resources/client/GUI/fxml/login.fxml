@@ -6,20 +6,20 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane id="borderPane" fx:id="borderPane" prefHeight="523.0" prefWidth="750.0" styleClass="login-bp"
-            stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.172-ea"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.initializables.Login">
-    <padding>
-        <Insets bottom="50" left="50" right="50" top="10"/>
-    </padding>
+<StackPane fx:id="rootStackPane" id="rootPane" prefHeight="523.0" prefWidth="750.0" styleClass="login-bp"
+           stylesheets="@../css/login.css" xmlns="http://javafx.com/javafx/8.0.172-ea"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.LoginGUIController">
+    <BorderPane>
+        <padding>
+            <Insets bottom="50" left="50" right="50" top="10"/>
+        </padding>
 
-    <top>
+        <top>
 
-    </top>
+        </top>
 
-    <bottom>
-        <StackPane fx:id="rootStackPane">
+        <bottom>
             <HBox id="credentials-box" alignment="BASELINE_LEFT" prefWidth="265">
                 <GridPane id="gridPane" hgap="5" vgap="5" alignment="CENTER">
                     <padding>
@@ -40,14 +40,9 @@
                     <HBox alignment="CENTER_RIGHT" spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <Button fx:id="buttonLogin" onAction="#performLogin" text="Login" prefWidth="100"/>
                     </HBox>
-                    <rowConstraints>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                        <RowConstraints/>
-                    </rowConstraints>
 
                 </GridPane>
             </HBox>
-        </StackPane>
-    </bottom>
-</BorderPane>
+        </bottom>
+    </BorderPane>
+</StackPane>

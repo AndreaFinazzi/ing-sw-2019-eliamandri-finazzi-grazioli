@@ -1,6 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.AbstractGUIController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.LocalModel;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.WeaponCardClient;
@@ -10,23 +12,27 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.lang.Thread.sleep;
 
 
 public class GUI extends Application implements RemoteView {
 
+    private static GUI instance;
     static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
 
     String[] args;
@@ -37,8 +43,32 @@ public class GUI extends Application implements RemoteView {
 
     private LocalModel localModel;
 
-    public GUI(String[] args, Client client) {
-        this.args = args;
+    private MainGUIController mainGUIController;
+
+    public GUI() {
+        instance = this;
+    }
+
+    public synchronized static GUI getInstance(String[] args) {
+        if (instance == null) {
+            new Thread(() -> {
+                // Have to run in a thread because launch doesn't return
+                Application.launch(GUI.class, args);
+            }).start();
+        }
+
+        while (instance == null) {
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
+
+        return instance;
+    }
+
+    public void setClient(Client client) {
         this.client = client;
     }
 
@@ -56,23 +86,11 @@ public class GUI extends Application implements RemoteView {
         client.setClientID(clientID);
     }
 
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Adrenaline");
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/login.fxml"));
-        BorderPane root = null;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Scene scene = new Scene(root);
-
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.show();
     }
 
     @Override
@@ -122,12 +140,52 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void login(ArrayList<Avatar> availableAvatars) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/login.fxml"));
 
+        StackPane root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        AbstractGUIController loginController = loader.getController();
+        loginController.setView(this);
+
+        Scene scene = new Scene(root);
+
+        Platform.runLater(() -> {
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
+
+            primaryStage.show();
+        });
+    }
+
+    @Override
+    public void loginSuccessful() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/main.fxml"));
+
+        Pane root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        mainGUIController = loader.getController();
+        mainGUIController.setView(this);
+
+        primaryStage.getScene().setRoot(root);
+
+        Platform.runLater(() -> {
+            primaryStage.setFullScreen(true);
+        });
     }
 
     @Override
     public void mapVote(ArrayList<MapType> availableMaps) {
-
+        notifyMapVoteEvent(availableMaps.get(0));
     }
 
     @Override
@@ -176,18 +234,27 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void run() {
-        launch(args);
-    }
-
-    @Override
     public List<Observer> getObservers() {
         return observers;
     }
 
     @Override
     public List<Coordinates> getPathFromUser(int maxSteps) {
+        ArrayList<Coordinates> selectedPath = new ArrayList<>();
+        Semaphore semaphore = new Semaphore(0);
 
-        return null;
+        mainGUIController.setSemaphore(semaphore);
+        mainGUIController.setSelectedPath(selectedPath);
+
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        synchronized (semaphore) {
+            return selectedPath;
+        }
+
     }
 }

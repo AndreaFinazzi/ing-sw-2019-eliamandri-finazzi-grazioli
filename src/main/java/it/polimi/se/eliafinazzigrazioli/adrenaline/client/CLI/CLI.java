@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CLI implements RemoteView {
+public class CLI implements RemoteView, Runnable {
     static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
     //TODO
@@ -53,6 +53,11 @@ public class CLI implements RemoteView {
         System.out.println("choose one of the following avatars:\n" + serializeArray(availableAvatars));
 
         notifyLoginRequestEvent(playerName, availableAvatars.get(nextInt()));
+    }
+
+    @Override
+    public void loginSuccessful() {
+        showMessage("Login successful, waiting for other players.");
     }
 
     @Override
@@ -116,6 +121,7 @@ public class CLI implements RemoteView {
 
     @Override
     public int choseAction() {
+
         int choice;
         do {
             System.out.println("Choose your action: ");
