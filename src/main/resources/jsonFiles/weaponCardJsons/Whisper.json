@@ -1,0 +1,47 @@
+{
+  "weaponName": "Whisper",
+  "cardColor": "BLUE",
+  "loader": ["YELLOW"],
+  "effects": [
+    {
+      "effectName": "effect",
+      "effectDescription": "Deal 3 damage and 1 mark to 1 target you can see. Your target must be at least 2 moves away from you.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 20,
+          "minDistance": 2,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 3,
+          "markAmount": 0,
+          "playerToAffectSource": "effect",
+          "toAffectPlayerSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": ["effect"],
+  "notes": "The two moves have no ammo cost. You don't have to be able to see your target when you play the card. For example, you can move 2 squares and shoot a target you now see. You cannot use 1 move before shooting and 1 move after."
+}

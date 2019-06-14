@@ -81,7 +81,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         break;
 
                     case 2:
-                            generatedEvent = null;
+                        //todo shooting logic
                         break;
 
                     case 3:

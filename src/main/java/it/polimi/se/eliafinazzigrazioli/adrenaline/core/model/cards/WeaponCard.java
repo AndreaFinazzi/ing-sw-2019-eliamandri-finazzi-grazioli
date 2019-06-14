@@ -17,6 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+//todo check room selection logic for furnace and complete json
+//todo study the last thing wrote in the notes, that's how to potentially split the moves. at the moment it's split into to single move identical effects
+
 public class WeaponCard extends Card {
 
     /*
@@ -28,6 +31,7 @@ public class WeaponCard extends Card {
     private List<Ammo> loader;
     private List<WeaponEffect> effects;
     private List<String> callableEffects;
+    private String notes;
 
     /*
      * State attributes.
@@ -38,7 +42,7 @@ public class WeaponCard extends Card {
 
     //TODO factory method for cards
     public static WeaponCard jsonParser(String cardName) throws WeaponFileNotFoundException {
-        String filePath = "src\\main\\resources\\weaponCardJsons\\" + cardName + ".json";
+        String filePath = "src/main/resources/jsonFiles/weaponCardJsons/" + cardName;
         String jsonString;
         try {
             jsonString = new String(Files.readAllBytes(Paths.get(filePath)));

@@ -1,0 +1,123 @@
+{
+  "weaponName": "T.H.O.R.",
+  "cardColor": "BLUE",
+  "loader": ["RED"],
+  "effects": [
+    {
+      "effectName": "basic effect",
+      "effectDescription": "Deal 2 damage to 1 target you can see.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 2,
+          "markAmount": 0,
+          "playerToAffectSource": "basic effect",
+          "toAffectPlayerSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": [
+        "with chain reaction"
+      ]
+    },
+    {
+      "effectName": "with chain reaction",
+      "effectDescription": "Deal 1 damage to a second target that your first target can see.",
+      "price": ["BLUE"],
+      "effectStates": [
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": "basic effect",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "PreselectionBasedSelectorEffectState",
+          "previouslySelectedMap": {
+            "basic effect": [0]
+          },
+          "alreadySelected": false
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "with chain reaction",
+          "toAffectPlayerSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": [
+        "with high voltage"
+      ]
+    },
+    {
+      "effectName": "with high voltage",
+      "effectDescription": "Deal 2 damage to a third target that your second target can see. You cannot use this effect unless you first use the chain reaction.",
+      "price": ["BLUE"],
+      "effectStates": [
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": "with chain reaction",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "PreselectionBasedSelectorEffectState",
+          "previouslySelectedMap": {
+            "basic effect": [0]
+          },
+          "alreadySelected": false
+        },
+        {
+          "type": "PreselectionBasedSelectorEffectState",
+          "previouslySelectedMap": {
+            "with chain reaction": [0]
+          },
+          "alreadySelected": false
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 2,
+          "markAmount": 0,
+          "playerToAffectSource": "with high voltage",
+          "toAffectPlayerSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": [
+    "basic effect"
+  ],
+  "notes": "This card constrains the order in which you can use its effects. (Most cards don't.) Also note that each target must be a different player."
+}
