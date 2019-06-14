@@ -129,6 +129,15 @@ public class ClientGameBoard {
         }
     }
 
+    public void resetAmmoCards() {
+        for (int x = 0; x < x_max; x++) {
+            for (int y = 0; y < y_max; y++) {
+                if (squaresMatrix[x][y] != null)
+                    squaresMatrix[x][y].addAmmoCard();
+            }
+        }
+    }
+
     public void setPlayerPosition (String player, Coordinates coordinates) {
         playerPositions.put(player, squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()]);
     }

@@ -54,11 +54,13 @@ public abstract class AbstractConnectionManager implements Observer {
     @Override
     public void update(AbstractModelEvent event) {
         //Visitor pattern
-        try {
-            event.handle(client.getView());
-        } catch (HandlerNotImplementedException e) {
-            e.printStackTrace();
-        }
+        new Thread(() -> {
+            try {
+                event.handle(client.getView());
+            } catch (HandlerNotImplementedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 }

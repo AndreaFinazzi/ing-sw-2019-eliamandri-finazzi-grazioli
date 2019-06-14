@@ -79,7 +79,7 @@ public final class Rules {
     // GAME_BOARD
     private static final JsonNode GAME_BOARD = GAME.get("board");
     public static final int GAME_BOARD_X_MAX = GAME_BOARD.get("x_max").asInt(4);
-    public static final int GAME_BOARD_Y_MAX = GAME_BOARD.get("y_max").asInt(5);
+    public static final int GAME_BOARD_Y_MAX = GAME_BOARD.get("y_max").asInt(3);
 
     private Rules() {
         throw new AssertionError();

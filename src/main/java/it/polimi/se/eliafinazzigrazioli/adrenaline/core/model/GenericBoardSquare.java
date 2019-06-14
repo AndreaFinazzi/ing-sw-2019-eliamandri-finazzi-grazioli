@@ -5,7 +5,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class GenericBoardSquare extends BoardSquare implements Serializable {
 
@@ -20,13 +19,25 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
     }
 
 
+    public AmmoCard getCollectable() {
+        return collectable;
+    }
+
     @Override
     public boolean isSpawnPoint() {
         return false;
     }
 
     @Override
-    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path) {
+    public boolean ammoCollectionIsValid() {
+        if (collectable != null)
+            return true;
+        else
+            return false;
+    }
+
+    @Override
+    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck) {
         AmmoCard collected = collectable;
         collectable = null;
         PowerUpCard collectedPowerUp = null;
@@ -37,13 +48,11 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
             collectedPowerUp = deck.drawCard();
             player.addPowerUp(collectedPowerUp, deck);
         }
-        return new AmmoCardCollectedEvent(player.getPlayerNickname(), collectedPowerUp, collected.getAmmos(), path);
+        return null;
     }
 
     //TODO define type exception
-    public AmmoCard removeCollectables() throws Exception {
-        if (collectable == null)
-            throw new Exception();
+    public AmmoCard gatherCollectables() {
         AmmoCard tempCollectables = collectable;
         collectable = null;
         return tempCollectables;

@@ -1,8 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AmmoCard {
+public class AmmoCard implements Serializable {
 
     private final List<Ammo> ammos;
     private final boolean powerUp;

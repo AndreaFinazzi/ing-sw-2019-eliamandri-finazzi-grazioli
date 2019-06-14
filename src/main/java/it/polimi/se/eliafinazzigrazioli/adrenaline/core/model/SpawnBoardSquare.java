@@ -33,10 +33,14 @@ public class SpawnBoardSquare extends BoardSquare {
      * @return
      */
     @Override
-    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path) {
+    public AmmoCardCollectedEvent collect(Player player, PowerUpsDeck deck) {
         return null;
     }
 
+    @Override
+    public boolean ammoCollectionIsValid() {
+        return false;
+    }
 
     public ArrayList<WeaponCard> getWeapons() {
         return weaponSlots;

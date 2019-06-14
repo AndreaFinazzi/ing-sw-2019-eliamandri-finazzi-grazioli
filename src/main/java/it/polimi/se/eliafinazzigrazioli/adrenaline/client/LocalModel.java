@@ -14,7 +14,7 @@ public class LocalModel {
     //Private information
     private List<WeaponCardClient> weaponCards; //user's weapon
     private List<PowerUpCardClient> powerUpCards;
-    private List<Ammo> ammo;
+    private List<Ammo> ammos;
 
     //Public information
     private ClientGameBoard gameBoard;
@@ -25,7 +25,7 @@ public class LocalModel {
     public LocalModel() {
         weaponCards = new ArrayList<>();
         powerUpCards = new ArrayList<>();
-        ammo = new ArrayList<>();
+        ammos = new ArrayList<>();
 
         players = new ArrayList<>();
         playerBoards = new HashMap<>();
@@ -56,6 +56,10 @@ public class LocalModel {
         return false;
     }
 
+    public void addAmmo(Ammo ammo) {
+        ammos.add(ammo);
+    }
+
     public List<WeaponCardClient> getWeaponCards() {
         return weaponCards;
     }
@@ -73,7 +77,7 @@ public class LocalModel {
     }
 
     public List<Ammo> getAmmos() {
-        return ammo;
+        return ammos;
     }
 
     public List<String> getPlayers() {

@@ -2,7 +2,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -57,11 +56,6 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         }
         else
             return false;
-    }
-
-    @Override
-    public boolean addAmmoCard(AmmoCardClient ammo) {
-        return false;
     }
 
     public boolean isAmmoCard() {

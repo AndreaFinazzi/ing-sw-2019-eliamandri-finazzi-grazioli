@@ -141,6 +141,10 @@ public class Player implements Selectable {
         playerBoard.addAmmos(ammoList);
     }
 
+    public boolean addAmmo(Ammo ammo) {
+        return playerBoard.addAmmo(ammo);
+    }
+
     /**
      * Given a color of the ammos returns the sum of the ammos and equivalent powerUps of that color.
      * @param ammoType
