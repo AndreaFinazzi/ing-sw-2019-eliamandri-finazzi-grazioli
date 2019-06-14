@@ -35,7 +35,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(MatchStartedEvent event) throws HandlerNotImplementedException {
         updateMatchPlayers(event.getPlayerToAvatarMap());
-
+        List<String> players = new ArrayList<>(event.getPlayerToAvatarMap().keySet());
+        initPlayersBoard(players);
         mapVote(event.getAvailableMaps());
     }
 
@@ -350,7 +351,15 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     void updatePlayerInfo(String player);
 
-    void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap);
+    default void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap){
+        getLocalModel().setPlayersAvatarMap(playerToAvatarMap);
+    }
+
+    default void initPlayersBoard(List<String> players) {
+        for(String player : players) {
+            getLocalModel().getPlayerBoards().put(player, new PlayerBoard());
+        }
+    }
 
     void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates);
 
