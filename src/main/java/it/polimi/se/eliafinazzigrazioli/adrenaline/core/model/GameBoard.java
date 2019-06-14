@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.Play
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerSpawnedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundBoardException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -132,6 +133,15 @@ public class GameBoard {
         playerPositions = new HashMap<>();
     }
 
+    public void ammoCardsSetup(AmmoCardsDeck deck) {
+        for (int x = 0; x < x_max; x++) {
+            for (int y = 0; y < y_max; y++) {
+                if (squaresMatrix[x][y] != null && !squaresMatrix[x][y].isSpawnPoint() && ((GenericBoardSquare) squaresMatrix[x][y]).getCollectable() == null)
+                    ((GenericBoardSquare) squaresMatrix[x][y]).dropCollectables(deck.drawCard());
+            }
+        }
+    }
+
     public void setPlayerPositions(Player player, BoardSquare position) throws OutOfBoundBoardException {
         if (position == null)
             throw new OutOfBoundBoardException("OutOfBoundException");
@@ -205,15 +215,13 @@ public class GameBoard {
         return true;
     }
 
-    public AbstractModelEvent collect(Player player, PowerUpsDeck deck, List<Coordinates> path) {
-        List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(path);
-        BoardSquare destination = null;
-        if (path.size() == 0)
-            destination = getPlayerPosition(player);
+    public AmmoCard collectAmmoCard(Player player, PowerUpsDeck deck) {
+        BoardSquare position = getPlayerPosition(player);
+        if (position.isSpawnPoint())
+            return null;
         else
-            boardSquaresPath.get(boardSquaresPath.size()-1);
-        movePlayer(player, boardSquaresPath.get(boardSquaresPath.size()-1));
-        return destination.collect(player, deck, path);
+            return ((GenericBoardSquare) position).gatherCollectables();
+
     }
 
     private List<BoardSquare> coordinatesToBoardSquares(List<Coordinates> coordinatesList) {

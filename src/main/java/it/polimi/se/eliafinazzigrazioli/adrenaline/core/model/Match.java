@@ -4,13 +4,18 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractMod
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.SpawnPowerUpSelected;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -86,6 +91,8 @@ public class Match implements Observable {
     private Player firstPlayer;
     private PowerUpsDeck powerUpsDeck;
     private WeaponsDeck weaponsDeck;
+    private AmmoCardsDeck ammoCardsDeck;
+
     private ArrayList<Avatar> availableAvatars = new ArrayList<>(Arrays.asList(Avatar.values()));
     private int turn = 0;
 
@@ -93,6 +100,7 @@ public class Match implements Observable {
         phase = MatchPhase.INITIALIZATION;
         powerUpsDeck = new PowerUpsDeck();
         weaponsDeck = new WeaponsDeck();
+        ammoCardsDeck = new AmmoCardsDeck();
     }
 
 
@@ -120,6 +128,10 @@ public class Match implements Observable {
 
     public WeaponsDeck getWeaponsDeck() {
         return weaponsDeck;
+    }
+
+    public AmmoCardsDeck getAmmoCardsDeck() {
+        return ammoCardsDeck;
     }
 
     public void nextCurrentPlayer() {
@@ -324,12 +336,11 @@ public class Match implements Observable {
         //todo preparation of the setup of the model, (weapons, power ups, deadPath....)
         currentPlayer = firstPlayer;
         gameBoard = new GameBoard(mapType);
+        gameBoard.ammoCardsSetup(ammoCardsDeck);
 
-        notifyObservers(new ActionRequestEvent(currentPlayer, 3, 3, 3, 3));
-
-//        notifyObservers(new BeginMatchEvent(mapType));
-//        notifyObservers(new BeginTurnEvent(currentPlayer));
-//        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
+        notifyObservers(new BeginMatchEvent(mapType));
+        notifyObservers(new BeginTurnEvent(currentPlayer));
+        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
     }
 
     //TODO who should create the event?

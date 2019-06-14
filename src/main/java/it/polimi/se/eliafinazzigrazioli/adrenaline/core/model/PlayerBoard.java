@@ -127,9 +127,12 @@ public class PlayerBoard {
             addAmmo(tempAmmo);
     }
 
-    public void addAmmo(Ammo ammo){
-        if (numAmmoType(ammo) < Rules.PLAYER_BOARD_MAX_AMMO)
+    public boolean addAmmo(Ammo ammo) {
+        if (numAmmoType(ammo) < Rules.PLAYER_BOARD_MAX_AMMO) {
             ammos.add(ammo);
+            return true;
+        }
+        return false;
     }
 
     public ArrayList<Ammo> getAmmos() {
