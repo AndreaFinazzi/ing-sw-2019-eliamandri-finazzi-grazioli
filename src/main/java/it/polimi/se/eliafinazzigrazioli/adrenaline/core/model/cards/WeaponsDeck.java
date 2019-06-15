@@ -20,4 +20,8 @@ public class WeaponsDeck extends Deck<String> {
             cards.add(listOfCardFiles[i].getName());
     }
 
+    public boolean isEmpty() {
+        return cards.isEmpty();
+    }
+
 }

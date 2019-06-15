@@ -53,10 +53,7 @@
         {
           "type": "PreselectionBasedSelectorEffectState",
           "previouslySelectedMap": {
-            "basic effect": [
-              0,
-              1
-            ]
+            "basic effect": [0, 1]
           },
           "alreadySelected": true
         },
@@ -74,7 +71,9 @@
           "toAffectPlayerSelectionOrder": 0
         }
       ],
-      "nextCallableEffects": "with turret tripod"
+      "nextCallableEffects": [
+        "with turret tripod"
+      ]
     },
     {
       "effectName": "with turret tripod",
@@ -86,19 +85,14 @@
         {
           "type": "PreselectionBasedSelectorEffectState",
           "previouslySelectedMap": {
-            "basic effect": [
-              0,
-              1
-            ]
+            "basic effect": [0, 1]
           },
           "alreadySelected": true
         },
         {
           "type": "PreselectionBasedSelectorEffectState",
           "previouslySelectedMap": {
-            "with focus shot": [
-              0
-            ]
+            "with focus shot": [0]
           },
           "alreadySelected": false
         },
@@ -146,10 +140,12 @@
           "playerToAffectSource": "with turret tripod",
           "toAffectPlayerSelectionOrder": 0
         }
-      ]
+      ],
+      "nextCallableEffects": []
     }
   ],
   "callableEffects": [
     "basic effect"
-  ]
+  ],
+  "notes": "If you deal both additional points of damage, they must be dealt to 2 different targets. If you see only 2 targets, you deal 2 to each if you use both optional effects. If you use the basic effect on only 1 target, you can still use the the turret tripod to give it 1 additional damage."
 }

@@ -1,0 +1,188 @@
+{
+  "weaponName": "Hellion",
+  "cardColor": "RED",
+  "loader": ["YELLOW"],
+  "effects": [
+    {
+      "effectName": "basic mode",
+      "effectDescription": "Deal 1 damage to 1 target you can see at least 1 move away. Then give 1 mark to that target and everyone else on that square.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 20,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 0
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 0,
+          "minDistance": 0,
+          "referenceSource": "basic effect",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": false,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": -1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 1,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 0
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 1,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 1,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 2
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 1,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 3
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 1,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 4
+        }
+      ],
+      "nextCallableEffects": []
+    },
+    {
+      "effectName": "in nano-tracer mode",
+      "effectDescription": "Deal 1 damage to 1 target you can see at least 1 move away. Then give 2 marks to that target and everyone else on that square.",
+      "price": ["RED"],
+      "effectStates": [
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 20,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 0
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 0,
+          "minDistance": 0,
+          "referenceSource": "basic effect",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": false,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": -1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 2,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 0
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 2,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 2,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 2
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 2,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 3
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 2,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 4
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": [
+    "basic mode",
+    "in nano-tracer mode"
+  ],
+  "notes": null
+}

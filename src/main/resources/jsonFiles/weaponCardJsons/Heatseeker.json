@@ -1,0 +1,40 @@
+{
+  "weaponName": "Heatseeker",
+  "cardColor": "RED",
+  "loader": ["RED", "YELLOW"],
+  "effects": [
+    {
+      "effectName": "effect",
+      "effectDescription": "Choose 1 target you cannot see and deal 3 damage to it.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": true,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 3,
+          "markAmount": 0,
+          "playerToAffectSource": "effect",
+          "toAffectPlayerSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": [
+    "effect"
+  ],
+  "notes": "Yes, this can only hit targets you cannot see."
+}

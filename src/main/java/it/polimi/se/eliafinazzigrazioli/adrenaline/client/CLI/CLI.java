@@ -28,6 +28,7 @@ public class CLI implements RemoteView, Runnable {
     private LocalModel localModel;
 
     private Client client;
+
     private List<Observer> observers = new ArrayList<>();
 
     public CLI(Client client) {
@@ -72,11 +73,6 @@ public class CLI implements RemoteView, Runnable {
     public void updatePlayerInfo(String player) {
         client.setPlayerName(player);
         this.playerName = player;
-    }
-
-    @Override
-    public void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap) {
-        //TODO
     }
 
     private <T> String serializeArray(ArrayList<T> list) {
@@ -128,10 +124,15 @@ public class CLI implements RemoteView, Runnable {
             System.out.println("1) Move");
             System.out.println("2) Shoot");
             System.out.println("3) Collect");
+            System.out.println("4) Show Map");
             try {
                 choice = Integer.parseInt(input.nextLine());
             } catch(NumberFormatException e) {
                 System.out.println("Invalid choice");
+                choice = -1;
+            }
+            if(choice == 4) {
+                showMap();
                 choice = -1;
             }
             if(choice < 1 || choice > 3)
@@ -338,34 +339,14 @@ public class CLI implements RemoteView, Runnable {
 
     @Override
     public void showMap() {
-        System.out.println(" ________________________________________________________________");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.printf("|\t  Color  \t|\t  Color  \t|\t  Color  \t|\t  Color  \t|\n");
-        System.out.println("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.print(" ________________");
-        System.out.print("________________");
-        System.out.print("________________");
-        System.out.println("________________");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.printf("|\t  Color  \t|\t  Color  \t|\t  Color  \t|\t  Color  \t|\n");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.print(" ________________");
-        System.out.print("________________");
-        System.out.print("________________");
-        System.out.println("________________");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.printf("|\t  Color  \t|\t  Color  \t|\t  Color  \t|\t  Color  \t|\n");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.printf("|\t\t\t\t|\t\t\t\t|\t\t\t\t|\t\t\t\t|\n");
-        System.out.print(" ________________");
-        System.out.print("________________");
-        System.out.print("________________");
-        System.out.println("________________");
+
+        String[][] mapText = localModel.getGameBoard().getMapText(localModel.getPlayersAvatarMap());
+        for(int j=mapText[0].length-1; j>=0; j--) {
+            for(int i=0; i<mapText.length; i++){
+                System.out.print(mapText[i][j]);
+            }
+            System.out.println();
+        }
     }
 
 
