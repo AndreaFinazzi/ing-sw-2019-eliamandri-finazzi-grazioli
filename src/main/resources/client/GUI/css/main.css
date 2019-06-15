@@ -1,5 +1,5 @@
 #rootGridPane {
-    -fx-background-image: url("../img/assets/adrenaline/background_table_1.JPG");
+    -fx-background-image: url("../assets/adrenaline/background_table_1.JPG");
     -fx-background-insets: 0, 0;
     -fx-background-size: cover;
     -fx-background-position: center;
@@ -8,12 +8,23 @@
 
 
 /*DON'T CHANGE THIS! */
-#mainBoardBorderPane {
-    -fx-background-image: url("../img/assets/maps/Map_FOUR.png");
+#mainBoardPane {
+    -fx-background-image: url("../assets/maps/Map_ONE.png");
     -fx-background-insets: 0, 0;
     -fx-background-size: contain;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
+
+}
+
+#mapVoteAnchorPane {
+    -fx-background-color: rgb(50, 50, 50);
+
+    -fx-border-style: solid;
+    -fx-border-color: linear-gradient(to right, #bf4e1c 0%, #eda386 50%, #bb3e7f 75%, #93ceed 100%);
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-border-insets: -1;
 
 }
 
@@ -23,68 +34,83 @@
 
 }
 
+#mapPreviewImageView {
+    -fx-border-style: solid;
+    -fx-border-color: linear-gradient(to right, #bf4e1c 0%, #eda386 50%, #bb3e7f 75%, #93ceed 100%);
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-border-insets: -1;
+}
+
+#overlay {
+    -fx-background-color: rgba(37, 37, 37, 0.6);
+}
+
+.mapVoteBackground {
+    -fx-background-color: rgba(57, 57, 57, 0.8);
+}
+
+.weaponCard {
+    -fx-background-image: url("../assets/cards/AD_weapons_IT_02.png");
+    -fx-background-color: none;
+    -fx-background-insets: 0, 0;
+    -fx-background-size: contain;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+
+    -fx-fill: none;
+
+    -fx-min-width: 97;
+    -fx-min-height: 170;
+}
+
+.powerUpCard {
+    -fx-background-image: url("../assets/cards/AD_powerups_IT_02.png");
+    -fx-background-color: none;
+    -fx-background-insets: 0, 0;
+    -fx-background-size: contain;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+
+    -fx-fill: none;
+
+    -fx-min-width: 97;
+    -fx-min-height: 170;
+}
+
+.myWeaponCard {
+    -fx-min-width: 110;
+    -fx-min-height: 200;
+}
+
+.myPowerUp {
+    -fx-min-width: 90;
+    -fx-min-height: 190;
+}
+
 .blueWeaponCard {
-    -fx-image: url("../img/assets/cards/AD_weapons_IT_0226.png");
-    -fx-rotate: -90;
-    -fx-scale-shape: true;
+    -fx-background-image: url("../assets/cards/rotated/AD_weapons_IT_02.png");
+
+    -fx-min-width: 170;
+    -fx-min-height: 97;
 }
 
 .yellowWeaponCard {
-    -fx-image: url("../img/assets/cards/AD_weapons_IT_0226.png");
-    /*-fx-rotate: 90;*/
-    -fx-scale-shape: true;
+
 }
 
 .redWeaponCard {
-    -fx-image: url("../img/assets/cards/AD_weapons_IT_0226.png");
-    /*-fx-rotate: 90;*/
-    -fx-scale-shape: true;
-}
-
-#blueWeaponCard1 {
 
 }
 
-#playerBoard1 {
-    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_YELLOW.png");
-    -fx-background-insets: 0, 0;
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
+.skullCircle {
+    -fx-fill: red;
 }
-
-#playerBoard2 {
-    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_BLUE.png");
-    -fx-background-insets: 0, 0;
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
-}
-
-#playerBoard3 {
-    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_PURPLE.png");
-    -fx-background-insets: 0, 0;
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
-}
-
-#playerBoard4 {
-    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_GREY.png");
-    -fx-background-insets: 0, 0;
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
-}
-
-#myPlayerBoard {
-    -fx-background-image: url("../img/assets/playerBoards/PlayerBoard_GREEN.png");
-    -fx-background-insets: 0, 0;
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
-}
-
 
 .playerInfoTextArea {
+
+}
+
+.cardSlots {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
 }
