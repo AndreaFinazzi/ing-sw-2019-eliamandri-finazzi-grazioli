@@ -1,7 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.AbstractGUIController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.LoginGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.LocalModel;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
@@ -44,6 +44,9 @@ public class GUI extends Application implements RemoteView {
     private LocalModel localModel;
 
     private MainGUIController mainGUIController;
+    private LoginGUIController loginGUIController;
+
+    private boolean initialized = false;
 
     public GUI() {
         instance = this;
@@ -72,6 +75,14 @@ public class GUI extends Application implements RemoteView {
         this.client = client;
     }
 
+    public void showOverlay() {
+        mainGUIController.showOverlay();
+    }
+
+    public void hideOverlay() {
+        mainGUIController.hideOverlay();
+    }
+
     @Override
     public String getPlayer() {
         return client.getPlayerName();
@@ -88,14 +99,14 @@ public class GUI extends Application implements RemoteView {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Adrenaline");
+    public LocalModel getLocalModel() {
+        return localModel;
     }
 
     @Override
-    public LocalModel getLocalModel() {
-        return localModel;
+    public void start(Stage primaryStage) throws Exception {
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle("Adrenaline");
     }
 
     @Override
@@ -140,30 +151,42 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void login(ArrayList<Avatar> availableAvatars) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/login.fxml"));
+        if (!initialized) {
+            initialized = true;
 
-        StackPane root = null;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/login.fxml"));
+
+            StackPane root = null;
+            try {
+                root = loader.load();
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+
+            loginGUIController = loader.getController();
+            loginGUIController.setView(this);
+            loginGUIController.setAvailableAvatarsList(availableAvatars);
+
+            Scene scene = new Scene(root);
+
+            Platform.runLater(() -> {
+                primaryStage.setScene(scene);
+                primaryStage.setResizable(false);
+
+                primaryStage.show();
+            });
+        } else {
+            loginGUIController.setLoggable(true);
         }
-
-        AbstractGUIController loginController = loader.getController();
-        loginController.setView(this);
-
-        Scene scene = new Scene(root);
-
-        Platform.runLater(() -> {
-            primaryStage.setScene(scene);
-            primaryStage.setResizable(false);
-
-            primaryStage.show();
-        });
     }
 
     @Override
     public void loginSuccessful() {
+        loginGUIController.waitForMatchStart();
+    }
+
+    @Override
+    public void mapVote(ArrayList<MapType> availableMaps) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/main.fxml"));
 
         Pane root = null;
@@ -181,11 +204,8 @@ public class GUI extends Application implements RemoteView {
         Platform.runLater(() -> {
             primaryStage.setFullScreen(true);
         });
-    }
 
-    @Override
-    public void mapVote(ArrayList<MapType> availableMaps) {
-        notifyMapVoteEvent(availableMaps.get(0));
+        mainGUIController.setVoteMap(availableMaps);
     }
 
     @Override
@@ -243,8 +263,8 @@ public class GUI extends Application implements RemoteView {
         ArrayList<Coordinates> selectedPath = new ArrayList<>();
         Semaphore semaphore = new Semaphore(0);
 
-        mainGUIController.setSemaphore(semaphore);
-        mainGUIController.setSelectedPath(selectedPath);
+//        mainGUIController.setSemaphore(semaphore);
+//        mainGUIController.setSelectedPath(selectedPath);
 
         try {
             semaphore.acquire();

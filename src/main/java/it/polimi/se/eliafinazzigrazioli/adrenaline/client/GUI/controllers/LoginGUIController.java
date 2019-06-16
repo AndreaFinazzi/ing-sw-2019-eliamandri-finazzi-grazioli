@@ -5,10 +5,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
+import java.util.ArrayList;
 
 public class LoginGUIController extends AbstractGUIController {
     @FXML
@@ -20,14 +24,19 @@ public class LoginGUIController extends AbstractGUIController {
     @FXML
     private Button buttonLogin;
 
+    @FXML
+    private ChoiceBox<Avatar> availableAvatarsList;
+
+    @FXML
+    private AnchorPane overlayAnchorPane;
+
 
     public void performLogin(ActionEvent actionEvent) {
 
         System.out.println("Try login: " + txtUsername.getText());
-        txtUsername.setDisable(true);
-        buttonLogin.setDisable(true);
 
-        view.notifyLoginRequestEvent(txtUsername.getText(), Avatar.BANSHEE);
+
+        view.notifyLoginRequestEvent(txtUsername.getText(), availableAvatarsList.getValue());
 
         ProgressIndicator progressIndicator = new ProgressIndicator();
         VBox box = new VBox(progressIndicator);
@@ -37,4 +46,16 @@ public class LoginGUIController extends AbstractGUIController {
         rootStackPane.getChildren().add(box);
     }
 
+    public void setLoggable(boolean loggable) {
+        txtUsername.setDisable(!loggable);
+        buttonLogin.setDisable(!loggable);
+    }
+
+    public void setAvailableAvatarsList(ArrayList<Avatar> availableAvatars) {
+        availableAvatarsList.getItems().addAll(availableAvatars);
+    }
+
+    public void waitForMatchStart() {
+        overlayAnchorPane.setVisible(true);
+    }
 }

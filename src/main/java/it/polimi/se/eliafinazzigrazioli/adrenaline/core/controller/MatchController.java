@@ -5,7 +5,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LoginRespon
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.MatchStartedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MapVoteEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.SpawnPowerUpSelected;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;

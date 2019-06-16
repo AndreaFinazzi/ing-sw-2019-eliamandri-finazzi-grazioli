@@ -1,56 +1,71 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
-import javafx.scene.input.MouseEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 public class MainGUIController extends AbstractGUIController {
 
-    ArrayList<Coordinates> selectedPath;
-    Semaphore semaphore;
+    @FXML
+    private ChoiceBox<MapType> availableMapsChoiceBox;
+
+    @FXML
+    private StackPane mapVoteOverlayStackPane;
+
+    @FXML
+    private ImageView voteMapPreviewImage;
+
+    @FXML
+    private AnchorPane overlay;
 
     public MainGUIController() {
         super();
     }
 
-    public void setSelectedPath(ArrayList<Coordinates> selectedPath) {
-        this.selectedPath = selectedPath;
+    public void setVoteMap(ArrayList<MapType> availableMaps) {
+        mapVoteOverlayStackPane.setVisible(true);
+
+        availableMapsChoiceBox.getItems().addAll(availableMaps);
+        availableMapsChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<MapType>() {
+            @Override
+            public void changed(ObservableValue<? extends MapType> observable, MapType oldValue, MapType newValue) {
+
+                File mapImageFile = new File(getClass().getResource("/client/GUI/assets/maps/" + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_PREFIX + newValue.name() + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_FORMAT).getFile());
+                Image mapImage = new Image(mapImageFile.toURI().toString());
+
+                // TODO not working
+                voteMapPreviewImage.setImage(mapImage);
+                voteMapPreviewImage.setFitWidth(200);
+                voteMapPreviewImage.setFitHeight(260);
+                voteMapPreviewImage.setVisible(true);
+                voteMapPreviewImage.setCache(true);
+            }
+        });
     }
 
-    public void setSemaphore(Semaphore semaphore) {
-        this.semaphore = semaphore;
+    public void voteMap(ActionEvent actionEvent) {
+        showOverlay();
+
+        view.notifyMapVoteEvent(availableMapsChoiceBox.getValue());
     }
 
-    public void pathCONFIRMButtonPressed(MouseEvent actionEvent) {
-        System.out.println("UNLOCKING SEMAPHORE.");
-
-        semaphore.release();
+    public void showOverlay() {
+        overlay.setVisible(true);
     }
 
-    public void arrowRIGHTPressed(MouseEvent actionEvent) {
-//        Coordinates currentPosition = view.getLocalModel().getGameBoard().getPlayerPositionByName("toni").getCoordinates();
-//        selectedPath.add(new Coordinates(currentPosition.getXCoordinate() + 1, currentPosition.getYCoordinate()));
-        selectedPath.add(new Coordinates(2, 2));
-        System.out.println("arrow RIGHT pressed.");
+    public void hideOverlay() {
+        overlay.setVisible(false);
     }
 
-    public void arrowDOWNPressed(MouseEvent actionEvent) {
-        selectedPath.add(new Coordinates(3, 2));
-        System.out.println("arrow DOWN pressed.");
-
-    }
-
-    public void arrowLEFTPressed(MouseEvent actionEvent) {
-        selectedPath.add(new Coordinates(2, 3));
-        System.out.println("arrow LEFT pressed.");
-
-    }
-
-    public void arrowUPPressed(MouseEvent actionEvent) {
-        selectedPath.add(new Coordinates(3, 4));
-        System.out.println("arrow UP pressed.");
-
-    }
 }
