@@ -127,9 +127,9 @@ public class ClientGameBoard {
                         InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL);
                 squaresMatrix[1][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(1, 2),
                         InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
-                squaresMatrix[2][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(2, 2),
+                squaresMatrix[2][2] = new SpawnBoardSquareClient(Room.BLUE, new Coordinates(2, 2),
                         InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
-                squaresMatrix[3][2] = new SpawnBoardSquareClient(Room.GREEN, new Coordinates(3, 2),
+                squaresMatrix[3][2] = new GenericBoardSquareClient(Room.GREEN, new Coordinates(3, 2),
                         InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR);
         }
     }
@@ -220,13 +220,15 @@ public class ClientGameBoard {
                 color = ANSI_PURPLE;
             else if(boardSquare.getRoom().equals(Room.GRAY))
                 color = ANSI_WHITE;
-            else
+            else if(boardSquare.getRoom().equals(Room.GREEN))
                 color = ANSI_GREEN;
+            else
+                color = ANSI_RESET;
 
             if(boardSquare.isSpawnBoard()) {
                 squareText[1][DIM_Y-2] = color + "S";
             }
-            else squareText[1][DIM_Y-2] = color + "G";
+            //else squareText[1][DIM_Y-2] = color + "G";
 
             if(boardSquare.getNorth().equals(InterSquareLink.WALL)) {
                 if(boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
@@ -342,7 +344,7 @@ public class ClientGameBoard {
                 x = random.nextInt(DIM_X-2) +1;
                 y = random.nextInt(DIM_Y-2) +1;
             } while(!squareText[x][y].equals(" "));
-            squareText[x][y] = "X";
+            squareText[x][y] = color + "X";
         }
         addPlayers(squareText, avatars);
         return squareText;

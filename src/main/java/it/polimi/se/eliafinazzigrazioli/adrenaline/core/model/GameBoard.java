@@ -61,7 +61,7 @@ public class GameBoard {
             squaresMatrix[3][0] = new SpawnBoardSquare(Room.YELLOW, new Coordinates(3, 0),
                     InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR);
             squaresMatrix[3][1] = new GenericBoardSquare(Room.YELLOW, new Coordinates(3, 1),
-                    InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.DOOR);
+                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.DOOR);
             squaresMatrix[2][1] = new GenericBoardSquare(Room.PURPLE, new Coordinates(2, 1),
                     InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL);
             squaresMatrix[0][2] = new GenericBoardSquare(Room.BLUE, new Coordinates(0, 2),
@@ -101,12 +101,11 @@ public class GameBoard {
         }
 
         if (mapType.equals(MapType.FOUR)) {
-            if (mapType.equals(MapType.THREE)) {
                 squaresMatrix = new BoardSquare[x_max][y_max];
                 squaresMatrix[0][0] = new GenericBoardSquare(Room.GRAY, new Coordinates(0, 0),
                         InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
                 squaresMatrix[0][1] = new SpawnBoardSquare(Room.RED, new Coordinates(0, 1),
-                        InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
+                        InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
                 squaresMatrix[1][1] = new GenericBoardSquare(Room.PURPLE, new Coordinates(1, 1),
                         InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
                 squaresMatrix[1][0] = new GenericBoardSquare(Room.GRAY, new Coordinates(1, 0),
@@ -122,12 +121,11 @@ public class GameBoard {
                 squaresMatrix[0][2] = new GenericBoardSquare(Room.RED, new Coordinates(0, 2),
                         InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL);
                 squaresMatrix[1][2] = new GenericBoardSquare(Room.BLUE, new Coordinates(1, 2),
-                        InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
-                squaresMatrix[2][2] = new GenericBoardSquare(Room.BLUE, new Coordinates(2, 2),
+                        InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
+                squaresMatrix[2][2] = new SpawnBoardSquare(Room.BLUE, new Coordinates(2, 2),
                         InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
-                squaresMatrix[3][2] = new SpawnBoardSquare(Room.GREEN, new Coordinates(3, 2),
+                squaresMatrix[3][2] = new GenericBoardSquare(Room.GREEN, new Coordinates(3, 2),
                         InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR);
-            }
 
         }
         playerPositions = new HashMap<>();
