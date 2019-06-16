@@ -4,8 +4,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public class GenericViewEvent extends AbstractViewEvent {
 
-    public GenericViewEvent(String player, String message) {
-        super(player);
+    public GenericViewEvent(int clientID, String player, String message) {
+        super(clientID, player);
         super.setMessage(message);
     }
 

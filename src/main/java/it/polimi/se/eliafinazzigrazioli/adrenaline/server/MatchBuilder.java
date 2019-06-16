@@ -77,6 +77,11 @@ public class MatchBuilder {
 
     public synchronized void signNewClient(AbstractClientHandler clientHandler) {
         clientHandler.setEventsQueue(matchToQueueMap.get(nextMatch));
+        nextMatch.signNewClient(clientHandler);
+    }
+
+    private synchronized void signClient(AbstractClientHandler clientHandler) {
+        clientHandler.setEventsQueue(matchToQueueMap.get(nextMatch));
         nextMatch.signClient(clientHandler);
     }
 
@@ -92,7 +97,6 @@ public class MatchBuilder {
 
     private synchronized void startMatch(MatchController match) {
 
-
         //TODO: move to Messages
         LOGGER.info("Game starting");
 
@@ -103,6 +107,6 @@ public class MatchBuilder {
 
         instantiateNewMatch();
 
-        for (AbstractClientHandler clientHandler : notLoggedClients) signNewClient(clientHandler);
+        for (AbstractClientHandler clientHandler : notLoggedClients) signClient(clientHandler);
     }
 }

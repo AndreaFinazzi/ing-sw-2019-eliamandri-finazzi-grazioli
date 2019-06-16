@@ -9,8 +9,8 @@ public class MovePlayEvent extends AbstractViewEvent {
 
     private List<Coordinates> path;
 
-    public MovePlayEvent(String player, List<Coordinates> path) {
-        super(player);
+    public MovePlayEvent(int clientID, String player, List<Coordinates> path) {
+        super(clientID, player);
         this.path = path;
     }
 

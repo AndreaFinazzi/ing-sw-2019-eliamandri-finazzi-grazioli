@@ -7,8 +7,8 @@ public class RoomSelectedEvent extends AbstractViewEvent {
 
     private Room room;
 
-    public RoomSelectedEvent(String player, Room room) {
-        super(player);
+    public RoomSelectedEvent(int clientID, String player, Room room) {
+        super(clientID, player);
         this.room = room;
     }
 

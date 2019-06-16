@@ -45,7 +45,7 @@ public class PlayerControllerTest {
         List<Coordinates> coordinatesList = new ArrayList<>();
         coordinatesList.add(new Coordinates(1, 0));
         coordinatesList.add(new Coordinates(1, 1));
-        MovePlayEvent movePlayEvent = new MovePlayEvent("playerOne", coordinatesList);
+        MovePlayEvent movePlayEvent = new MovePlayEvent(0, "playerOne", coordinatesList);
         playerController.handleEvent(movePlayEvent);
         Player playerOne = matchController.getPlayers().get("playerOne");
         BoardSquare playerPos = matchController.getMatch().getGameBoard().getPlayerPosition(playerOne);

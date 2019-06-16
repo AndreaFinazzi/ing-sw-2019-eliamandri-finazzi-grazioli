@@ -9,8 +9,7 @@ public class LoginRequestEvent extends AbstractViewEvent {
     private Avatar chosenAvatar;
 
     public LoginRequestEvent(int clientID, String player, Avatar chosenAvatar) {
-        super(player);
-        this.clientID = clientID;
+        super(clientID, player);
         this.chosenAvatar = chosenAvatar;
     }
 

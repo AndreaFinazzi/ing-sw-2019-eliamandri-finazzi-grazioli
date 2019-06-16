@@ -5,8 +5,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCol
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ReloadWeaponsRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.AmmoCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
@@ -58,6 +58,7 @@ public class TurnController implements ViewEventsListenerInterface {
     @Override
     public void handleEvent(SpawnPowerUpSelected event) throws HandlerNotImplementedException {
         List<AbstractModelEvent> events = new ArrayList<>();
+
         GameBoard gameBoard = match.getGameBoard();
         Player currentPlayer = match.getCurrentPlayer();
         events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard()));

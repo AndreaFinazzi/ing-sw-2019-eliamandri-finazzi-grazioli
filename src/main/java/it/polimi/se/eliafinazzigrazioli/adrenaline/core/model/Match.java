@@ -20,6 +20,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Match implements Observable {
 
@@ -214,7 +215,7 @@ public class Match implements Observable {
         return tempPlayer;
     }
 
-    public synchronized Player addPlayer(int clientID, String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException, AvatarNotAvailableException {
+    public synchronized Player addPlayer(int clientID, String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException {
         Player tempPlayer = players.get(nickname);
 
         if (tempPlayer != null) {
@@ -226,10 +227,10 @@ public class Match implements Observable {
             throw new MaxPlayerException();
         } else {
             tempPlayer = players.add(clientID, nickname);
-            if (availableAvatars.contains(avatar))
-                tempPlayer.setAvatar(avatar);
-            else
-                throw new AvatarNotAvailableException();
+            if (!availableAvatars.contains(avatar))
+                avatar = availableAvatars.get(new Random().nextInt(availableAvatars.size() - 1));
+
+            tempPlayer.setAvatar(avatar);
             availableAvatars.remove(avatar);
             if (players.size() == 1) {
                 firstPlayer = tempPlayer;

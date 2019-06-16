@@ -8,8 +8,8 @@ public class PlayersSelectedEvent extends AbstractViewEvent {
 
     List<String> players;
 
-    public PlayersSelectedEvent(String player, List<String> players) {
-        super(player);
+    public PlayersSelectedEvent(int clientID, String player, List<String> players) {
+        super(clientID, player);
         this.players = players;
     }
 

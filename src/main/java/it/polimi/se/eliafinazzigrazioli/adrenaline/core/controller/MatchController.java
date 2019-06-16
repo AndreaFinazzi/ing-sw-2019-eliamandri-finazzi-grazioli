@@ -88,10 +88,15 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         match.addPlayer(player, avatar);
     }
 
-    public void signClient(AbstractClientHandler clientHandler) {
+    public void signNewClient(AbstractClientHandler clientHandler) {
         eventController.addVirtualView(clientHandler);
         clientIDToPlayerMap.put(clientHandler.getClientID(), NOT_LOGGED_CLIENT_NICKNAME);
         eventController.update(new ConnectionResponseEvent(clientHandler.getClientID(), "Username and Avatar required.", match.getAvailableAvatars()));
+    }
+
+    public void signClient(AbstractClientHandler clientHandler) {
+        eventController.addVirtualView(clientHandler);
+        clientIDToPlayerMap.put(clientHandler.getClientID(), NOT_LOGGED_CLIENT_NICKNAME);
     }
 
     public void removePlayer(String nickname) {
@@ -117,13 +122,14 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
     public ArrayList<AbstractClientHandler> popNotLoggedClients() {
         ArrayList<AbstractClientHandler> notLoggedClients = new ArrayList<>();
-        Set<Integer> clientIDs = clientIDToPlayerMap.keySet();
+        Iterator<Integer> clientIDs = clientIDToPlayerMap.keySet().iterator();
 
-        for (Integer clientID : clientIDs) {
+        while (clientIDs.hasNext()) {
+            int clientID = clientIDs.next();
+
             if (clientIDToPlayerMap.get(clientID).equals(NOT_LOGGED_CLIENT_NICKNAME)) {
                 notLoggedClients.add(eventController.popVirtualView(clientID));
-
-                clientIDToPlayerMap.remove(clientID);
+                clientIDs.remove();
             }
         }
 
@@ -175,8 +181,6 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
             responseEvent.setSuccess(false);
             responseEvent.setAvailableAvatars(match.getAvailableAvatars());
             responseEvent.setMessage("Username already in game, try with a different nick!");
-        } catch (AvatarNotAvailableException e) {
-            e.printStackTrace();
         }
         eventController.update(responseEvent);
     }

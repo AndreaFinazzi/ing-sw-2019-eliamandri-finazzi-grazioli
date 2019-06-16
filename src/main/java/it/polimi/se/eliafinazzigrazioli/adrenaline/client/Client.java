@@ -30,7 +30,8 @@ public class Client {
                 connectionManager.update(nextEvent);
             }
         } catch (InterruptedException e) {
-            //TODO handle
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
         } finally {
 
         }

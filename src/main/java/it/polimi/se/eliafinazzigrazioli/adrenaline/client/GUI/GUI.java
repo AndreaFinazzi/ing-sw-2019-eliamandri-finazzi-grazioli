@@ -65,6 +65,7 @@ public class GUI extends Application implements RemoteView {
                 sleep(100);
             } catch (InterruptedException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -270,6 +271,7 @@ public class GUI extends Application implements RemoteView {
             semaphore.acquire();
         } catch (InterruptedException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
 
         synchronized (semaphore) {

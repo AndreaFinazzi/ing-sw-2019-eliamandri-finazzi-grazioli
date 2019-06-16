@@ -65,7 +65,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         PowerUpCard toKeep = selectPowerUpToKeep(cards);
         cards.remove(toKeep);
         PowerUpCard spawnCard = cards.get(0);
-        notifyObservers(new SpawnPowerUpSelected(getPlayer(), toKeep, spawnCard));
+        notifyObservers(new SpawnPowerUpSelected(getClientID(), getPlayer(), toKeep, spawnCard));
     }
 
     @Override
@@ -86,7 +86,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                 switch(choice) {
                     case 1:
                         path = getPathFromUser(event.getSimpleMovesMax());
-                        generatedEvent = path == null ? null : new MovePlayEvent(getPlayer(), path);
+                        generatedEvent = path == null ? null : new MovePlayEvent(getClientID(), getPlayer(), path);
                         break;
 
                     case 2:
@@ -103,7 +103,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                             generatedEvent = null;
                         }
                         else if (finalPosition.hasAmmoCard()) {
-                            generatedEvent = new CollectPlayEvent(getPlayer(), path == null ? new ArrayList<>() : path);
+                            generatedEvent = new CollectPlayEvent(getClientID(), getPlayer(), path == null ? new ArrayList<>() : path);
                         }
                         else {
                             generatedEvent = null;
@@ -155,7 +155,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
         //todo define payment logic
 
-        notifyObservers(new ReloadWeaponEvent(getPlayer(), selectedWeapon));
+        notifyObservers(new ReloadWeaponEvent(getClientID(), getPlayer(), selectedWeapon));
     }
 
     @Override
@@ -306,23 +306,23 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default void notifyPlayerSelectedEvent(ArrayList<String> selectedPlayers) {
-        notifyObservers(new PlayersSelectedEvent(getPlayer(), selectedPlayers));
+        notifyObservers(new PlayersSelectedEvent(getClientID(), getPlayer(), selectedPlayers));
     }
 
     default void notifyCardSelected(String card) {
-        notifyObservers(new CardSelectedEvent(getPlayer(), card));
+        notifyObservers(new CardSelectedEvent(getClientID(), getPlayer(), card));
     }
 
     default void notifySelectedSquare(Coordinates coordinates) {
-        notifyObservers(new SquareSelectedEvent(getPlayer(), coordinates));
+        notifyObservers(new SquareSelectedEvent(getClientID(), getPlayer(), coordinates));
     }
 
     default void notifySelectedEffects(String effect) {
-        notifyObservers(new EffectSelectedEvent(getPlayer(), effect));
+        notifyObservers(new EffectSelectedEvent(getClientID(), getPlayer(), effect));
     }
 
     default void notifySelectedWeaponCard(String weapon) {
-        notifyObservers(new CardSelectedEvent(getPlayer(), weapon));
+        notifyObservers(new CardSelectedEvent(getClientID(), getPlayer(), weapon));
     }
 
     default void notifyRequestMove(int clientID, String playerName) {
