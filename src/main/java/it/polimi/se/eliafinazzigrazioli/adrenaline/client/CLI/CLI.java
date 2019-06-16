@@ -347,6 +347,7 @@ public class CLI implements RemoteView, Runnable {
             }
             System.out.println();
         }
+        System.out.print(ClientGameBoard.ANSI_RESET);
     }
 
 

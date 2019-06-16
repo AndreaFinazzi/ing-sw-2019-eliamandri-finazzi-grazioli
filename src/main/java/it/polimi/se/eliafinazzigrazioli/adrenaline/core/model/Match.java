@@ -237,6 +237,8 @@ public class Match implements Observable {
 
         events.add(new EndTurnEvent(currentPlayer));
 
+        gameBoard.ammoCardsSetup(ammoCardsDeck);
+
         //todo all next turn setup (points, replace cards...)
 
 
@@ -336,8 +338,8 @@ public class Match implements Observable {
         gameBoard.ammoCardsSetup(ammoCardsDeck);
 
         notifyObservers(new BeginMatchEvent(mapType));
-//        notifyObservers(new BeginTurnEvent(currentPlayer));
-//        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
+        notifyObservers(new BeginTurnEvent(currentPlayer));
+        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
     }
 
     //TODO who should create the event?
