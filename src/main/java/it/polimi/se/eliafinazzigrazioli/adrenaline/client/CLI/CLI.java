@@ -131,8 +131,8 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public void buildLocalMap(MapType mapType) {
         localModel.generatesGameBoard(mapType);
-        System.out.println("Map is chosen is: " + mapType);
-        //todo showmap();
+        System.out.println("Chosen Map is: " + mapType);
+        showMap();
     }
 
     @Override
@@ -359,15 +359,11 @@ public class CLI implements RemoteView, Runnable {
 
     @Override
     public void showMap() {
-
-        String[][] mapText = localModel.getGameBoard().getMapText(localModel.getPlayersAvatarMap());
-        for(int j=mapText[0].length-1; j>=0; j--) {
-            for(int i=0; i<mapText.length; i++){
-                System.out.print(mapText[i][j]);
-            }
-            System.out.println();
-        }
+        String mapText = localModel.getGameBoard().getMapText(localModel.getPlayersAvatarMap());
+        showMessage(mapText);
     }
+
+
 
 
 
@@ -398,6 +394,39 @@ public class CLI implements RemoteView, Runnable {
             }
         }while( choice < 1 || choice > count );
         return cards.get(choice-1);
+    }
+
+    @Override
+    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
+        Integer choice;
+        System.out.println("Do you want to reload a weapon? [Y/n]");
+        String temp = input.nextLine();
+        if(temp.equalsIgnoreCase("n") || temp.equalsIgnoreCase("no") || temp.equalsIgnoreCase("not"))
+            return null;
+        if(reloadableWeapons == null) {
+            System.out.println("ops, something didn't work");
+            return null;
+        }
+        if(reloadableWeapons.size() == 0) {
+            System.out.println("No weapons can be reloaded.");
+            return null;
+        }
+        System.out.println("Insert your choice: ");
+        int count = 0;
+        for(WeaponCardClient weapon : reloadableWeapons) {
+            count++;
+            System.out.println(count + ") " + weapon.toReloadString());
+        }
+        do {
+            try {
+                temp = input.nextLine();
+                choice = Integer.parseInt(temp);
+            } catch(NumberFormatException e) {
+                System.out.println("Invalid choice ");
+                choice = -1;
+            }
+        } while(choice < 1 || choice > count);
+        return reloadableWeapons.get(choice-1);
     }
 
     @Override

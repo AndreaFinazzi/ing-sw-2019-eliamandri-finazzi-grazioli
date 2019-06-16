@@ -64,4 +64,12 @@ public class WeaponCardClient {
         }
         return string;
     }
+
+    public String toReloadString() {
+        String string = weaponName + " :\n" + "at the cost of: ";
+        for(Ammo ammo : price) {
+            string = string + ammo + " ";
+        }
+        return string;
+    }
 }
