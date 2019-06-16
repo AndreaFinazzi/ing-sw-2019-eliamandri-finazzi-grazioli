@@ -56,7 +56,8 @@ public abstract class BoardSquareClient {
         return false;
     }
 
-    public void addAmmoCard() {
+    public boolean addAmmoCard(AmmoCardClient ammoCard) {
+        return false;
     }
 
     public void removeAmmoCard() {

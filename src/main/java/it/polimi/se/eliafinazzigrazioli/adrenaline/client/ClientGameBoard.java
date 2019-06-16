@@ -5,6 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class ClientGameBoard {
 
@@ -135,10 +136,13 @@ public class ClientGameBoard {
     }
 
     public void resetAmmoCards() {
+        List<Ammo> ammoList = new ArrayList<>();
+        ammoList.add(Ammo.BLUE); ammoList.add(Ammo.YELLOW); ammoList.add(Ammo.RED);
         for (int x = 0; x < x_max; x++) {
             for (int y = 0; y < y_max; y++) {
                 if (squaresMatrix[x][y] != null)
-                    squaresMatrix[x][y].addAmmoCard();
+                    squaresMatrix[x][y].addAmmoCard(new AmmoCardClient(ammoList, false));
+                    //Return boolean
             }
         }
     }
@@ -347,6 +351,7 @@ public class ClientGameBoard {
             squareText[x][y] = color + "X";
         }
         addPlayers(squareText, avatars);
+        System.out.print(ANSI_RESET);
         return squareText;
     }
 
@@ -383,7 +388,7 @@ public class ClientGameBoard {
         }
     }
 
-    public String[][] getMapText(Map<String, Avatar> avatarMap) {
+    public String getMapText(Map<String, Avatar> avatarMap) {
         List<String[][]> squares = new ArrayList<>();
 
         String[][] square;
@@ -423,7 +428,16 @@ public class ClientGameBoard {
             }
 
         }
-        return mapText;
+
+        String map = "";
+
+        for(int j=mapText[0].length-1; j>=0; j--) {
+            for(int i=0; i<mapText.length; i++){
+                map = map + mapText[i][j];
+            }
+            map = map + ANSI_RESET + "\n";
+        }
+        return map;
     }
 
     public int getX_max() {

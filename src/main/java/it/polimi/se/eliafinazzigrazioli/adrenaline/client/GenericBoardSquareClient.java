@@ -6,28 +6,41 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 public class GenericBoardSquareClient extends BoardSquareClient {
 
-    private boolean ammoCard;
+    private AmmoCardClient ammoCard;
 
     public GenericBoardSquareClient(Room room, Coordinates coordinates,
                                     InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
 
         super(room, coordinates, north, south, east, west);
-        ammoCard = true;
+        ammoCard = null;
     }
 
 
     @Override
-    public void addAmmoCard() {
-        ammoCard = true;
+    public boolean addAmmoCard(AmmoCardClient ammoCard) {
+        if(ammoCard == null) {
+            this.ammoCard = ammoCard;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public AmmoCardClient collectAmmoCard() {
+        AmmoCardClient ammoCardClient = ammoCard;
+        ammoCard = null;
+        return ammoCardClient;
     }
 
     @Override
     public void removeAmmoCard() {
-        ammoCard = false;
+
     }
 
     public boolean hasAmmoCard() {
-        return ammoCard;
+        if(ammoCard != null)
+            return true;
+        return false;
     }
 
 }

@@ -7,10 +7,12 @@ public class PowerUpCardClient {
 
     private String powerUpType;
     private Ammo equivalentAmmo;
+    private String description;
 
     public PowerUpCardClient(PowerUpCard powerUpCard) {
         this.powerUpType = powerUpCard.getPowerUpType();
         this.equivalentAmmo = powerUpCard.getEquivalentAmmo();
+        this.description = powerUpCard.getDescrption();
     }
 
     public String getPowerUpType() {
