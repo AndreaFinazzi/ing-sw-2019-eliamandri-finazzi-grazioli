@@ -22,6 +22,14 @@ import java.util.List;
 public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     @Override
+    default void handleEvent(ConnectionResponseEvent event) throws HandlerNotImplementedException {
+        setClientID(event.getClientID());
+
+        showMessage(event.getMessage());
+        login(event.getAvailableAvatars());
+    }
+
+    @Override
     default void handleEvent(LoginResponseEvent event) throws HandlerNotImplementedException {
         showMessage(event.getMessage());
         if (!event.isSuccessful()) {
@@ -163,11 +171,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showAmmoCardResetting();
         showEndTurn(event.getPlayer());
     }
-
     @Override
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
+
     //TODO to implement
 
     @Override
@@ -183,14 +191,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         ClientGameBoard gameBoard = getLocalModel().getGameBoard();
         gameBoard.getBoardSquareByCoordinates(event.getBoardSquare()).removeAmmoCard();
         showAmmoCardCollected(event.getPlayer(), event.getAmmoCardCollected(), event.getBoardSquare());
-    }
-
-    //TODO to implement
-
-    @Override
-    default void handleEvent(ConnectionResponseEvent event) throws HandlerNotImplementedException {
-        showMessage(event.getMessage());
-        login(event.getAvailableAvatars());
     }
 
     //TODO to implement
@@ -284,6 +284,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     void error(Exception e);
 
     String getPlayer();
+
+    void setClientID(int clientID);
 
     int getClientID();
 
@@ -379,12 +381,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     void selectSelectableEffect(List<String> callableEffects);
 
-    void showMessage(String message);
-
-
-
-
-
+    void showMessage(Object message);
 
 
 

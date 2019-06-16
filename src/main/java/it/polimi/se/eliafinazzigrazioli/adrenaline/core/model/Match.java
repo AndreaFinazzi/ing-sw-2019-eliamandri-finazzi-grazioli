@@ -83,14 +83,15 @@ public class Match implements Observable {
     private ArrayList<Observer> observers = new ArrayList<>();
 
     private GameBoard gameBoard;
+
     private MatchPhase phase;
     private Player currentPlayer;
     private Player firstPlayer;
     private PowerUpsDeck powerUpsDeck;
     private WeaponsDeck weaponsDeck;
     private AmmoCardsDeck ammoCardsDeck;
-
     private ArrayList<Avatar> availableAvatars = new ArrayList<>(Arrays.asList(Avatar.values()));
+
     private int turn = 0;
 
     public Match() {
@@ -104,7 +105,6 @@ public class Match implements Observable {
     /*
      * Player-related methods
      */
-
     public ArrayList<Player> getPlayersOnSquare(BoardSquare square) {
         ArrayList<Player> onSquare = new ArrayList<>();
         for (Player player : players) {
@@ -113,6 +113,14 @@ public class Match implements Observable {
             }
         }
         return onSquare;
+    }
+
+    public int getMatchID() {
+        return matchID;
+    }
+
+    public void setMatchID(int matchID) {
+        this.matchID = matchID;
     }
 
     public Player getCurrentPlayer() {
@@ -336,8 +344,8 @@ public class Match implements Observable {
         gameBoard.ammoCardsSetup(ammoCardsDeck);
 
         notifyObservers(new BeginMatchEvent(mapType));
-//        notifyObservers(new BeginTurnEvent(currentPlayer));
-//        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
+        notifyObservers(new BeginTurnEvent(currentPlayer));
+        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
     }
 
     //TODO who should create the event?

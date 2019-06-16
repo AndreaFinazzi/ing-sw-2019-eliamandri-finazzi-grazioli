@@ -13,9 +13,11 @@ import java.util.logging.Logger;
 
 public class ConnectionManagerSocket extends AbstractConnectionManager {
 
+    private static final Logger LOGGER = Logger.getLogger(ConnectionManagerSocket.class.getName());
+
     private static final String IP_SERVER = "localhost";
     private static final int PORT_SEVER = 9999;
-    private static final Logger LOGGER = Logger.getLogger(ConnectionManagerSocket.class.getName());
+
     private Socket clientSocket;
     private ObjectOutputStream sender;
     private ObjectInputStream receiver;

@@ -49,11 +49,11 @@ public class CLI implements RemoteView, Runnable {
 
     public void login(ArrayList<Avatar> availableAvatars) {
         System.out.println("Insert your player name");
-        String playerName = input.nextLine();
+        String username = input.nextLine();
 
         System.out.println("choose one of the following avatars:\n" + serializeArray(availableAvatars));
 
-        notifyLoginRequestEvent(playerName, availableAvatars.get(nextInt()));
+        notifyLoginRequestEvent(username, availableAvatars.get(nextInt()));
     }
 
     @Override
@@ -385,13 +385,19 @@ public class CLI implements RemoteView, Runnable {
         return client.getPlayerName();
     }
 
+
+    @Override
+    public void setClientID(int clientID) {
+        client.setClientID(clientID);
+    }
+
     @Override
     public int getClientID() {
         return client.getClientID();
     }
 
     @Override
-    public void showMessage(String message) {
+    public void showMessage(Object message) {
         System.out.println(message);
     }
 

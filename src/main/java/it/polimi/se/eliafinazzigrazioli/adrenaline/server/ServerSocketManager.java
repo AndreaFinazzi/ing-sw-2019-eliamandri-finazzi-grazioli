@@ -21,8 +21,8 @@ public class ServerSocketManager implements Runnable {
     }
 
     public void startServerSocket() {
-        System.out.println("Server socket is started...");
-        ExecutorService executor = Executors.newCachedThreadPool();
+
+        ExecutorService clientHandlersExecutor = Executors.newCachedThreadPool();
         try {
             serverSocket = new ServerSocket(PORT);
             LOGGER.log(Level.INFO, "server socket created");
@@ -30,14 +30,17 @@ public class ServerSocketManager implements Runnable {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             return;
         }
-        LOGGER.log(Level.INFO, "Server Socket is ready");
 
         try {
             while (server.isUp()) {
                 LOGGER.log(Level.INFO, "Waiting a connection...");
-                Socket socket = serverSocket.accept();
+                Socket clientSocket = serverSocket.accept();
+
                 LOGGER.log(Level.INFO, "New client connected.");
-                executor.submit(new ClientHandlerSocket(server, socket));
+                ClientHandlerSocket newClientHandler = new ClientHandlerSocket(server, clientSocket);
+                clientHandlersExecutor.submit(newClientHandler);
+
+                server.signIn(newClientHandler);
             }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);

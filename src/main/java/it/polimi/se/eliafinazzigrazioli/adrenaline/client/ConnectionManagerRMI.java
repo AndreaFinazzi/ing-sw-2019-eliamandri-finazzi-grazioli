@@ -22,7 +22,7 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
         super(client);
 
         registry = LocateRegistry.getRegistry(1099);
-        serverRemoteRMI = (ServerRemoteRMI) registry.lookup("ClientHandlerRMI");
+        serverRemoteRMI = (ServerRemoteRMI) registry.lookup("ServerRMIManager");
 
         LOGGER.info("ClientHandlerRMI: Lookup successfully executed.");
 

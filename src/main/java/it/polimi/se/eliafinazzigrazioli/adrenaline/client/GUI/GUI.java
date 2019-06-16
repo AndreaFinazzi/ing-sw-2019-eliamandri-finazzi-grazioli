@@ -93,10 +93,10 @@ public class GUI extends Application implements RemoteView {
         return client.getClientID();
     }
 
+    @Override
     public void setClientID(int clientID) {
         client.setClientID(clientID);
     }
-
 
     @Override
     public LocalModel getLocalModel() {
@@ -126,6 +126,11 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void selectSelectableEffect(List<String> callableEffects) {
+
+    }
+
+    @Override
+    public void showMessage(Object message) {
 
     }
 
@@ -225,11 +230,6 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showMap() {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
 
     }
 

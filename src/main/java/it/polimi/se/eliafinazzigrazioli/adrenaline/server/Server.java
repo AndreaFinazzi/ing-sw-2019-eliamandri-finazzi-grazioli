@@ -8,7 +8,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -22,7 +21,6 @@ public class Server {
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     private ServerSocketManager serverSocketManager;
-    private HashMap<Integer, AbstractClientHandler> clientIDToClientHandlerMap = new HashMap<>();
 
     // Network threads pool
     private ExecutorService networkExecutor = Executors.newFixedThreadPool(2);
@@ -46,6 +44,8 @@ public class Server {
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
+
+        online = true;
     }
 
     public void startServerSocket() {
@@ -55,17 +55,16 @@ public class Server {
 
     public void startServerRMI() {
         LOGGER.info("Starting RMI manager");
-        networkExecutor.execute(new ServerRMIManager(this));
+        try {
+            networkExecutor.execute(new ServerRMIManager(this));
+        } catch (RemoteException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+        }
     }
 
-    public synchronized void signIn(int clientID, AbstractClientHandler clientHandler) {
-        matchBuilder.signNewClient(clientID, clientHandler);
+    public synchronized void signIn(AbstractClientHandler clientHandler) {
+        matchBuilder.signNewClient(clientHandler);
     }
-
-    public void removeClient(int clientID) {
-        clientIDToClientHandlerMap.remove(clientID);
-    }
-
 
     // ####################### RMI #######################
     public synchronized Registry getRegistry() {
