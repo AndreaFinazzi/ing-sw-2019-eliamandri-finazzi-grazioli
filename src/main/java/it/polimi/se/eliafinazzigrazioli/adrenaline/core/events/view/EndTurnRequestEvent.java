@@ -4,8 +4,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public class EndTurnRequestEvent extends AbstractViewEvent {
 
-    public EndTurnRequestEvent(String player) {
-        super(player);
+    public EndTurnRequestEvent(int clientID, String player) {
+        super(clientID, player);
     }
 
     @Override

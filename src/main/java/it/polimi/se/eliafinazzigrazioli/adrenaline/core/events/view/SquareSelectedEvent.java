@@ -7,8 +7,8 @@ public class SquareSelectedEvent extends AbstractViewEvent {
 
     private Coordinates square;
 
-    public SquareSelectedEvent(String player, Coordinates square) {
-        super(player);
+    public SquareSelectedEvent(int clientID, String player, Coordinates square) {
+        super(clientID, player);
         this.square = square;
     }
 

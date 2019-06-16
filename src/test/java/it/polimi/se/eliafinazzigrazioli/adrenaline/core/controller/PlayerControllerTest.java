@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.MatchBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ public class PlayerControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        matchController = new MatchController();
+        matchController = new MatchController(new MatchBuilder());
         eventController = new EventController(matchController);
         playerController = new PlayerController(eventController, matchController);
         matchController.addPlayer("playerOne", Avatar.BANSHEE);
@@ -44,7 +45,7 @@ public class PlayerControllerTest {
         List<Coordinates> coordinatesList = new ArrayList<>();
         coordinatesList.add(new Coordinates(1, 0));
         coordinatesList.add(new Coordinates(1, 1));
-        MovePlayEvent movePlayEvent = new MovePlayEvent("playerOne", coordinatesList);
+        MovePlayEvent movePlayEvent = new MovePlayEvent(0, "playerOne", coordinatesList);
         playerController.handleEvent(movePlayEvent);
         Player playerOne = matchController.getPlayers().get("playerOne");
         BoardSquare playerPos = matchController.getMatch().getGameBoard().getPlayerPosition(playerOne);

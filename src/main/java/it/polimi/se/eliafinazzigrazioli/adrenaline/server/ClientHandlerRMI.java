@@ -2,112 +2,38 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientDisconnectionEvent;
 
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 // RMI SERVER
-public class ClientHandlerRMI extends AbstractClientHandler implements ServerRemoteRMI {
+public class ClientHandlerRMI extends AbstractClientHandler {
 
     static final Logger LOGGER = Logger.getLogger(ClientHandlerRMI.class.getName());
 
-    private Map<Integer, ClientRemoteRMI> clientsRMI;
     private boolean set;
+    private ServerRMIManager serverRMIManager;
+    private ClientRemoteRMI clientRemoteRMI;
 
 
-    public ClientHandlerRMI(Server server) throws RemoteException {
+    public ClientHandlerRMI(ServerRMIManager serverRMIManager, ClientRemoteRMI clientRemoteRMI, int clientID) throws RemoteException {
         //TODO
         //listener = new RemoteView("tony");
-        super(server);
-        clientsRMI = new HashMap<>();
+        super(serverRMIManager.getServer());
 
-        UnicastRemoteObject.exportObject(this, 1099);
+        this.serverRMIManager = serverRMIManager;
+        this.clientRemoteRMI = clientRemoteRMI;
+        this.clientID = clientID;
     }
 
     @Override
-    public int askNewClientId() throws RemoteException {
-        return server.getCurrentClientID();
-    }
-
-    /**
-     * @param clientRMI
-     */
-    @Override
-    public void addClientRMI(ClientRemoteRMI clientRMI) throws RemoteException {
-        int clientID = clientRMI.getClientID();
+    public void send(AbstractModelEvent event) {
         try {
-            if (clientID == 0) {
-                clientID = server.getCurrentClientID();
-                clientRMI.setClientID(clientID);
-            }
-            clientsRMI.put(clientID, clientRMI);
-
-            server.signIn(clientID, this);
-
+            clientRemoteRMI.receive(event);
         } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
-        LOGGER.log(Level.INFO, "established connection RMI");
-    }
-
-    @Override
-    public void removeClientRMI(ClientRemoteRMI clientRMI) throws RemoteException {
-        int clientID = clientRMI.getClientID();
-        clientsRMI.remove(clientID);
-        server.removeClient(clientID);
-
-        eventsQueue.add(new ClientDisconnectionEvent(clientID));
-    }
-
-    public boolean isSet() {
-        return set;
-    }
-
-    public void setSet(boolean set) {
-        this.set = set;
-    }
-
-    @Override
-    public void sendToAll(AbstractModelEvent event) {
-        if (event.isPrivateEvent()) {
-
-            if (event.getClientID() != 0) {
-                sendTo(event.getClientID(), event);
-            } else {
-                throw new NullPointerException("Private event has no client ID!");
-            }
-        } else {
-            for (ClientRemoteRMI client : clientsRMI.values()) {
-                send(client, event);
-            }
-        }
-    }
-
-    @Override
-    public void sendTo(int clientID, AbstractModelEvent event) {
-        ClientRemoteRMI targetClient = clientsRMI.get(clientID);
-
-        if (targetClient != null)
-            send(targetClient, event);
-    }
-
-    private void send(ClientRemoteRMI client, AbstractModelEvent event) {
-        try {
-            client.receive(event);
-        } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-        }
-    }
-
-    @Override
-    public void receive(AbstractViewEvent event) throws RemoteException {
-        received(event);
     }
 }

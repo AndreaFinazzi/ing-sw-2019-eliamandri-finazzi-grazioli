@@ -9,8 +9,8 @@ public class CollectPlayEvent extends AbstractViewEvent {
 
     private List<Coordinates> path;
 
-    public CollectPlayEvent(String player, List<Coordinates> path) {
-        super(player);
+    public CollectPlayEvent(int clientID, String player, List<Coordinates> path) {
+        super(clientID, player);
         this.path = path;
     }
 

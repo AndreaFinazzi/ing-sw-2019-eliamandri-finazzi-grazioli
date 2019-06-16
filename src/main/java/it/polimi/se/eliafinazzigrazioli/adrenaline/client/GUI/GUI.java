@@ -65,6 +65,7 @@ public class GUI extends Application implements RemoteView {
                 sleep(100);
             } catch (InterruptedException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -93,10 +94,10 @@ public class GUI extends Application implements RemoteView {
         return client.getClientID();
     }
 
+    @Override
     public void setClientID(int clientID) {
         client.setClientID(clientID);
     }
-
 
     @Override
     public LocalModel getLocalModel() {
@@ -126,6 +127,11 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void selectSelectableEffect(List<String> callableEffects) {
+
+    }
+
+    @Override
+    public void showMessage(Object message) {
 
     }
 
@@ -229,11 +235,6 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
     public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
 
     }
@@ -270,6 +271,7 @@ public class GUI extends Application implements RemoteView {
             semaphore.acquire();
         } catch (InterruptedException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
 
         synchronized (semaphore) {

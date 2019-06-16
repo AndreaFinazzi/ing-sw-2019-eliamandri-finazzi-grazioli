@@ -26,7 +26,7 @@
       "cards_per_color" : 2
     },
     "game": {
-      "min_players": 3,
+      "min_players": 2,
       "max_players": 5,
       "max_maps": 4,
       "board": {

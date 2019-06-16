@@ -13,22 +13,19 @@ import java.util.logging.Logger;
 
 public class ConnectionManagerSocket extends AbstractConnectionManager {
 
+    private static final Logger LOGGER = Logger.getLogger(ConnectionManagerSocket.class.getName());
+
+    //TODO move in config file
     private static final String IP_SERVER = "localhost";
     private static final int PORT_SEVER = 9999;
-    private static final Logger LOGGER = Logger.getLogger(ConnectionManagerSocket.class.getName());
+
     private Socket clientSocket;
     private ObjectOutputStream sender;
     private ObjectInputStream receiver;
 
     public ConnectionManagerSocket(Client client) {
         super(client);
-        try {
-            clientSocket = new Socket(IP_SERVER, PORT_SEVER);
-            sender = new ObjectOutputStream(clientSocket.getOutputStream());
-            receiver = new ObjectInputStream(clientSocket.getInputStream());
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-        }
+
     }
 
     @Override
@@ -43,7 +40,28 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
 
     @Override
     public void init() {
-        performRegistration();
+        try {
+            clientSocket = new Socket(IP_SERVER, PORT_SEVER);
+            sender = new ObjectOutputStream(clientSocket.getOutputStream());
+            receiver = new ObjectInputStream(clientSocket.getInputStream());
+
+            startListener();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+            try {
+                LOGGER.info("Trying again in a few seconds");
+                Thread.sleep(CONNECTION_ATTEMPT_DELAY);
+                init();
+            } catch (InterruptedException ex) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+        }
+
+
+    }
+
+    private void startListener() {
         new Thread(() -> {
             AbstractModelEvent event;
             while (true) {

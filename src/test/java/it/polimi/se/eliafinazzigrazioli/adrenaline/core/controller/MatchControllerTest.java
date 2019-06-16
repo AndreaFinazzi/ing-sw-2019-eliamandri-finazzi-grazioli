@@ -6,6 +6,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerA
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Match;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.MatchBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class MatchControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        matchController = new MatchController();
+        matchController = new MatchController(new MatchBuilder());
         match = matchController.getMatch();
     }
 

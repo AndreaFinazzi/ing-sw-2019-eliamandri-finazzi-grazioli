@@ -13,6 +13,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerA
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.server.AbstractClientHandler;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.MatchBuilder;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -20,22 +21,27 @@ import java.util.logging.Logger;
 public class MatchController implements ViewEventsListenerInterface, Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(MatchController.class.getName());
+    private static final String NOT_LOGGED_CLIENT_NICKNAME = "$_$";
+
+    private MatchBuilder matchBuilder;
+
+    private boolean started;
 
     private Match match;
+
     private PlayerController playerController;
     private CardController cardController;
     private TurnController turnController;
     private EventController eventController;
-    private Timer timer;
-
     private Map<Integer, String> clientIDToPlayerMap = new HashMap<>();
 
     private Map<MapType, Integer> mapVotesCounter;
+
     private int mapVotes = 0;
 
-//    private BlockingQueue<AbstractViewEvent> eventsQueue;
+    public MatchController(MatchBuilder matchBuilder) {
+        this.matchBuilder = matchBuilder;
 
-    public MatchController() {
         match = new Match();
         match.setPhase(MatchPhase.RECRUITING);
 
@@ -49,6 +55,18 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         eventController.addViewEventsListener(MapVoteEvent.class, this);
 
         match.addObserver(eventController);
+    }
+
+    public void setMatchID(int matchID) {
+        match.setMatchID(matchID);
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 
     public void initMatch(MapType chosenMap) {
@@ -70,10 +88,15 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         match.addPlayer(player, avatar);
     }
 
-    public void signClient(Integer clientID, AbstractClientHandler clientHandler) {
+    public void signNewClient(AbstractClientHandler clientHandler) {
         eventController.addVirtualView(clientHandler);
-        clientIDToPlayerMap.put(clientID, null);
-        eventController.update(new ConnectionResponseEvent(clientID, "Username and Avatar required.", match.getAvailableAvatars()));
+        clientIDToPlayerMap.put(clientHandler.getClientID(), NOT_LOGGED_CLIENT_NICKNAME);
+        eventController.update(new ConnectionResponseEvent(clientHandler.getClientID(), "Username and Avatar required.", match.getAvailableAvatars()));
+    }
+
+    public void signClient(AbstractClientHandler clientHandler) {
+        eventController.addVirtualView(clientHandler);
+        clientIDToPlayerMap.put(clientHandler.getClientID(), NOT_LOGGED_CLIENT_NICKNAME);
     }
 
     public void removePlayer(String nickname) {
@@ -81,11 +104,11 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
     }
 
     public boolean isReady() {
-        return clientIDToPlayerMap.size() >= Rules.GAME_MIN_PLAYERS;
+        return match.getPlayers().size() >= Rules.GAME_MIN_PLAYERS;
     }
 
     public boolean isFull() {
-        return clientIDToPlayerMap.size() == Rules.GAME_MAX_PLAYERS;
+        return match.getPlayers().size() == Rules.GAME_MAX_PLAYERS;
     }
 
     //Getter
@@ -97,38 +120,20 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         return match;
     }
 
-    public ArrayList<String> getPlayersNicknames() {
-        return match.getPlayersNicknames();
-    }
+    public ArrayList<AbstractClientHandler> popNotLoggedClients() {
+        ArrayList<AbstractClientHandler> notLoggedClients = new ArrayList<>();
+        Iterator<Integer> clientIDs = clientIDToPlayerMap.keySet().iterator();
 
-    // requires 0 <= chosenMap <Rules.GAME_MAX_MAPS
-    public synchronized void voteMap_(int chosenMap) {
-        Integer choise;
-        switch (chosenMap) {
-            case 1:
-                choise = mapVotesCounter.get(MapType.ONE);
-                choise++;
-                mapVotesCounter.put(MapType.ONE, choise);
-                break;
+        while (clientIDs.hasNext()) {
+            int clientID = clientIDs.next();
 
-            case 2:
-                choise = mapVotesCounter.get(MapType.TWO);
-                choise++;
-                mapVotesCounter.put(MapType.TWO, choise);
-                break;
-
-            case 3:
-                choise = mapVotesCounter.get(MapType.THREE);
-                choise++;
-                mapVotesCounter.put(MapType.THREE, choise);
-                break;
-
-            case 4:
-                choise = mapVotesCounter.get(MapType.FOUR);
-                choise++;
-                mapVotesCounter.put(MapType.FOUR, choise);
-                break;
+            if (clientIDToPlayerMap.get(clientID).equals(NOT_LOGGED_CLIENT_NICKNAME)) {
+                notLoggedClients.add(eventController.popVirtualView(clientID));
+                clientIDs.remove();
+            }
         }
+
+        return notLoggedClients;
     }
 
     private synchronized void voteMap(MapType mapType) {
@@ -162,8 +167,10 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
             responseEvent.setSuccess(true);
             responseEvent.setPlayer(player.getPlayerNickname());
             responseEvent.setAssignedAvatar(player.getAvatar());
-            responseEvent.setMessage("Welcome to Adrenaline, " + event.getPlayer());
+            responseEvent.setMatchID(match.getMatchID());
+            responseEvent.setMessage("Welcome to Adrenaline, " + event.getPlayer() + "\nYou're logged to match " + match.getMatchID());
             clientIDToPlayerMap.put(player.getClientID(), player.getPlayerNickname());
+            matchBuilder.playerLogged(this);
 
         } catch (MaxPlayerException e) {
             responseEvent.setSuccess(false);
@@ -174,8 +181,6 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
             responseEvent.setSuccess(false);
             responseEvent.setAvailableAvatars(match.getAvailableAvatars());
             responseEvent.setMessage("Username already in game, try with a different nick!");
-        } catch (AvatarNotAvailableException e) {
-            e.printStackTrace();
         }
         eventController.update(responseEvent);
     }

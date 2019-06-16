@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchControll
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServerEventsConsumer implements Runnable {
@@ -28,7 +29,8 @@ public class ServerEventsConsumer implements Runnable {
                 matchController.getEventController().update(nextEvent);
             }
         } catch (InterruptedException e) {
-            //TODO handle
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
         } finally {
 
         }

@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public abstract class AbstractConnectionManager implements Observer {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractConnectionManager.class.getName());
-
+    protected static final int CONNECTION_ATTEMPT_DELAY = 5000;
     protected Client client;
 
 
@@ -35,7 +35,7 @@ public abstract class AbstractConnectionManager implements Observer {
             update(event);
         } else if (!client.getEventsQueue().offer(event)) {
             //TODO specific event type needed?
-            send(new GenericViewEvent(client.getPlayerName(), "Events generation failed."));
+            send(new GenericViewEvent(client.getClientID(), client.getPlayerName(), "Events generation failed."));
         }
     }
 

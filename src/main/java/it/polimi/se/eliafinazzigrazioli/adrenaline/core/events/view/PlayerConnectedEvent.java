@@ -7,8 +7,8 @@ public class PlayerConnectedEvent extends AbstractViewEvent {
     private int chosenMap;
     private String avatar;
 
-    public PlayerConnectedEvent(String player) {
-        super(player);
+    public PlayerConnectedEvent(int clientID, String player) {
+        super(clientID, player);
     }
 
     @Override

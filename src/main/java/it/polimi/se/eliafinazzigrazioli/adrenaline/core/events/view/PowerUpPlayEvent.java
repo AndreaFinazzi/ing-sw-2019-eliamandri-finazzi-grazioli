@@ -7,8 +7,8 @@ public class PowerUpPlayEvent extends AbstractViewEvent {
 
     private PowerUpCard card;
 
-    public PowerUpPlayEvent(String player, PowerUpCard card) {
-        super(player);
+    public PowerUpPlayEvent(int clientID, String player, PowerUpCard card) {
+        super(clientID, player);
         this.card = card;
     }
 

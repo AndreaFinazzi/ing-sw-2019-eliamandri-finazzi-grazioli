@@ -6,8 +6,8 @@ public class WeaponToUseSelectedEvent extends AbstractViewEvent {
 
     private String weaponName;
 
-    public WeaponToUseSelectedEvent(String player, String weaponName) {
-        super(player);
+    public WeaponToUseSelectedEvent(int clientID, String player, String weaponName) {
+        super(clientID, player);
         this.weaponName = weaponName;
     }
 

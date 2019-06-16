@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 public class EventController implements Observer {
     private HashMap<Class<? extends AbstractViewEvent>, ArrayList<ViewEventsListenerInterface>> viewEventsListenerMap;
-    //private ArrayList<ModelEventsListenerInterface> modelEventsListenerMap;
 
     private ArrayList<AbstractClientHandler> virtualViews;
 
@@ -52,10 +51,15 @@ public class EventController implements Observer {
     public void update(AbstractModelEvent event) {
         if (virtualViews == null) return;
 
-        virtualViews.forEach(virtualView -> {
-            virtualView.sendToAll(event);
-                }
-        );
+        if (event.isPrivateEvent()) {
+            for (AbstractClientHandler virtualView : virtualViews) {
+                if (virtualView.getClientID() == event.getClientID()) virtualView.send(event);
+            }
+        } else {
+            for (AbstractClientHandler virtualView : virtualViews) {
+                virtualView.send(event);
+            }
+        }
     }
 
     public void addViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) {
@@ -83,7 +87,14 @@ public class EventController implements Observer {
         if (!listeners.remove(value)) throw new ListenerNotFoundException();
     }
 
-    public void removeVirtualView(AbstractClientHandler virtualView) {
-        virtualViews.remove(virtualView);
+    public AbstractClientHandler popVirtualView(int clientID) {
+        for (AbstractClientHandler virtualView : virtualViews) {
+            if (virtualView.getClientID() == clientID) {
+                virtualViews.remove(virtualView);
+                return virtualView;
+            }
+        }
+
+        return null;
     }
 }

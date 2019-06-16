@@ -3,14 +3,17 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.GenericEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientDisconnectionEvent;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
 public abstract class AbstractClientHandler implements Runnable {
-    protected transient Server server;
     protected static final Logger LOGGER = Logger.getLogger(AbstractClientHandler.class.getName());
-    protected AbstractViewEvent nextReceivedEvent;
+
+    protected transient Server server;
+
+    protected int clientID;
 
     protected BlockingQueue<AbstractViewEvent> eventsQueue;
 
@@ -18,38 +21,33 @@ public abstract class AbstractClientHandler implements Runnable {
         this.server = server;
     }
 
-    public abstract void sendToAll(AbstractModelEvent event);
-
-    public abstract void sendTo(int clientID, AbstractModelEvent event);
+    public abstract void send(AbstractModelEvent event);
 
     // register starting match
-    public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
-        this.eventsQueue = eventsQueue;
-//        eventController.addModelEventsListener(this);
+
+    public int getClientID() {
+        return clientID;
     }
 
-//    protected void signPlayerToNextMatch(AbstractClientHandler clientHandler) {
-//        server.addClient(clientHandler);
-//    }
+    public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
+        this.eventsQueue = eventsQueue;
+
+    }
 
     protected void received(AbstractViewEvent event) {
-        if (eventsQueue == null) {
-            LOGGER.info("Trying to directly update eventController");
-        } else if (!eventsQueue.offer(event)) {
+        if (!eventsQueue.offer(event)) {
             //TODO specific event type needed?
-            sendTo(event.getClientID(), new GenericEvent(event.getPlayer(), "Events generation failed."));
+            send(new GenericEvent(event.getPlayer(), "Events generation failed."));
         }
     }
 
-    private void setup() {
-
+    public void unregister() {
+        eventsQueue.add(new ClientDisconnectionEvent(this));
     }
 
-    //TODO: this should do something useful
     //TODO: add message constants to dedicated class
     @Override
     public void run() {
         LOGGER.info("ClientHandler initialized");
-        setup();
     }
 }

@@ -49,11 +49,11 @@ public class CLI implements RemoteView, Runnable {
 
     public void login(ArrayList<Avatar> availableAvatars) {
         System.out.println("Insert your player name");
-        String playerName = input.nextLine();
+        String username = input.nextLine();
 
         System.out.println("choose one of the following avatars:\n" + serializeArray(availableAvatars));
 
-        notifyLoginRequestEvent(playerName, availableAvatars.get(nextInt()));
+        notifyLoginRequestEvent(username, availableAvatars.get(nextInt(availableAvatars.size() - 1)));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class CLI implements RemoteView, Runnable {
         showMessage("Vote one of the following maps: ");
         showMessage(serializeArray(availableMaps));
 
-        notifyMapVoteEvent(availableMaps.get(nextInt()));
+        notifyMapVoteEvent(availableMaps.get(nextInt(availableMaps.size() - 1)));
     }
 
     @Override
@@ -93,6 +93,26 @@ public class CLI implements RemoteView, Runnable {
         input.nextLine();
 
         return nextInt;
+    }
+
+    private int nextInt(int maxBound) {
+        int nextInt = input.nextInt();
+        input.nextLine();
+
+        if (nextInt > maxBound) {
+            showMessage("Choice out of bound. Sit down and focus, you can do it: ");
+            nextInt = nextInt(maxBound);
+        }
+
+        return nextInt;
+    }
+
+    private String nextLine() {
+        String nextLine = "";
+        while (input.hasNext()) {
+            nextLine = input.nextLine();
+        }
+        return nextLine;
     }
 
     @Override
@@ -386,13 +406,19 @@ public class CLI implements RemoteView, Runnable {
         return client.getPlayerName();
     }
 
+
+    @Override
+    public void setClientID(int clientID) {
+        client.setClientID(clientID);
+    }
+
     @Override
     public int getClientID() {
         return client.getClientID();
     }
 
     @Override
-    public void showMessage(String message) {
+    public void showMessage(Object message) {
         System.out.println(message);
     }
 
