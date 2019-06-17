@@ -153,7 +153,7 @@ public class Player implements Selectable {
     public int ammosNum(Ammo ammoType){
         int numOfAmmos = playerBoard.numAmmoType(ammoType);
         for (PowerUpCard powerUpCard: powerUps) {
-            if (powerUpCard.getEquivalentAmmo().equals(ammoType))
+            if (powerUpCard.getAmmo().equals(ammoType))
                 numOfAmmos++;
         }
         return numOfAmmos;

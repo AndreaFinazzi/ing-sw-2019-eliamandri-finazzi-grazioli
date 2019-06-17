@@ -37,7 +37,7 @@ public class TurnController implements ViewEventsListenerInterface {
         this.actionsPerformed = 0;
         eventController.addViewEventsListener(MovePlayEvent.class, this);
         eventController.addViewEventsListener(CollectPlayEvent.class, this);
-        eventController.addViewEventsListener(SpawnPowerUpSelected.class, this);
+        eventController.addViewEventsListener(SpawnPowerUpSelectedEvent.class, this);
         eventController.addViewEventsListener(ReloadWeaponEvent.class, this);
     }
 
@@ -56,7 +56,7 @@ public class TurnController implements ViewEventsListenerInterface {
      * @throws HandlerNotImplementedException
      */
     @Override
-    public void handleEvent(SpawnPowerUpSelected event) throws HandlerNotImplementedException {
+    public void handleEvent(SpawnPowerUpSelectedEvent event) throws HandlerNotImplementedException {
         List<AbstractModelEvent> events = new ArrayList<>();
 
         GameBoard gameBoard = match.getGameBoard();

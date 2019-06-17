@@ -1,16 +1,17 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 
 public class PowerUpCollectedEvent extends AbstractModelEvent {
 
-    private PowerUpCard collectedCard;
+    private PowerUpCardClient collectedCard;
     private boolean actuallyCollected;
 
     public PowerUpCollectedEvent(String player, PowerUpCard collectedCard, boolean actuallyCollected) {
         super(player);
-        this.collectedCard = collectedCard;
+        this.collectedCard = new PowerUpCardClient(collectedCard);
         this.actuallyCollected = actuallyCollected; // serve per sapere se è realmente stato raccolto; (3+ powerUp)
     }
 
@@ -19,7 +20,7 @@ public class PowerUpCollectedEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
-    public PowerUpCard getCollectedCard() {
+    public PowerUpCardClient getCollectedCard() {
         return collectedCard;
     }
 

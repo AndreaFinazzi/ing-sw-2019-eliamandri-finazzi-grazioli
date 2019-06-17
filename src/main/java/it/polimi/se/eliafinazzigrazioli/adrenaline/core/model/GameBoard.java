@@ -159,7 +159,7 @@ public class GameBoard {
 
 
     public PlayerSpawnedEvent spawnPlayer(Player player, PowerUpCard powerUpCard) {
-        Ammo ammoColor = powerUpCard.getEquivalentAmmo();
+        Ammo ammoColor = powerUpCard.getAmmo();
         List<BoardSquare> room;
         BoardSquare spawnBoardSquare = null;
         switch (ammoColor) {
