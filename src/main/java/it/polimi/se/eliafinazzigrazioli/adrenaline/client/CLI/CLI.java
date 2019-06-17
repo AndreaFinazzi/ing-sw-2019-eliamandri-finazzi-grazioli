@@ -7,7 +7,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -130,7 +129,7 @@ public class CLI implements RemoteView, Runnable {
             showMessage("Choose your action: ");
             showMessage(serializeList(availableActions));
 
-            choice = availableActions.get(nextInt(availableActions.size() - 1));
+            choice = availableActions.get(nextInt(availableActions.size()));
             if (choice == PlayerAction.SHOW_MAP) {
                 showMap();
             }
@@ -239,7 +238,7 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards) {
+    public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
         showMessage("Choose your ");
         showMessage(serializeList(cards));
         int choice = nextInt(cards.size());

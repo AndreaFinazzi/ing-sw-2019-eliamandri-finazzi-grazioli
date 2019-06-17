@@ -68,11 +68,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     @Override
     default void handleEvent(SpawnSelectionRequestEvent event) throws HandlerNotImplementedException {
-        List<PowerUpCard> cards = new ArrayList<>(event.getSelectableCards());
-        PowerUpCard toKeep = selectPowerUpToKeep(cards);
+        List<PowerUpCardClient> cards = new ArrayList<>(event.getSelectableCards());
+        PowerUpCardClient toKeep = selectPowerUpToKeep(cards);
         cards.remove(toKeep);
-        PowerUpCard spawnCard = cards.get(0);
-        notifyObservers(new SpawnPowerUpSelected(getClient().getClientID(), getClient().getPlayerName(), toKeep, spawnCard));
+        PowerUpCardClient spawnCard = cards.get(0);
+        notifyObservers(new SpawnPowerUpSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), toKeep, spawnCard));
     }
 
     @Override
@@ -279,6 +279,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
         buildLocalMap(event.getMapType());
+        showMap();
     }
 
 
@@ -372,10 +373,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void buildLocalMap(MapType mapType) {
         getLocalModel().generatesGameBoard(mapType);
         System.out.println("Map is chosen is: " + mapType);
-        //todo showmap();
+        showMap();
     }
-
-    ;
 
     void showMap();
 
@@ -407,14 +406,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
-    default void showSpawn(String player, Coordinates spawnPoint, PowerUpCard spawnCard, boolean isOpponent) {
+    default void showSpawn(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
         if (isOpponent)
             showMessage("Player " + player + " spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
         else
             showMessage("You spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
     }
 
-    default void showPowerUpCollection(String player, PowerUpCard cardCollected, boolean isOpponent) {
+    default void showPowerUpCollection(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
         if (isOpponent)
             showMessage("Player " + player + " collected a powerup\n");
         else
@@ -510,7 +509,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     PlayerAction choseAction();
 
-    PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards);
+    PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards);
 
 
     /** DEVE DARE LA POSSIBILITA DI NON RICARICARE ALCUNA ARMA E RITONARE NULL IN QUEL CASO, OPPURE AVVISARE CHE NESSUNA ARMA PUO ESSERE RICARICATA */

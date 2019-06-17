@@ -1,14 +1,15 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 
-public class SpawnPowerUpSelected extends AbstractViewEvent {
+public class SpawnPowerUpSelectedEvent extends AbstractViewEvent {
 
-    private PowerUpCard toKeep;
-    private PowerUpCard spawnCard;
+    private PowerUpCardClient toKeep;
+    private PowerUpCardClient spawnCard;
 
-    public SpawnPowerUpSelected(int clientID, String player, PowerUpCard toKeep, PowerUpCard spawnCard) {
+    public SpawnPowerUpSelectedEvent(int clientID, String player, PowerUpCardClient toKeep, PowerUpCardClient spawnCard) {
         super(clientID, player);
         this.toKeep = toKeep;
         this.spawnCard = spawnCard;
@@ -20,10 +21,10 @@ public class SpawnPowerUpSelected extends AbstractViewEvent {
     }
 
     public PowerUpCard getToKeep() {
-        return toKeep;
+        return PowerUpCard.clientCopyToServer(toKeep);
     }
 
     public PowerUpCard getSpawnCard() {
-        return spawnCard;
+        return PowerUpCard.clientCopyToServer(spawnCard);
     }
 }

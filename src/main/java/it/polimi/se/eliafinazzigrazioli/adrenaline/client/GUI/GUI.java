@@ -8,7 +8,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
@@ -252,7 +251,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards) {
+    public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
         return null;
     }
 

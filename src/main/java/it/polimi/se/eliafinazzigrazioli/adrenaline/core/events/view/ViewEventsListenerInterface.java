@@ -74,7 +74,7 @@ public interface ViewEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(SpawnPowerUpSelected event) throws HandlerNotImplementedException {
+    default void handleEvent(SpawnPowerUpSelectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 

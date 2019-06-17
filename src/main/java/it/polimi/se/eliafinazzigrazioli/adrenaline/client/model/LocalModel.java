@@ -49,10 +49,9 @@ public class LocalModel {
             System.out.println("Invalid collect");
     }
 
-    public boolean addPowerUp(PowerUpCard card) {
-        PowerUpCardClient powerUpCardClient = new PowerUpCardClient(card);
-        if(powerUpCards.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && !powerUpCards.contains(powerUpCardClient)){
-            powerUpCards.add(powerUpCardClient);
+    public boolean addPowerUp(PowerUpCardClient card) {
+        if(powerUpCards.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && !powerUpCards.contains(card)){
+            powerUpCards.add(card);
             return true;
         }
         return false;
