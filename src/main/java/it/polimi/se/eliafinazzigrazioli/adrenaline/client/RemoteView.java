@@ -51,6 +51,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(BeginMatchEvent event) throws HandlerNotImplementedException {
         buildLocalMap(event.getMapType());
+        getLocalModel().getGameBoard().resetAmmoCards(event.getAmmoCardsSetup());
         //todo to complete with info about the match and relative visualization
     }
 
@@ -167,7 +168,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     @Override
     default void handleEvent(EndTurnEvent event) throws HandlerNotImplementedException {
-        getLocalModel().getGameBoard().resetAmmoCards();
+        getLocalModel().getGameBoard().resetAmmoCards(event.getAmmoCardsSetup());
         showAmmoCardResetting();
         showEndTurn(event.getPlayer());
     }

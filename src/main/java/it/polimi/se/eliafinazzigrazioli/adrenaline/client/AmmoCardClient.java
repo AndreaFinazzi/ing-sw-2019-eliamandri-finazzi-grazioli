@@ -1,17 +1,33 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.AmmoCard;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AmmoCardClient {
+public class AmmoCardClient implements Serializable {
 
+    private String id;
     private List<Ammo> ammos;
     private boolean powerUp;
 
-    public AmmoCardClient(List<Ammo> ammos, boolean powerUp) {
-        this.ammos = ammos;
-        this.powerUp = powerUp;
+    public AmmoCardClient(AmmoCard ammoCard) {
+        this.id = ammoCard.getId();
+        this.ammos = ammoCard.getAmmos();
+        this.powerUp = ammoCard.containsPowerUpCard();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public List<Ammo> getAmmos() {
+        return ammos;
+    }
+
+    public boolean containsPowerUp() {
+        return powerUp;
     }
 
     @Override

@@ -49,6 +49,8 @@ public final class Rules {
     public static final int GAME_MIN_PLAYERS = GAME.get("min_players").asInt(3);
     public static final int GAME_MAX_PLAYERS = GAME.get("max_players").asInt(5);
     public static final int GAME_MAX_MAPS = GAME.get("max_maps").asInt(4);
+    public static final int GAME_AMMO_CARDS_DUPLICATES = GAME.get("ammo_cards_duplicates").asInt(3);
+
 
     // TURN
     private static final JsonNode TURN = RULES.get("turn");
@@ -80,6 +82,7 @@ public final class Rules {
     private static final JsonNode GAME_BOARD = GAME.get("board");
     public static final int GAME_BOARD_X_MAX = GAME_BOARD.get("x_max").asInt(4);
     public static final int GAME_BOARD_Y_MAX = GAME_BOARD.get("y_max").asInt(3);
+    public static final int GAME_BOARD_MAX_WEAPONS_ON_SPAWN = GAME_BOARD.get("max_weapons_on_spawn").asInt(3);
 
     private Rules() {
         throw new AssertionError();

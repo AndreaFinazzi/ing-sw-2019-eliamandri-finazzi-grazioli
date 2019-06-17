@@ -17,9 +17,9 @@ public class GenericBoardSquareClient extends BoardSquareClient {
 
 
     @Override
-    public boolean addAmmoCard(AmmoCardClient ammoCard) {
+    public boolean addAmmoCard(AmmoCardClient ammoCardToAdd) {
         if(ammoCard == null) {
-            this.ammoCard = ammoCard;
+            this.ammoCard = ammoCardToAdd;
             return true;
         }
         return false;
@@ -34,13 +34,11 @@ public class GenericBoardSquareClient extends BoardSquareClient {
 
     @Override
     public void removeAmmoCard() {
-
+        ammoCard = null;
     }
 
     public boolean hasAmmoCard() {
-        if(ammoCard != null)
-            return true;
-        return false;
+        return ammoCard != null;
     }
 
 }

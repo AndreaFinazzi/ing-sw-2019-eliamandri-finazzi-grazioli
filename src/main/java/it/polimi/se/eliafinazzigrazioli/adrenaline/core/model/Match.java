@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.AmmoCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
@@ -9,10 +11,12 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.Begi
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -20,6 +24,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Match implements Observable {
@@ -99,7 +104,11 @@ public class Match implements Observable {
         phase = MatchPhase.INITIALIZATION;
         powerUpsDeck = new PowerUpsDeck();
         weaponsDeck = new WeaponsDeck();
-        ammoCardsDeck = new AmmoCardsDeck();
+        try {
+            ammoCardsDeck = new AmmoCardsDeck();
+        } catch (WeaponFileNotFoundException e) {
+
+        }
     }
 
 
@@ -243,10 +252,9 @@ public class Match implements Observable {
 
     public void nextTurn() {
         List<AbstractModelEvent> events = new ArrayList<>();
+        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = gameBoard.ammoCardsSetup(ammoCardsDeck);
 
-        events.add(new EndTurnEvent(currentPlayer));
-
-        gameBoard.ammoCardsSetup(ammoCardsDeck);
+        events.add(new EndTurnEvent(currentPlayer, ammoCardsReplaced));
 
         //todo all next turn setup (points, replace cards...)
 
@@ -344,9 +352,10 @@ public class Match implements Observable {
         //todo preparation of the setup of the model, (weapons, power ups, deadPath....)
         currentPlayer = firstPlayer;
         gameBoard = new GameBoard(mapType);
-        gameBoard.ammoCardsSetup(ammoCardsDeck);
+        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = gameBoard.ammoCardsSetup(ammoCardsDeck);
 
-        notifyObservers(new BeginMatchEvent(mapType));
+
+        notifyObservers(new BeginMatchEvent(mapType, ammoCardsReplaced));
         notifyObservers(new BeginTurnEvent(currentPlayer));
         notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
     }
