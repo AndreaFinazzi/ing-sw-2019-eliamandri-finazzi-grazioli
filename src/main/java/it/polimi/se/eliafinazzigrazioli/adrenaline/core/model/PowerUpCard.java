@@ -37,9 +37,6 @@ public class PowerUpCard implements Serializable {
 
     @Override
     public String toString() {
-        return "PowerUpCard{" +
-                "equivalentAmmo=" + equivalentAmmo +
-                ", effect=" + effect +
-                '}';
+        return "PowerUp Card: " + powerUpType + " " + equivalentAmmo;
     }
 }
