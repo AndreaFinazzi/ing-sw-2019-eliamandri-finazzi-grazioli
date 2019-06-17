@@ -111,7 +111,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         break;
                 }
                 if (generatedEvent == null)
-                    System.out.println("This action can't be performed... choose again.");
+                    showMessage("This action can't be performed... choose again.");
             }
             notifyObservers(generatedEvent);
             }
@@ -211,7 +211,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(NotAllowedPlayEvent event) throws HandlerNotImplementedException {
         showMessage(event.getMessage());
-        System.out.println("ACTION FAILED!");
+        showMessage("ACTION FAILED!");
 
     }
     //TODO to implement
@@ -271,8 +271,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
+        getLocalModel().getGameBoard().resetAmmoCards();
         buildLocalMap(event.getMapType());
-
     }
 
 
@@ -389,60 +389,60 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void showPlayerMovement(String player, List<Coordinates> path) {
         if (path != null && path.size() > 0) {
             if (player.equals(getPlayer()))
-                System.out.println("You moved to square" + getLocalModel().getGameBoard().getBoardSquareByCoordinates(path.get(path.size()-1)) + " through the path: ");
+                showMessage("You moved to square" + getLocalModel().getGameBoard().getBoardSquareByCoordinates(path.get(path.size()-1)) + " through the path: ");
             else
-                System.out.println("Player " + player + " moved to square" + getLocalModel().getGameBoard().getBoardSquareByCoordinates(path.get(path.size()-1)) + " through the path: ");
+                showMessage("Player " + player + " moved to square" + getLocalModel().getGameBoard().getBoardSquareByCoordinates(path.get(path.size()-1)) + " through the path: ");
             for (Coordinates coordinates: path)
-                System.out.println(getLocalModel().getGameBoard().getBoardSquareByCoordinates(coordinates));
+                showMessage(getLocalModel().getGameBoard().getBoardSquareByCoordinates(coordinates));
         }
     }
 
     default void showSpawn(String player, Coordinates spawnPoint, PowerUpCard spawnCard, boolean isOpponent) {
         if (isOpponent)
-            System.out.println("Player " + player + " spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
+            showMessage("Player " + player + " spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
         else
-            System.out.println("You spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
+            showMessage("You spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
     }
 
     default void showPowerUpCollection(String player, PowerUpCard cardCollected, boolean isOpponent) {
         if (isOpponent)
-            System.out.println("Player " + player + " collected a powerup\n");
+            showMessage("Player " + player + " collected a powerup\n");
         else
-            System.out.println("You collected " + cardCollected.toString() + "!\n");
+            showMessage("You collected " + cardCollected.toString() + "!\n");
     }
 
     default void showBeginTurn(String player) {
         if (player.equals(getPlayer())) {
-            System.out.println("Your turn began!!!");
+            showMessage("Your turn began!!!");
         }
         else
-            System.out.println(player + "'s turn began!");
+            showMessage(player + "'s turn began!");
     }
 
     default void showEndTurn(String player) {
         if (player.equals(getPlayer()))
-            System.out.println("YEAH!! You concluded your turn!");
+            showMessage("YEAH!! You concluded your turn!");
         else
-            System.out.println(player + " concluded his turn!");
+            showMessage(player + " concluded his turn!");
     }
 
     default void showAmmoCollected(String player, Ammo ammo, boolean actuallyCollected) {
         if (player.equals(getPlayer()))
-            System.out.println("You collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
+            showMessage("You collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
         else
-            System.out.println(player + " collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but his playerBoard was full!"));
+            showMessage(player + " collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but his playerBoard was full!"));
     }
 
     default void showAmmoCardCollected(String player, AmmoCard ammoCard, Coordinates coordinates) {
         String message = " gathered the ammo card " + ammoCard.toString() + " from square " + coordinates + "!";
         if (player.equals(getPlayer()))
-            System.out.println("You " + message);
+            showMessage("You " + message);
         else
-            System.out.println(player + message);
+            showMessage(player + message);
     }
 
     default void showAmmoCardResetting() {
-        System.out.println("Gathered ammo cards are being replaced...");
+        showMessage("Gathered ammo cards are being replaced...");
     }
 
 
@@ -458,7 +458,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     /** DEVE DARE LA POSSIBILITA DI NON RICARICARE ALCUNA ARMA E RITONARE NULL IN QUEL CASO, OPPURE AVVISARE CHE NESSUNA ARMA PUO ESSERE RICARICATA */
     default WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
-        System.out.println("No weapons can be reloaded.");
+        showMessage("No weapons can be reloaded.");
         return null;
     }
 
