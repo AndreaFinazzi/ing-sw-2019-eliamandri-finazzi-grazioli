@@ -1,9 +1,11 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class BoardSquareClient {
@@ -42,6 +44,10 @@ public abstract class BoardSquareClient {
 
     public InterSquareLink getWest() {
         return west;
+    }
+
+    public ArrayList<InterSquareLink> getBounds() {
+        return new ArrayList<>(Arrays.asList(north, east, south, west));
     }
 
     public boolean isSpawnBoard(){

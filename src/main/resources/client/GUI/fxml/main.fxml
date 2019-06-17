@@ -125,11 +125,14 @@
                 </GridPane>
                 <AnchorPane>
                     <children>
-                        <Pane id="mainBoardPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="25.0"
-                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+                        <Pane id="mainBoardPane" fx:id="mainBoardPane" prefHeight="200.0" prefWidth="200.0"
+                              AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="25.0">
                             <children>
-                                <GridPane id="gameBoardGridPane" hgap="18.0" layoutX="256.0" layoutY="162.0"
-                                          prefHeight="701.0" prefWidth="526.0" vgap="18.0">
+                                <GridPane id="gameBoardGridPane" fx:id="gameBoardGridPane" alignment="CENTER"
+                                          gridLinesVisible="true" hgap="18.0" layoutX="256.0" layoutY="162.0"
+                                          nodeOrientation="LEFT_TO_RIGHT" prefHeight="701.0" prefWidth="526.0"
+                                          rotate="180.0" vgap="18.0">
                                     <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="134.0"
                                                            percentWidth="31.0" prefWidth="134.0"/>
@@ -355,7 +358,8 @@
                 </AnchorPane>
             </children>
         </GridPane>
-        <StackPane fx:id="mapVoteOverlayStackPane" prefHeight="150.0" prefWidth="200.0" styleClass="mapVoteBackground">
+        <StackPane fx:id="mapVoteOverlayStackPane" prefHeight="150.0" prefWidth="200.0" styleClass="mapVoteBackground"
+                   visible="false">
             <children>
                 <AnchorPane id="mapVoteAnchorPane" maxHeight="400.0" maxWidth="600.0" prefHeight="400.0"
                             prefWidth="600.0" StackPane.alignment="CENTER">
@@ -426,6 +430,6 @@
                 </AnchorPane>
             </children>
         </StackPane>
-        <AnchorPane fx:id="overlay" prefHeight="200.0" prefWidth="200.0"/>
+        <AnchorPane fx:id="overlay" prefHeight="200.0" prefWidth="200.0" visible="false"/>
     </children>
 </StackPane>

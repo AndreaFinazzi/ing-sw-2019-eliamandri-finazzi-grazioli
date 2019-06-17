@@ -1,4 +1,4 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.AmmoCard;

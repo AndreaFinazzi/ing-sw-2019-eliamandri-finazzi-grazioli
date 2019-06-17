@@ -55,7 +55,7 @@ public class AmmoCardsDeck {
         /*    for (Ammo doubleAmmo: Ammo.values())
                 for (Ammo singleAmmo: Ammo.values())
                     if (doubleAmmo != singleAmmo)
-                    deck.add(new AmmoCard(Arrays.asList(doubleAmmo, doubleAmmo, singleAmmo), false));
+                        deck.add(new AmmoCard(Arrays.asList(doubleAmmo, doubleAmmo, singleAmmo), false));
         for (int i=0; i < 3; i++)
             for (Ammo firstAmmo: Ammo.values())
                 for (Ammo secondAmmo: Ammo.values())

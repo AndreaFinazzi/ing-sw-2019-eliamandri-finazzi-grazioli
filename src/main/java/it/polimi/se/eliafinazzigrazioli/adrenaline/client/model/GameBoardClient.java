@@ -1,22 +1,24 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.*;
-import java.util.logging.Logger;
 
-public class ClientGameBoard {
+public class GameBoardClient {
+
+    private MapType mapType;
 
     private BoardSquareClient[][] squaresMatrix;
+
     private int x_max = Rules.GAME_BOARD_X_MAX;
     private int y_max = Rules.GAME_BOARD_Y_MAX;
     private Map<String, BoardSquareClient> playerPositions = new HashMap<>();
     private final int DIM_X = 12;
     private final int DIM_Y = 6;
-
     public static final String ANSI_RESET = "\u001B[0m";
+
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
@@ -24,7 +26,9 @@ public class ClientGameBoard {
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    public ClientGameBoard(MapType mapType) {
+    public GameBoardClient(MapType mapType) {
+        this.mapType = mapType;
+
         if (mapType.equals(MapType.ONE)) {
             squaresMatrix = new BoardSquareClient[x_max][y_max];
             squaresMatrix[0][2] = new GenericBoardSquareClient(Room.RED, new Coordinates(0, 2),
@@ -107,36 +111,40 @@ public class ClientGameBoard {
         }
 
         if (mapType.equals(MapType.FOUR)) {
-                squaresMatrix = new BoardSquareClient[x_max][y_max];
-                squaresMatrix[0][0] = new GenericBoardSquareClient(Room.GRAY, new Coordinates(0, 0),
-                        InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
-                squaresMatrix[0][1] = new SpawnBoardSquareClient(Room.RED, new Coordinates(0, 1),
-                        InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
-                squaresMatrix[1][1] = new GenericBoardSquareClient(Room.PURPLE, new Coordinates(1, 1),
-                        InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
-                squaresMatrix[1][0] = new GenericBoardSquareClient(Room.GRAY, new Coordinates(1, 0),
-                        InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
-                squaresMatrix[2][0] = new GenericBoardSquareClient(Room.YELLOW, new Coordinates(2, 0),
-                        InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
-                squaresMatrix[3][0] = new SpawnBoardSquareClient(Room.YELLOW, new Coordinates(3, 0),
-                        InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
-                squaresMatrix[3][1] = new GenericBoardSquareClient(Room.YELLOW, new Coordinates(3, 1),
-                        InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
-                squaresMatrix[2][1] = new GenericBoardSquareClient(Room.YELLOW, new Coordinates(2, 1),
-                        InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
-                squaresMatrix[0][2] = new GenericBoardSquareClient(Room.RED, new Coordinates(0, 2),
-                        InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL);
-                squaresMatrix[1][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(1, 2),
-                        InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
-                squaresMatrix[2][2] = new SpawnBoardSquareClient(Room.BLUE, new Coordinates(2, 2),
-                        InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
-                squaresMatrix[3][2] = new GenericBoardSquareClient(Room.GREEN, new Coordinates(3, 2),
-                        InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR);
+            squaresMatrix = new BoardSquareClient[x_max][y_max];
+            squaresMatrix[0][0] = new GenericBoardSquareClient(Room.GRAY, new Coordinates(0, 0),
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
+            squaresMatrix[0][1] = new SpawnBoardSquareClient(Room.RED, new Coordinates(0, 1),
+                    InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
+            squaresMatrix[1][1] = new GenericBoardSquareClient(Room.PURPLE, new Coordinates(1, 1),
+                    InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
+            squaresMatrix[1][0] = new GenericBoardSquareClient(Room.GRAY, new Coordinates(1, 0),
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
+            squaresMatrix[2][0] = new GenericBoardSquareClient(Room.YELLOW, new Coordinates(2, 0),
+                    InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
+            squaresMatrix[3][0] = new SpawnBoardSquareClient(Room.YELLOW, new Coordinates(3, 0),
+                    InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
+            squaresMatrix[3][1] = new GenericBoardSquareClient(Room.YELLOW, new Coordinates(3, 1),
+                    InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
+            squaresMatrix[2][1] = new GenericBoardSquareClient(Room.YELLOW, new Coordinates(2, 1),
+                    InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
+            squaresMatrix[0][2] = new GenericBoardSquareClient(Room.RED, new Coordinates(0, 2),
+                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL);
+            squaresMatrix[1][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(1, 2),
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
+            squaresMatrix[2][2] = new SpawnBoardSquareClient(Room.BLUE, new Coordinates(2, 2),
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
+            squaresMatrix[3][2] = new GenericBoardSquareClient(Room.GREEN, new Coordinates(3, 2),
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR);
         }
     }
 
+    public MapType getMapType() {
+        return mapType;
+    }
+
     public void resetAmmoCards(Map<Coordinates, AmmoCardClient> ammoCardsReset) {
-        for (Map.Entry<Coordinates, AmmoCardClient> squareToAmmoCardEntry: ammoCardsReset.entrySet()) {
+        for (Map.Entry<Coordinates, AmmoCardClient> squareToAmmoCardEntry : ammoCardsReset.entrySet()) {
             getBoardSquareByCoordinates(squareToAmmoCardEntry.getKey()).addAmmoCard(squareToAmmoCardEntry.getValue());
         }
     }
