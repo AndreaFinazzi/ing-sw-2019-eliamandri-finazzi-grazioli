@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerSpawnedEvent;
@@ -131,13 +132,18 @@ public class GameBoard {
         playerPositions = new HashMap<>();
     }
 
-    public void ammoCardsSetup(AmmoCardsDeck deck) {
+    public Map<Coordinates, AmmoCardClient> ammoCardsSetup(AmmoCardsDeck deck) {
+        Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap = new HashMap<>();
         for (int x = 0; x < x_max; x++) {
             for (int y = 0; y < y_max; y++) {
-                if (squaresMatrix[x][y] != null && !squaresMatrix[x][y].isSpawnPoint() && ((GenericBoardSquare) squaresMatrix[x][y]).getCollectable() == null)
-                    ((GenericBoardSquare) squaresMatrix[x][y]).dropCollectables(deck.drawCard());
+                if (squaresMatrix[x][y] != null && !squaresMatrix[x][y].isSpawnPoint() && ((GenericBoardSquare) squaresMatrix[x][y]).getCollectable() == null) {
+                    AmmoCard ammoCard = deck.drawCard();
+                    ((GenericBoardSquare) squaresMatrix[x][y]).dropCollectables(ammoCard);
+                    coordinatesAmmoCardMap.put(squaresMatrix[x][y].getCoordinates(), new AmmoCardClient(ammoCard));
+                }
             }
         }
+        return coordinatesAmmoCardMap;
     }
 
     public void setPlayerPositions(Player player, BoardSquare position) throws OutOfBoundBoardException {

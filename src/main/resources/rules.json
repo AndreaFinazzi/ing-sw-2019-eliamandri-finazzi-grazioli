@@ -29,9 +29,11 @@
       "min_players": 2,
       "max_players": 5,
       "max_maps": 4,
+      "ammo_cards_duplicates": 3,
       "board": {
         "x_max": 4,
-        "y_max": 3
+        "y_max": 3,
+        "max_weapons_on_spawn": 3
       }
     },
     "turn" : {

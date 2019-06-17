@@ -1,4 +1,5 @@
 {
-"ammos": ["BLUE", "BLUE", "YELLOW"],
-"powerUp": false
+  "id": "042",
+  "ammos": ["BLUE", "BLUE", "YELLOW"],
+  "powerUp": false
 }

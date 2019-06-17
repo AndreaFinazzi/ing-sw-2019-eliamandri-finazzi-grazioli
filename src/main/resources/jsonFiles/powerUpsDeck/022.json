@@ -1,5 +1,6 @@
 {
   "type": "Tagback Granade",
+  "id": "022",
   "ammo": "BLUE",
   "toPay": false,
   "description": "You may play this card when you receive damage from a player you can see. Give that player 1 mark."

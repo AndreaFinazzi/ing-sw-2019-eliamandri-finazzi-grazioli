@@ -143,15 +143,9 @@ public class GameBoardClient {
         return mapType;
     }
 
-    public void resetAmmoCards() {
-        List<Ammo> ammoList = new ArrayList<>();
-        ammoList.add(Ammo.BLUE); ammoList.add(Ammo.YELLOW); ammoList.add(Ammo.RED);
-        for (int x = 0; x < x_max; x++) {
-            for (int y = 0; y < y_max; y++) {
-                if (squaresMatrix[x][y] != null)
-                    squaresMatrix[x][y].addAmmoCard(new AmmoCardClient(ammoList, false));
-                    //Return boolean
-            }
+    public void resetAmmoCards(Map<Coordinates, AmmoCardClient> ammoCardsReset) {
+        for (Map.Entry<Coordinates, AmmoCardClient> squareToAmmoCardEntry : ammoCardsReset.entrySet()) {
+            getBoardSquareByCoordinates(squareToAmmoCardEntry.getKey()).addAmmoCard(squareToAmmoCardEntry.getValue());
         }
     }
 

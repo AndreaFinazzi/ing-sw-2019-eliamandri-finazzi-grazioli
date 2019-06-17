@@ -1,21 +1,29 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.util.Map;
 
 public class BeginMatchEvent extends AbstractModelEvent {
 
     private MapType mapType;
+    Map<Coordinates, AmmoCardClient> ammoCardsSetup;
 
-    private Map<String, Avatar> playerToAvatr;
+    private Map<String, Avatar> playerToAvatar;
 
     public BeginMatchEvent(MapType mapType) {
         this.mapType = mapType;
+    }
+
+    public BeginMatchEvent(MapType mapType, Map<Coordinates, AmmoCardClient> ammoCardsSetup) {
+        this.mapType = mapType;
+        this.ammoCardsSetup = ammoCardsSetup;
     }
 
     @Override
@@ -25,5 +33,13 @@ public class BeginMatchEvent extends AbstractModelEvent {
 
     public MapType getMapType() {
         return mapType;
+    }
+
+    public Map<Coordinates, AmmoCardClient> getAmmoCardsSetup() {
+        return ammoCardsSetup;
+    }
+
+    public Map<String, Avatar> getPlayerToAvatar() {
+        return playerToAvatar;
     }
 }
