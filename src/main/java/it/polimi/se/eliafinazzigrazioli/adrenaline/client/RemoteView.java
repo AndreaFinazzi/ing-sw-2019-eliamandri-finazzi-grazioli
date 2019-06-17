@@ -272,7 +272,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
-        getLocalModel().getGameBoard().resetAmmoCards();
         buildLocalMap(event.getMapType());
     }
 
