@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
@@ -21,22 +22,26 @@ import java.util.List;
 
 public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
+    LocalModel getLocalModel();
+
+    Client getClient();
+
     @Override
     default void handleEvent(ConnectionResponseEvent event) throws HandlerNotImplementedException {
-        setClientID(event.getClientID());
+        getClient().setClientID(event.getClientID());
 
         showMessage(event.getMessage());
-        login(event.getAvailableAvatars());
+        showLogin(event.getAvailableAvatars());
     }
 
     @Override
     default void handleEvent(LoginResponseEvent event) throws HandlerNotImplementedException {
         showMessage(event.getMessage());
         if (!event.isSuccessful()) {
-            login(event.getAvailableAvatars());
+            showLogin(event.getAvailableAvatars());
         } else {
             updatePlayerInfo(event.getPlayer());
-            loginSuccessful();
+            showLoginSuccessful();
         }
     }
 
@@ -45,13 +50,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         updateMatchPlayers(event.getPlayerToAvatarMap());
         List<String> players = new ArrayList<>(event.getPlayerToAvatarMap().keySet());
         initPlayersBoard(players);
-        mapVote(event.getAvailableMaps());
+        showMapVote(event.getAvailableMaps());
     }
 
     @Override
     default void handleEvent(BeginMatchEvent event) throws HandlerNotImplementedException {
         buildLocalMap(event.getMapType());
         //todo to complete with info about the match and relative visualization
+        showBeginMatch();
     }
 
     @Override
@@ -65,7 +71,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         PowerUpCard toKeep = selectPowerUpToKeep(cards);
         cards.remove(toKeep);
         PowerUpCard spawnCard = cards.get(0);
-        notifyObservers(new SpawnPowerUpSelected(getClientID(), getPlayer(), toKeep, spawnCard));
+        notifyObservers(new SpawnPowerUpSelected(getClient().getClientID(), getClient().getPlayerName(), toKeep, spawnCard));
     }
 
     @Override
@@ -73,37 +79,37 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         LocalModel localModel = getLocalModel();
         String player = event.getPlayer();
         localModel.getGameBoard().setPlayerPosition(player, event.getSpawnPoint());
-        showSpawn(player, event.getSpawnPoint(), event.getDiscardedPowerUp(), !player.equals(getPlayer()));
+        showSpawn(player, event.getSpawnPoint(), event.getDiscardedPowerUp(), !player.equals(getClient().getPlayerName()));
     }
 
     @Override
     default void handleEvent(ActionRequestEvent event) throws HandlerNotImplementedException {
-        if (event.getPlayer().equals(getPlayer())) {
+        if (event.getPlayer().equals(getClient().getPlayerName())) {
             AbstractViewEvent generatedEvent = null;
             while (generatedEvent == null) {
-                int choice = choseAction();
+                PlayerAction choice = choseAction();
                 List<Coordinates> path;
                 switch(choice) {
-                    case 1:
+                    case MOVE:
                         path = getPathFromUser(event.getSimpleMovesMax());
-                        generatedEvent = path == null ? null : new MovePlayEvent(getClientID(), getPlayer(), path);
+                        generatedEvent = path == null ? null : new MovePlayEvent(getClient().getClientID(), getClient().getPlayerName(), path);
                         break;
 
-                    case 2:
+                    case SHOOT:
                         //todo shooting logic
                         break;
 
-                    case 3:
+                    case COLLECT:
                         path = getPathFromUser(event.getCollectingMovesMax());
-                        ClientGameBoard gameBoard = getLocalModel().getGameBoard();
+                        GameBoardClient gameBoard = getLocalModel().getGameBoard();
                         BoardSquareClient finalPosition = path == null ?
-                                gameBoard.getPlayerPositionByName(getPlayer()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size()-1));
+                                gameBoard.getPlayerPositionByName(getClient().getPlayerName()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size() - 1));
                         if (finalPosition.isSpawnBoard()) {
                             //todo weapon to collect procedure
                             generatedEvent = null;
                         }
                         else if (finalPosition.hasAmmoCard()) {
-                            generatedEvent = new CollectPlayEvent(getClientID(), getPlayer(), path == null ? new ArrayList<>() : path);
+                            generatedEvent = new CollectPlayEvent(getClient().getClientID(), getClient().getPlayerName(), path == null ? new ArrayList<>() : path);
                         }
                         else {
                             generatedEvent = null;
@@ -119,7 +125,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     @Override
     default void handleEvent(PlayerMovementEvent event) throws HandlerNotImplementedException {
-        ClientGameBoard gameBoard = getLocalModel().getGameBoard();
+        GameBoardClient gameBoard = getLocalModel().getGameBoard();
         List<Coordinates> path = event.getPath();
         Coordinates finalPositionCoordinates = path.get(path.size()-1);
         gameBoard.setPlayerPosition(event.getPlayer(), finalPositionCoordinates);
@@ -129,7 +135,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(PowerUpCollectedEvent event) throws HandlerNotImplementedException {
         LocalModel localModel = getLocalModel();
-        if (event.getPlayer().equals(getPlayer())){
+        if (event.getPlayer().equals(getClient().getPlayerName())) {
             localModel.addPowerUp(event.getCollectedCard());
             showPowerUpCollection(event.getPlayer(), event.getCollectedCard(), false);
         }
@@ -155,7 +161,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
         //todo define payment logic
 
-        notifyObservers(new ReloadWeaponEvent(getClientID(), getPlayer(), selectedWeapon));
+        notifyObservers(new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), selectedWeapon));
     }
 
     @Override
@@ -176,19 +182,19 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         throw new HandlerNotImplementedException();
     }
 
-    //TODO to implement
 
+    //TODO to implement
     @Override
     default void handleEvent(AllowedMovesEvent event) throws HandlerNotImplementedException {
 
         throw new HandlerNotImplementedException();
     }
 
-    //TODO to implement
 
+    //TODO to implement
     @Override
     default void handleEvent(AmmoCardCollectedEvent event) throws HandlerNotImplementedException {
-        ClientGameBoard gameBoard = getLocalModel().getGameBoard();
+        GameBoardClient gameBoard = getLocalModel().getGameBoard();
         gameBoard.getBoardSquareByCoordinates(event.getBoardSquare()).removeAmmoCard();
         showAmmoCardCollected(event.getPlayer(), event.getAmmoCardCollected(), event.getBoardSquare());
     }
@@ -214,8 +220,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         System.out.println("ACTION FAILED!");
 
     }
-    //TODO to implement
 
+    //TODO to implement
     @Override
     default void handleEvent(PlayerDamagedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
@@ -227,8 +233,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void handleEvent(PlayerShotEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-    //TODO to implement
 
+    //TODO to implement
     //TODO to implement
     @Override
     default void handleEvent(SelectableBoardSquaresEvent event) throws HandlerNotImplementedException {
@@ -259,8 +265,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         throw new HandlerNotImplementedException();
     }
 
-    //TODO to implement
 
+    //TODO to implement
     @Override
     default void handleEvent(WeaponCollectedEvent event) throws HandlerNotImplementedException {
         collectWeapon(event.getCollectedWeapon(), event.getDropOfWeapon());
@@ -283,46 +289,42 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     void error(Exception e);
 
-    String getPlayer();
+    void showLogin(ArrayList<Avatar> availableAvatars);
 
-    void setClientID(int clientID);
+    void showLoginSuccessful();
 
-    int getClientID();
+    void showMapVote(ArrayList<MapType> availableMaps);
 
-    void login(ArrayList<Avatar> availableAvatars);
-
-    void loginSuccessful();
-
-    void mapVote(ArrayList<MapType> availableMaps);
-
+    void showBeginMatch();
 
     //OUTGOING communications
+
     default void notifyLoginRequestEvent(String nickname, Avatar avatar) {
-        notifyObservers(new LoginRequestEvent(getClientID(), nickname, avatar));
+        notifyObservers(new LoginRequestEvent(getClient().getClientID(), nickname, avatar));
     }
 
     default void notifyMapVoteEvent(MapType mapType) {
-        notifyObservers(new MapVoteEvent(getClientID(), getPlayer(), mapType));
+        notifyObservers(new MapVoteEvent(getClient().getClientID(), getClient().getPlayerName(), mapType));
     }
 
     default void notifyPlayerSelectedEvent(ArrayList<String> selectedPlayers) {
-        notifyObservers(new PlayersSelectedEvent(getClientID(), getPlayer(), selectedPlayers));
+        notifyObservers(new PlayersSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), selectedPlayers));
     }
 
     default void notifyCardSelected(String card) {
-        notifyObservers(new CardSelectedEvent(getClientID(), getPlayer(), card));
+        notifyObservers(new CardSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), card));
     }
 
     default void notifySelectedSquare(Coordinates coordinates) {
-        notifyObservers(new SquareSelectedEvent(getClientID(), getPlayer(), coordinates));
+        notifyObservers(new SquareSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), coordinates));
     }
 
     default void notifySelectedEffects(String effect) {
-        notifyObservers(new EffectSelectedEvent(getClientID(), getPlayer(), effect));
+        notifyObservers(new EffectSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), effect));
     }
 
     default void notifySelectedWeaponCard(String weapon) {
-        notifyObservers(new CardSelectedEvent(getClientID(), getPlayer(), weapon));
+        notifyObservers(new CardSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), weapon));
     }
 
     default void notifyRequestMove(int clientID, String playerName) {
@@ -331,7 +333,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     //    Local model
 
-    LocalModel getLocalModel();
+
 
     default boolean canPay(List<Ammo> price) {
         List<Ammo> priceCopy = new ArrayList<>(price);
@@ -351,7 +353,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             return false;
     }
 
-    void updatePlayerInfo(String player);
+    default void updatePlayerInfo(String player) {
+        getClient().setPlayerName(player);
+    }
 
     default void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap){
         getLocalModel().setPlayersAvatarMap(playerToAvatarMap);
@@ -365,7 +369,13 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates);
 
-    void buildLocalMap(MapType mapType);
+    default void buildLocalMap(MapType mapType) {
+        getLocalModel().generatesGameBoard(mapType);
+        System.out.println("Map is chosen is: " + mapType);
+        //todo showmap();
+    }
+
+    ;
 
     void showMap();
 
@@ -388,7 +398,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     //SHOW METHODS
     default void showPlayerMovement(String player, List<Coordinates> path) {
         if (path != null && path.size() > 0) {
-            if (player.equals(getPlayer()))
+            if (player.equals(getClient().getPlayerName()))
                 System.out.println("You moved to square" + getLocalModel().getGameBoard().getBoardSquareByCoordinates(path.get(path.size()-1)) + " through the path: ");
             else
                 System.out.println("Player " + player + " moved to square" + getLocalModel().getGameBoard().getBoardSquareByCoordinates(path.get(path.size()-1)) + " through the path: ");
@@ -412,7 +422,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default void showBeginTurn(String player) {
-        if (player.equals(getPlayer())) {
+        if (player.equals(getClient().getPlayerName())) {
             System.out.println("Your turn began!!!");
         }
         else
@@ -420,14 +430,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default void showEndTurn(String player) {
-        if (player.equals(getPlayer()))
+        if (player.equals(getClient().getPlayerName()))
             System.out.println("YEAH!! You concluded your turn!");
         else
             System.out.println(player + " concluded his turn!");
     }
 
     default void showAmmoCollected(String player, Ammo ammo, boolean actuallyCollected) {
-        if (player.equals(getPlayer()))
+        if (player.equals(getClient().getPlayerName()))
             System.out.println("You collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
         else
             System.out.println(player + " collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but his playerBoard was full!"));
@@ -435,7 +445,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     default void showAmmoCardCollected(String player, AmmoCard ammoCard, Coordinates coordinates) {
         String message = " gathered the ammo card " + ammoCard.toString() + " from square " + coordinates + "!";
-        if (player.equals(getPlayer()))
+        if (player.equals(getClient().getPlayerName()))
             System.out.println("You " + message);
         else
             System.out.println(player + message);
@@ -446,12 +456,59 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
 
-
     //INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS
 
-    List<Coordinates> getPathFromUser(int maxSteps);
+    default List<Coordinates> getPathFromUser(int maxSteps) {
+        BoardSquareClient currentPose = getLocalModel().getGameBoard().getPlayerPositionByName(getClient().getPlayerName());
+        List<Coordinates> path = new ArrayList<>();
+        ArrayList<MoveDirection> availableMoves = new ArrayList<>();
 
-    int choseAction();
+        MoveDirection choice;
+
+        do {
+            availableMoves.clear();
+            if (currentPose == null) {
+                return null;
+            }
+
+            if (currentPose.getNorth().equals(InterSquareLink.SAMEROOM) || currentPose.getNorth().equals(InterSquareLink.DOOR)) {
+                availableMoves.add(MoveDirection.UP);
+            }
+            if (currentPose.getEast().equals(InterSquareLink.SAMEROOM) || currentPose.getEast().equals(InterSquareLink.DOOR)) {
+                availableMoves.add(MoveDirection.RIGHT);
+            }
+            if (currentPose.getSouth().equals(InterSquareLink.SAMEROOM) || currentPose.getSouth().equals(InterSquareLink.DOOR)) {
+                availableMoves.add(MoveDirection.DOWN);
+            }
+            if (currentPose.getWest().equals(InterSquareLink.SAMEROOM) || currentPose.getWest().equals(InterSquareLink.DOOR)) {
+                availableMoves.add(MoveDirection.LEFT);
+            }
+            availableMoves.add(MoveDirection.STOP);
+
+            choice = getMoveFromUser(currentPose, availableMoves);
+
+            currentPose = getLocalModel().getGameBoard().getBoardSquareByCoordinates(calculateCoordinates(currentPose.getCoordinates(), choice));
+
+            if (choice != MoveDirection.STOP)
+                path.add(currentPose.getCoordinates());
+
+        } while (path.size() < maxSteps && choice != MoveDirection.STOP);
+
+        if (choice == MoveDirection.STOP && path.isEmpty())
+            return null;
+        else
+            showMessage("Path successfully generated.");
+
+        return path;
+    }
+
+    static Coordinates calculateCoordinates(Coordinates initialCoordinates, MoveDirection moveDirection) {
+        return new Coordinates(initialCoordinates.getXCoordinate() + moveDirection.getDeltaX(), initialCoordinates.getYCoordinate() + moveDirection.getDeltaY());
+    }
+
+    MoveDirection getMoveFromUser(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves);
+
+    PlayerAction choseAction();
 
     PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards);
 

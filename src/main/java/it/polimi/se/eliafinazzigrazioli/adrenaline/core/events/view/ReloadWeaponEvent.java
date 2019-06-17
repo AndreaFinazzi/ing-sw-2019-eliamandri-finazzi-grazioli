@@ -1,6 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
 public class ReloadWeaponEvent extends AbstractViewEvent {

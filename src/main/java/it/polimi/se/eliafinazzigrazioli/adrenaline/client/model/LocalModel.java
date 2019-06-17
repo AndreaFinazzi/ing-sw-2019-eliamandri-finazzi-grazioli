@@ -1,4 +1,4 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -17,7 +17,7 @@ public class LocalModel {
     private List<Ammo> ammos;
 
     //Public information
-    private ClientGameBoard gameBoard;
+    private GameBoardClient gameBoard;
     private List<String> players;
     private Map<String, PlayerBoard> playerBoards;
     private Map<String, Avatar> playersToMap;
@@ -34,7 +34,7 @@ public class LocalModel {
     }
 
     public void generatesGameBoard(MapType mapType) {
-        gameBoard = new ClientGameBoard(mapType);
+        gameBoard = new GameBoardClient(mapType);
         listSpawn = gameBoard.getSpawnBoardSquareClient();
     }
 
@@ -115,7 +115,7 @@ public class LocalModel {
         return null;
     }
 
-    public ClientGameBoard getGameBoard() {
+    public GameBoardClient getGameBoard() {
         return gameBoard;
     }
 }

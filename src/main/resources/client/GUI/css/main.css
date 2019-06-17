@@ -9,13 +9,30 @@
 
 /*DON'T CHANGE THIS! */
 #mainBoardPane {
-    -fx-background-image: url("../assets/maps/Map_ONE.png");
+    -fx-background-image: url("../assets/maps/Map_BW.png");
     -fx-background-insets: 0, 0;
     -fx-background-size: contain;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
 
 }
+
+.map_ONE {
+    -fx-background-image: url("../assets/maps/Map_ONE.png");
+}
+
+.map_TWO {
+    -fx-background-image: url("../assets/maps/Map_TWO.png");
+}
+
+.map_THREE {
+    -fx-background-image: url("../assets/maps/Map_THREE.png");
+}
+
+.map_FOUR {
+    -fx-background-image: url("../assets/maps/Map_FOUR.png");
+}
+
 
 #mapVoteAnchorPane {
     -fx-background-color: rgb(50, 50, 50);
@@ -25,12 +42,6 @@
     -fx-border-width: 1;
     -fx-border-radius: 6;
     -fx-border-insets: -1;
-
-}
-
-/*DON'T CHANGE THIS! */
-
-#gameBoardGridPane {
 
 }
 

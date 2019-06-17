@@ -3,12 +3,12 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.LoginGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.LocalModel;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import javafx.application.Application;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,6 +51,7 @@ public class GUI extends Application implements RemoteView {
 
     public GUI() {
         instance = this;
+        localModel = new LocalModel();
     }
 
     public synchronized static GUI getInstance(String[] args) {
@@ -72,10 +74,6 @@ public class GUI extends Application implements RemoteView {
         return instance;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     public void showOverlay() {
         mainGUIController.showOverlay();
     }
@@ -84,24 +82,18 @@ public class GUI extends Application implements RemoteView {
         mainGUIController.hideOverlay();
     }
 
-    @Override
-    public String getPlayer() {
-        return client.getPlayerName();
-    }
-
-    @Override
-    public int getClientID() {
-        return client.getClientID();
-    }
-
-    @Override
-    public void setClientID(int clientID) {
-        client.setClientID(clientID);
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     @Override
     public LocalModel getLocalModel() {
         return localModel;
+    }
+
+    @Override
+    public Client getClient() {
+        return client;
     }
 
     @Override
@@ -136,8 +128,23 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public int choseAction() {
-        return -1;
+    public PlayerAction choseAction() {
+        AtomicReference<PlayerAction> chosenAction = new AtomicReference<>();
+        Semaphore semaphore = new Semaphore(0);
+
+        mainGUIController.setSemaphore(semaphore);
+        mainGUIController.setChosenAction(chosenAction);
+
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+
+        synchronized (semaphore) {
+            return chosenAction.get();
+        }
     }
 
     @Override
@@ -156,7 +163,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void login(ArrayList<Avatar> availableAvatars) {
+    public void showLogin(ArrayList<Avatar> availableAvatars) {
         if (!initialized) {
             initialized = true;
 
@@ -187,12 +194,12 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void loginSuccessful() {
+    public void showLoginSuccessful() {
         loginGUIController.waitForMatchStart();
     }
 
     @Override
-    public void mapVote(ArrayList<MapType> availableMaps) {
+    public void showMapVote(ArrayList<MapType> availableMaps) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/main.fxml"));
 
         Pane root = null;
@@ -215,17 +222,19 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void showBeginMatch() {
+        mainGUIController.loadMap();
+
+        hideOverlay();
+    }
+
+    @Override
     public void updatePlayerInfo(String player) {
         client.setPlayerName(player);
     }
 
     @Override
     public void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap) {
-
-    }
-
-    @Override
-    public void buildLocalMap(MapType mapType) {
 
     }
 
@@ -264,8 +273,8 @@ public class GUI extends Application implements RemoteView {
         ArrayList<Coordinates> selectedPath = new ArrayList<>();
         Semaphore semaphore = new Semaphore(0);
 
-//        mainGUIController.setSemaphore(semaphore);
-//        mainGUIController.setSelectedPath(selectedPath);
+        mainGUIController.setSemaphore(semaphore);
+        mainGUIController.setSelectedPath(selectedPath);
 
         try {
             semaphore.acquire();
@@ -278,5 +287,14 @@ public class GUI extends Application implements RemoteView {
             return selectedPath;
         }
 
+    }
+
+    @Override
+    public MoveDirection getMoveFromUser(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
+        return null;
+    }
+
+    public String getMapFileName(MapType mapType) {
+        return "/client/GUI/assets/maps/" + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_PREFIX + mapType.name() + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_FORMAT;
     }
 }

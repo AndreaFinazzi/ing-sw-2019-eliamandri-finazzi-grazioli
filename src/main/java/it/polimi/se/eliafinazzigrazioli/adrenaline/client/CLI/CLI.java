@@ -1,8 +1,11 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -17,8 +20,6 @@ public class CLI implements RemoteView, Runnable {
     static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
     //TODO
-    private String playerName;
-
     private Scanner input;
 
     private ConnectionManagerRMI connectionManagerRMI;
@@ -43,11 +44,16 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
+    public Client getClient() {
+        return client;
+    }
+
+    @Override
     public void error(Exception e) {
         LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
 
-    public void login(ArrayList<Avatar> availableAvatars) {
+    public void showLogin(ArrayList<Avatar> availableAvatars) {
         System.out.println("Insert your player name");
         String username = input.nextLine();
 
@@ -57,12 +63,12 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void loginSuccessful() {
+    public void showLoginSuccessful() {
         showMessage("Login successful, waiting for other players.");
     }
 
     @Override
-    public void mapVote(ArrayList<MapType> availableMaps) {
+    public void showMapVote(ArrayList<MapType> availableMaps) {
         showMessage("Vote one of the following maps: ");
         showMessage(serializeArray(availableMaps));
 
@@ -70,9 +76,8 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void updatePlayerInfo(String player) {
-        client.setPlayerName(player);
-        this.playerName = player;
+    public void showBeginMatch() {
+
     }
 
     private <T> String serializeArray(ArrayList<T> list) {
@@ -96,8 +101,14 @@ public class CLI implements RemoteView, Runnable {
     }
 
     private int nextInt(int maxBound) {
-        int nextInt = input.nextInt();
-        input.nextLine();
+        int nextInt;
+        try {
+            nextInt = input.nextInt();
+            input.nextLine();
+        } catch (NumberFormatException e) {
+            showMessage("Invalid choice");
+            nextInt = nextInt(maxBound);
+        }
 
         if (nextInt > maxBound) {
             showMessage("Choice out of bound. Sit down and focus, you can do it: ");
@@ -116,157 +127,65 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
+    public PlayerAction choseAction() {
+        ArrayList<PlayerAction> availableActions = new ArrayList<>(Arrays.asList(PlayerAction.values()));
+        PlayerAction choice;
+        do {
+            showMessage("Choose your action: ");
+            showMessage(serializeArray(availableActions));
+
+            choice = availableActions.get(nextInt(availableActions.size() - 1));
+            if (choice == PlayerAction.SHOW_MAP) {
+                showMap();
+            }
+        } while (choice == PlayerAction.SHOW_MAP);
+
+        return choice;
+    }
+
+    @Override
     public void showSelectableSquare(List<Coordinates> selectable) {
         System.out.println("You can select this square: ");
         int count = 1;
-        for(Coordinates coordinates : selectable) {
+        for (Coordinates coordinates : selectable) {
             BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(coordinates);
-            if(boardSquareClient != null) {
+            if (boardSquareClient != null) {
                 System.out.println(count + ") " + boardSquareClient.getRoom() + " with coordinates: " + coordinates);
                 count++;
             }
         }
     }
 
-    @Override
-    public void buildLocalMap(MapType mapType) {
-        localModel.generatesGameBoard(mapType);
-        System.out.println("Chosen Map is: " + mapType);
-        showMap();
-    }
-
-    @Override
-    public int choseAction() {
-
-        int choice;
-        do {
-            System.out.println("Choose your action: ");
-            System.out.println("1) Move");
-            System.out.println("2) Shoot");
-            System.out.println("3) Collect");
-            System.out.println("4) Show Map");
-            try {
-                choice = Integer.parseInt(input.nextLine());
-            } catch(NumberFormatException e) {
-                System.out.println("Invalid choice");
-                choice = -1;
-            }
-            if(choice == 4) {
-                showMap();
-                choice = -1;
-            }
-            if(choice < 1 || choice > 3)
-                System.out.println("Not valid action");
-        } while(choice < 1 || choice > 3);
-
-        return choice;
-    }
-
     public void collectPlay() {
         List<Coordinates> path = getPathFromUser(Rules.MAX_MOVEMENTS_BEFORE_COLLECTION);
-        Coordinates finalCoordinates = path.get(path.size()-1); // Last element
+        Coordinates finalCoordinates = path.get(path.size() - 1); // Last element
         BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(finalCoordinates);
-        if(boardSquareClient.isSpawnBoard()) {
+        if (boardSquareClient.isSpawnBoard()) {
             //new Weapon collect event
-        }
-        else {
+        } else {
             //new ammoCard collect event
         }
     }
 
     @Override
-    public List<Coordinates> getPathFromUser(int maxSteps) {
-        BoardSquareClient currentPose = localModel.getGameBoard().getPlayerPositionByName(this.playerName);
-        List<Coordinates> path = new ArrayList<>();
-        Map<Integer, Integer> allowChoice = new HashMap<>();
-        int x, y;
-        int step = 0;
-        int choice;
-        if(currentPose == null) {
-            return null;
-        }
-        System.out.println("You are in " + currentPose);
-        do {
-            int count;
-            do {
-                count = 0;
-                System.out.println("Insert your choose: ");
-                if(currentPose.getNorth().equals(InterSquareLink.SAMEROOM) || currentPose.getNorth().equals(InterSquareLink.DOOR)) {
-                    count++;
-                    System.out.println(count + ") Up");
-                    allowChoice.put(count, 1);
-                }
-                if(currentPose.getEast().equals(InterSquareLink.SAMEROOM) || currentPose.getEast().equals(InterSquareLink.DOOR)) {
-                    count++;
-                    System.out.println(count + ") Right");
-                    allowChoice.put(count, 2);
-                }
-                if(currentPose.getSouth().equals(InterSquareLink.SAMEROOM) || currentPose.getSouth().equals(InterSquareLink.DOOR)) {
-                    count++;
-                    System.out.println(count + ") Down");
-                    allowChoice.put(count, 3);
-                }
-                if(currentPose.getWest().equals(InterSquareLink.SAMEROOM) || currentPose.getWest().equals(InterSquareLink.DOOR)) {
-                    count++;
-                    System.out.println(count + ") Left");
-                    allowChoice.put(count, 4);
-                }
-                count++;
-                System.out.println(count + ") Stop");
-                allowChoice.put(count, 5);
-                String string = input.nextLine();
-                try {
-                    choice = Integer.parseInt(string);
-                } catch(NumberFormatException e) {
-                    System.out.println("Invalid choice");
-                    choice = -1;
-                }
-            }while(choice < 1 || choice > count);
+    public MoveDirection getMoveFromUser(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
+        showMessage("You are in " + currentPose);
+        MoveDirection choice;
 
-            choice = allowChoice.get(choice);
-            Coordinates currentCoordinates = currentPose.getCoordinates();
-            x = currentCoordinates.getXCoordinate();
-            y = currentCoordinates.getYCoordinate();
 
-            switch(choice) {
-                case 1:
-                    y++;
-                    step++;
-                    break;
+        showMessage("Chose a move direction: ");
+        showMessage(serializeArray(availableMoves));
 
-                case 2:
-                    x++;
-                    step++;
-                    break;
+        choice = availableMoves.get(nextInt(availableMoves.size() - 1));
 
-                case  3:
-                    y--;
-                    step++;
-                    break;
-
-                case 4:
-                    x--;
-                    step++;
-                    break;
-                case 5:
-                    System.out.println("Creates path!");
-                    break;
-            }
-            currentCoordinates = new Coordinates(x,y);
-            currentPose = localModel.getGameBoard().getBoardSquareByCoordinates(currentCoordinates);
-            if(choice != 5)
-                path.add(new Coordinates(x,y));
-            else if(choice == 5 && step == 0)
-                return null;
-        } while(step < maxSteps && choice != 5);
-        return path;
+        return choice;
     }
 
     @Override
     public void selectWeaponCard() {
         List<WeaponCardClient> weapons = localModel.getWeaponCards();
         int count = 1;
-        for(WeaponCardClient weapon : weapons){
+        for (WeaponCardClient weapon : weapons) {
             System.out.println(count + ") " + weapon);
             count++;
         }
@@ -277,12 +196,12 @@ public class CLI implements RemoteView, Runnable {
             String temp = input.nextLine();
             try {
                 choice = Integer.parseInt(temp);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid choose");
                 choice = -1;
             }
-        }while( choice < 1 || choice > count );
-        String weapon = weapons.get(choice-1).getWeaponName();
+        } while (choice < 1 || choice > count);
+        String weapon = weapons.get(choice - 1).getWeaponName();
         notifySelectedWeaponCard(weapon);
     }
 
@@ -290,9 +209,9 @@ public class CLI implements RemoteView, Runnable {
     public void selectSelectableSquare(List<Coordinates> selectable) {
         System.out.println("You can select this square: ");
         int count = 1;
-        for(Coordinates coordinates : selectable) {
+        for (Coordinates coordinates : selectable) {
             BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(coordinates);
-            if(boardSquareClient != null) {
+            if (boardSquareClient != null) {
                 System.out.println(count + ") " + boardSquareClient.getRoom() + " with coordinates: " + coordinates);
                 count++;
             }
@@ -305,12 +224,12 @@ public class CLI implements RemoteView, Runnable {
             String temp = input.nextLine();
             try {
                 choice = Integer.parseInt(temp);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid choice");
                 choice = -1;
             }
-        }while( choice < 1 || choice > count );
-        Coordinates square = selectable.get(choice-1);
+        } while (choice < 1 || choice > count);
+        Coordinates square = selectable.get(choice - 1);
         notifySelectedSquare(square);
     }
 
@@ -318,7 +237,7 @@ public class CLI implements RemoteView, Runnable {
     public void selectSelectableEffect(List<String> callableEffects) {
         System.out.println("You can select this effects ");
         int count = 1;
-        for(String effect : callableEffects) {
+        for (String effect : callableEffects) {
             System.out.println(count + ") " + effect);
             count++;
         }
@@ -329,11 +248,11 @@ public class CLI implements RemoteView, Runnable {
             String temp = input.nextLine();
             try {
                 choice = Integer.parseInt(temp);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid choice");
                 choice = -1;
             }
-        }while( choice < 1 || choice > count );
+        } while (choice < 1 || choice > count);
         String temp = callableEffects.get(count);
         notifySelectedEffects(temp);
     }
@@ -347,11 +266,10 @@ public class CLI implements RemoteView, Runnable {
     public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
         System.out.println("You have collected this Weapon card");
         System.out.println(weaponCardClient);
-        if(localModel.getGameBoard().getBoardSquareByCoordinates(coordinates).addWeaponCard(weaponCardClient)) {
+        if (localModel.getGameBoard().getBoardSquareByCoordinates(coordinates).addWeaponCard(weaponCardClient)) {
             System.out.println(weaponCardClient);
             System.out.println("is drawed on coordinates: " + coordinates);
-        }
-        else
+        } else
             System.out.println("ops, something didn't work");
 
     }
@@ -364,9 +282,6 @@ public class CLI implements RemoteView, Runnable {
     }
 
 
-
-
-
     @Override
     public void updatePlayerPosition(String nickname, Coordinates coordinates) {
         System.out.println(nickname + " position it's changed");
@@ -377,7 +292,7 @@ public class CLI implements RemoteView, Runnable {
     public PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards) {
         System.out.println("Choose your ");
         int count = 1;
-        for(PowerUpCard temp : cards){
+        for (PowerUpCard temp : cards) {
             System.out.println(count + ") " + temp.getPowerUpType() + " " + temp.getEquivalentAmmo());
             count++;
         }
@@ -388,12 +303,12 @@ public class CLI implements RemoteView, Runnable {
             String temp = input.nextLine();
             try {
                 choice = Integer.parseInt(temp);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid choice");
                 choice = -1;
             }
-        }while( choice < 1 || choice > count );
-        return cards.get(choice-1);
+        } while (choice < 1 || choice > count);
+        return cards.get(choice - 1);
     }
 
     @Override
@@ -401,19 +316,19 @@ public class CLI implements RemoteView, Runnable {
         Integer choice;
         System.out.println("Do you want to reload a weapon? [Y/n]");
         String temp = input.nextLine();
-        if(temp.equalsIgnoreCase("n") || temp.equalsIgnoreCase("no") || temp.equalsIgnoreCase("not"))
+        if (temp.equalsIgnoreCase("n") || temp.equalsIgnoreCase("no") || temp.equalsIgnoreCase("not"))
             return null;
-        if(reloadableWeapons == null) {
+        if (reloadableWeapons == null) {
             System.out.println("ops, something didn't work");
             return null;
         }
-        if(reloadableWeapons.size() == 0) {
+        if (reloadableWeapons.size() == 0) {
             System.out.println("No weapons can be reloaded.");
             return null;
         }
         System.out.println("Insert your choice: ");
         int count = 0;
-        for(WeaponCardClient weapon : reloadableWeapons) {
+        for (WeaponCardClient weapon : reloadableWeapons) {
             count++;
             System.out.println(count + ") " + weapon.toReloadString());
         }
@@ -421,28 +336,12 @@ public class CLI implements RemoteView, Runnable {
             try {
                 temp = input.nextLine();
                 choice = Integer.parseInt(temp);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid choice ");
                 choice = -1;
             }
-        } while(choice < 1 || choice > count);
-        return reloadableWeapons.get(choice-1);
-    }
-
-    @Override
-    public String getPlayer() {
-        return client.getPlayerName();
-    }
-
-
-    @Override
-    public void setClientID(int clientID) {
-        client.setClientID(clientID);
-    }
-
-    @Override
-    public int getClientID() {
-        return client.getClientID();
+        } while (choice < 1 || choice > count);
+        return reloadableWeapons.get(choice - 1);
     }
 
     @Override

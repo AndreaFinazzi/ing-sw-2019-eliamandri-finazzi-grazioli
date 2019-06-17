@@ -6,6 +6,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.GenericViewE
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public abstract class AbstractConnectionManager implements Observer {
@@ -14,6 +16,7 @@ public abstract class AbstractConnectionManager implements Observer {
     protected static final int CONNECTION_ATTEMPT_DELAY = 5000;
     protected Client client;
 
+    private ExecutorService handlersExecutor = Executors.newCachedThreadPool();
 
     public AbstractConnectionManager(Client client) {
         this.client = client;
@@ -54,13 +57,13 @@ public abstract class AbstractConnectionManager implements Observer {
     @Override
     public void update(AbstractModelEvent event) {
         //Visitor pattern
-        new Thread(() -> {
+        handlersExecutor.execute(() -> {
             try {
                 event.handle(client.getView());
             } catch (HandlerNotImplementedException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
 }
