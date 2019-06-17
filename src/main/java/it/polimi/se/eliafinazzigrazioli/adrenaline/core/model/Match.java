@@ -1,12 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
@@ -15,7 +10,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -245,37 +239,6 @@ public class Match implements Observable {
         return tempPlayer;
     }
 
-    public void nextTurn() {
-        List<AbstractModelEvent> events = new ArrayList<>();
-        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = gameBoard.ammoCardsSetup(ammoCardsDeck);
-
-        events.add(new EndTurnEvent(currentPlayer, ammoCardsReplaced));
-
-        //todo all next turn setup (points, replace cards...)
-
-
-        nextCurrentPlayer();
-        if (currentPlayer == firstPlayer)
-            turn++;
-
-        events.add(new BeginTurnEvent(currentPlayer));
-        if (turn == 0)
-            events.add(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
-        else {
-            PlayerBoard playerBoard = currentPlayer.getPlayerBoard();
-            events.add(new ActionRequestEvent(
-                    currentPlayer,
-                    Rules.MAX_ACTIONS_AVAILABLE,
-                    playerBoard.simpleMovementMaxMoves(),
-                    playerBoard.preCollectionMaxMoves(),
-                    playerBoard.preShootingMaxMoves()));
-        }
-
-
-        notifyObservers(events);
-
-    }
-
     public void removePlayer(String nickname) {
         Player tempPlayer = players.get(nickname);
         if (tempPlayer != null) {
@@ -333,9 +296,14 @@ public class Match implements Observable {
         return turn;
     }
 
-    public void increaseTurn() {
+    public void nextTurn() {
         nextCurrentPlayer();
         turn++;
+    }
+
+    public void increaseTurn(){
+        if (currentPlayer == firstPlayer)
+            turn++;
     }
 
 
@@ -347,23 +315,8 @@ public class Match implements Observable {
         //todo preparation of the setup of the model, (weapons, power ups, deadPath....)
         currentPlayer = firstPlayer;
         gameBoard = new GameBoard(mapType);
-        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = gameBoard.ammoCardsSetup(ammoCardsDeck);
 
-
-        notifyObservers(new BeginMatchEvent(mapType, ammoCardsReplaced));
-        notifyObservers(new BeginTurnEvent(currentPlayer));
-        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
     }
-
-    //TODO who should create the event?
-    public void beginTurn() {
-        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
-    }
-
-    public void endTurn() {
-        notifyObservers(currentPlayer.createEndTurnEvent());
-    }
-
 
     public ArrayList<Avatar> getAvailableAvatars() {
         return availableAvatars;

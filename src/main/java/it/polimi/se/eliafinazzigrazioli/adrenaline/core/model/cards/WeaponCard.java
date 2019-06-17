@@ -80,6 +80,14 @@ public class WeaponCard extends Card {
         return loader;
     }
 
+    public List<WeaponEffect> getEffects() {
+        return effects;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
     public void setActiveEffect(String effectName){
         activeEffect = getEffectByName(effectName);
     }
