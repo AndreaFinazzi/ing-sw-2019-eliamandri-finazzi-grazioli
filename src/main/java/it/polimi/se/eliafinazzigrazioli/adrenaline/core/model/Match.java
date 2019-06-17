@@ -246,6 +246,8 @@ public class Match implements Observable {
 
         events.add(new EndTurnEvent(currentPlayer));
 
+        gameBoard.ammoCardsSetup(ammoCardsDeck);
+
         //todo all next turn setup (points, replace cards...)
 
 
