@@ -25,9 +25,6 @@ public class PowerUpCardClient {
 
     @Override
     public String toString() {
-        return "PowerUpCardClient{" +
-                "powerUpType='" + powerUpType + '\'' +
-                ", equivalentAmmo=" + equivalentAmmo +
-                '}';
+        return "PowerUp Card: " + powerUpType + " " + equivalentAmmo;
     }
 }

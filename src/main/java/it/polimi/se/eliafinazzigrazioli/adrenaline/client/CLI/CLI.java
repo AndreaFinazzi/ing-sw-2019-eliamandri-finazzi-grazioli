@@ -120,7 +120,7 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public void showSelectableSquare(List<Coordinates> selectable) {
         showMessage("You can select this square: ");
-        serializeList(selectable);
+        showMessage(serializeList(selectable));
     }
 
     @Override
@@ -261,7 +261,7 @@ public class CLI implements RemoteView, Runnable {
     public void selectWeaponCard() {
         List<WeaponCardClient> weapons = localModel.getWeaponCards();
         showMessage("Insert your choice");
-        serializeList(weapons);
+        showMessage(serializeList(weapons));
         int choice = nextInt(weapons.size());
         String weapon = weapons.get(choice).getWeaponName();
         notifySelectedWeaponCard(weapon);
@@ -286,7 +286,7 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public void selectSelectableEffect(List<String> callableEffects) {
         showMessage("You can select this effects ");
-        serializeList(callableEffects);
+        showMessage(serializeList(callableEffects));
         showMessage("Insert your choice");
         int choice = nextInt(callableEffects.size());
         String temp = callableEffects.get(choice);
@@ -331,7 +331,7 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public PowerUpCard selectPowerUpToKeep(List<PowerUpCard> cards) {
         showMessage("Choose your ");
-        serializeList(cards);
+        showMessage(serializeList(cards));
         int choice = nextInt(cards.size());
         return cards.get(choice);
     }

@@ -65,4 +65,18 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
     public void setAmmoCard(boolean ammoCard) {
         this.ammoCard = ammoCard;
     }
+
+    @Override
+    public String toString() {
+        return "SpawnBoardSquareClient{" +
+                "weaponCards=" + weaponCards +
+                ", ammoCard=" + ammoCard +
+                ", coordinates=" + coordinates +
+                ", room=" + room +
+                ", north=" + north +
+                ", south=" + south +
+                ", east=" + east +
+                ", west=" + west +
+                '}';
+    }
 }
