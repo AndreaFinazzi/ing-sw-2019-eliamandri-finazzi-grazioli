@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.CommandGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.LoginGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
@@ -45,6 +46,7 @@ public class GUI extends Application implements RemoteView {
     private LocalModel localModel;
 
     private MainGUIController mainGUIController;
+    private CommandGUIController commandsGUIController;
     private LoginGUIController loginGUIController;
 
     private boolean initialized = false;
@@ -201,7 +203,7 @@ public class GUI extends Application implements RemoteView {
     @Override
     public void showMapVote(ArrayList<MapType> availableMaps) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/main.fxml"));
-
+        FXMLLoader commandsLoader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/commands.fxml"));
         Pane root = null;
         try {
             root = loader.load();
@@ -210,6 +212,7 @@ public class GUI extends Application implements RemoteView {
         }
 
         mainGUIController = loader.getController();
+        commandsGUIController = commandsLoader.getController();
         mainGUIController.setView(this);
 
         primaryStage.getScene().setRoot(root);
@@ -269,12 +272,12 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public List<Coordinates> getPathFromUser(int maxSteps) {
-        ArrayList<Coordinates> selectedPath = new ArrayList<>();
+    public MoveDirection getMoveFromUser(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
+        AtomicReference<MoveDirection> selectedMove = new AtomicReference<>();
         Semaphore semaphore = new Semaphore(0);
 
-        mainGUIController.setSemaphore(semaphore);
-        mainGUIController.setSelectedPath(selectedPath);
+        commandsGUIController.setSemaphore(semaphore);
+        commandsGUIController.setSelectedMove(selectedMove);
 
         try {
             semaphore.acquire();
@@ -284,14 +287,9 @@ public class GUI extends Application implements RemoteView {
         }
 
         synchronized (semaphore) {
-            return selectedPath;
+            return selectedMove.get();
         }
 
-    }
-
-    @Override
-    public MoveDirection getMoveFromUser(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
-        return null;
     }
 
     public String getMapFileName(MapType mapType) {

@@ -1,6 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.AmmoCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;

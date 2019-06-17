@@ -1,7 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.AmmoCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerSpawnedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundBoardException;
