@@ -17,6 +17,7 @@ public class GameBoardClient {
     private Map<String, BoardSquareClient> playerPositions = new HashMap<>();
     private final int DIM_X = 12;
     private final int DIM_Y = 6;
+
     public static final String ANSI_RESET = "\u001B[0m";
 
     public static final String ANSI_RED = "\u001B[31m";
@@ -63,7 +64,7 @@ public class GameBoardClient {
             squaresMatrix[0][1] = new SpawnBoardSquareClient(Room.RED, new Coordinates(0, 1),
                     InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
             squaresMatrix[1][1] = new GenericBoardSquareClient(Room.RED, new Coordinates(1, 1),
-                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM);
             squaresMatrix[1][0] = new GenericBoardSquareClient(Room.GRAY, new Coordinates(1, 0),
                     InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
             squaresMatrix[2][0] = new GenericBoardSquareClient(Room.GRAY, new Coordinates(2, 0),
@@ -72,13 +73,13 @@ public class GameBoardClient {
                     InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.DOOR);
             squaresMatrix[3][1] = new GenericBoardSquareClient(Room.YELLOW, new Coordinates(3, 1),
                     InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.DOOR);
-            squaresMatrix[2][1] = new GenericBoardSquareClient(Room.PURPLE, new Coordinates(2, 1),
-                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL);
+            squaresMatrix[2][1] = new GenericBoardSquareClient(Room.RED, new Coordinates(2, 1),
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
             squaresMatrix[0][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(0, 2),
                     InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
             squaresMatrix[1][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(1, 2),
                     InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM);
-            squaresMatrix[2][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(2, 2),
+            squaresMatrix[2][2] = new SpawnBoardSquareClient(Room.BLUE, new Coordinates(2, 2),
                     InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
             squaresMatrix[3][2] = null;
         }
@@ -104,9 +105,9 @@ public class GameBoardClient {
                     InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
             squaresMatrix[1][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(1, 2),
                     InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM);
-            squaresMatrix[2][2] = new GenericBoardSquareClient(Room.BLUE, new Coordinates(2, 2),
+            squaresMatrix[2][2] = new SpawnBoardSquareClient(Room.BLUE, new Coordinates(2, 2),
                     InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
-            squaresMatrix[3][2] = new SpawnBoardSquareClient(Room.GREEN, new Coordinates(3, 2),
+            squaresMatrix[3][2] = new GenericBoardSquareClient(Room.GREEN, new Coordinates(3, 2),
                     InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR);
         }
 
@@ -427,7 +428,6 @@ public class GameBoardClient {
                     mapText[currentX+i][currentY-j] = iterator[i][DIM_Y-1-j];
                 }
             }
-
         }
 
         String map = "";
