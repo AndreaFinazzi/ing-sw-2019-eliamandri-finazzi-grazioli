@@ -1,26 +1,51 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class WeaponCardClient {
+public class WeaponCardClient implements Serializable {
 
     private String weaponName;
 
     private Ammo weaponColor;
-    private List<Ammo> price;
+    private List<Ammo> loader;
+
+    private List<WeaponEffectClient> effects;
 
     private Map<String, String> effectsDescription;
 
     private boolean loaded;
 
+    private String notes;
 
-    public WeaponCardClient(String weaponName, Map<String, String> effectsDescription, List<Ammo> price) {
+
+    public WeaponCardClient(WeaponCard weaponCard) {
+        weaponName = weaponCard.getWeaponName();
+        weaponColor = weaponCard.getCardColor();
+        loader = weaponCard.getLoader();
+        effects = new ArrayList<>();
+        for (WeaponEffect weaponEffect: weaponCard.getEffects()) {
+            effects.add(new WeaponEffectClient(
+                    weaponEffect.getEffectName(),
+                    weaponEffect.getEffectDescription(),
+                    weaponEffect.getPrice()
+                    ));
+        }
+        loaded = true;
+
+        notes = weaponCard.getNotes();
+    }
+
+    public WeaponCardClient(String weaponName, Map<String, String> effectsDescription, List<Ammo> loader) {
         this.weaponName = weaponName;
         this.effectsDescription = effectsDescription;
-        this.price = price;
+        this.loader = loader;
     }
 
     public String getWeaponName() {
@@ -31,12 +56,18 @@ public class WeaponCardClient {
         return weaponColor;
     }
 
-    public List<Ammo> getPrice() {
-        return price;
+    public List<Ammo> getLoader() {
+        return loader;
     }
 
     public boolean isLoaded() {
         return loaded;
+    }
+
+    public List<Ammo> getPrice() {
+        List<Ammo> price = new ArrayList<>(loader);
+        price.add(weaponColor);
+        return price;
     }
 
     @Override
@@ -57,18 +88,10 @@ public class WeaponCardClient {
     public String toString() {
         String string = weaponName + " :\n\n";
         int count = 1;
-        for (Map.Entry<String, String> entry : effectsDescription.entrySet()) {
+        for (WeaponEffectClient effect: effects) {
             //System.out.println("Key : " + entry.getKey() + " Value : " + entry.getValue());
-            string = string + count + ": " + entry.getKey() + ":\n\t" + entry.getValue() + "\n";
+            string = string + count + ": " + effect.getEffectName() + ": " + effect.getEffectDescription() + "\n";
             count++;
-        }
-        return string;
-    }
-
-    public String toReloadString() {
-        String string = weaponName + " :\n" + "at the cost of: ";
-        for(Ammo ammo : price) {
-            string = string + ammo + " ";
         }
         return string;
     }
