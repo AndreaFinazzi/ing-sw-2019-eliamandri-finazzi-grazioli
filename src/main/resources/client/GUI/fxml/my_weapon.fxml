@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import java.lang.String?>
+<Button xmlns:fx="http://javafx.com/fxml" alignment="CENTER" mnemonicParsing="false">
+    <styleClass>
+        <String fx:value="myWeaponCard"/>
+        <String fx:value="weaponCard"/>
+    </styleClass>
+</Button>

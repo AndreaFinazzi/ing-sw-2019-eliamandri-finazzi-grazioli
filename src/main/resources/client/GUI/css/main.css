@@ -75,7 +75,7 @@
     -fx-fill: none;
 
     -fx-min-width: 97;
-    -fx-min-height: 170;
+    /*-fx-min-height: 170;*/
 }
 
 .powerUpCard {
@@ -88,18 +88,20 @@
 
     -fx-fill: none;
 
-    -fx-min-width: 97;
-    -fx-min-height: 170;
+    -fx-pref-width: 97;
+    -fx-pref-height: 170;
 }
 
 .myWeaponCard {
-    -fx-min-width: 110;
-    -fx-min-height: 200;
+    -fx-min-width: 73;
+    -fx-pref-width: 110;
+    -fx-pref-height: 187;
 }
 
 .myPowerUp {
-    -fx-min-width: 90;
-    -fx-min-height: 190;
+    -fx-min-width: 60;
+    -fx-pref-width: 90;
+    -fx-pref-height: 141;
 }
 
 .blueWeaponCard {
@@ -110,11 +112,13 @@
 }
 
 .yellowWeaponCard {
-
+    -fx-min-width: 97;
+    -fx-min-height: 170;
 }
 
 .redWeaponCard {
-
+    -fx-min-width: 97;
+    -fx-min-height: 170;
 }
 
 .skullCircle {
@@ -127,4 +131,33 @@
 
 .cardSlots {
     -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+.arrowButton {
+    -fx-max-height: 50;
+    -fx-max-width: 50;
+    -fx-background-size: 40 40;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+
+}
+
+.arrowButtonContainer {
+    -fx-max-height: 50;
+    -fx-max-width: 50;
+    -fx-row-valignment: center;
+    -fx-column-halignment: center;
+}
+
+.button:hover {
+    -fx-border-style: solid;
+    -fx-border-color: linear-gradient(to top, #bf4e1c 0%, #eda386 50%, #bb3e7f 75%, #93ceed 100%);
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-border-insets: -1;
+}
+
+.button:pressed {
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
 }

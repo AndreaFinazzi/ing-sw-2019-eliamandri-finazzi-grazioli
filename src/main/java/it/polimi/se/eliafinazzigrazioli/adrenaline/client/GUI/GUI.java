@@ -38,20 +38,27 @@ public class GUI extends Application implements RemoteView {
     public static final String MAP_STYLE_CLASS_DEFAULT = "map_NONE";
     public static final String MAP_STYLE_CLASS_PREFIX = "map_";
 
-    private static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
-    private static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
-    private static final String ASSET_PATH_CARDS_ROOT = ASSET_PATH_ROOT + "cards/";
-    private static final String ASSET_PATH_MAPS_ROOT = ASSET_PATH_ROOT + "maps/";
-    private static final String ASSET_PATH_AMMO_ROOT = ASSET_PATH_ROOT + "ammo/";
-    private static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + "playerboards/";
+    public static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
+    public static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
+    public static final String ASSET_PATH_CARDS_ROOT = ASSET_PATH_ROOT + "cards/";
+    public static final String ASSET_PATH_MAPS_ROOT = ASSET_PATH_ROOT + "maps/";
+    public static final String ASSET_PATH_AMMO_ROOT = ASSET_PATH_ROOT + "ammo/";
+    public static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + "playerboards/";
+    public static final String ASSET_PATH_ICONS_ROOT = ASSET_PATH_ROOT + "icons/";
 
-    private static final String ASSET_PREFIX_POWER_UP = "AD_powerups_IT_";
-    private static final String ASSET_FORMAT_POWER_UP = ".png";
+    public static final String ASSET_FORMAT_CARDS = ".png";
+    public static final String ASSET_FORMAT_ICONS = ".png";
+    public static final String ASSET_PREFIX_POWER_UP = "AD_powerups_IT_";
+    public static final String ASSET_PREFIX_WEAPON = "AD_weapons_IT_";
+    public static final String ASSET_PREFIX_ICONS_ARROWS = "arrow_";
 
+    public static final String FXML_PATH_LOGIN = FXML_PATH_ROOT + "login.fxml";
     public static final String FXML_PATH_COMMANDS = FXML_PATH_ROOT + "commands.fxml";
     public static final String FXML_PATH_OPPONENT_PLAYER_INFO = FXML_PATH_ROOT + "opponent_player_info.fxml";
     public static final String FXML_PATH_PLAYER_BOARD = FXML_PATH_ROOT + "player_board.fxml";
     public static final String FXML_PATH_MAIN = FXML_PATH_ROOT + "main.fxml";
+    public static final String FXML_PATH_MY_POWER_UP = FXML_PATH_ROOT + "my_power_up.fxml";
+    public static final String FXML_PATH_MY_WEAPON = FXML_PATH_ROOT + "my_weapon.fxml";
 
     private static GUI instance;
     static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
@@ -197,7 +204,7 @@ public class GUI extends Application implements RemoteView {
         if (!initialized) {
             initialized = true;
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_PATH_LOGIN));
 
             StackPane root = null;
             try {
@@ -230,14 +237,14 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showMapVote(ArrayList<MapType> availableMaps) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_PATH_MAIN));
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource(FXML_PATH_MAIN));
+        mainGUIController = new MainGUIController(this);
+        loader.setController(mainGUIController);
+
         Pane root = null;
         try {
             root = loader.load();
-            mainGUIController = loader.getController();
-            mainGUIController.setView(this);
-
-            mainGUIController.loadScene();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -336,8 +343,20 @@ public class GUI extends Application implements RemoteView {
     }
 
     public String getPowerUpAsset(String id) {
-        String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_POWER_UP + id + ASSET_FORMAT_POWER_UP;
-        return getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_POWER_UP + id + ASSET_FORMAT_CARDS;
+        return this.getClass().getResource(uri).toExternalForm();
+
+    }
+
+    public String getWeaponAsset(String id) {
+        String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT_CARDS;
+        return this.getClass().getResource(uri).toExternalForm();
+
+    }
+
+    public String getIconAsset(String id) {
+        String uri = ASSET_PATH_ICONS_ROOT + id;
+        return GUI.class.getResource(uri).toExternalForm();
 
     }
 

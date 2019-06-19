@@ -1,8 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 
@@ -16,17 +16,12 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
 
     private PlayerBoardGUIController playerBoardGUIController;
 
-    public OpponentPlayerGUIController() {
-
+    public OpponentPlayerGUIController(GUI view) {
+        super(view);
     }
 
-    public void loadScene(Avatar avatar) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/player_board.fxml"));
-        loader.load();
-
-        playerBoardGUIController = loader.getController();
-        playerBoardGUIController.loadScene(avatar);
-
-        opponentPlayerRootAnchorPane.getChildren().add(loader.getRoot());
+    public void loadPlayerBoard(Avatar avatar) throws IOException {
+        playerBoardGUIController = new PlayerBoardGUIController(view, avatar);
+        loadFXML(GUI.FXML_PATH_PLAYER_BOARD, opponentPlayerRootAnchorPane, playerBoardGUIController);
     }
 }

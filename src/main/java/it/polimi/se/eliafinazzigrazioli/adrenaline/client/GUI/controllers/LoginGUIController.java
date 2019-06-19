@@ -30,6 +30,10 @@ public class LoginGUIController extends AbstractGUIController {
     @FXML
     private AnchorPane overlayAnchorPane;
 
+    public LoginGUIController() {
+        super();
+    }
+
 
     public void performLogin(ActionEvent actionEvent) {
 

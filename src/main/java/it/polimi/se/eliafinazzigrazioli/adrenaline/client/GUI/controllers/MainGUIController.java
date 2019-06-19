@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,7 +17,10 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 public class MainGUIController extends AbstractGUIController {
 
@@ -33,6 +37,8 @@ public class MainGUIController extends AbstractGUIController {
     private StackPane mapVoteOverlayStackPane;
     @FXML
     private ImageView voteMapPreviewImage;
+    @FXML
+    private Button voteMapButton;
 
     @FXML
     private AnchorPane overlay;
@@ -41,8 +47,8 @@ public class MainGUIController extends AbstractGUIController {
     @FXML
     private Pane mainBoardPane;
 
-    public MainGUIController() {
-        super();
+    public MainGUIController(GUI view) {
+        super(view);
     }
 
     public void setVoteMap(ArrayList<MapType> availableMaps) {
@@ -80,28 +86,6 @@ public class MainGUIController extends AbstractGUIController {
         overlay.setVisible(false);
     }
 
-    public void loadScene() throws IOException {
-
-        ArrayList<OpponentPlayerGUIController> opponentPlayerGUIControllers = new ArrayList<>();
-
-        for (String player : view.getLocalModel().getPlayersAvatarMap().keySet()) {
-            if (player.equals(view.getClient().getPlayerName())) {
-                CommandGUIController commandGUIController = (CommandGUIController) loadFXML(GUI.FXML_PATH_COMMANDS, commandsContainerAnchorPane);
-
-                view.setCommandsGUIController(commandGUIController);
-                commandGUIController.loadScene(view.getLocalModel().getPlayersAvatarMap().get(player));
-            } else {
-                OpponentPlayerGUIController opponentPlayerGUIController = (OpponentPlayerGUIController) loadFXML(GUI.FXML_PATH_OPPONENT_PLAYER_INFO, playerBoardsVBox);
-
-                opponentPlayerGUIControllers.add(opponentPlayerGUIController);
-                opponentPlayerGUIController.loadScene(view.getLocalModel().getPlayersAvatarMap().get(player));
-            }
-        }
-
-        mapVoteOverlayStackPane.setVisible(false);
-        hideOverlay();
-    }
-
     public void loadMap() {
         // Load chosen map
         String mapClass = GUI.MAP_STYLE_CLASS_PREFIX + view.getLocalModel().getGameBoard().getMapType().name();
@@ -110,4 +94,36 @@ public class MainGUIController extends AbstractGUIController {
 
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
+
+        voteMapButton.setOnAction(this::voteMap);
+
+        // Initialize player boards
+        try {
+            ArrayList<OpponentPlayerGUIController> opponentPlayerGUIControllers = new ArrayList<>();
+
+            for (String player : view.getLocalModel().getPlayersAvatarMap().keySet()) {
+                if (player.equals(view.getClient().getPlayerName())) {
+                    CommandGUIController commandGUIController = new CommandGUIController(view);
+                    loadFXML(GUI.FXML_PATH_COMMANDS, commandsContainerAnchorPane, commandGUIController);
+                    view.setCommandsGUIController(commandGUIController);
+                    commandGUIController.loadMyPlayerBoard(view.getLocalModel().getPlayersAvatarMap().get(player));
+
+                } else {
+                    OpponentPlayerGUIController opponentPlayerGUIController = new OpponentPlayerGUIController(view);
+                    loadFXML(GUI.FXML_PATH_OPPONENT_PLAYER_INFO, playerBoardsVBox, opponentPlayerGUIController);
+
+                    opponentPlayerGUIControllers.add(opponentPlayerGUIController);
+                    opponentPlayerGUIController.loadPlayerBoard(view.getLocalModel().getPlayersAvatarMap().get(player));
+                }
+            }
+
+            mapVoteOverlayStackPane.setVisible(false);
+            hideOverlay();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
 }

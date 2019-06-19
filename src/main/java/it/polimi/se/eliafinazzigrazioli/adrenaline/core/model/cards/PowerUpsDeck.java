@@ -2,9 +2,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.AmmoCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 

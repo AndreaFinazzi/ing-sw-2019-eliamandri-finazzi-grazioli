@@ -6,7 +6,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SpawnBoardSquare extends BoardSquare {
 

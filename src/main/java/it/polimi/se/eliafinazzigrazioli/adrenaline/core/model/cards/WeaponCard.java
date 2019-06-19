@@ -5,12 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.RuntimeTypeAdapterFactory;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;

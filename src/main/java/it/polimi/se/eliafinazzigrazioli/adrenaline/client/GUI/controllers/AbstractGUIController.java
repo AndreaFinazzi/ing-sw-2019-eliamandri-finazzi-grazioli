@@ -4,19 +4,28 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Logger;
 
 public class AbstractGUIController implements Initializable {
+    static final Logger LOGGER = Logger.getLogger(AbstractGUIController.class.getName());
+
     protected GUI view;
     protected Semaphore semaphore;
 
     public AbstractGUIController() {
 
+    }
+
+    public AbstractGUIController(GUI view) {
+        this();
+        this.view = view;
     }
 
     public void setView(GUI view) {
@@ -45,6 +54,16 @@ public class AbstractGUIController implements Initializable {
         Platform.runLater(() -> parent.getChildren().add(loader.getRoot()));
 
         return guiController;
+    }
+
+    Node loadFXML(String path, Pane parent, AbstractGUIController guiController) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+        loader.setController(guiController);
+        loader.load();
+
+        Platform.runLater(() -> parent.getChildren().add(loader.getRoot()));
+
+        return loader.getRoot();
     }
 
     @Override

@@ -7,8 +7,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.Font?>
 <?import java.lang.*?>
-<StackPane stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController">
+<StackPane stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <GridPane id="rootGridPane" prefHeight="1080.0" prefWidth="1920.0">
             <rowConstraints>
@@ -272,7 +271,7 @@
                 </AnchorPane>
             </children>
         </GridPane>
-        <StackPane fx:id="mapVoteOverlayStackPane" prefHeight="150.0" prefWidth="200.0" styleClass="mapVoteBackground"
+        <StackPane fx:id="mapVoteOverlayStackPane" styleClass="mapVoteBackground" prefHeight="150.0" prefWidth="200.0"
                    visible="false">
             <children>
                 <AnchorPane id="mapVoteAnchorPane" maxHeight="400.0" maxWidth="600.0" prefHeight="400.0"
@@ -315,7 +314,8 @@
                                             <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
                                                         GridPane.rowIndex="2">
                                                 <children>
-                                                    <Button mnemonicParsing="false" onAction="#voteMap" text="Submit"
+                                                    <Button fx:id="voteMapButton"
+                                                            mnemonicParsing="false" text="Submit"
                                                             AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="0.0"
                                                             AnchorPane.topAnchor="5.0"/>
                                                 </children>
