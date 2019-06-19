@@ -1,9 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
@@ -123,9 +120,9 @@ public class CLI implements RemoteView, Runnable {
             if (choice == PlayerAction.SHOW_MAP) {
                 showMap();
             }
-            if( choice.equals(PlayerAction.SHOW_OWNED_PLAYERBOARD)) {
+            /*if( choice.equals(PlayerAction.SHOW_OWNED_PLAYERBOARD)) {
                 showMessage(CLIUtils.serializeMap(localModel.getPlayerBoards()));
-            }
+            }*/
             if(choice.equals(PlayerAction.SHOW_OWNED_POWERUPS)) {
                 List<PowerUpCardClient> powerUpCardClients = localModel.getPowerUpCards();
                 List<String[][]> powerUpsMatrix = new ArrayList<>();
@@ -207,11 +204,6 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void collectWeapon(String collectedWeapon, String dropOfWeapon) {
-
-    }
-
-    @Override
     public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
         showMessage("You have collected this Weapon card");
         showMessage(weaponCardClient);
@@ -249,6 +241,35 @@ public class CLI implements RemoteView, Runnable {
         int choice = nextInt(cards.size());
         return cards.get(choice);
     }
+
+    //todo implement
+    @Override
+    public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> cards) {
+        return null;
+    }
+
+    /*@Override
+    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
+        if(reloadableWeapons == null) {
+            showMessage("ops, something didn't work");
+            return null;
+        }
+        else if (!reloadableWeapons.isEmpty()) {
+            int choice;
+            showMessage("Do you want to reload a weapon? [Y/n]");
+            String temp = input.nextLine();
+            if (temp.equalsIgnoreCase("n") || temp.equalsIgnoreCase("no") || temp.equalsIgnoreCase("not"))
+                return null;
+            showMessage("Insert your choice: ");
+            showMessage(serializeList(reloadableWeapons));
+            choice = nextInt(reloadableWeapons.size());
+            return reloadableWeapons.get(choice);
+        }
+        else {
+            showMessage("No weapons can be reloaded.");
+            return null;
+        }
+    }*/
 
     @Override
     public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {

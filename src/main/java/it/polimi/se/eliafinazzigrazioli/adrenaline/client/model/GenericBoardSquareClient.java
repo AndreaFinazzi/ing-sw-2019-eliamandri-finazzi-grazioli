@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.BoardSquareClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;

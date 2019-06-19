@@ -89,6 +89,10 @@ public class WeaponCardClient implements Serializable {
         return false;
     }
 
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
+
     @Override
     public String toString() {
         String string = weaponName + " :\n\n";

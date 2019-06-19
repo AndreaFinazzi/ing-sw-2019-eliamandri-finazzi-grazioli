@@ -1,10 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCollectedEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ReloadWeaponsRequestEvent;
@@ -15,6 +14,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -42,6 +42,7 @@ public class TurnController implements ViewEventsListenerInterface {
         eventController.addViewEventsListener(CollectPlayEvent.class, this);
         eventController.addViewEventsListener(SpawnPowerUpSelectedEvent.class, this);
         eventController.addViewEventsListener(ReloadWeaponEvent.class, this);
+        eventController.addViewEventsListener(WeaponCollectionEvent.class, this);
     }
 
     /**
@@ -160,6 +161,76 @@ public class TurnController implements ViewEventsListenerInterface {
     }
 
     @Override
+    public void handleEvent(WeaponCollectionEvent event) throws HandlerNotImplementedException {
+        List<Coordinates> path = event.getPath() == null ? new ArrayList<>() : event.getPath();
+        GameBoard gameBoard = match.getGameBoard();
+        Player currentPlayer = match.getCurrentPlayer();
+        boolean movementActuated = false;
+        List<AbstractModelEvent> events = new ArrayList<>();
+        BoardSquare finalPosition;
+        if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE && path.size() <= currentPlayer.getPlayerBoard().preCollectionMaxMoves()) {
+            if (path.size() > 0) {
+                finalPosition = gameBoard.getBoardSquareByCoordinates(path.get(path.size()-1));
+                movementActuated = true;
+            }
+            else
+                finalPosition = gameBoard.getPlayerPosition(currentPlayer);
+
+            if (movementActuated)
+            {
+                gameBoard.movePlayer(currentPlayer, finalPosition);
+                events.add(new PlayerMovementEvent(currentPlayer, path));
+            }
+            if (finalPosition.isSpawnPoint()) {
+                WeaponCard weaponCard = ((SpawnBoardSquare) finalPosition).collectWeapon(event.getWeaponCollected());
+                List<String> powerUpIds = new ArrayList<>();
+                List<PowerUpCard> powerUpsToSpend = new ArrayList<>();
+                for (PowerUpCardClient powerUpCardClient: event.getPowerUpsToPay())
+                    powerUpIds.add(powerUpCardClient.getId());
+
+                for (PowerUpCard powerUpCard: currentPlayer.getPowerUps())
+                    if (powerUpIds.contains(powerUpCard.getId())) {
+                        powerUpsToSpend.add(powerUpCard);
+                        powerUpIds.remove(powerUpCard.getId());
+                    }
+
+                //weapon replacement
+                WeaponCard weaponDropped = null;
+                if (event.getWeaponDropped() != null) {
+                    try {
+                        weaponDropped = currentPlayer.removeWeapon(event.getWeaponDropped());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //weapon collection
+                if (currentPlayer.canSpend(weaponCard.getLoader(), powerUpsToSpend)) {
+                    try {
+                        currentPlayer.addWeapon(weaponCard);
+                        if (weaponDropped != null)
+                            ((SpawnBoardSquare) finalPosition).addWeapon(weaponDropped);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                //payment
+                List<Ammo> ammosSpent = currentPlayer.spendPrice(weaponCard.getLoader(), powerUpsToSpend);
+                events.add(new WeaponCollectedEvent(currentPlayer, weaponCard, weaponDropped, finalPosition.getCoordinates(), powerUpsToSpend, ammosSpent, currentPlayer.weaponHandIsFull()));
+
+                events.add(concludeAction(currentPlayer));
+                match.notifyObservers(events);
+            }
+            else
+                match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
+        }
+        else {
+            match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
+        }
+
+    }
+
+    @Override
     public void handleEvent(ReloadWeaponEvent event) throws HandlerNotImplementedException {
         if (event.getWeapon() == null) {
             match.notifyObservers(nextTurn());
@@ -182,9 +253,11 @@ public class TurnController implements ViewEventsListenerInterface {
         List<AbstractModelEvent> events = new ArrayList<>();
         Map<Coordinates, AmmoCardClient> ammoCardsReplaced = match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck());
 
+        Map<Coordinates, List<WeaponCardClient>> weaponCardsReplaced = match.getGameBoard().weaponCardsSetup(match.getWeaponsDeck());
+
         beginTurn();
 
-        events.add(new EndTurnEvent(match.getCurrentPlayer(), ammoCardsReplaced));
+        events.add(new EndTurnEvent(match.getCurrentPlayer(), ammoCardsReplaced, weaponCardsReplaced));
 
         //todo all next turn setup (points, replace cards...)
 

@@ -19,7 +19,6 @@ public class GameBoardClient {
     private final int DIM_Y = 6;
 
     public static final String ANSI_RESET = "\u001B[0m";
-
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
@@ -149,6 +148,15 @@ public class GameBoardClient {
             getBoardSquareByCoordinates(squareToAmmoCardEntry.getKey()).addAmmoCard(squareToAmmoCardEntry.getValue());
         }
     }
+
+    public void resetWeapons(Map<Coordinates, List<WeaponCardClient>> weaponsPlaced) {
+        for (Map.Entry<Coordinates, List<WeaponCardClient>> coordinatesToWeapons: weaponsPlaced.entrySet()) {
+            BoardSquareClient boardSquare = getBoardSquareByCoordinates(coordinatesToWeapons.getKey());
+            for (WeaponCardClient weaponCard: coordinatesToWeapons.getValue())
+                boardSquare.addWeaponCard(weaponCard);
+        }
+    }
+
 
     public void setPlayerPosition (String player, Coordinates coordinates) {
         playerPositions.put(player, squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()]);

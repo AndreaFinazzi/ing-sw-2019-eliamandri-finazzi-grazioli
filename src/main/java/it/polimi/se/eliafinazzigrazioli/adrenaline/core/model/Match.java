@@ -317,8 +317,6 @@ public class Match implements Observable {
         //todo preparation of the setup of the model, (weapons, power ups, deadPath....)
         currentPlayer = firstPlayer;
         gameBoard = new GameBoard(mapType);
-        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = gameBoard.ammoCardsSetup(ammoCardsDeck);
-
     }
 
     public Map<String, Avatar> getAvatarMap() {

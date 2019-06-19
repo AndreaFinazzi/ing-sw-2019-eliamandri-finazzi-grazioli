@@ -8,7 +8,10 @@ public class Deck<CardType> {
     protected List<CardType> cards;
 
     public CardType drawCard() {
-        return cards.remove(new Random().nextInt(cards.size()));
+        if (cards.size() > 1)
+            return cards.remove(new Random().nextInt(cards.size()));
+        else
+            return cards.remove(0);
     }
 
 }

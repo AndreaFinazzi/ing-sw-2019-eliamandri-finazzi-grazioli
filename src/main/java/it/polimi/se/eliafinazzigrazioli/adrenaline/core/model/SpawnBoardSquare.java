@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCol
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ public class SpawnBoardSquare extends BoardSquare {
 
     public SpawnBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
         super(room, coordinates, north, south, east, west);
+        weaponSlots = new ArrayList<>();
     }
 
 
@@ -47,22 +49,29 @@ public class SpawnBoardSquare extends BoardSquare {
 
 
     //TODO define type excpetion
-    public WeaponCard collectWeapon(WeaponCard weapon) throws Exception {
-        int index = weaponSlots.indexOf(weapon);
-        if (index == -1)
-            throw new Exception();
-        WeaponCard tmpWeapon = weaponSlots.get(index);
-        weaponSlots.remove(index);
+    public WeaponCard collectWeapon(String weapon) {
+        WeaponCard tmpWeapon = null;
+        for (WeaponCard weaponCard: weaponSlots)
+            if (weapon.equals(weaponCard.getWeaponName()))
+                tmpWeapon = weaponCard;
+
+        if (tmpWeapon != null)
+            weaponSlots.remove(tmpWeapon);
+
         return tmpWeapon;
     }
 
     //TODO define type excpetion
     public void addWeapon(WeaponCard weapon) throws Exception {
-        if (weaponSlots.size() == 3)
+        if (weaponSlots.size() == Rules.GAME_BOARD_MAX_WEAPONS_ON_SPAWN)
             throw new Exception();
         if (weaponSlots.contains(weapon))
             throw new Exception();
         weaponSlots.add(weapon);
+    }
+
+    public boolean weaponsSlotIsFull() {
+        return weaponSlots.size() >= Rules.GAME_BOARD_MAX_WEAPONS_ON_SPAWN;
     }
 
     @Override

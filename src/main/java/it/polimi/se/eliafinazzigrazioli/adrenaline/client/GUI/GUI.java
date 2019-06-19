@@ -1,6 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.CommandGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.LoginGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController;
@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -189,6 +190,18 @@ public class GUI extends Application implements RemoteView {
 
     }
 
+    //todo implement
+    @Override
+    public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> cards) {
+        return null;
+    }
+
+    //todo implement
+    @Override
+    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
+        return null;
+    }
+
     @Override
     public void updatePlayerPosition(String nickname, Coordinates coordinates) {
 
@@ -300,11 +313,6 @@ public class GUI extends Application implements RemoteView {
         synchronized (semaphore) {
             return selectedPowerUp.get();
         }
-
-    }
-
-    @Override
-    public void collectWeapon(String collectedWeapon, String dropOfWeapon) {
 
     }
 

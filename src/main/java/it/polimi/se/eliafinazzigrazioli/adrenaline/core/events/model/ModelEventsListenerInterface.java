@@ -110,10 +110,6 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(WeaponCollectedEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
@@ -137,6 +133,11 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     default void handleEvent(AmmoCollectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
+
+    default void handleEvent(WeaponCollectedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
 
 
 

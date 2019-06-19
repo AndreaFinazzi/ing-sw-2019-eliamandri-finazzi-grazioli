@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ConnectionResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LoginResponseEvent;
@@ -79,9 +80,10 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         match.setPhase(MatchPhase.PLAYING);
         match.beginMatch(chosenMap); //Initializes map
 
-        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck()); //places ammoCards and keeps track in a map
+        Map<Coordinates, AmmoCardClient> ammoCardsSetup = match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck()); //places ammoCards and keeps track in a map
+        Map<Coordinates, List<WeaponCardClient>> weaponCardsSetup = match.getGameBoard().weaponCardsSetup(match.getWeaponsDeck());
 
-        match.notifyObservers(new BeginMatchEvent(chosenMap, ammoCardsReplaced, match.getAvatarMap())); //event contains info about match initialization
+        match.notifyObservers(new BeginMatchEvent(chosenMap, ammoCardsSetup, weaponCardsSetup, match.getAvatarMap())); //event contains info about match initialization
         match.notifyObservers(new BeginTurnEvent(match.getCurrentPlayer())); //notifies to all players who is beginning the turn
         match.notifyObservers(new SpawnSelectionRequestEvent(   //notifies to current player info for spawning routine. This event triggers request/response logic
                 match.getCurrentPlayer(),

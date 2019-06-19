@@ -16,13 +16,14 @@ public class LocalModel {
 
     //Private information
     private List<WeaponCardClient> weaponCards; //user's weapon
+    private boolean weaponHandFull;
     private List<PowerUpCardClient> powerUpCards;
     private List<Ammo> ammos;
 
     //Public information
     private GameBoardClient gameBoard;
     private List<String> players;
-    private Map<String, PlayerBoard> playerBoards;
+    private Map<String, PlayerClient> opponentsInfo;
     private Map<String, Avatar> playerToAvatarMap;
     private List<BoardSquareClient> listSpawn;
 
@@ -32,8 +33,10 @@ public class LocalModel {
         ammos = new ArrayList<>();
 
         players = new ArrayList<>();
-        playerBoards = new HashMap<>();
+        opponentsInfo = new HashMap<>();
         playerToAvatarMap = new HashMap<>();
+
+        weaponHandFull = false;
     }
 
     public void generatesGameBoard(MapType mapType) {
@@ -64,8 +67,30 @@ public class LocalModel {
         ammos.add(ammo);
     }
 
+    public void removeAmmo(Ammo ammo) {
+        ammos.remove(ammo);
+    }
+
+    public void addWeapon(WeaponCardClient weapon) {
+        weaponCards.add(weapon);
+    }
+
+    public WeaponCardClient removeWeapon(String weapon) {
+        WeaponCardClient toRemove = null;
+        for (WeaponCardClient weaponCardClient: weaponCards) {
+            if (weapon.equals(weaponCardClient.getWeaponName()))
+                toRemove = weaponCardClient;
+        }
+        weaponCards.remove(toRemove);
+        return toRemove;
+    }
+
     public List<WeaponCardClient> getWeaponCards() {
         return weaponCards;
+    }
+
+    public void removePowerUp(PowerUpCardClient powerUpCardClient) {
+        powerUpCards.remove(powerUpCardClient);
     }
 
     public List<PowerUpCardClient> getPowerUpCards() {
@@ -88,10 +113,6 @@ public class LocalModel {
         return players;
     }
 
-    public Map<String, PlayerBoard> getPlayerBoards() {
-        return playerBoards;
-    }
-
     public Map<String, Avatar> getPlayersAvatarMap() {
         return playerToAvatarMap;
     }
@@ -100,9 +121,18 @@ public class LocalModel {
         this.playerToAvatarMap = playerAvatarMap;
     }
 
+    public boolean isWeaponHandFull() {
+        return weaponHandFull;
+    }
+
     public void updatePowerUpCards() {
         //TODO
     }
+
+    public void setWeaponHandFull() {
+        weaponHandFull = true;
+    }
+
 
     public WeaponCardClient getWeaponCardByNameOnMap(String weaponName) {
         for(BoardSquareClient square : listSpawn){
@@ -117,7 +147,51 @@ public class LocalModel {
         return null;
     }
 
+    //In this version it controls that the player can pay the price in any way
+    public boolean canPay(List<Ammo> price) {
+        List<Ammo> priceCopy = new ArrayList<>(price);
+
+        for (Ammo ammo: ammos) {
+            if (priceCopy.contains(ammo))
+                priceCopy.remove(ammo);
+        }
+        for (PowerUpCardClient powerUpCard: powerUpCards) {
+            if (priceCopy.contains(powerUpCard.getEquivalentAmmo()))
+                priceCopy.remove(powerUpCard.getEquivalentAmmo());
+        }
+        if (priceCopy.size() == 0)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean canPay(List<Ammo> price, List<PowerUpCardClient> powerUpsToPay) {
+        List<Ammo> priceCopy = new ArrayList<>(price);
+
+        for (PowerUpCardClient powerUpCard: powerUpsToPay)
+            priceCopy.remove(powerUpCard.getEquivalentAmmo());
+
+        for (Ammo ammo: ammos) {
+            if (priceCopy.contains(ammo))
+                priceCopy.remove(ammo);
+        }
+        if (priceCopy.size() == 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public GameBoardClient getGameBoard() {
         return gameBoard;
+    }
+
+    public PlayerClient getOpponentInfo(String player) {
+        return opponentsInfo.get(player);
+    }
+
+    public void addOpponent(String player) {
+        opponentsInfo.put(player, new PlayerClient());
     }
 }

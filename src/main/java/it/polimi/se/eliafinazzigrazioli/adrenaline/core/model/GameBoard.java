@@ -1,10 +1,14 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerSpawnedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundBoardException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -143,6 +147,36 @@ public class GameBoard {
             }
         }
         return coordinatesAmmoCardMap;
+    }
+
+    public Map<Coordinates, List<WeaponCardClient>> weaponCardsSetup(WeaponsDeck deck) {
+        Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponCardMap = new HashMap<>();
+        List<WeaponCardClient> weaponsOnSpawn;
+        WeaponCard weaponCard = null;
+        if (!deck.isEmpty()) {
+            for (int x = 0; x < x_max; x++) {
+                for (int y = 0; y < y_max; y++) {
+                    if (squaresMatrix[x][y] != null && squaresMatrix[x][y].isSpawnPoint() && !((SpawnBoardSquare) squaresMatrix[x][y]).weaponsSlotIsFull() && !deck.isEmpty()) {
+                        weaponsOnSpawn = new ArrayList<>();
+                        for (int i = 0; i < Rules.GAME_BOARD_MAX_WEAPONS_ON_SPAWN && !((SpawnBoardSquare) squaresMatrix[x][y]).weaponsSlotIsFull(); i++) {
+                            try {
+                                weaponCard = WeaponCard.jsonParser(deck.drawCard());
+                            } catch (WeaponFileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                            weaponsOnSpawn.add(new WeaponCardClient(weaponCard));
+                            try {
+                                ((SpawnBoardSquare) squaresMatrix[x][y]).addWeapon(weaponCard);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        coordinatesWeaponCardMap.put(squaresMatrix[x][y].getCoordinates(), weaponsOnSpawn);
+                    }
+                }
+            }
+        }
+        return coordinatesWeaponCardMap;
     }
 
     public void setPlayerPositions(Player player, BoardSquare position) throws OutOfBoundBoardException {

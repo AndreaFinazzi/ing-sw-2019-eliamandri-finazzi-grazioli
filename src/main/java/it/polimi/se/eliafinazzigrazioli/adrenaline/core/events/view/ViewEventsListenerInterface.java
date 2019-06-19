@@ -6,6 +6,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 public interface ViewEventsListenerInterface extends EventListenerInterface {
 
+    default void handleEvent(WeaponCollectionEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
     default void handleEvent(CardSelectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }

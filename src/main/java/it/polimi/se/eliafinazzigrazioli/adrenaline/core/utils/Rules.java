@@ -51,7 +51,6 @@ public final class Rules {
     public static final int GAME_MAX_MAPS = GAME.get("max_maps").asInt(4);
     public static final int GAME_AMMO_CARDS_DUPLICATES = GAME.get("ammo_cards_duplicates").asInt(3);
 
-
     // TURN
     private static final JsonNode TURN = RULES.get("turn");
     public static final int MAX_MOVEMENTS = TURN.get("max_moves_simple").asInt(3);

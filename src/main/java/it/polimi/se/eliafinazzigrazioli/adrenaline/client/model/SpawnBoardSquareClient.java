@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -25,11 +26,20 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         return weaponCards;
     }
 
-    public WeaponCardClient remove(WeaponCardClient weaponCard) {
-        int index = weaponCards.indexOf(weaponCard);
-        WeaponCardClient tempWeaponcard = weaponCards.get(index);
-        weaponCards.remove(weaponCard);
-        return tempWeaponcard;
+    public void addWeapon(WeaponCardClient weaponCard) {
+        if (weaponCards.contains(weaponCard)) {
+            weaponCard.setLoaded(true);
+            weaponCards.add(weaponCard);
+        }
+    }
+
+    public WeaponCardClient remove(String weaponCard) {
+        WeaponCardClient toRemove = null;
+        for (WeaponCardClient weaponCardClient: weaponCards)
+            if (weaponCard.equals(weaponCardClient.getWeaponName()))
+                toRemove = weaponCardClient;
+        weaponCards.remove(toRemove);
+        return toRemove;
     }
 
     @Override
@@ -44,7 +54,7 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
 
     @Override
     public boolean addWeaponCard(WeaponCardClient weapon) {
-        if(weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && !weaponCards.contains(weapon)){
+        if(!weaponCards.contains(weapon)){
             weaponCards.add(weapon);
             return true;
         }

@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractMod
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PowerUpCollectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AmmoNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -109,11 +110,25 @@ public class Player implements Selectable {
     }
 
     //TODO define type exception
-    public WeaponCard removeWeapon(WeaponCard weapon) throws Exception {
-        int index = weapons.indexOf(weapon);
-        if (index == -1)
+    public WeaponCard removeWeapon(String weapon) throws Exception {
+        WeaponCard weaponToRemove = null;
+        for (WeaponCard weaponCard: weapons) {
+            if (weapon.equals(weaponCard.getWeaponName())) {
+                weaponToRemove = weaponCard;
+            }
+        }
+
+        if (weaponToRemove == null)
             throw new Exception();
-        return weapons.remove(index);
+        else {
+            weapons.remove(weaponToRemove);
+            return weaponToRemove;
+        }
+
+    }
+
+    public boolean weaponHandIsFull() {
+        return weapons.size() == Rules.PLAYER_CARDS_MAX_WEAPONS;
     }
 
     //TODO define type excpetion
@@ -164,18 +179,35 @@ public class Player implements Selectable {
      * @param price
      * @return
      */
-    public boolean canSpend(List<Ammo> price){
-        for (Ammo ammoType: Ammo.values()){
-            int ammosNum = 0;
-            for (Ammo ammoToSpend: price){
-                if (ammoType.equals(ammoToSpend))
-                    ammosNum++;
-            }
-            if (ammosNum > ammosNum(ammoType)){
+    public boolean canSpend(List<Ammo> price, List<PowerUpCard> powerUps){
+        List<Ammo> priceCopy = new ArrayList<>(price);
+        for (PowerUpCard powerUpCard: powerUps) {
+            if (priceCopy.contains(powerUpCard.getAmmo()))
+                priceCopy.remove(powerUpCard.getAmmo());
+            else
                 return false;
-            }
         }
-        return true;
+        for (Ammo ammo: playerBoard.getAmmos())
+            if (priceCopy.contains(ammo))
+                priceCopy.remove(ammo);
+        if (priceCopy.isEmpty())
+            return true;
+        else
+            return false;
+    }
+
+    public List<Ammo> spendPrice(List<Ammo> price, List<PowerUpCard> powerUpsToSpend) {
+        List<Ammo> priceCopy = new ArrayList<>(price);
+        for (PowerUpCard powerUpCard: powerUpsToSpend) {
+            priceCopy.remove(powerUpCard.getAmmo());
+            powerUps.remove(powerUpCard);
+        }
+        try {
+            playerBoard.spendAmmo(priceCopy);
+        } catch (AmmoNotAvailableException e) {
+            e.printStackTrace();
+        }
+        return priceCopy;
     }
 
     public WeaponCard getWeaponByName(String weaponName) {

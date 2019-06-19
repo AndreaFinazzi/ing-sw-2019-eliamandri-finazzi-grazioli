@@ -52,6 +52,11 @@ public class PowerUpCardClient implements Serializable {
     }
 
     @Override
+    public boolean equals(Object powerUpCardClient) {
+        return id.equals(((PowerUpCardClient)powerUpCardClient).id);
+    }
+
+    @Override
     public String toString() {
         return CLIUtils.matrixToString(drawCard());
     }
