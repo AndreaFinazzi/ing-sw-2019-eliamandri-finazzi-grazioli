@@ -172,12 +172,12 @@ public class PlayerBoard {
 
     @Override
     public String toString() {
-        return "PlayerBoard{" +
-                "skulls=" + skulls +
-                ", death=" + death +
-                ", overkill=" + overkill +
-                ", movementsAllowed=" + movementsAllowed +
-                ", deathScore= " +deathScores.get (0) +
-                '}';
+        return "PlayerBoard " +
+                "skulls: " + skulls +
+                "\n death: " + death +
+                ", overkill: " + overkill +
+                "\n movementsAllowed: " + movementsAllowed +
+                ", deathScore: " +deathScores.get (0) +
+                '\n';
     }
 }

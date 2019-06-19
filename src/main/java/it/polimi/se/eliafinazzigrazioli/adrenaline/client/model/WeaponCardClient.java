@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
@@ -23,6 +25,9 @@ public class WeaponCardClient implements Serializable {
     private boolean loaded;
 
     private String notes;
+
+    private final static int width = 24;
+    private final static int height = 24;
 
 
     public WeaponCardClient(WeaponCard weaponCard) {
@@ -94,5 +99,11 @@ public class WeaponCardClient implements Serializable {
             count++;
         }
         return string;
+    }
+
+    public String[][] drawCard() {
+       String[][] weapon = CLIUtils.drawEmptyBox(width, height, Color.ammoToColor(weaponColor));
+       weapon = CLIUtils.insertStringToMatrix(weapon, this.toString());
+       return weapon;
     }
 }

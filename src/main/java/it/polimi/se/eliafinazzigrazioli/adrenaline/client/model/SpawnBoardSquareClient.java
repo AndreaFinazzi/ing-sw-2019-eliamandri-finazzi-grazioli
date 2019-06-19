@@ -25,12 +25,6 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         return weaponCards;
     }
 
-    public void addWeapon(WeaponCardClient weaponCard) {
-        if (weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && weaponCards.contains(weaponCard)) {
-            weaponCards.add(weaponCard);
-        }
-    }
-
     public WeaponCardClient remove(WeaponCardClient weaponCard) {
         int index = weaponCards.indexOf(weaponCard);
         WeaponCardClient tempWeaponcard = weaponCards.get(index);
@@ -68,15 +62,6 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
 
     @Override
     public String toString() {
-        return "SpawnBoardSquareClient{" +
-                "weaponCards=" + weaponCards +
-                ", ammoCard=" + ammoCard +
-                ", coordinates=" + coordinates +
-                ", room=" + room +
-                ", north=" + north +
-                ", south=" + south +
-                ", east=" + east +
-                ", west=" + west +
-                '}';
+        return "Spawn board square at " + coordinates + "\n" + "Room: " + room;
     }
 }

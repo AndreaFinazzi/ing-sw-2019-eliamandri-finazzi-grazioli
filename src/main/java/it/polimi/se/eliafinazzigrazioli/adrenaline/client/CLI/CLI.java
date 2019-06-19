@@ -56,7 +56,7 @@ public class CLI implements RemoteView, Runnable {
         showMessage("Insert your player name");
         String username = input.nextLine();
 
-        showMessage("choose one of the following avatars:\n" + serializeList(availableAvatars));
+        showMessage("choose one of the following avatars:\n" + CLIUtils.serializeList(availableAvatars));
 
         notifyLoginRequestEvent(username, availableAvatars.get(nextInt(availableAvatars.size())));
     }
@@ -69,7 +69,7 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public void showMapVote(ArrayList<MapType> availableMaps) {
         showMessage("Vote one of the following maps: ");
-        showMessage(serializeList(availableMaps));
+        showMessage(CLIUtils.serializeList(availableMaps));
 
         notifyMapVoteEvent(availableMaps.get(nextInt(availableMaps.size())));
     }
@@ -77,19 +77,6 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public void showBeginMatch() {
 
-    }
-
-    private <T> String serializeList(List<T> list) {
-        Iterator<T> iterator = list.iterator();
-        int index = 0;
-        String result = "";
-
-        while (iterator.hasNext()) {
-            index++;
-            result = result.concat(String.format("%d)\t%s%n", index, iterator.next()));
-        }
-
-        return result;
     }
 
     private int nextInt() {
@@ -127,13 +114,24 @@ public class CLI implements RemoteView, Runnable {
         PlayerAction choice;
         do {
             showMessage("Choose your action: ");
-            showMessage(serializeList(availableActions));
+            showMessage(CLIUtils.serializeList(availableActions));
 
             choice = availableActions.get(nextInt(availableActions.size()));
             if (choice == PlayerAction.SHOW_MAP) {
                 showMap();
             }
-        } while (choice == PlayerAction.SHOW_MAP);
+            if( choice.equals(PlayerAction.SHOW_OWNED_PLAYERBOARD)) {
+                showMessage(CLIUtils.serializeMap(localModel.getPlayerBoards()));
+            }
+            if(choice.equals(PlayerAction.SHOW_OWNED_POWERUPS)) {
+                List<PowerUpCardClient> powerUpCardClients = localModel.getPowerUpCards();
+                List<String[][]> powerUpsMatrix = new ArrayList<>();
+                for(PowerUpCardClient iterator:powerUpCardClients) {
+                    powerUpsMatrix.add(iterator.drawCard());
+                }
+                showMessage(CLIUtils.alignSquare(powerUpsMatrix));
+            }
+        } while (choice.toString().contains("Show"));
 
         return choice;
     }
@@ -141,7 +139,7 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public void showSelectableSquare(List<Coordinates> selectable) {
         showMessage("You can select this square: ");
-        showMessage(serializeList(selectable));
+        showMessage(CLIUtils.serializeList(selectable));
     }
 
     public void collectPlay() {
@@ -162,7 +160,7 @@ public class CLI implements RemoteView, Runnable {
 
 
         showMessage("Chose a move direction: ");
-        showMessage(serializeList(availableMoves));
+        showMessage(CLIUtils.serializeList(availableMoves));
 
         choice = availableMoves.get(nextInt(availableMoves.size()));
 
@@ -173,7 +171,7 @@ public class CLI implements RemoteView, Runnable {
     public void selectWeaponCard() {
         List<WeaponCardClient> weapons = localModel.getWeaponCards();
         showMessage("Insert your choice");
-        showMessage(serializeList(weapons));
+        showMessage(CLIUtils.serializeList(weapons));
         int choice = nextInt(weapons.size());
         String weapon = weapons.get(choice).getWeaponName();
         notifySelectedWeaponCard(weapon);
@@ -198,7 +196,7 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public void selectSelectableEffect(List<String> callableEffects) {
         showMessage("You can select this effects ");
-        showMessage(serializeList(callableEffects));
+        showMessage(CLIUtils.serializeList(callableEffects));
         showMessage("Insert your choice");
         int choice = nextInt(callableEffects.size());
         String temp = callableEffects.get(choice);
@@ -240,7 +238,11 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
         showMessage("Choose your ");
-        showMessage(serializeList(cards));
+        List<String[][]> list = new ArrayList<>();
+        for(PowerUpCardClient iterator:cards){
+            list.add(iterator.drawCard());
+        }
+        showMessage(CLIUtils.alignSquare(list));
         int choice = nextInt(cards.size());
         return cards.get(choice);
     }
@@ -261,7 +263,7 @@ public class CLI implements RemoteView, Runnable {
             return null;
         }
         showMessage("Insert your choice: ");
-        showMessage(serializeList(reloadableWeapons));
+        showMessage(CLIUtils.serializeList(reloadableWeapons));
         choice = nextInt(reloadableWeapons.size());
         return reloadableWeapons.get(choice);
     }
@@ -280,4 +282,11 @@ public class CLI implements RemoteView, Runnable {
     public List<Observer> getObservers() {
         return observers;
     }
+
+
+
+    // RICHIEDE DIMENSIONI MAGGIORI DI 2X2
+
+
+
 }

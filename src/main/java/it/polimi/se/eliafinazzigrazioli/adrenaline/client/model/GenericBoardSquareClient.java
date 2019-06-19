@@ -41,4 +41,8 @@ public class GenericBoardSquareClient extends BoardSquareClient {
         return ammoCard != null;
     }
 
+    @Override
+    public String toString() {
+        return "Board square at " + coordinates + "\n" + "Room: " + room;
+    }
 }
