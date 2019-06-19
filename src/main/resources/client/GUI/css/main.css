@@ -9,12 +9,15 @@
 
 /*DON'T CHANGE THIS! */
 #mainBoardPane {
-    -fx-background-image: url("../assets/maps/Map_BW.png");
     -fx-background-insets: 0, 0;
     -fx-background-size: contain;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
 
+}
+
+.map_NONE {
+    -fx-background-image: url("../assets/maps/Map_BW.png");
 }
 
 .map_ONE {

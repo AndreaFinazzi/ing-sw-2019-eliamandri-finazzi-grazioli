@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
-<GridPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-          fx:controller="it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.PlayerBoardGUIController"
-          fx:id="playerBoardGridPane" id="playerBoard"
-          vgap="9.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+<GridPane id="playerBoard" fx:id="playerBoardGridPane" styleClass="playerBoard_PURPLE"
+          stylesheets="@../css/player_board.css" vgap="9.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.PlayerBoardGUIController">
     <columnConstraints>
         <ColumnConstraints hgrow="NEVER" percentWidth="48.0"/>
         <ColumnConstraints hgrow="NEVER" percentWidth="45.0"/>
@@ -15,4 +15,3 @@
         <RowConstraints percentHeight="25.0" vgrow="NEVER"/>
     </rowConstraints>
 </GridPane>
-

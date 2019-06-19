@@ -1,8 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PlayerAction;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -13,14 +12,21 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class MainGUIController extends AbstractGUIController {
 
+    // Slots
+    @FXML
+    private VBox playerBoardsVBox;
+    @FXML
+    private AnchorPane commandsContainerAnchorPane;
+
+    // Map vote overlay
     @FXML
     private ChoiceBox<MapType> availableMapsChoiceBox;
     @FXML
@@ -31,12 +37,9 @@ public class MainGUIController extends AbstractGUIController {
     @FXML
     private AnchorPane overlay;
 
+    // Main board
     @FXML
     private Pane mainBoardPane;
-
-    private Semaphore semaphore;
-    private AtomicReference<PlayerAction> chosenAction;
-    private ArrayList<Coordinates> selectedPath;
 
     public MainGUIController() {
         super();
@@ -65,7 +68,7 @@ public class MainGUIController extends AbstractGUIController {
 
     public void voteMap(ActionEvent actionEvent) {
         showOverlay();
-
+        mapVoteOverlayStackPane.setVisible(false);
         view.notifyMapVoteEvent(availableMapsChoiceBox.getValue());
     }
 
@@ -77,23 +80,34 @@ public class MainGUIController extends AbstractGUIController {
         overlay.setVisible(false);
     }
 
+    public void loadScene() throws IOException {
+
+        ArrayList<OpponentPlayerGUIController> opponentPlayerGUIControllers = new ArrayList<>();
+
+        for (String player : view.getLocalModel().getPlayersAvatarMap().keySet()) {
+            if (player.equals(view.getClient().getPlayerName())) {
+                CommandGUIController commandGUIController = (CommandGUIController) loadFXML(GUI.FXML_PATH_COMMANDS, commandsContainerAnchorPane);
+
+                view.setCommandsGUIController(commandGUIController);
+                commandGUIController.loadScene(view.getLocalModel().getPlayersAvatarMap().get(player));
+            } else {
+                OpponentPlayerGUIController opponentPlayerGUIController = (OpponentPlayerGUIController) loadFXML(GUI.FXML_PATH_OPPONENT_PLAYER_INFO, playerBoardsVBox);
+
+                opponentPlayerGUIControllers.add(opponentPlayerGUIController);
+                opponentPlayerGUIController.loadScene(view.getLocalModel().getPlayersAvatarMap().get(player));
+            }
+        }
+
+        mapVoteOverlayStackPane.setVisible(false);
+        hideOverlay();
+    }
+
     public void loadMap() {
-        String mapClass = "map_" + view.getLocalModel().getGameBoard().getMapType().name();
+        // Load chosen map
+        String mapClass = GUI.MAP_STYLE_CLASS_PREFIX + view.getLocalModel().getGameBoard().getMapType().name();
+        mainBoardPane.getStyleClass().remove(GUI.MAP_STYLE_CLASS_DEFAULT);
         mainBoardPane.getStyleClass().add(mapClass);
 
-        hideOverlay();
-        mapVoteOverlayStackPane.setVisible(false);
     }
 
-    public void setSemaphore(Semaphore semaphore) {
-        this.semaphore = semaphore;
-    }
-
-    public void setSelectedPath(ArrayList<Coordinates> selectedPath) {
-        this.selectedPath = selectedPath;
-    }
-
-    public void setChosenAction(AtomicReference<PlayerAction> chosenAction) {
-        this.chosenAction = chosenAction;
-    }
 }

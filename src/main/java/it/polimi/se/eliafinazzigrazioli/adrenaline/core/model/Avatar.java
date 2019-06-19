@@ -5,7 +5,7 @@ import java.io.Serializable;
 public enum Avatar implements Serializable {
     DESTRUCTOR(":D-STRUCT-OR", DamageMark.YELLOW),
     BANSHEE("BANSHEE", DamageMark.BLUE),
-    DOZER("DOZER", DamageMark.GRAY),
+    DOZER("DOZER", DamageMark.GREY),
     VIOLET("VIOLET", DamageMark.PURPLE),
     SPROG("SPROG", DamageMark.GREEN);
 

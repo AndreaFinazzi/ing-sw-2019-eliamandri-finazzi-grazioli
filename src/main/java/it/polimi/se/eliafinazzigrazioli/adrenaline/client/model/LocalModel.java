@@ -1,6 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PlayerBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -20,7 +23,7 @@ public class LocalModel {
     private GameBoardClient gameBoard;
     private List<String> players;
     private Map<String, PlayerBoard> playerBoards;
-    private Map<String, Avatar> playersToMap;
+    private Map<String, Avatar> playerToAvatarMap;
     private List<BoardSquareClient> listSpawn;
 
     public LocalModel() {
@@ -30,7 +33,7 @@ public class LocalModel {
 
         players = new ArrayList<>();
         playerBoards = new HashMap<>();
-        playersToMap = new HashMap<>();
+        playerToAvatarMap = new HashMap<>();
     }
 
     public void generatesGameBoard(MapType mapType) {
@@ -90,11 +93,11 @@ public class LocalModel {
     }
 
     public Map<String, Avatar> getPlayersAvatarMap() {
-        return playersToMap;
+        return playerToAvatarMap;
     }
 
-    public void setPlayersAvatarMap(Map<String, Avatar> playersAvatarMap) {
-        this.playersToMap = playersAvatarMap;
+    public void setPlayerToAvatarMap(Map<String, Avatar> playerAvatarMap) {
+        this.playerToAvatarMap = playerAvatarMap;
     }
 
     public void updatePowerUpCards() {
