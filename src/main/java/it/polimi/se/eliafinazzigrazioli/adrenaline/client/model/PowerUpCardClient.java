@@ -13,6 +13,10 @@ public class PowerUpCardClient implements Serializable {
     private Ammo equivalentAmmo;
     private String description;
 
+    public PowerUpCardClient() {
+
+    }
+
     public PowerUpCardClient(PowerUpCard powerUpCard) {
         this.id = powerUpCard.getId();
         this.powerUpType = powerUpCard.getType();

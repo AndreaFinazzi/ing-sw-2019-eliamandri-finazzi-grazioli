@@ -4,6 +4,6 @@ public enum DamageMark {
     PURPLE,
     YELLOW,
     GREEN,
-    GRAY,
+    GREY,
     BLUE
 }

@@ -81,7 +81,7 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
         Map<Coordinates, AmmoCardClient> ammoCardsReplaced = match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck()); //places ammoCards and keeps track in a map
 
-        match.notifyObservers(new BeginMatchEvent(chosenMap, ammoCardsReplaced)); //event contains info about match initialization
+        match.notifyObservers(new BeginMatchEvent(chosenMap, ammoCardsReplaced, match.getAvatarMap())); //event contains info about match initialization
         match.notifyObservers(new BeginTurnEvent(match.getCurrentPlayer())); //notifies to all players who is beginning the turn
         match.notifyObservers(new SpawnSelectionRequestEvent(   //notifies to current player info for spawning routine. This event triggers request/response logic
                 match.getCurrentPlayer(),

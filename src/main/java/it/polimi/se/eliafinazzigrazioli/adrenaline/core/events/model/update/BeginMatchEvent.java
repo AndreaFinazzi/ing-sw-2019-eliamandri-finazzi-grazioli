@@ -15,15 +15,16 @@ public class BeginMatchEvent extends AbstractModelEvent {
     private MapType mapType;
     Map<Coordinates, AmmoCardClient> ammoCardsSetup;
 
-    private Map<String, Avatar> playerToAvatar;
+    private Map<String, Avatar> playerToAvatarMap;
 
     public BeginMatchEvent(MapType mapType) {
         this.mapType = mapType;
     }
 
-    public BeginMatchEvent(MapType mapType, Map<Coordinates, AmmoCardClient> ammoCardsSetup) {
-        this.mapType = mapType;
+    public BeginMatchEvent(MapType mapType, Map<Coordinates, AmmoCardClient> ammoCardsSetup, Map<String, Avatar> avatarMap) {
+        this(mapType);
         this.ammoCardsSetup = ammoCardsSetup;
+        this.playerToAvatarMap = avatarMap;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class BeginMatchEvent extends AbstractModelEvent {
         return ammoCardsSetup;
     }
 
-    public Map<String, Avatar> getPlayerToAvatar() {
-        return playerToAvatar;
+    public Map<String, Avatar> getPlayerToAvatarMap() {
+        return playerToAvatarMap;
     }
 }

@@ -373,8 +373,7 @@ public class GameBoardClient {
                 }
                 else if(avatar.getDamageMark().equals(DamageMark.BLUE)){
                     color = ANSI_BLUE;
-                }
-                else if(avatar.getDamageMark().equals(DamageMark.GRAY)){
+                } else if (avatar.getDamageMark().equals(DamageMark.GREY)) {
                     color = ANSI_WHITE;
                 }
                 else{ //Purple

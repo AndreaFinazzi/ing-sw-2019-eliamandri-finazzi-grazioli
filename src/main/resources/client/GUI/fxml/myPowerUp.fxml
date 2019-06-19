@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import java.lang.String?>
+<Button xmlns:fx="http://javafx.com/fxml/1"
+        alignment="CENTER" mnemonicParsing="false">
+    <styleClass>
+        <String fx:value="powerUpCard"/>
+        <String fx:value="myPowerUp"/>
+    </styleClass>
+</Button>

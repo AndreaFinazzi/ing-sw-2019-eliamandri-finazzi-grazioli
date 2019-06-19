@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
@@ -10,6 +11,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -315,7 +317,22 @@ public class Match implements Observable {
         //todo preparation of the setup of the model, (weapons, power ups, deadPath....)
         currentPlayer = firstPlayer;
         gameBoard = new GameBoard(mapType);
+        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = gameBoard.ammoCardsSetup(ammoCardsDeck);
 
+    }
+
+    public Map<String, Avatar> getAvatarMap() {
+        Map<String, Avatar> playerToAvatarMap = new HashMap<>();
+        for (Player player : players) {
+            playerToAvatarMap.put(player.getPlayerNickname(), player.getAvatar());
+        }
+
+        return playerToAvatarMap;
+    }
+
+    //TODO who should create the event?
+    public void beginTurn() {
+        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
     }
 
     public ArrayList<Avatar> getAvailableAvatars() {

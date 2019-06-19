@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.CommandGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.LoginGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.OpponentPlayerGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
@@ -21,8 +22,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -32,6 +33,25 @@ import static java.lang.Thread.sleep;
 
 
 public class GUI extends Application implements RemoteView {
+
+    // static constants
+    public static final String MAP_STYLE_CLASS_DEFAULT = "map_NONE";
+    public static final String MAP_STYLE_CLASS_PREFIX = "map_";
+
+    private static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
+    private static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
+    private static final String ASSET_PATH_CARDS_ROOT = ASSET_PATH_ROOT + "cards/";
+    private static final String ASSET_PATH_MAPS_ROOT = ASSET_PATH_ROOT + "maps/";
+    private static final String ASSET_PATH_AMMO_ROOT = ASSET_PATH_ROOT + "ammo/";
+    private static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + "playerboards/";
+
+    private static final String ASSET_PREFIX_POWER_UP = "AD_powerups_IT_";
+    private static final String ASSET_FORMAT_POWER_UP = ".png";
+
+    public static final String FXML_PATH_COMMANDS = FXML_PATH_ROOT + "commands.fxml";
+    public static final String FXML_PATH_OPPONENT_PLAYER_INFO = FXML_PATH_ROOT + "opponent_player_info.fxml";
+    public static final String FXML_PATH_PLAYER_BOARD = FXML_PATH_ROOT + "player_board.fxml";
+    public static final String FXML_PATH_MAIN = FXML_PATH_ROOT + "main.fxml";
 
     private static GUI instance;
     static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
@@ -47,6 +67,8 @@ public class GUI extends Application implements RemoteView {
     private MainGUIController mainGUIController;
     private CommandGUIController commandsGUIController;
     private LoginGUIController loginGUIController;
+    ///TODO define a setter and verify Map is the correct data structure
+    private Map<Avatar, OpponentPlayerGUIController> opponentPlayerGUIControllers;
 
     private boolean initialized = false;
 
@@ -97,6 +119,10 @@ public class GUI extends Application implements RemoteView {
         return client;
     }
 
+    public void setCommandsGUIController(CommandGUIController commandsGUIController) {
+        this.commandsGUIController = commandsGUIController;
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
@@ -133,8 +159,10 @@ public class GUI extends Application implements RemoteView {
         AtomicReference<PlayerAction> chosenAction = new AtomicReference<>();
         Semaphore semaphore = new Semaphore(0);
 
-        mainGUIController.setSemaphore(semaphore);
-        mainGUIController.setChosenAction(chosenAction);
+        commandsGUIController.setSemaphore(semaphore);
+        commandsGUIController.setChosenAction(chosenAction);
+
+        commandsGUIController.setChoseAction();
 
         try {
             semaphore.acquire();
@@ -144,6 +172,7 @@ public class GUI extends Application implements RemoteView {
         }
 
         synchronized (semaphore) {
+            commandsGUIController.setLockedCommands();
             return chosenAction.get();
         }
     }
@@ -201,22 +230,22 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showMapVote(ArrayList<MapType> availableMaps) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/main.fxml"));
-        FXMLLoader commandsLoader = new FXMLLoader(getClass().getResource("/client/GUI/fxml/commands.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_PATH_MAIN));
         Pane root = null;
         try {
             root = loader.load();
+            mainGUIController = loader.getController();
+            mainGUIController.setView(this);
+
+            mainGUIController.loadScene();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
-        mainGUIController = loader.getController();
-        commandsGUIController = commandsLoader.getController();
-        mainGUIController.setView(this);
 
-        primaryStage.getScene().setRoot(root);
-
+        Pane finalRoot = root;
         Platform.runLater(() -> {
+            primaryStage.getScene().setRoot(finalRoot);
             primaryStage.setFullScreen(true);
         });
 
@@ -226,18 +255,12 @@ public class GUI extends Application implements RemoteView {
     @Override
     public void showBeginMatch() {
         mainGUIController.loadMap();
-
         hideOverlay();
     }
 
     @Override
     public void updatePlayerInfo(String player) {
         client.setPlayerName(player);
-    }
-
-    @Override
-    public void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap) {
-
     }
 
     @Override
@@ -252,7 +275,25 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
-        return null;
+        AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
+
+        commandsGUIController.setPowerUpCards(cards);
+        commandsGUIController.setSelectedPowerUp(selectedPowerUp);
+
+        Semaphore semaphore = new Semaphore(0);
+        commandsGUIController.setSemaphore(semaphore);
+
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+
+        synchronized (semaphore) {
+            return selectedPowerUp.get();
+        }
+
     }
 
     @Override
@@ -276,7 +317,10 @@ public class GUI extends Application implements RemoteView {
         Semaphore semaphore = new Semaphore(0);
 
         commandsGUIController.setSemaphore(semaphore);
+        commandsGUIController.setAvailableMoves(availableMoves);
         commandsGUIController.setSelectedMove(selectedMove);
+
+        commandsGUIController.setGetMove();
 
         try {
             semaphore.acquire();
@@ -286,8 +330,14 @@ public class GUI extends Application implements RemoteView {
         }
 
         synchronized (semaphore) {
+            commandsGUIController.setLockedCommands();
             return selectedMove.get();
         }
+    }
+
+    public String getPowerUpAsset(String id) {
+        String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_POWER_UP + id + ASSET_FORMAT_POWER_UP;
+        return getClass().getResource(uri).toExternalForm();
 
     }
 

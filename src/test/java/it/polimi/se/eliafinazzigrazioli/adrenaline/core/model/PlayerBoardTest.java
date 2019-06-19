@@ -35,8 +35,8 @@ public class PlayerBoardTest {
         ArrayList<DamageMark> tempList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             try {
-                playerBoard.addDamage(DamageMark.GRAY);
-                tempList.add(DamageMark.GRAY);
+                playerBoard.addDamage(DamageMark.GREY);
+                tempList.add(DamageMark.GREY);
                 assertEquals(i + 1, playerBoard.getScores().size());
             } catch (OutOfBoundException e) {
                 LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -132,7 +132,7 @@ public class PlayerBoardTest {
         assertEquals(0, playerBoard.numMarkType(DamageMark.PURPLE));
         assertEquals(0, playerBoard.numMarkType(DamageMark.GREEN));
         assertEquals(0, playerBoard.numMarkType(DamageMark.BLUE));
-        assertEquals(0, playerBoard.numMarkType(DamageMark.GRAY));
+        assertEquals(0, playerBoard.numMarkType(DamageMark.GREY));
 
     }
 

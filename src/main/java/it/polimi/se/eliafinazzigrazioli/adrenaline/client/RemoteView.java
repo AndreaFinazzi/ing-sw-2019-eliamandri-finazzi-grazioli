@@ -106,7 +106,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         path = getPathFromUser(event.getCollectingMovesMax());
                         GameBoardClient gameBoard = getLocalModel().getGameBoard();
                         BoardSquareClient finalPosition = path == null ?
-                                gameBoard.getPlayerPositionByName(getClient().getPlayerName()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size()-1));
+                                gameBoard.getPlayerPositionByName(getClient().getPlayerName()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size() - 1));
                         if (finalPosition.isSpawnBoard()) {
                             //todo weapon to collect procedure
                             generatedEvent = null;
@@ -363,7 +363,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap){
-        getLocalModel().setPlayersAvatarMap(playerToAvatarMap);
+        getLocalModel().setPlayerToAvatarMap(playerToAvatarMap);
     }
 
     default void initPlayersBoard(List<String> players) {

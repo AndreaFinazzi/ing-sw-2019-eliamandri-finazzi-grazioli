@@ -1,0 +1,52 @@
+#playerBoard {
+    -fx-pref-width: 610;
+}
+
+.playerBoard_NONE {
+    -fx-background-image: url("../assets/adrenaline/background_table_1.JPG");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+.playerBoard_PURPLE {
+    -fx-background-image: url("../assets/playerboards/PlayerBoard_PURPLE.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+.playerBoard_YELLOW {
+    -fx-background-image: url("../assets/playerboards/PlayerBoard_YELLOW.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+.playerBoard_GREEN {
+    -fx-background-image: url("../assets/playerboards/PlayerBoard_GREEN.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+.playerBoard_GREY {
+    -fx-background-image: url("../assets/playerboards/PlayerBoard_GREY.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+.playerBoard_BLUE {
+    -fx-background-image: url("../assets/playerboards/PlayerBoard_BLUE.png");
+    -fx-background-insets: 0, 0;
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
