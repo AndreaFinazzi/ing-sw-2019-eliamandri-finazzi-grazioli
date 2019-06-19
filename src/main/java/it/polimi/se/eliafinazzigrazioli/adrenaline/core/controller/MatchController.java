@@ -1,8 +1,12 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ConnectionResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LoginResponseEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.MatchStartedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MapVoteEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
@@ -11,6 +15,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarN
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.server.AbstractClientHandler;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.server.MatchBuilder;
@@ -72,12 +77,19 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
     public void initMatch(MapType chosenMap) {
         //TODO: to implement
         match.setPhase(MatchPhase.PLAYING);
+        match.beginMatch(chosenMap); //Initializes map
 
-        //match.setGameBoard(chosenMap);
+        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck()); //places ammoCards and keeps track in a map
 
-        //TODO verify
-
-        match.beginMatch(chosenMap);
+        match.notifyObservers(new BeginMatchEvent(chosenMap, ammoCardsReplaced)); //event contains info about match initialization
+        match.notifyObservers(new BeginTurnEvent(match.getCurrentPlayer())); //notifies to all players who is beginning the turn
+        match.notifyObservers(new SpawnSelectionRequestEvent(   //notifies to current player info for spawning routine. This event triggers request/response logic
+                match.getCurrentPlayer(),
+                Arrays.asList(
+                        match.getPowerUpsDeck().drawCard(),
+                        match.getPowerUpsDeck().drawCard())
+                )
+        );
     }
 
     public EventController getEventController() {

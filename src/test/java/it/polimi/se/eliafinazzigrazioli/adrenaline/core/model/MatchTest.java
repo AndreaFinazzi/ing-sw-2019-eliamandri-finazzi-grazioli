@@ -203,7 +203,7 @@ public class MatchTest {
         }
         int oldTurn = match.getTurn();
         for (int i = 0; i < 100; i++) {
-            match.increaseTurn();
+            match.nextTurn();
             assertEquals(oldTurn + 1, match.getTurn());
             oldTurn = match.getTurn();
         }

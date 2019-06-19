@@ -1,8 +1,10 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AmmoCardCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ReloadWeaponsRequestEvent;
@@ -19,6 +21,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 //TODO DEFINE AND INSERT MESSAGES, IN PARTICULAR FOR NOT ALLOWED PLAY EVENT BECAUSE IT IS THROWN IN A VARIETY OF SITUATIONS
@@ -39,10 +42,6 @@ public class TurnController implements ViewEventsListenerInterface {
         eventController.addViewEventsListener(CollectPlayEvent.class, this);
         eventController.addViewEventsListener(SpawnPowerUpSelectedEvent.class, this);
         eventController.addViewEventsListener(ReloadWeaponEvent.class, this);
-    }
-
-    public void beginTurn() {
-        actionsPerformed = 0;
     }
 
     /**
@@ -102,18 +101,8 @@ public class TurnController implements ViewEventsListenerInterface {
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
 
         else{
-            actionsPerformed++;
             events.add(gameBoard.playerMovement(currentPlayer, path));
-            if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE)
-                events.add(new ActionRequestEvent(
-                        currentPlayer,
-                        Rules.MAX_ACTIONS_AVAILABLE - actionsPerformed,
-                        currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
-                        currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
-                        currentPlayer.getPlayerBoard().preShootingMaxMoves()
-                ));
-            else
-                events.add(new ReloadWeaponsRequestEvent(currentPlayer));
+            events.add(concludeAction(currentPlayer));
             match.notifyObservers(events);
         }
 
@@ -133,23 +122,25 @@ public class TurnController implements ViewEventsListenerInterface {
         List<Coordinates> path = event.getPath();
         GameBoard gameBoard = match.getGameBoard();
         Player currentPlayer = match.getCurrentPlayer();
-        boolean movementActuaded = false;
+        boolean movementActuated = false;
         List<AbstractModelEvent> events = new ArrayList<>();
         BoardSquare finalPosition;
         if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE && path.size() <= currentPlayer.getPlayerBoard().preCollectionMaxMoves()) {
             if (path.size() > 0) {
                 finalPosition = gameBoard.getBoardSquareByCoordinates(path.get(path.size()-1));
-                movementActuaded = true;
+                movementActuated = true;
             }
             else
                 finalPosition = gameBoard.getPlayerPosition(currentPlayer);
-            if (movementActuaded)
+            if (movementActuated)
             {
                 gameBoard.movePlayer(currentPlayer, finalPosition);
                 events.add(new PlayerMovementEvent(currentPlayer, path));
             }
             if (finalPosition.ammoCollectionIsValid()) {
                 AmmoCard ammoCard = ((GenericBoardSquare) finalPosition).gatherCollectables();
+                events.add(new AmmoCardCollectedEvent(currentPlayer, ammoCard, finalPosition.getCoordinates()));
+
                 //todo verify if it's better to sent the entire ammoCard somehow
                 for (Ammo ammo: ammoCard.getAmmos())
                     events.add(new AmmoCollectedEvent(currentPlayer, ammo, currentPlayer.addAmmo(ammo)));
@@ -157,17 +148,7 @@ public class TurnController implements ViewEventsListenerInterface {
                     PowerUpsDeck deck = match.getPowerUpsDeck();
                     events.add(currentPlayer.addPowerUp(deck.drawCard(), deck));
                 }
-                events.add(new AmmoCardCollectedEvent(currentPlayer, ammoCard, finalPosition.getCoordinates()));
-                actionsPerformed++;
-                if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE)
-                    events.add(new ActionRequestEvent(
-                        currentPlayer,
-                        Rules.MAX_ACTIONS_AVAILABLE-actionsPerformed,
-                        currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
-                        currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
-                        currentPlayer.getPlayerBoard().preShootingMaxMoves()));
-                else
-                    events.add(new ReloadWeaponsRequestEvent(currentPlayer));
+                events.add(concludeAction(currentPlayer));
                 match.notifyObservers(events);
             }
             else
@@ -181,8 +162,7 @@ public class TurnController implements ViewEventsListenerInterface {
     @Override
     public void handleEvent(ReloadWeaponEvent event) throws HandlerNotImplementedException {
         if (event.getWeapon() == null) {
-            beginTurn();
-            match.nextTurn();
+            match.notifyObservers(nextTurn());
         }
         else {
             //todo payment logic and further reload request
@@ -192,14 +172,59 @@ public class TurnController implements ViewEventsListenerInterface {
     @Override
     public void handleEvent(EndTurnRequestEvent event) throws HandlerNotImplementedException {
         //todo points assignment and end turn resets
-        match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck());
-        match.nextCurrentPlayer();
-        beginTurn();
-        if (match.getTurn() != 0)
-            match.notifyObservers(new BeginTurnEvent(match.getCurrentPlayer().getPlayerNickname()));
-        else {
-            PowerUpsDeck deck = match.getPowerUpsDeck();
-            match.notifyObservers(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), Arrays.asList(deck.drawCard(), deck.drawCard())));
-        }
+        match.notifyObservers(nextTurn());
     }
+
+
+
+    //SUPPORT METHODS
+    private List<AbstractModelEvent> nextTurn() {
+        List<AbstractModelEvent> events = new ArrayList<>();
+        Map<Coordinates, AmmoCardClient> ammoCardsReplaced = match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck());
+
+        beginTurn();
+
+        events.add(new EndTurnEvent(match.getCurrentPlayer(), ammoCardsReplaced));
+
+        //todo all next turn setup (points, replace cards...)
+
+
+        match.nextCurrentPlayer();
+
+        match.increaseTurn(); //increases turn if nextPlayer is the first player
+
+        events.add(new BeginTurnEvent(match.getCurrentPlayer()));
+        if (match.getTurn() == 0)
+            events.add(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), Arrays.asList(match.getPowerUpsDeck().drawCard(), match.getPowerUpsDeck().drawCard())));
+        else {
+            PlayerBoard playerBoard = match.getCurrentPlayer().getPlayerBoard();
+            events.add(new ActionRequestEvent(
+                    match.getCurrentPlayer(),
+                    Rules.MAX_ACTIONS_AVAILABLE,
+                    playerBoard.simpleMovementMaxMoves(),
+                    playerBoard.preCollectionMaxMoves(),
+                    playerBoard.preShootingMaxMoves()));
+        }
+
+        return events;
+    }
+
+    private void beginTurn() {
+        actionsPerformed = 0;
+    }
+
+    private AbstractModelEvent concludeAction(Player currentPlayer) {
+        actionsPerformed++;
+        if (actionsPerformed < Rules.MAX_ACTIONS_AVAILABLE)
+            return new ActionRequestEvent(
+                    currentPlayer,
+                    Rules.MAX_ACTIONS_AVAILABLE - actionsPerformed,
+                    currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
+                    currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
+                    currentPlayer.getPlayerBoard().preShootingMaxMoves()
+            );
+        else
+            return new ReloadWeaponsRequestEvent(currentPlayer);
+    }
+
 }

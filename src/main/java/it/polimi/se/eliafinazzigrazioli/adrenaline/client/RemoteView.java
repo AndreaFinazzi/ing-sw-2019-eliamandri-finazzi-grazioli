@@ -19,6 +19,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
@@ -57,6 +58,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void handleEvent(BeginMatchEvent event) throws HandlerNotImplementedException {
         buildLocalMap(event.getMapType());
         getLocalModel().getGameBoard().resetAmmoCards(event.getAmmoCardsSetup());
+        showAmmoCardResetting(event.getAmmoCardsSetup());
         //todo to complete with info about the match and relative visualization
         showBeginMatch();
     }
@@ -104,7 +106,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         path = getPathFromUser(event.getCollectingMovesMax());
                         GameBoardClient gameBoard = getLocalModel().getGameBoard();
                         BoardSquareClient finalPosition = path == null ?
-                                gameBoard.getPlayerPositionByName(getClient().getPlayerName()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size()));
+                                gameBoard.getPlayerPositionByName(getClient().getPlayerName()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size()-1));
                         if (finalPosition.isSpawnBoard()) {
                             //todo weapon to collect procedure
                             generatedEvent = null;
@@ -175,7 +177,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(EndTurnEvent event) throws HandlerNotImplementedException {
         getLocalModel().getGameBoard().resetAmmoCards(event.getAmmoCardsSetup());
-        showAmmoCardResetting();
+        showAmmoCardResetting(event.getAmmoCardsSetup());
+
         showEndTurn(event.getPlayer());
     }
     @Override
@@ -196,6 +199,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(AmmoCardCollectedEvent event) throws HandlerNotImplementedException {
         GameBoardClient gameBoard = getLocalModel().getGameBoard();
+
         gameBoard.getBoardSquareByCoordinates(event.getBoardSquare()).removeAmmoCard();
         showAmmoCardCollected(event.getPlayer(), event.getAmmoCardCollected(), event.getBoardSquare());
     }
@@ -450,7 +454,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             showMessage(player + message);
     }
 
-    default void showAmmoCardResetting() {
+    default void showAmmoCardResetting(Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap) {
         showMessage("Gathered ammo cards are being replaced...");
     }
 
