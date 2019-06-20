@@ -14,6 +14,9 @@ public class PowerUpCardClient implements Serializable {
     private String powerUpType;
     private Ammo equivalentAmmo;
     private String description;
+
+    private int slotPosition;
+
     private final static int width = 24;
     private final static int height = 24;
 
@@ -26,6 +29,7 @@ public class PowerUpCardClient implements Serializable {
         this.powerUpType = powerUpCard.getType();
         this.equivalentAmmo = powerUpCard.getAmmo();
         this.description = powerUpCard.getDescription();
+        slotPosition = -1;
     }
 
     public String getId() {
@@ -49,6 +53,14 @@ public class PowerUpCardClient implements Serializable {
         String[][] box = CLIUtils.drawEmptyBox(width, height, Color.ammoToColor(equivalentAmmo));
         box = CLIUtils.insertStringToMatrix(box, string);
         return box;
+    }
+
+    public int getSlotPosition() {
+        return slotPosition;
+    }
+
+    public void setSlotPosition(int slotPosition) {
+        this.slotPosition = slotPosition;
     }
 
     @Override

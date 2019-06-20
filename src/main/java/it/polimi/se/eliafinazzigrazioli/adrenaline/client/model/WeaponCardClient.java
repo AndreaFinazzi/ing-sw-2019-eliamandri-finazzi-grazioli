@@ -26,6 +26,8 @@ public class WeaponCardClient implements Serializable {
 
     private String notes;
 
+    private int slotPosition;
+
     private final static int width = 24;
     private final static int height = 24;
 
@@ -43,8 +45,9 @@ public class WeaponCardClient implements Serializable {
                     ));
         }
         loaded = true;
-
         notes = weaponCard.getNotes();
+
+        slotPosition = -1;
     }
 
     public WeaponCardClient(String weaponName, Map<String, String> effectsDescription, List<Ammo> loader) {
@@ -73,6 +76,14 @@ public class WeaponCardClient implements Serializable {
         List<Ammo> price = new ArrayList<>(loader);
         price.add(weaponColor);
         return price;
+    }
+
+    public int getSlotPosition() {
+        return slotPosition;
+    }
+
+    public void setSlotPosition(int slotPosition) {
+        this.slotPosition = slotPosition;
     }
 
     @Override

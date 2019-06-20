@@ -3,7 +3,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PlayerBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -56,8 +55,15 @@ public class LocalModel {
     }
 
     public boolean addPowerUp(PowerUpCardClient card) {
-        if(powerUpCards.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && !powerUpCards.contains(card)){
+        List<Integer> slotPositions = new ArrayList<>();
+        int index = 0;
+        for (PowerUpCardClient powerUpCardClient: powerUpCards)
+            slotPositions.add(powerUpCardClient.getSlotPosition());
+        while (slotPositions.contains(index))
+            index++;
+        if(powerUpCards.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS){
             powerUpCards.add(card);
+            card.setSlotPosition(index);
             return true;
         }
         return false;
@@ -72,6 +78,13 @@ public class LocalModel {
     }
 
     public void addWeapon(WeaponCardClient weapon) {
+        List<Integer> slotPositions = new ArrayList<>();
+        int index = 0;
+        for (WeaponCardClient weaponCardClient: weaponCards)
+            slotPositions.add(weaponCardClient.getSlotPosition());
+        while (slotPositions.contains(index))
+            index++;
+        weapon.setSlotPosition(index);
         weaponCards.add(weapon);
     }
 
@@ -82,6 +95,7 @@ public class LocalModel {
                 toRemove = weaponCardClient;
         }
         weaponCards.remove(toRemove);
+        toRemove.setSlotPosition(-1);
         return toRemove;
     }
 
@@ -90,6 +104,7 @@ public class LocalModel {
     }
 
     public void removePowerUp(PowerUpCardClient powerUpCardClient) {
+        powerUpCardClient.setSlotPosition(-1);
         powerUpCards.remove(powerUpCardClient);
     }
 

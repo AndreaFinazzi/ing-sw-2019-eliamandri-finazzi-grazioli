@@ -37,8 +37,14 @@ public class PlayerClient {
         return new ArrayList<>(ammos);
     }
 
-
     public void addWeapon(WeaponCardClient weapon) {
+        List<Integer> slotPositions = new ArrayList<>();
+        int index = 0;
+        for (WeaponCardClient weaponCardClient: weapons)
+            slotPositions.add(weaponCardClient.getSlotPosition());
+        while (slotPositions.contains(index))
+            index++;
+        weapon.setSlotPosition(index);
         weapons.add(weapon);
     }
 
@@ -49,6 +55,7 @@ public class PlayerClient {
                 toRemove = weaponCardClient;
         }
         weapons.remove(toRemove);
+        toRemove.setSlotPosition(-1);
         return toRemove;
     }
 
