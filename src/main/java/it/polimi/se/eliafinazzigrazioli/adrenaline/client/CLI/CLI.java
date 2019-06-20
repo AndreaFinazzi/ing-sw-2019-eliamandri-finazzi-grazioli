@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
@@ -269,8 +270,9 @@ public class CLI implements RemoteView, Runnable {
             count++;
             string = string + count + ") \t\t\t\t\t";
         }
-        showMessage(count+1 + "Nothing \n");
+        showMessage("");
         showMessage(string);
+        showMessage(count+1 + "Nothing \n");
         int selected = nextInt(cards.size()+1);
         if(selected<cards.size())
             return cards.get(selected);
@@ -299,6 +301,23 @@ public class CLI implements RemoteView, Runnable {
             return null;
         }
     }*/
+
+    @Override
+    public void showPaymentUpdate(String player, List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos) {
+        String message;
+        List<String[][]> powerUpsMatrix = new ArrayList<>();
+        if (player.equals(getClient().getPlayerName()))
+            message = "You ";
+        else
+            message = "Player " + player;
+        message = message + "payed the fallowing power ups:";
+        for (PowerUpCardClient powerUpCardClient: powerUpCardClients)
+                powerUpsMatrix.add(powerUpCardClient.drawCard(true));
+        message = message + CLIUtils.alignSquare(powerUpsMatrix);
+        message = message + "\nand the fallowing ammos: " + ammos;
+
+        showMessage(message);
+    }
 
     @Override
     public void showSpawn(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
