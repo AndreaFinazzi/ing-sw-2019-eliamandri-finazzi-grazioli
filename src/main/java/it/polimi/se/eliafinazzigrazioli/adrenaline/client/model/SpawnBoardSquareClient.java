@@ -27,7 +27,14 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
     }
 
     public void addWeapon(WeaponCardClient weaponCard) {
-        if (weaponCards.contains(weaponCard)) {
+        List<Integer> weaponPositions = new ArrayList<>();
+        int index = 0;
+        for (WeaponCardClient weaponCardClient: weaponCards)
+            weaponPositions.add(weaponCardClient.getSlotPosition());
+        while (weaponPositions.contains(index))
+            index++;
+        weaponCard.setSlotPosition(index);
+        if (!weaponCards.contains(weaponCard)) {
             weaponCard.setLoaded(true);
             weaponCards.add(weaponCard);
         }
@@ -38,6 +45,7 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         for (WeaponCardClient weaponCardClient: weaponCards)
             if (weaponCard.equals(weaponCardClient.getWeaponName()))
                 toRemove = weaponCardClient;
+        toRemove.setSlotPosition(-1);
         weaponCards.remove(toRemove);
         return toRemove;
     }
