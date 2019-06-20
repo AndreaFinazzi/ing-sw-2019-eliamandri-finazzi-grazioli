@@ -153,7 +153,7 @@ public class GameBoardClient {
         for (Map.Entry<Coordinates, List<WeaponCardClient>> coordinatesToWeapons: weaponsPlaced.entrySet()) {
             BoardSquareClient boardSquare = getBoardSquareByCoordinates(coordinatesToWeapons.getKey());
             for (WeaponCardClient weaponCard: coordinatesToWeapons.getValue())
-                boardSquare.addWeaponCard(weaponCard);
+                ((SpawnBoardSquareClient)boardSquare).addWeapon(weaponCard);
         }
     }
 
