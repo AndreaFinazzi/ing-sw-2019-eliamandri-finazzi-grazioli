@@ -83,7 +83,7 @@ public class CLIUtils {
 
     public static String matrixToString(String[][] matrix) {
         int count = 0;
-        String result = "";
+        String result = "\n";
         for(int j=0; j<matrix[count].length; j++) {
             for(int i=0; i<matrix.length; i++) {
                 result = result.concat(matrix[i][j]);

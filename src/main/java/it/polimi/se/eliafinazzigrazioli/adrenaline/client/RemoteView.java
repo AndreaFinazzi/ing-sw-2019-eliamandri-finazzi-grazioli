@@ -409,6 +409,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     void showBeginMatch();
 
+    //Per quella bellezza unica di Grazioli, questo metodo è stato implementato sulla cli
     default void showWeaponCollectionUpdate(String player, WeaponCardClient collectedCard, WeaponCardClient droppedCard, Room roomColor) {
         String message;
         if (player.equals(getClient().getPlayerName()))
@@ -534,7 +535,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         if (isOpponent)
             showMessage("Player " + player + " collected a powerup\n");
         else
-            showMessage("You collected " + cardCollected.toString() + "!\n");
+            showMessage("You collected \n" + cardCollected.toString() + "!\n");
     }
 
     default void showBeginTurn(String player) {

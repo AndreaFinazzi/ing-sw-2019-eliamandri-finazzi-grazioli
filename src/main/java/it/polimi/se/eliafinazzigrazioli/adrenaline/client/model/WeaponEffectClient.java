@@ -28,4 +28,12 @@ public class WeaponEffectClient implements Serializable {
     public List<Ammo> getPrice() {
         return price;
     }
+
+    public String priceToString() {
+        String string = "";
+        for(Ammo ammo : price) {
+            string = string + ammo.toString() + " ";
+        }
+        return string;
+    }
 }

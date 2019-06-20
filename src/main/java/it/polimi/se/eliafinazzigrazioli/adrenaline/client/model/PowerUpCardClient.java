@@ -7,13 +7,19 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 
 import java.io.Serializable;
 
-public class PowerUpCardClient implements Serializable {
+public class PowerUpCardClient implements Serializable, CardInterface {
 
 
     private String id;
     private String powerUpType;
     private Ammo equivalentAmmo;
     private String description;
+
+    private final static int FULL_WIDTH = 24;
+    private final static int FULL_HEIGHT = 24;
+
+    private final static int LIGTH_WIDTH = 20;
+    private final static int LIGHT_HEIGHT = 12;
 
     private int slotPosition;
 
@@ -49,10 +55,21 @@ public class PowerUpCardClient implements Serializable {
     }
 
     public String[][] drawCard() {
-        String string = "PowerUp card:\n" + powerUpType + "\n\nDescription :\n\n" + description;
-        String[][] box = CLIUtils.drawEmptyBox(width, height, Color.ammoToColor(equivalentAmmo));
+        String string = this.toString();
+        String[][] box = CLIUtils.drawEmptyBox(FULL_WIDTH, FULL_HEIGHT, Color.ammoToColor(equivalentAmmo));
         box = CLIUtils.insertStringToMatrix(box, string);
         return box;
+    }
+
+    public String[][] drawCard(boolean light) {
+        if(light) {
+            String string = this.toStringLight();
+            String[][] box = CLIUtils.drawEmptyBox(LIGTH_WIDTH, LIGHT_HEIGHT, Color.ammoToColor(equivalentAmmo));
+            box = CLIUtils.insertStringToMatrix(box, string);
+            return box;
+        } else {
+            return drawCard();
+        }
     }
 
     public int getSlotPosition() {
@@ -70,6 +87,11 @@ public class PowerUpCardClient implements Serializable {
 
     @Override
     public String toString() {
-        return CLIUtils.matrixToString(drawCard());
+        return "PowerUp card:\n" + powerUpType + "\n\nDescription :\n\n" + description;
+
+    }
+
+    private String toStringLight() {
+        return "PowerUp card:\n" + powerUpType +"\n";
     }
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class WeaponCardClient implements Serializable {
+public class WeaponCardClient implements Serializable, CardInterface {
 
     private String weaponName;
 
@@ -26,6 +26,11 @@ public class WeaponCardClient implements Serializable {
 
     private String notes;
 
+    private final static int FULL_WIDTH = 24;
+    private final static int FULL_HEIGHT = 24;
+
+    private final static int LIGTH_WIDTH = 24;
+    private final static int LIGHT_HEIGHT = 12;
     private int slotPosition;
 
     private final static int width = 24;
@@ -45,6 +50,7 @@ public class WeaponCardClient implements Serializable {
                     ));
         }
         loaded = true;
+
         notes = weaponCard.getNotes();
 
         slotPosition = -1;
@@ -116,9 +122,30 @@ public class WeaponCardClient implements Serializable {
         return string;
     }
 
+    private String toStringLight() {
+        String string = weaponName + " :\n\n";
+        int count = 1;
+        for (WeaponEffectClient effect: effects) {
+            string = string + count + ": " + effect.getEffectName() + " price: " + effect.priceToString() + "\n\n";
+            count++;
+        }
+        return string;
+    }
+
     public String[][] drawCard() {
-       String[][] weapon = CLIUtils.drawEmptyBox(width, height, Color.ammoToColor(weaponColor));
+       String[][] weapon = CLIUtils.drawEmptyBox(FULL_WIDTH, FULL_HEIGHT, Color.ammoToColor(weaponColor));
        weapon = CLIUtils.insertStringToMatrix(weapon, this.toString());
        return weapon;
+    }
+
+    public String[][] drawCard(boolean light) {
+        if(!light) {
+            return drawCard();
+        }
+        else {
+            String[][] weapon = CLIUtils.drawEmptyBox(LIGTH_WIDTH, LIGHT_HEIGHT, Color.ammoToColor(weaponColor));
+            weapon = CLIUtils.insertStringToMatrix(weapon, this.toStringLight());
+            return weapon;
+        }
     }
 }

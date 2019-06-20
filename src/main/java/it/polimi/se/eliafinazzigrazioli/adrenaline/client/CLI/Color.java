@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 
 public enum Color {
     PURPLE("\u001B[35m"),
@@ -36,6 +37,33 @@ public enum Color {
 
             default:
                 return Color.RESET;
+        }
+    }
+
+    public static Color roomToColor(Room room) {
+
+        switch(room) {
+            case RED:
+                return Color.RED;
+
+            case BLUE:
+                return Color.BLUE;
+
+            case GRAY:
+                return Color.GRAY;
+
+            case GREEN:
+                return Color.GREEN;
+
+            case PURPLE:
+                return Color.PURPLE;
+
+            case YELLOW:
+                return Color.YELLOW;
+
+            default:
+                return Color.RESET;
+
         }
     }
 }

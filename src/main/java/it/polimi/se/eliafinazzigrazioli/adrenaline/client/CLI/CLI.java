@@ -4,14 +4,12 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -90,8 +88,13 @@ public class CLI implements RemoteView, Runnable {
 
         int nextInt;
         do {
-            nextInt = input.nextInt();
-            input.nextLine();
+            try {
+                nextInt = input.nextInt();
+                input.nextLine();
+            } catch(NoSuchElementException e) {
+                e.printStackTrace();
+                nextInt = -1;
+            }
             if(nextInt < 1 || nextInt > size) {
                 showMessage("Choice out of bound. Sit down and focus, you can do it: ");
             }
@@ -119,6 +122,14 @@ public class CLI implements RemoteView, Runnable {
             choice = availableActions.get(nextInt(availableActions.size()));
             if (choice == PlayerAction.SHOW_MAP) {
                 showMap();
+            }
+            if(choice.equals(PlayerAction.SHOW_OWNED_WEAPONS)){
+                List<WeaponCardClient> weaponCardClients = localModel.getWeaponCards();
+                List<String[][]> weaponCardsMatrix = new ArrayList<>();
+                for(WeaponCardClient iterator : weaponCardClients) {
+                    weaponCardsMatrix.add(iterator.drawCard());
+                }
+                showMessage(CLIUtils.alignSquare(weaponCardsMatrix));
             }
             /*if( choice.equals(PlayerAction.SHOW_OWNED_PLAYERBOARD)) {
                 showMessage(CLIUtils.serializeMap(localModel.getPlayerBoards()));
@@ -245,6 +256,24 @@ public class CLI implements RemoteView, Runnable {
     //todo implement
     @Override
     public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> cards) {
+        showMessage("You can select :");
+        List<String[][]> listMatrix = new ArrayList<>();
+        String string = "";
+        int count = 0;
+        for(PowerUpCardClient powerUpCardClient : cards) {
+            listMatrix.add(powerUpCardClient.drawCard(true));
+        }
+        showMessage(CLIUtils.alignSquare(listMatrix));
+
+        for(int i=0; i<cards.size(); i++){
+            count++;
+            string = string + count + ") \t\t\t\t\t";
+        }
+        showMessage(count+1 + "Nothing \n");
+        showMessage(string);
+        int selected = nextInt(cards.size()+1);
+        if(selected<cards.size())
+            return cards.get(selected);
         return null;
     }
 
@@ -272,6 +301,28 @@ public class CLI implements RemoteView, Runnable {
     }*/
 
     @Override
+    public void showSpawn(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
+        String message = "";
+        if(isOpponent) {
+            message = message + "Player " + player;
+        }
+        else
+            message = message + "You collected \n";
+        message = message + " spawned on " + spawnPoint.toString() + CLIUtils.matrixToString(spawnCard.drawCard(true));
+        showMessage(message);
+    }
+
+    @Override
+    public void showPowerUpCollection(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
+        String message = "";
+        if (isOpponent)
+            message = message + "Player " + player + "collected a powerup\n";
+        else
+            message = message + "You collected \n" + CLIUtils.matrixToString(cardCollected.drawCard()) + "!\n";
+        showMessage(message);
+    }
+
+    @Override
     public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
         int choice;
         showMessage("Do you want to reload a weapon? [Y/n]");
@@ -293,7 +344,24 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void showMessage(Object message) {
+    public void showWeaponCollectionUpdate(String player, WeaponCardClient collectedCard, WeaponCardClient droppedCard, Room roomColor) {
+        String message = "";
+        String weapon = CLIUtils.matrixToString(collectedCard.drawCard(true));
+        if(player.equalsIgnoreCase(getClient().getPlayerName()))
+            message = "You ";
+        else
+            message = "Player " + player;
+        message = message.concat(" collected the weapon:\n".concat(weapon).concat("from ").concat(roomColor.toString()));
+        if(droppedCard != null) {
+            String droppedWeapon = CLIUtils.matrixToString(droppedCard.drawCard(true));
+            message = message.concat(" and dropped the weapon\n").concat(droppedWeapon);
+            message = message.concat("\nback on board");
+        }
+        showMessage(message);
+    }
+
+    @Override
+    public synchronized void showMessage(Object message) {
         System.out.println(message);
     }
 
