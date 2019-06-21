@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Coordinates implements Serializable {
 
@@ -31,7 +32,7 @@ public class Coordinates implements Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(xCoordinate, yCoordinate);
     }
 
     @Override

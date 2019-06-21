@@ -1,5 +1,6 @@
 {
   "weaponName": "Whisper",
+  "id": "0218",
   "cardColor": "BLUE",
   "loader": ["YELLOW"],
   "effects": [

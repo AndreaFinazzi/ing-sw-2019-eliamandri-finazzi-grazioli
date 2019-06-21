@@ -1,0 +1,25 @@
+.gameBoardItem {
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+
+    -fx-max-width: 50;
+    -fx-max-height: 50;
+}
+
+.ammoCard {
+    -fx-background-image: url("../assets/ammo/AD_ammo_04.png");
+    -fx-background-color: none;
+    -fx-background-insets: 0, 0;
+    -fx-background-size: contain;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+
+    -fx-image: url("../assets/ammo/AD_ammo_04.png");
+}
+
+.playerAvatar {
+
+}

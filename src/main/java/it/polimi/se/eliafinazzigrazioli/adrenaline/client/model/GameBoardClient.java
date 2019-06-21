@@ -157,7 +157,6 @@ public class GameBoardClient {
         }
     }
 
-
     public void setPlayerPosition (String player, Coordinates coordinates) {
         playerPositions.put(player, squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()]);
     }

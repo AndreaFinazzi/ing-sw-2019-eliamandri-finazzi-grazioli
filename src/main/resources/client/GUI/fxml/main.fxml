@@ -38,117 +38,39 @@
                 </GridPane>
                 <AnchorPane>
                     <children>
-                        <Pane id="mainBoardPane" fx:id="mainBoardPane" prefHeight="200.0" prefWidth="200.0"
+                        <Pane id="mainBoardPane" fx:id="mainBoardPane" maxHeight="1030.0" maxWidth="960.0"
+                              minHeight="1030.0" minWidth="960.0" prefHeight="1030.0" prefWidth="960.0"
                               styleClass="map_NONE" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0"
                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
                             <children>
                                 <GridPane id="gameBoardGridPane" fx:id="gameBoardGridPane" alignment="CENTER"
                                           gridLinesVisible="true" hgap="18.0" layoutX="256.0" layoutY="162.0"
+                                          maxHeight="701.0" maxWidth="526.0" minHeight="701.0" minWidth="526.0"
                                           nodeOrientation="LEFT_TO_RIGHT" prefHeight="701.0" prefWidth="526.0"
-                                          rotate="180.0" vgap="18.0">
+                                          stylesheets="@../css/player_board.css" vgap="18.0">
                                     <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="134.0"
                                                            percentWidth="31.0" prefWidth="134.0"/>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="179.0" minWidth="150.0"
-                                                           percentWidth="37.0" prefWidth="172.0"/>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="147.0" minWidth="124.0"
-                                                           percentWidth="32.0" prefWidth="131.0"/>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="168.0" minWidth="168.0"
+                                                           percentWidth="37.0" prefWidth="168.0"/>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="172.0" minWidth="172.0"
+                                                           percentWidth="32.0" prefWidth="172.0"/>
                                     </columnConstraints>
                                     <rowConstraints>
-                                        <RowConstraints maxHeight="130.0" minHeight="130.0" percentHeight="22.0"
-                                                        prefHeight="130.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="140.0" minHeight="140.0" percentHeight="28.0"
-                                                        prefHeight="140.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="202.0" minHeight="140.0" percentHeight="29.0"
-                                                        prefHeight="179.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="125.0" minHeight="63.0" percentHeight="21.0"
-                                                        prefHeight="86.0" vgrow="SOMETIMES"/>
+                                        <RowConstraints maxHeight="141.0" minHeight="141.0" percentHeight="22.0"
+                                                        prefHeight="141.0" vgrow="SOMETIMES"/>
+                                        <RowConstraints maxHeight="172.0" minHeight="172.0" percentHeight="28.0"
+                                                        prefHeight="172.0" vgrow="SOMETIMES"/>
+                                        <RowConstraints maxHeight="177.0" minHeight="177.0" percentHeight="29.0"
+                                                        prefHeight="177.0" vgrow="SOMETIMES"/>
+                                        <RowConstraints maxHeight="128.0" minHeight="128.0" percentHeight="21.0"
+                                                        prefHeight="128.0" vgrow="SOMETIMES"/>
                                     </rowConstraints>
                                     <padding>
                                         <Insets bottom="18.0" left="18.0" right="18.0" top="18.0"/>
                                     </padding>
-                                    <children>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.columnIndex="1">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.columnIndex="2">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.rowIndex="1">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.columnIndex="1"
-                                                  GridPane.rowIndex="1">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.columnIndex="2"
-                                                  GridPane.rowIndex="1">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.rowIndex="2">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.columnIndex="1"
-                                                  GridPane.rowIndex="2">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.columnIndex="2"
-                                                  GridPane.rowIndex="2">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.rowIndex="3">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.columnIndex="1"
-                                                  GridPane.rowIndex="3">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                        <TilePane alignment="CENTER" hgap="10.0" prefHeight="200.0" prefWidth="200.0"
-                                                  styleClass="gameBoardSquare" vgap="10.0" GridPane.columnIndex="2"
-                                                  GridPane.rowIndex="3">
-                                            <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                            </padding>
-                                        </TilePane>
-                                    </children>
                                 </GridPane>
-                                <VBox fx:id="blueWeaponCardSlots" alignment="CENTER" layoutX="90.0" layoutY="156.0"
+                                <VBox fx:id="weaponCardSlots_BLUE" alignment="CENTER" layoutX="90.0" layoutY="156.0"
                                       maxHeight="333.0" maxWidth="150.0" minHeight="333.0" minWidth="150.0"
                                       prefHeight="333.0" prefWidth="150.0" spacing="15.0">
                                     <opaqueInsets>
@@ -181,7 +103,7 @@
                                         </Button>
                                     </children>
                                 </VBox>
-                                <HBox fx:id="yellowWeaponCardSlots" alignment="CENTER" layoutX="527.0" layoutY="-3.0"
+                                <HBox fx:id="weaponCardSlots_YELLOW" alignment="CENTER" layoutX="527.0" layoutY="-3.0"
                                       maxHeight="150.0" maxWidth="333.0" minHeight="150.0" minWidth="333.0"
                                       prefHeight="150.0" prefWidth="333.0" spacing="15.0">
                                     <padding>
@@ -211,7 +133,7 @@
                                         </Button>
                                     </children>
                                 </HBox>
-                                <HBox fx:id="redWeaponCardSlots" alignment="CENTER" layoutX="369.0" layoutY="878.0"
+                                <HBox fx:id="weaponCardSlots_RED" alignment="CENTER" layoutX="369.0" layoutY="878.0"
                                       maxHeight="150.0" maxWidth="333.0" minHeight="150.0" minWidth="333.0"
                                       prefHeight="150.0" prefWidth="333.0" spacing="15.0">
                                     <padding>
@@ -271,7 +193,7 @@
                 </AnchorPane>
             </children>
         </GridPane>
-        <StackPane fx:id="mapVoteOverlayStackPane" styleClass="mapVoteBackground" prefHeight="150.0" prefWidth="200.0"
+        <StackPane fx:id="mapVoteOverlayStackPane" prefHeight="150.0" prefWidth="200.0" styleClass="mapVoteBackground"
                    visible="false">
             <children>
                 <AnchorPane id="mapVoteAnchorPane" maxHeight="400.0" maxWidth="600.0" prefHeight="400.0"
@@ -314,10 +236,11 @@
                                             <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
                                                         GridPane.rowIndex="2">
                                                 <children>
-                                                    <Button fx:id="voteMapButton"
-                                                            mnemonicParsing="false" text="Submit"
+                                                    <Button fx:id="voteMapButton" mnemonicParsing="false" text="Submit"
                                                             AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="0.0"
-                                                            AnchorPane.topAnchor="5.0"/>
+                                                            AnchorPane.topAnchor="5.0">
+                                                        <disable>${availableMapsChoiceBox.selected}</disable>
+                                                    </Button>
                                                 </children>
                                             </AnchorPane>
                                         </children>

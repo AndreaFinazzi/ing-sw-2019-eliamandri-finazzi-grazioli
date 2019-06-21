@@ -1,5 +1,6 @@
 {
-  "weaponName": "Lock Refile",
+  "weaponName": "Lock Rifle",
+  "id": "0221",
   "cardColor": "BLUE",
   "loader": [
     "BLUE"

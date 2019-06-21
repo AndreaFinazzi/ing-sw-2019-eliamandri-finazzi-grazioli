@@ -1,5 +1,6 @@
 {
   "weaponName": "Heatseeker",
+  "id": "0210",
   "cardColor": "RED",
   "loader": ["RED", "YELLOW"],
   "effects": [

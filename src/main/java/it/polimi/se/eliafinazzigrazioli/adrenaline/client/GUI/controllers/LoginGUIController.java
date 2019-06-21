@@ -1,13 +1,11 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -22,6 +20,9 @@ public class LoginGUIController extends AbstractGUIController {
     private TextField txtUsername;
 
     @FXML
+    private Label errorLabel;
+
+    @FXML
     private Button buttonLogin;
 
     @FXML
@@ -30,29 +31,37 @@ public class LoginGUIController extends AbstractGUIController {
     @FXML
     private AnchorPane overlayAnchorPane;
 
+    private VBox loaderBox;
+
     public LoginGUIController() {
         super();
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+
+        loaderBox = new VBox(progressIndicator);
+        loaderBox.setAlignment(Pos.CENTER);
+        loaderBox.setStyle("-fx-background-color: rgba(50, 50, 50, 0.5);");
+
+        loaderBox.setVisible(false);
+
+        Platform.runLater(() -> rootStackPane.getChildren().add(loaderBox));
     }
 
 
     public void performLogin(ActionEvent actionEvent) {
 
-        System.out.println("Try login: " + txtUsername.getText());
+        view.showMessage("Try login: " + txtUsername.getText());
 
-
-        view.notifyLoginRequestEvent(txtUsername.getText(), availableAvatarsList.getValue());
-
-        ProgressIndicator progressIndicator = new ProgressIndicator();
-        VBox box = new VBox(progressIndicator);
-        box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-background-color: rgba(50, 50, 50, 0.5);");
         // Grey Background
-        rootStackPane.getChildren().add(box);
+        errorLabel.setVisible(false);
+        loaderBox.setVisible(true);
+        view.notifyLoginRequestEvent(txtUsername.getText(), availableAvatarsList.getValue());
     }
 
-    public void setLoggable(boolean loggable) {
-        txtUsername.setDisable(!loggable);
-        buttonLogin.setDisable(!loggable);
+    public void setRetry() {
+        errorLabel.setVisible(true);
+        txtUsername.setDisable(false);
+        buttonLogin.setDisable(false);
+        loaderBox.setVisible(false);
     }
 
     public void setAvailableAvatarsList(ArrayList<Avatar> availableAvatars) {

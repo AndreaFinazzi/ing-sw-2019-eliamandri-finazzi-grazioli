@@ -66,6 +66,14 @@ public class AbstractGUIController implements Initializable {
         return loader.getRoot();
     }
 
+    Node loadFXML(String path, AbstractGUIController guiController) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+        loader.setController(guiController);
+        loader.load();
+
+        return loader.getRoot();
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 

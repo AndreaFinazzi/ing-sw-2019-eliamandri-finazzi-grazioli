@@ -1,5 +1,6 @@
 {
   "weaponName": "Hellion",
+  "id": "0215",
   "cardColor": "RED",
   "loader": ["YELLOW"],
   "effects": [

@@ -201,7 +201,11 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
     @Override
     public void handleEvent(MapVoteEvent event) throws HandlerNotImplementedException {
-        voteMap(event.getVotedMap());
+        if (event.getVotedMap() != null)
+            voteMap(event.getVotedMap());
+        else
+            voteMap(MapType.values()[new Random().nextInt(MapType.values().length - 1)]);
+
         if (mapVotes == getPlayers().size()) {
             initMatch(getWinningMap());
         }

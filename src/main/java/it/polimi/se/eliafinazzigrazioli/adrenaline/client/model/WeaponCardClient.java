@@ -14,6 +14,7 @@ import java.util.Map;
 public class WeaponCardClient implements Serializable, CardInterface {
 
     private String weaponName;
+    private String id;
 
     private Ammo weaponColor;
     private List<Ammo> loader;
@@ -39,6 +40,7 @@ public class WeaponCardClient implements Serializable, CardInterface {
 
     public WeaponCardClient(WeaponCard weaponCard) {
         weaponName = weaponCard.getWeaponName();
+        id = weaponCard.getId();
         weaponColor = weaponCard.getCardColor();
         loader = weaponCard.getLoader();
         effects = new ArrayList<>();
@@ -64,6 +66,10 @@ public class WeaponCardClient implements Serializable, CardInterface {
 
     public String getWeaponName() {
         return weaponName;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Ammo getWeaponColor() {

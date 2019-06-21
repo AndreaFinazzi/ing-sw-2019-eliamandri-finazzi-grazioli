@@ -23,8 +23,8 @@ public class PowerUpCardClient implements Serializable, CardInterface {
 
     private int slotPosition;
 
-    private final static int width = 24;
-    private final static int height = 24;
+    private final static int DRAW_WIDTH = 24;
+    private final static int DRAW_HEIGHT = 24;
 
     public PowerUpCardClient() {
 

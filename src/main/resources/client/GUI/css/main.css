@@ -134,6 +134,11 @@
 }
 
 .arrowButton {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+
     -fx-max-height: 50;
     -fx-max-width: 50;
     -fx-background-size: 40 40;

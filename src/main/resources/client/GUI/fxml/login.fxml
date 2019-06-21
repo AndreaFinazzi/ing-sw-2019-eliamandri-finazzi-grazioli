@@ -64,6 +64,11 @@
                             </Label>
                         </children>
                     </AnchorPane>
+                    <Label fx:id="errorLabel" text="Not valid!" textFill="RED" visible="false" GridPane.columnIndex="2">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                    </Label>
                     <rowConstraints>
                         <RowConstraints/>
                         <RowConstraints minHeight="10.0" prefHeight="30.0"/>

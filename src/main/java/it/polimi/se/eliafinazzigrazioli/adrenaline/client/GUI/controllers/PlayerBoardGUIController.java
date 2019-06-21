@@ -36,6 +36,5 @@ public class PlayerBoardGUIController extends AbstractGUIController {
 
         playerBoardGridPane.getStyleClass().remove(PLAYER_BOARD_STYLE_CLASS_DEFAULT);
         playerBoardGridPane.getStyleClass().add(PLAYER_BOARD_STYLE_CLASS_PREFIX + avatar.getDamageMark().name());
-
     }
 }

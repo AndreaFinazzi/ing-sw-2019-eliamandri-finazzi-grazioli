@@ -1,9 +1,10 @@
-#playerBoard {
+.playerBoard {
     -fx-pref-width: 610;
+    -fx-pref-height: 155;
 }
 
 .playerBoard_NONE {
-    -fx-background-image: url("../assets/adrenaline/background_table_1.JPG");
+    -fx-background-image: url("../assets/playerboards/PlayerBoard_BW.png");
     -fx-background-insets: 0, 0;
     -fx-background-size: cover;
     -fx-background-position: center;
@@ -50,3 +51,6 @@
     -fx-background-repeat: no-repeat;
 }
 
+#overlay {
+    -fx-background-color: rgba(37, 37, 37, 0.6);
+}

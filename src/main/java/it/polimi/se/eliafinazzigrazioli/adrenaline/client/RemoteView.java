@@ -13,7 +13,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.Play
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
@@ -488,6 +487,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
+    // TODO should be removed
     void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates);
 
     default void buildLocalMap(MapType mapType) {

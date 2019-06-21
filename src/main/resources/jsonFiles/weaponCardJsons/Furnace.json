@@ -1,5 +1,6 @@
 {
   "weaponName": "Furnace",
+  "id": "0214",
   "cardColor": "RED",
   "loader": ["BLUE"],
   "effects": [

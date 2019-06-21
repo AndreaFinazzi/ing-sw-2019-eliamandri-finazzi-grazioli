@@ -25,6 +25,7 @@ public class WeaponCard extends Card {
      * saved in the json file.
      */
     private String weaponName;
+    private String id;
     private Ammo cardColor;
     private List<Ammo> loader;
     private List<WeaponEffect> effects;
@@ -68,6 +69,10 @@ public class WeaponCard extends Card {
 
     public String getWeaponName() {
         return weaponName;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public WeaponEffect getActiveEffect() {
@@ -146,5 +151,4 @@ public class WeaponCard extends Card {
     public String toString() {
         return "Name: " + weaponName + "\nColor: " + cardColor +"\nLoader: " + loader.toString() + "\nEffects: " + effects ;
     }
-
 }

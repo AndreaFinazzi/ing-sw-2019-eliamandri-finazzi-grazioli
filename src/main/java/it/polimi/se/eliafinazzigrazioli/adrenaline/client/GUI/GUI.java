@@ -1,7 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.CommandGUIController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.CommandsGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.LoginGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.OpponentPlayerGUIController;
@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -42,6 +41,7 @@ public class GUI extends Application implements RemoteView {
     public static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
     public static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
     public static final String ASSET_PATH_CARDS_ROOT = ASSET_PATH_ROOT + "cards/";
+    public static final String ASSET_PATH_CARDS_ROTATED_ROOT = ASSET_PATH_CARDS_ROOT + "rotated/";
     public static final String ASSET_PATH_MAPS_ROOT = ASSET_PATH_ROOT + "maps/";
     public static final String ASSET_PATH_AMMO_ROOT = ASSET_PATH_ROOT + "ammo/";
     public static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + "playerboards/";
@@ -49,14 +49,19 @@ public class GUI extends Application implements RemoteView {
 
     public static final String ASSET_FORMAT_CARDS = ".png";
     public static final String ASSET_FORMAT_ICONS = ".png";
+    public static final String ASSET_FORMAT_AMMO = ".png";
     public static final String ASSET_PREFIX_POWER_UP = "AD_powerups_IT_";
     public static final String ASSET_PREFIX_WEAPON = "AD_weapons_IT_";
+    public static final String ASSET_PREFIX_AMMO = "AD_ammo_";
     public static final String ASSET_PREFIX_ICONS_ARROWS = "arrow_";
+
+    public static final String ASSET_ID_HIDDEN_CARD = "02";
 
     public static final String FXML_PATH_LOGIN = FXML_PATH_ROOT + "login.fxml";
     public static final String FXML_PATH_COMMANDS = FXML_PATH_ROOT + "commands.fxml";
     public static final String FXML_PATH_OPPONENT_PLAYER_INFO = FXML_PATH_ROOT + "opponent_player_info.fxml";
     public static final String FXML_PATH_PLAYER_BOARD = FXML_PATH_ROOT + "player_board.fxml";
+    public static final String FXML_PATH_BOARD_SQUARE = FXML_PATH_ROOT + "board_square.fxml";
     public static final String FXML_PATH_MAIN = FXML_PATH_ROOT + "main.fxml";
     public static final String FXML_PATH_MY_POWER_UP = FXML_PATH_ROOT + "my_power_up.fxml";
     public static final String FXML_PATH_MY_WEAPON = FXML_PATH_ROOT + "my_weapon.fxml";
@@ -73,10 +78,10 @@ public class GUI extends Application implements RemoteView {
     private LocalModel localModel;
 
     private MainGUIController mainGUIController;
-    private CommandGUIController commandsGUIController;
+    private CommandsGUIController commandsGUIController;
     private LoginGUIController loginGUIController;
     ///TODO define a setter and verify Map is the correct data structure
-    private Map<Avatar, OpponentPlayerGUIController> opponentPlayerGUIControllers;
+    private Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap;
 
     private boolean initialized = false;
 
@@ -127,7 +132,7 @@ public class GUI extends Application implements RemoteView {
         return client;
     }
 
-    public void setCommandsGUIController(CommandGUIController commandsGUIController) {
+    public void setCommandsGUIController(CommandsGUIController commandsGUIController) {
         this.commandsGUIController = commandsGUIController;
     }
 
@@ -204,7 +209,7 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void updatePlayerPosition(String nickname, Coordinates coordinates) {
-
+        localModel.getGameBoard().getBoardSquareByCoordinates(coordinates).getRoom();
     }
 
     @Override
@@ -239,7 +244,7 @@ public class GUI extends Application implements RemoteView {
                 primaryStage.show();
             });
         } else {
-            loginGUIController.setLoggable(true);
+            loginGUIController.setRetry();
         }
     }
 
@@ -284,13 +289,29 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
+
+    }
+
+    @Override
     public void showMap() {
 
     }
 
     @Override
-    public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
+    public void showWeaponCardResetting(Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap) {
+        for (Map.Entry<Coordinates, List<WeaponCardClient>> coordinatesWeaponsEntry : coordinatesWeaponsMap.entrySet()) {
+            for (WeaponCardClient weaponCard : coordinatesWeaponsEntry.getValue()) {
+                mainGUIController.updateWeaponCardOnMap(weaponCard, localModel.getGameBoard().getBoardSquareByCoordinates(coordinatesWeaponsEntry.getKey()).getRoom());
+            }
+        }
+    }
 
+    @Override
+    public void showAmmoCardResetting(Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap) {
+        for (Map.Entry<Coordinates, AmmoCardClient> coordinatesAmmoCardEntry : coordinatesAmmoCardMap.entrySet()) {
+            mainGUIController.updateAmmoCardOnMap(coordinatesAmmoCardEntry.getKey(), coordinatesAmmoCardEntry.getValue());
+        }
     }
 
     @Override
@@ -298,6 +319,7 @@ public class GUI extends Application implements RemoteView {
         AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
 
         commandsGUIController.setPowerUpCards(cards);
+        commandsGUIController.setSelectablePowerUp(cards);
         commandsGUIController.setSelectedPowerUp(selectedPowerUp);
 
         Semaphore semaphore = new Semaphore(0);
@@ -313,7 +335,6 @@ public class GUI extends Application implements RemoteView {
         synchronized (semaphore) {
             return selectedPowerUp.get();
         }
-
     }
 
     @Override
@@ -350,6 +371,23 @@ public class GUI extends Application implements RemoteView {
         }
     }
 
+    @Override
+    public void showSpawn(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
+
+    }
+
+    @Override
+    public void showPowerUpCollection(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
+        if (isOpponent) {
+            try {
+                opponentPlayerToGUIControllerMap.get(player).setCardCollected(cardCollected);
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+            }
+        } else
+            commandsGUIController.updatePowerUpCards();
+    }
+
     public String getPowerUpAsset(String id) {
         String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_POWER_UP + id + ASSET_FORMAT_CARDS;
         return this.getClass().getResource(uri).toExternalForm();
@@ -362,13 +400,29 @@ public class GUI extends Application implements RemoteView {
 
     }
 
+    public String getAmmoAsset(String id) {
+        String uri = ASSET_PATH_AMMO_ROOT + ASSET_PREFIX_AMMO + id + ASSET_FORMAT_AMMO;
+        return this.getClass().getResource(uri).toExternalForm();
+
+    }
+
+    public String getWeaponRotatedAsset(String id) {
+        String uri = ASSET_PATH_CARDS_ROTATED_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT_CARDS;
+        return this.getClass().getResource(uri).toExternalForm();
+
+    }
+
     public String getIconAsset(String id) {
         String uri = ASSET_PATH_ICONS_ROOT + id;
-        return GUI.class.getResource(uri).toExternalForm();
+        return this.getClass().getResource(uri).toExternalForm();
 
     }
 
     public String getMapFileName(MapType mapType) {
         return "/client/GUI/assets/maps/" + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_PREFIX + mapType.name() + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_FORMAT;
+    }
+
+    public void setOpponentPlayerToGUIControllerMap(Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap) {
+        this.opponentPlayerToGUIControllerMap = opponentPlayerToGUIControllerMap;
     }
 }

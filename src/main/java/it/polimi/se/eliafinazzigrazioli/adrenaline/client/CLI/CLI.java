@@ -1,6 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
@@ -215,6 +218,7 @@ public class CLI implements RemoteView, Runnable {
         notifySelectedEffects(temp);
     }
 
+    // TODO Never used
     @Override
     public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
         showMessage("You have collected this Weapon card");
@@ -222,8 +226,7 @@ public class CLI implements RemoteView, Runnable {
         if(localModel.getGameBoard().getBoardSquareByCoordinates(coordinates).addWeaponCard(weaponCardClient)) {
             showMessage(weaponCardClient);
             showMessage("is drawed on coordinates: " + coordinates);
-        }
-        else
+        } else
             showMessage("ops, something didn't work");
 
     }

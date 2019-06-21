@@ -1,5 +1,6 @@
 {
   "weaponName": "Machine Gun",
+  "id": "0220",
   "basic effect": "BLUE",
   "loader": [
     "RED"
