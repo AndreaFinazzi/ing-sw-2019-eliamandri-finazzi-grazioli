@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class CommandsGUIController extends AbstractGUIController {
-    private boolean initialized = false;
 
     private List<PowerUpCardClient> myPowerUps;
     private List<WeaponCardClient> myWeaponCards;
@@ -71,7 +70,7 @@ public class CommandsGUIController extends AbstractGUIController {
 
     public void setPowerUpCards(List<PowerUpCardClient> powerUpCards) {
         myPowerUps = powerUpCards;
-        resetPowerUps();
+        resetPowerUpSlots();
         for (int i = 0; i < powerUpCards.size(); i++) {
             int position = i;
             Platform.runLater(() -> myPowerUpSlots.getChildren().get(position).setStyle("-fx-background-image: url('" + view.getPowerUpAsset(powerUpCards.get(position).getId()) + "'); "));
@@ -79,17 +78,31 @@ public class CommandsGUIController extends AbstractGUIController {
     }
 
     public void updatePowerUpCards() {
-        resetPowerUps();
+        resetPowerUpSlots();
         for (PowerUpCardClient powerUpCard : view.getLocalModel().getPowerUpCards()) {
             Platform.runLater(() -> myPowerUpSlots.getChildren().get(powerUpCard.getSlotPosition()).setStyle("-fx-background-image: url('" + view.getPowerUpAsset(powerUpCard.getId()) + "'); "));
         }
     }
 
-    private void resetPowerUps() {
-        for (Node slot : myPowerUpSlots.getChildren()) {
-            Platform.runLater(() -> slot.setStyle("-fx-background-image: url('" + GUI.ASSET_ID_HIDDEN_CARD + "'); "));
+    public void updateWeaponCards() {
+        resetWeaponSlots();
+        for (WeaponCardClient weaponCard : view.getLocalModel().getWeaponCards()) {
+            Platform.runLater(() -> myPowerUpSlots.getChildren().get(weaponCard.getSlotPosition()).setStyle("-fx-background-image: url('" + view.getWeaponAsset(weaponCard.getId()) + "'); "));
         }
     }
+
+    private void resetPowerUpSlots() {
+        for (Node slot : myPowerUpSlots.getChildren()) {
+            Platform.runLater(() -> slot.setStyle("-fx-background-image: url('" + view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD) + "'); "));
+        }
+    }
+
+    private void resetWeaponSlots() {
+        for (Node slot : myWeaponCardSlots.getChildren()) {
+            Platform.runLater(() -> slot.setStyle("-fx-background-image: url('" + view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD) + "'); "));
+        }
+    }
+
     // Weapon card id is missing
 //    public void setWeaponCards(List<WeaponCardClient> weaponCards) {
 //        myWeaponCards = weaponCards;
@@ -122,13 +135,22 @@ public class CommandsGUIController extends AbstractGUIController {
         }
     }
 
+    public void setSelectableWeapon(List<WeaponCardClient> selectableWeapons) {
+        for (WeaponCardClient card : selectableWeapons) {
+            myWeaponCardSlots.getChildren().get(myWeaponCards.indexOf(card)).setDisable(false);
+        }
+    }
+
     public void setAvailableMoves(ArrayList<MoveDirection> availableMoves) {
-        for (MoveDirection availableMoveDirection : availableMoves) {
-            moveDirectionButtonEnumMap.get(availableMoveDirection).setDisable(false);
+        arrowsGridPane.setDisable(false);
+        for (Map.Entry<MoveDirection, Button> moveDirectionButtonEntry : moveDirectionButtonEnumMap.entrySet()) {
+            if (availableMoves.contains(moveDirectionButtonEntry.getKey()))
+                moveDirectionButtonEntry.getValue().setDisable(false);
+            else
+                moveDirectionButtonEntry.getValue().setDisable(true);
         }
 
         arrowSTOP.setDisable(false);
-        arrowsGridPane.setDisable(false);
     }
 
     public void disableArrows() {
@@ -136,7 +158,6 @@ public class CommandsGUIController extends AbstractGUIController {
             arrow.setDisable(true);
         }
     }
-
     public void disableCards() {
         myPowerUpSlots.setDisable(true);
         myWeaponCardSlots.setDisable(true);
@@ -144,6 +165,7 @@ public class CommandsGUIController extends AbstractGUIController {
 // USELESS
 //    public void arrowPressed(MouseEvent actionEvent) {
 //        selectedMove.set(MoveDirection.STOP);
+
 //        disableArrows();
 
 //        semaphore.release();
@@ -175,7 +197,6 @@ public class CommandsGUIController extends AbstractGUIController {
 
     public void setGetMove() {
         arrowsGridPane.setVisible(true);
-
         actionsFlowPane.setVisible(false);
     }
 
@@ -213,7 +234,8 @@ public class CommandsGUIController extends AbstractGUIController {
             // Weapons
             for (int i = 0; i < Rules.PLAYER_CARDS_MAX_WEAPONS; i++) {
                 try {
-                    Button button = (Button) loadFXML(GUI.FXML_PATH_MY_WEAPON, myWeaponCardSlots, this);
+                    Button button = (Button) loadFXML(GUI.FXML_PATH_WEAPON, myWeaponCardSlots, this);
+                    button.getStyleClass().add(GUI.STYLE_CLASS_WEAPON_MY);
                     button.setDisable(true);
                     button.setOnAction(event -> {
                         disableCards();
@@ -228,7 +250,7 @@ public class CommandsGUIController extends AbstractGUIController {
             // PowerUps
             for (int i = 0; i < Rules.PLAYER_CARDS_MAX_POWER_UPS; i++) {
                 try {
-                    Button button = (Button) loadFXML(GUI.FXML_PATH_MY_POWER_UP, myPowerUpSlots, this);
+                    Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, myPowerUpSlots, this);
                     button.setDisable(true);
                     button.setOnAction(event -> {
                         disableCards();

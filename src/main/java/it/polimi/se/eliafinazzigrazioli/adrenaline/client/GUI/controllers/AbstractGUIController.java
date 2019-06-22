@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 public class AbstractGUIController implements Initializable {
     static final Logger LOGGER = Logger.getLogger(AbstractGUIController.class.getName());
 
+    protected boolean initialized = false;
+
     protected GUI view;
     protected Semaphore semaphore;
 

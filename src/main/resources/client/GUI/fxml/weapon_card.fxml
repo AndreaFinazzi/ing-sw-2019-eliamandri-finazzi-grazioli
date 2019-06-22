@@ -4,7 +4,7 @@
 <?import java.lang.String?>
 <Button xmlns:fx="http://javafx.com/fxml" alignment="CENTER" mnemonicParsing="false">
     <styleClass>
-        <String fx:value="myWeaponCard"/>
+        <String fx:value="card"/>
         <String fx:value="weaponCard"/>
     </styleClass>
 </Button>

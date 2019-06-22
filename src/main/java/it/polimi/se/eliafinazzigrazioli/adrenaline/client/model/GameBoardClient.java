@@ -5,8 +5,11 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameBoardClient {
+    static final Logger LOGGER = Logger.getLogger(GameBoardClient.class.getName());
 
     private MapType mapType;
 
@@ -150,14 +153,14 @@ public class GameBoardClient {
     }
 
     public void resetWeapons(Map<Coordinates, List<WeaponCardClient>> weaponsPlaced) {
-        for (Map.Entry<Coordinates, List<WeaponCardClient>> coordinatesToWeapons: weaponsPlaced.entrySet()) {
+        for (Map.Entry<Coordinates, List<WeaponCardClient>> coordinatesToWeapons : weaponsPlaced.entrySet()) {
             BoardSquareClient boardSquare = getBoardSquareByCoordinates(coordinatesToWeapons.getKey());
-            for (WeaponCardClient weaponCard: coordinatesToWeapons.getValue())
-                ((SpawnBoardSquareClient)boardSquare).addWeapon(weaponCard);
+            for (WeaponCardClient weaponCard : coordinatesToWeapons.getValue())
+                ((SpawnBoardSquareClient) boardSquare).addWeapon(weaponCard);
         }
     }
 
-    public void setPlayerPosition (String player, Coordinates coordinates) {
+    public void setPlayerPosition(String player, Coordinates coordinates) {
         playerPositions.put(player, squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()]);
     }
 
@@ -175,7 +178,7 @@ public class GameBoardClient {
     }
 
     public BoardSquareClient getPlayerPositionByName(String playerName) {
-        if(!playerPositions.containsKey(playerName))
+        if (!playerPositions.containsKey(playerName))
             return null;
         return playerPositions.get(playerName);
     }
@@ -197,15 +200,27 @@ public class GameBoardClient {
         return squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()];
     }
 
-    public List<BoardSquareClient> getSpawnBoardSquareClient() {
-        List<BoardSquareClient> listSpawn = new ArrayList<>();
-        for(int i=0; i<x_max; i++) {
-            for(int j=0; j<y_max; j++) {
-                if(squaresMatrix[i][j] != null && squaresMatrix[i][j].isSpawnBoard())
-                    listSpawn.add(squaresMatrix[i][j]);
+    public List<SpawnBoardSquareClient> getSpawnBoardSquareClient() {
+        List<SpawnBoardSquareClient> listSpawn = new ArrayList<>();
+        for (int i = 0; i < x_max; i++) {
+            for (int j = 0; j < y_max; j++) {
+                if (squaresMatrix[i][j] != null && squaresMatrix[i][j].isSpawnBoard())
+                    try {
+                        listSpawn.add((SpawnBoardSquareClient) squaresMatrix[i][j]);
+                    } catch (ClassCastException e) {
+                        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    }
             }
         }
         return listSpawn;
+    }
+
+    public SpawnBoardSquareClient getSpawnBoardSquareClientByRoom(Room room) {
+        for (SpawnBoardSquareClient spawnBoardSquare : getSpawnBoardSquareClient()) {
+            if (spawnBoardSquare.room == room) return spawnBoardSquare;
+        }
+
+        return null;
     }
 
 
@@ -213,96 +228,91 @@ public class GameBoardClient {
         int width = DIM_X; int height = DIM_Y;
         Random random = new Random();
         String[][] squareText = new String[width][height];
-        for(int i=0; i<width; i++) {
-            for(int j=0; j<height; j++) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 squareText[i][j] = " ";
             }
         }
         String color;
 
-        if(boardSquare==null) {
+        if (boardSquare == null) {
             return squareText;
-        }
-        else {
-            if(boardSquare.getRoom().equals(Room.BLUE))
+        } else {
+            if (boardSquare.getRoom().equals(Room.BLUE))
                 color = ANSI_BLUE;
-            else if(boardSquare.getRoom().equals(Room.RED))
+            else if (boardSquare.getRoom().equals(Room.RED))
                 color = ANSI_RED;
-            else if(boardSquare.getRoom().equals(Room.YELLOW))
+            else if (boardSquare.getRoom().equals(Room.YELLOW))
                 color = ANSI_YELLOW;
-            else if(boardSquare.getRoom().equals((Room.PURPLE)))
+            else if (boardSquare.getRoom().equals((Room.PURPLE)))
                 color = ANSI_PURPLE;
-            else if(boardSquare.getRoom().equals(Room.GRAY))
+            else if (boardSquare.getRoom().equals(Room.GRAY))
                 color = ANSI_WHITE;
-            else if(boardSquare.getRoom().equals(Room.GREEN))
+            else if (boardSquare.getRoom().equals(Room.GREEN))
                 color = ANSI_GREEN;
             else
                 color = ANSI_RESET;
 
-            if(boardSquare.isSpawnBoard()) {
-                squareText[1][DIM_Y-2] = color + "S";
+            if (boardSquare.isSpawnBoard()) {
+                squareText[1][DIM_Y - 2] = color + "S";
             }
             //else squareText[1][DIM_Y-2] = color + "G";
 
-            if(boardSquare.getNorth().equals(InterSquareLink.WALL)) {
-                if(boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
-                    squareText[0][height-1] = color + "╔";
-                else if(boardSquare.getWest().equals(InterSquareLink.SAMEROOM))
-                    squareText[0][height-1] = color + "═";
-                for(int i=1; i<width-1; i++) {
-                    squareText[i][height-1] = color + "═";
+            if (boardSquare.getNorth().equals(InterSquareLink.WALL)) {
+                if (boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
+                    squareText[0][height - 1] = color + "╔";
+                else if (boardSquare.getWest().equals(InterSquareLink.SAMEROOM))
+                    squareText[0][height - 1] = color + "═";
+                for (int i = 1; i < width - 1; i++) {
+                    squareText[i][height - 1] = color + "═";
                 }
-                if(boardSquare.getEast().equals(InterSquareLink.WALL) || boardSquare.getEast().equals(InterSquareLink.DOOR))
-                    squareText[width-1][height-1] = color + "╗";
-                else if(boardSquare.getEast().equals(InterSquareLink.SAMEROOM))
-                    squareText[width-1][height-1] = color + "═";
+                if (boardSquare.getEast().equals(InterSquareLink.WALL) || boardSquare.getEast().equals(InterSquareLink.DOOR))
+                    squareText[width - 1][height - 1] = color + "╗";
+                else if (boardSquare.getEast().equals(InterSquareLink.SAMEROOM))
+                    squareText[width - 1][height - 1] = color + "═";
 
-            }
-            else if(boardSquare.getNorth().equals(InterSquareLink.DOOR)) {
+            } else if (boardSquare.getNorth().equals(InterSquareLink.DOOR)) {
 
-                if(boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
-                    squareText[0][height-1] = color + "╔";
-                else if(boardSquare.getWest().equals(InterSquareLink.SAMEROOM))
-                    squareText[0][height-1] = color + "═";
-                for(int i=1; i<width-1; i++) {
-                    squareText[i][height-1] = color + "═";
+                if (boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
+                    squareText[0][height - 1] = color + "╔";
+                else if (boardSquare.getWest().equals(InterSquareLink.SAMEROOM))
+                    squareText[0][height - 1] = color + "═";
+                for (int i = 1; i < width - 1; i++) {
+                    squareText[i][height - 1] = color + "═";
                 }
-                squareText[3][height-1] = color + "╝" + ANSI_RESET;
-                squareText[4][height-1] = " ";
-                squareText[5][height-1] = " ";
-                squareText[6][height-1] = " ";
-                squareText[7][height-1] = " ";
-                squareText[8][height-1] = color + "╚";
-                if(boardSquare.getEast().equals(InterSquareLink.WALL) || boardSquare.getEast().equals(InterSquareLink.DOOR))
-                    squareText[width-1][height-1] = color + "╗";
-                else if(boardSquare.getEast().equals(InterSquareLink.SAMEROOM))
-                    squareText[width-1][height-1] = color + "═";
-            }
-            else if(boardSquare.getNorth().equals(InterSquareLink.SAMEROOM)) {
-                squareText[0][height-1] = color + "║";
-                squareText[width-1][height-1] = color + "║";
+                squareText[3][height - 1] = color + "╝" + ANSI_RESET;
+                squareText[4][height - 1] = " ";
+                squareText[5][height - 1] = " ";
+                squareText[6][height - 1] = " ";
+                squareText[7][height - 1] = " ";
+                squareText[8][height - 1] = color + "╚";
+                if (boardSquare.getEast().equals(InterSquareLink.WALL) || boardSquare.getEast().equals(InterSquareLink.DOOR))
+                    squareText[width - 1][height - 1] = color + "╗";
+                else if (boardSquare.getEast().equals(InterSquareLink.SAMEROOM))
+                    squareText[width - 1][height - 1] = color + "═";
+            } else if (boardSquare.getNorth().equals(InterSquareLink.SAMEROOM)) {
+                squareText[0][height - 1] = color + "║";
+                squareText[width - 1][height - 1] = color + "║";
             }
 
-            if(boardSquare.getSouth().equals(InterSquareLink.WALL)) {
-                if(boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
+            if (boardSquare.getSouth().equals(InterSquareLink.WALL)) {
+                if (boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
                     squareText[0][0] = color + "╚";
-                else if(boardSquare.getWest().equals(InterSquareLink.SAMEROOM))
+                else if (boardSquare.getWest().equals(InterSquareLink.SAMEROOM))
                     squareText[0][0] = color + "═";
-                for(int i=1; i<width-1; i++) {
+                for (int i = 1; i < width - 1; i++) {
                     squareText[i][0] = color + "═";
                 }
-                if(boardSquare.getEast().equals(InterSquareLink.WALL) || boardSquare.getEast().equals(InterSquareLink.DOOR))
-                    squareText[width-1][0] = color + "╝";
-                else if(boardSquare.getEast().equals(InterSquareLink.SAMEROOM))
-                    squareText[width-1][0] = color + "═";
-            }
-
-            else if(boardSquare.getSouth().equals(InterSquareLink.DOOR)) {
-                if(boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
+                if (boardSquare.getEast().equals(InterSquareLink.WALL) || boardSquare.getEast().equals(InterSquareLink.DOOR))
+                    squareText[width - 1][0] = color + "╝";
+                else if (boardSquare.getEast().equals(InterSquareLink.SAMEROOM))
+                    squareText[width - 1][0] = color + "═";
+            } else if (boardSquare.getSouth().equals(InterSquareLink.DOOR)) {
+                if (boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
                     squareText[0][0] = color + "╚";
-                else if(boardSquare.getWest().equals(InterSquareLink.SAMEROOM))
+                else if (boardSquare.getWest().equals(InterSquareLink.SAMEROOM))
                     squareText[0][0] = color + "═";
-                for(int i=1; i<width-1; i++) {
+                for (int i = 1; i < width - 1; i++) {
                     squareText[i][0] = color + "═";
                 }
                 squareText[3][0] = color + "╗";
@@ -311,38 +321,35 @@ public class GameBoardClient {
                 squareText[6][0] = " ";
                 squareText[7][0] = " ";
                 squareText[8][0] = color + "╔";
-                if(boardSquare.getEast().equals(InterSquareLink.WALL) || boardSquare.getEast().equals(InterSquareLink.DOOR))
-                    squareText[width-1][0] = color + "╝";
-                else if(boardSquare.getEast().equals(InterSquareLink.SAMEROOM))
-                    squareText[width-1][0] = color + "═";
-            }
-            else if(boardSquare.getSouth().equals(InterSquareLink.SAMEROOM)) {
+                if (boardSquare.getEast().equals(InterSquareLink.WALL) || boardSquare.getEast().equals(InterSquareLink.DOOR))
+                    squareText[width - 1][0] = color + "╝";
+                else if (boardSquare.getEast().equals(InterSquareLink.SAMEROOM))
+                    squareText[width - 1][0] = color + "═";
+            } else if (boardSquare.getSouth().equals(InterSquareLink.SAMEROOM)) {
                 squareText[0][0] = color + "║";
-                squareText[width-1][0] = color + "║";
+                squareText[width - 1][0] = color + "║";
             }
 
-            if(boardSquare.getEast().equals(InterSquareLink.WALL)) {
-                for(int i=1; i<height-1; i++) {
-                    squareText[width-1][i] = color + "║";
+            if (boardSquare.getEast().equals(InterSquareLink.WALL)) {
+                for (int i = 1; i < height - 1; i++) {
+                    squareText[width - 1][i] = color + "║";
                 }
-            }
-            else if(boardSquare.getEast().equals(InterSquareLink.DOOR)) {
-                for(int i=1; i<height-1; i++) {
-                    squareText[width-1][i] = color + "║";
+            } else if (boardSquare.getEast().equals(InterSquareLink.DOOR)) {
+                for (int i = 1; i < height - 1; i++) {
+                    squareText[width - 1][i] = color + "║";
                 }
-                squareText[width-1][1] = color + "╔";
-                squareText[width-1][2] = " ";
-                squareText[width-1][3] = " ";
-                squareText[width-1][4] = color + "╚";
+                squareText[width - 1][1] = color + "╔";
+                squareText[width - 1][2] = " ";
+                squareText[width - 1][3] = " ";
+                squareText[width - 1][4] = color + "╚";
             }
 
-            if(boardSquare.getWest().equals(InterSquareLink.WALL)) {
-                for(int i=1; i<height-1; i++) {
+            if (boardSquare.getWest().equals(InterSquareLink.WALL)) {
+                for (int i = 1; i < height - 1; i++) {
                     squareText[0][i] = color + "║";
                 }
-            }
-            else if(boardSquare.getWest().equals(InterSquareLink.DOOR)) {
-                for(int i=1; i<height-1; i++) {
+            } else if (boardSquare.getWest().equals(InterSquareLink.DOOR)) {
+                for (int i = 1; i < height - 1; i++) {
                     squareText[0][i] = color + "║";
                 }
                 squareText[0][1] = color + "╗";
@@ -352,12 +359,12 @@ public class GameBoardClient {
             }
 
         }
-        if(boardSquare.hasAmmoCard()){
+        if (boardSquare.hasAmmoCard()) {
             int x, y;
             do {
-                x = random.nextInt(DIM_X-2) +1;
-                y = random.nextInt(DIM_Y-2) +1;
-            } while(!squareText[x][y].equals(" "));
+                x = random.nextInt(DIM_X - 2) + 1;
+                y = random.nextInt(DIM_Y - 2) + 1;
+            } while (!squareText[x][y].equals(" "));
             squareText[x][y] = color + "X";
         }
         addPlayers(squareText, avatars);
@@ -367,30 +374,28 @@ public class GameBoardClient {
 
     public void addPlayers(String[][] squareText, List<Avatar> avatars) {
         Random random = new Random();
-        int x=0; int y=0;
+        int x = 0;
+        int y = 0;
         String color;
 
-        for(Avatar avatar : avatars) {
+        for (Avatar avatar : avatars) {
             // perchè è null???
-            if(avatar!=null) {
-                if(avatar.getDamageMark().equals(DamageMark.GREEN)){
+            if (avatar != null) {
+                if (avatar.getDamageMark().equals(DamageMark.GREEN)) {
                     color = ANSI_GREEN;
-                }
-                else if(avatar.getDamageMark().equals(DamageMark.YELLOW)){
+                } else if (avatar.getDamageMark().equals(DamageMark.YELLOW)) {
                     color = ANSI_YELLOW;
-                }
-                else if(avatar.getDamageMark().equals(DamageMark.BLUE)){
+                } else if (avatar.getDamageMark().equals(DamageMark.BLUE)) {
                     color = ANSI_BLUE;
                 } else if (avatar.getDamageMark().equals(DamageMark.GREY)) {
                     color = ANSI_WHITE;
-                }
-                else{ //Purple
+                } else { //Purple
                     color = ANSI_PURPLE;
                 }
                 do {
-                    x = random.nextInt(DIM_X-2) +1;
-                    y = random.nextInt(DIM_Y-2) +1;
-                } while(!squareText[x][y].equals(" "));
+                    x = random.nextInt(DIM_X - 2) + 1;
+                    y = random.nextInt(DIM_Y - 2) + 1;
+                } while (!squareText[x][y].equals(" "));
                 squareText[x][y] = color + "@";
             }
 
@@ -401,13 +406,13 @@ public class GameBoardClient {
         List<String[][]> squares = new ArrayList<>();
 
         String[][] square;
-        for(int j=y_max-1; j>=0; j--) {
-            for(int i=0; i<x_max; i++) {
+        for (int j = y_max - 1; j >= 0; j--) {
+            for (int i = 0; i < x_max; i++) {
                 BoardSquareClient boardSquareClient = squaresMatrix[i][j];
                 List<String> keys = new ArrayList<>(playerPositions.keySet());
                 List<Avatar> avatars = new ArrayList<>();
-                for(String key : keys){
-                    if(playerPositions.get(key).equals(squaresMatrix[i][j])) {
+                for (String key : keys) {
+                    if (playerPositions.get(key).equals(squaresMatrix[i][j])) {
                         avatars.add(avatarMap.get(key));
                     }
                 }
@@ -416,31 +421,31 @@ public class GameBoardClient {
             }
         }
 
-        String[][] mapText = new String[DIM_X*x_max][DIM_Y*y_max];
+        String[][] mapText = new String[DIM_X * x_max][DIM_Y * y_max];
 
-        int currentX = 0; int currentY = DIM_Y*y_max - 1;
+        int currentX = 0;
+        int currentY = DIM_Y * y_max - 1;
         int count = -1;
-        for(String[][] iterator : squares) {
+        for (String[][] iterator : squares) {
 
             count++;
-            if(count != 0 && count%4==0) {
+            if (count != 0 && count % 4 == 0) {
                 currentY = currentY - DIM_Y;
                 currentX = 0;
-            }
-            else if(count != 0)
+            } else if (count != 0)
                 currentX += DIM_X;
 
-            for(int j= 0; j<DIM_Y; j++) {
-                for(int i=0; i<DIM_X; i++) {
-                    mapText[currentX+i][currentY-j] = iterator[i][DIM_Y-1-j];
+            for (int j = 0; j < DIM_Y; j++) {
+                for (int i = 0; i < DIM_X; i++) {
+                    mapText[currentX + i][currentY - j] = iterator[i][DIM_Y - 1 - j];
                 }
             }
         }
 
         String map = "";
 
-        for(int j=mapText[0].length-1; j>=0; j--) {
-            for(int i=0; i<mapText.length; i++){
+        for (int j = mapText[0].length - 1; j >= 0; j--) {
+            for (int i = 0; i < mapText.length; i++) {
                 map = map + mapText[i][j];
             }
             map = map + ANSI_RESET + "\n";

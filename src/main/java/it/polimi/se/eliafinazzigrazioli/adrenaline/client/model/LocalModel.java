@@ -24,7 +24,7 @@ public class LocalModel {
     private List<String> players;
     private Map<String, PlayerClient> opponentsInfo;
     private Map<String, Avatar> playerToAvatarMap;
-    private List<BoardSquareClient> listSpawn;
+    private List<SpawnBoardSquareClient> listSpawn;
 
     public LocalModel() {
         weaponCards = new ArrayList<>();
@@ -84,7 +84,7 @@ public class LocalModel {
             slotPositions.add(weaponCardClient.getSlotPosition());
         while (slotPositions.contains(index))
             index++;
-        weapon.setSlotPosition(index);
+        weapon.setSlotPosition(null, index);
         weaponCards.add(weapon);
     }
 
@@ -95,7 +95,7 @@ public class LocalModel {
                 toRemove = weaponCardClient;
         }
         weaponCards.remove(toRemove);
-        toRemove.setSlotPosition(-1);
+        toRemove.setSlotPosition(null, -1);
         return toRemove;
     }
 
@@ -151,7 +151,7 @@ public class LocalModel {
 
     public WeaponCardClient getWeaponCardByNameOnMap(String weaponName) {
         for(BoardSquareClient square : listSpawn){
-            List<WeaponCardClient> list = square.getWeapons();
+            List<WeaponCardClient> list = square.getWeaponCards();
             if(list != null) {
                 for(int i=0; i<list.size(); i++) {
                     if(list.get(i).getWeaponName().equals(weaponName))
@@ -210,7 +210,7 @@ public class LocalModel {
         opponentsInfo.put(player, new PlayerClient());
     }
 
-    public List<BoardSquareClient> getListSpawn() {
+    public List<SpawnBoardSquareClient> getListSpawn() {
         return listSpawn;
     }
 }

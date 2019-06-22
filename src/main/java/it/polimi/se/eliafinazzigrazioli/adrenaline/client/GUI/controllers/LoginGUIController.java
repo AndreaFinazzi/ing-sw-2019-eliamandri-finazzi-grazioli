@@ -10,7 +10,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 public class LoginGUIController extends AbstractGUIController {
     @FXML
@@ -43,7 +45,6 @@ public class LoginGUIController extends AbstractGUIController {
 
         loaderBox.setVisible(false);
 
-        Platform.runLater(() -> rootStackPane.getChildren().add(loaderBox));
     }
 
 
@@ -70,5 +71,12 @@ public class LoginGUIController extends AbstractGUIController {
 
     public void waitForMatchStart() {
         overlayAnchorPane.setVisible(true);
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
+
+        Platform.runLater(() -> rootStackPane.getChildren().add(loaderBox));
     }
 }

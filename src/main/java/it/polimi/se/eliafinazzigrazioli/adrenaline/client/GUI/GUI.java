@@ -1,17 +1,16 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.CommandsGUIController;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.LoginGUIController;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.MainGUIController;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.OpponentPlayerGUIController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -19,9 +18,11 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -35,8 +36,11 @@ import static java.lang.Thread.sleep;
 public class GUI extends Application implements RemoteView {
 
     // static constants
-    public static final String MAP_STYLE_CLASS_DEFAULT = "map_NONE";
-    public static final String MAP_STYLE_CLASS_PREFIX = "map_";
+    public static final String STYLE_CLASS_MAP_DEFAULT = "map_NONE";
+    public static final String STYLE_CLASS_MAP_PREFIX = "map_";
+    public static final String STYLE_CLASS_WEAPON_ROTATED = "rotatedWeaponCard";
+    public static final String STYLE_CLASS_WEAPON_ON_MAP = "onMapWeaponCard";
+    public static final String STYLE_CLASS_WEAPON_MY = "myWeaponCard";
 
     public static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
     public static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
@@ -45,6 +49,7 @@ public class GUI extends Application implements RemoteView {
     public static final String ASSET_PATH_MAPS_ROOT = ASSET_PATH_ROOT + "maps/";
     public static final String ASSET_PATH_AMMO_ROOT = ASSET_PATH_ROOT + "ammo/";
     public static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + "playerboards/";
+    public static final String ASSET_PATH_AVATAR_ROOT = ASSET_PATH_ROOT + "avatars/";
     public static final String ASSET_PATH_ICONS_ROOT = ASSET_PATH_ROOT + "icons/";
 
     public static final String ASSET_FORMAT_CARDS = ".png";
@@ -53,9 +58,11 @@ public class GUI extends Application implements RemoteView {
     public static final String ASSET_PREFIX_POWER_UP = "AD_powerups_IT_";
     public static final String ASSET_PREFIX_WEAPON = "AD_weapons_IT_";
     public static final String ASSET_PREFIX_AMMO = "AD_ammo_";
+    public static final String ASSET_PREFIX_AVATAR = "avatar_";
     public static final String ASSET_PREFIX_ICONS_ARROWS = "arrow_";
 
     public static final String ASSET_ID_HIDDEN_CARD = "02";
+    public static final String ASSET_ID_HIDDEN_AMMO = "04";
 
     public static final String FXML_PATH_LOGIN = FXML_PATH_ROOT + "login.fxml";
     public static final String FXML_PATH_COMMANDS = FXML_PATH_ROOT + "commands.fxml";
@@ -63,8 +70,9 @@ public class GUI extends Application implements RemoteView {
     public static final String FXML_PATH_PLAYER_BOARD = FXML_PATH_ROOT + "player_board.fxml";
     public static final String FXML_PATH_BOARD_SQUARE = FXML_PATH_ROOT + "board_square.fxml";
     public static final String FXML_PATH_MAIN = FXML_PATH_ROOT + "main.fxml";
-    public static final String FXML_PATH_MY_POWER_UP = FXML_PATH_ROOT + "my_power_up.fxml";
-    public static final String FXML_PATH_MY_WEAPON = FXML_PATH_ROOT + "my_weapon.fxml";
+    public static final String FXML_PATH_POWER_UP = FXML_PATH_ROOT + "power_up_card.fxml";
+    public static final String FXML_PATH_WEAPON = FXML_PATH_ROOT + "weapon_card.fxml";
+    public static final String FXML_PATH_AVATAR = FXML_PATH_ROOT + "avatar.fxml";
 
     private static GUI instance;
     static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
@@ -82,6 +90,8 @@ public class GUI extends Application implements RemoteView {
     private LoginGUIController loginGUIController;
     ///TODO define a setter and verify Map is the correct data structure
     private Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap;
+    private Map<Coordinates, BoardSquareGUIController> coordinatesBoardSquareGUIControllerMap = new HashMap<>();
+
 
     private boolean initialized = false;
 
@@ -144,7 +154,24 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showPlayerMovement(String player, List<Coordinates> path) {
-
+        if (!path.isEmpty()) {
+            try {
+                if (!player.equals(client.getPlayerName())) {
+                    Coordinates nextDestination = path.get(0);
+                    mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(player), nextDestination);
+                    PauseTransition delay = new PauseTransition(Duration.seconds(1));
+                    delay.setOnFinished(event -> {
+                        path.remove(0);
+                        showPlayerMovement(player, path);
+                    });
+                    delay.play();
+                } else {
+                    mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(player), path.get(path.size() - 1));
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
     }
 
     @Override
@@ -191,6 +218,28 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons) {
+        AtomicReference<WeaponCardClient> selectedWeaponCard = new AtomicReference<>();
+
+        commandsGUIController.setSelectableWeapon(selectableWeapons);
+        commandsGUIController.setSelectedWeapon(selectedWeaponCard);
+
+        Semaphore semaphore = new Semaphore(0);
+        commandsGUIController.setSemaphore(semaphore);
+
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+
+        synchronized (semaphore) {
+            return selectedWeaponCard.get();
+        }
+    }
+
+    @Override
     public void selectWeaponCard() {
 
     }
@@ -198,7 +247,24 @@ public class GUI extends Application implements RemoteView {
     //todo implement
     @Override
     public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> cards) {
-        return null;
+        AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
+
+        commandsGUIController.setSelectablePowerUp(cards);
+        commandsGUIController.setSelectedPowerUp(selectedPowerUp);
+
+        Semaphore semaphore = new Semaphore(0);
+        commandsGUIController.setSemaphore(semaphore);
+
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+
+        synchronized (semaphore) {
+            return selectedPowerUp.get();
+        }
     }
 
     //todo implement
@@ -272,6 +338,7 @@ public class GUI extends Application implements RemoteView {
         Platform.runLater(() -> {
             primaryStage.getScene().setRoot(finalRoot);
             primaryStage.setFullScreen(true);
+            primaryStage.setResizable(true);
         });
 
         mainGUIController.setVoteMap(availableMaps);
@@ -299,12 +366,50 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void showPowerUpCollection(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
+        if (isOpponent) {
+            try {
+                opponentPlayerToGUIControllerMap.get(player).setCardCollected(cardCollected);
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+            }
+        } else
+            commandsGUIController.updatePowerUpCards();
+    }
+
+    @Override
+    public void showWeaponCollectionUpdate(String player, WeaponCardClient collectedCard, WeaponCardClient droppedCard, Room roomColor) {
+        if (!player.equals(getClient().getPlayerName())) {
+            try {
+                opponentPlayerToGUIControllerMap.get(player).setCardCollected(collectedCard);
+                mainGUIController.removeWeaponCardFromMap(roomColor, collectedCard.getId());
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+            }
+        } else {
+            commandsGUIController.updateWeaponCards();
+        }
+    }
+
+    @Override
     public void showWeaponCardResetting(Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap) {
         for (Map.Entry<Coordinates, List<WeaponCardClient>> coordinatesWeaponsEntry : coordinatesWeaponsMap.entrySet()) {
             for (WeaponCardClient weaponCard : coordinatesWeaponsEntry.getValue()) {
-                mainGUIController.updateWeaponCardOnMap(weaponCard, localModel.getGameBoard().getBoardSquareByCoordinates(coordinatesWeaponsEntry.getKey()).getRoom());
+                mainGUIController.updateWeaponCardOnMap(weaponCard);
             }
         }
+    }
+
+    @Override
+    public void showAmmoCardCollected(String player, AmmoCardClient ammoCard, Coordinates coordinates) {
+        if (!player.equals(getClient().getPlayerName())) {
+            try {
+                opponentPlayerToGUIControllerMap.get(player).setCardCollected(ammoCard);
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+            }
+        }
+        mainGUIController.updateAmmoCardOnMap(coordinates, null);
     }
 
     @Override
@@ -316,14 +421,20 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
-        AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
-
         commandsGUIController.setPowerUpCards(cards);
-        commandsGUIController.setSelectablePowerUp(cards);
-        commandsGUIController.setSelectedPowerUp(selectedPowerUp);
+
+        return selectPowerUp(cards);
+    }
+
+    @Override
+    public WeaponCardClient selectWeaponCardFromSpawnSquare(List<WeaponCardClient> selectableWeapons) {
+        AtomicReference<WeaponCardClient> selectedWeapon = new AtomicReference<>();
+
+        mainGUIController.setSelectableWeaponCards(selectableWeapons);
+        mainGUIController.setSelectedWeapon(selectedWeapon);
 
         Semaphore semaphore = new Semaphore(0);
-        commandsGUIController.setSemaphore(semaphore);
+        mainGUIController.setSemaphore(semaphore);
 
         try {
             semaphore.acquire();
@@ -333,7 +444,7 @@ public class GUI extends Application implements RemoteView {
         }
 
         synchronized (semaphore) {
-            return selectedPowerUp.get();
+            return selectedWeapon.get();
         }
     }
 
@@ -349,43 +460,45 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public MoveDirection getMoveFromUser(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
+        try {
+            mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(client.getPlayerName()), currentPose.getCoordinates());
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
         AtomicReference<MoveDirection> selectedMove = new AtomicReference<>();
         Semaphore semaphore = new Semaphore(0);
 
         commandsGUIController.setSemaphore(semaphore);
-        commandsGUIController.setAvailableMoves(availableMoves);
         commandsGUIController.setSelectedMove(selectedMove);
 
-        commandsGUIController.setGetMove();
+        do {
+            commandsGUIController.setAvailableMoves(availableMoves);
+            commandsGUIController.setGetMove();
 
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            Thread.currentThread().interrupt();
-        }
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
 
-        synchronized (semaphore) {
-            commandsGUIController.setLockedCommands();
-            return selectedMove.get();
-        }
+            synchronized (semaphore) {
+                commandsGUIController.setLockedCommands();
+            }
+        } while (!availableMoves.contains(selectedMove.get()));
+
+        return selectedMove.get();
+
     }
 
     @Override
     public void showSpawn(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
-
-    }
-
-    @Override
-    public void showPowerUpCollection(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
-        if (isOpponent) {
-            try {
-                opponentPlayerToGUIControllerMap.get(player).setCardCollected(cardCollected);
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-            }
-        } else
-            commandsGUIController.updatePowerUpCards();
+        try {
+            mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(player), spawnPoint);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
     public String getPowerUpAsset(String id) {
@@ -408,6 +521,12 @@ public class GUI extends Application implements RemoteView {
 
     public String getWeaponRotatedAsset(String id) {
         String uri = ASSET_PATH_CARDS_ROTATED_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT_CARDS;
+        return this.getClass().getResource(uri).toExternalForm();
+
+    }
+
+    public String getAvatarAsset(String id) {
+        String uri = ASSET_PATH_AVATAR_ROOT + ASSET_PREFIX_AVATAR + id + ASSET_FORMAT_ICONS;
         return this.getClass().getResource(uri).toExternalForm();
 
     }

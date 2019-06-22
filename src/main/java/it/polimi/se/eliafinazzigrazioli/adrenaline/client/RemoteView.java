@@ -114,7 +114,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                                 gameBoard.getPlayerPositionByName(getClient().getPlayerName()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size() - 1));
                         if (finalPosition.isSpawnBoard()) {
                             //todo weapon to collect procedure
-                            List<WeaponCardClient> collectibleWeapons = calculatePayableWeapons(finalPosition.getWeapons(), getLocalModel(), false);
+                            List<WeaponCardClient> collectibleWeapons = calculatePayableWeapons(finalPosition.getWeaponCards(), getLocalModel(), false);
 
                             WeaponCardClient selectedWeapon = selectWeaponCardFromSpawnSquare(collectibleWeapons);  /** SELECTION HERE */
 
@@ -212,7 +212,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             localModel.getOpponentInfo(player).addWeapon(weaponCard);
         }
 
-        showWeaponCollectionUpdate(event.getPlayer(), weaponCard, droppedWeapon,collectionSpawnPoint.getRoom());
+        showWeaponCollectionUpdate(event.getPlayer(), weaponCard, droppedWeapon, collectionSpawnPoint.getRoom());
         showPaymentUpdate(event.getPlayer(), powerUpsActuallySpent, event.getAmmosSpent());
     }
 
@@ -560,7 +560,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             showMessage(player + " collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but his playerBoard was full!"));
     }
 
-    default void showAmmoCardCollected(String player, AmmoCard ammoCard, Coordinates coordinates) {
+    default void showAmmoCardCollected(String player, AmmoCardClient ammoCard, Coordinates coordinates) {
         String message = " gathered the ammo card " + ammoCard.toString() + " from square " + coordinates + "!";
         if (player.equals(getClient().getPlayerName()))
             showMessage("You " + message);
@@ -696,9 +696,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
-    default WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> weaponsToSelect) {
+    default WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons) {
         int count = 0;
-        for (WeaponCardClient weaponCardClient: weaponsToSelect) {
+        for (WeaponCardClient weaponCardClient : selectableWeapons) {
             count++;
             showMessage(count + ") " + weaponCardClient);
         }
@@ -708,22 +708,22 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         do {
             showMessage("enter:");
             choice = scanner.nextInt();
-        } while (choice < 1 || count > weaponsToSelect.size() + 1);
+        } while (choice < 1 || count > selectableWeapons.size() + 1);
         if (choice != count+1)
-            return weaponsToSelect.get(choice - 1);
+            return selectableWeapons.get(choice - 1);
         else
             return null;
     }
 
-    default WeaponCardClient selectWeaponCardFromSpawnSquare(List<WeaponCardClient> weaponsToSelect) {
-        if (weaponsToSelect.isEmpty()) {
+    default WeaponCardClient selectWeaponCardFromSpawnSquare(List<WeaponCardClient> selectableWeapons) {
+        if (selectableWeapons.isEmpty()) {
             showMessage("No weapons to select.");
             return null;
         }
         else {
             showMessage("Select a weapon from the map:");
             int count = 0;
-            for (WeaponCardClient weaponCardClient: weaponsToSelect) {
+            for (WeaponCardClient weaponCardClient : selectableWeapons) {
                 count++;
                 showMessage(count + ") " + weaponCardClient);
             }
@@ -732,8 +732,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             do {
                 showMessage("enter:");
                 choice = scanner.nextInt();
-            } while (choice < 1 || count > weaponsToSelect.size());
-            return weaponsToSelect.get(choice - 1);
+            } while (choice < 1 || count > selectableWeapons.size());
+            return selectableWeapons.get(choice - 1);
         }
     }
 

@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.AmmoCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
@@ -11,12 +12,12 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
  */
 public class AmmoCardCollectedEvent extends AbstractModelEvent {
 
-    private AmmoCard ammoCardCollected;
+    private AmmoCardClient ammoCardCollected;
     private Coordinates boardSquare;
 
     public AmmoCardCollectedEvent(Player player, AmmoCard ammoCardCollected, Coordinates boardSquare) {
         super(player);
-        this.ammoCardCollected = ammoCardCollected;
+        this.ammoCardCollected = new AmmoCardClient(ammoCardCollected);
         this.boardSquare = boardSquare;
     }
 
@@ -25,7 +26,7 @@ public class AmmoCardCollectedEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
-    public AmmoCard getAmmoCardCollected() {
+    public AmmoCardClient getAmmoCardCollected() {
         return ammoCardCollected;
     }
 

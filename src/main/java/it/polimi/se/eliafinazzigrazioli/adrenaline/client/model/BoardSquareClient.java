@@ -54,7 +54,7 @@ public abstract class BoardSquareClient {
         return false;
     }
 
-    public List<WeaponCardClient> getWeapons(){
+    public List<WeaponCardClient> getWeaponCards() {
         return null;
     }
 

@@ -387,8 +387,8 @@ public class CLI implements RemoteView, Runnable {
 
     public void showWeaponOnSpawn() {
         List<WeaponCardClient> weaponCardClients;
-        for(BoardSquareClient spawn : localModel.getListSpawn()) {
-            weaponCardClients = spawn.getWeapons();
+        for (SpawnBoardSquareClient spawn : localModel.getListSpawn()) {
+            weaponCardClients = spawn.getWeaponCards();
             if(weaponCardClients != null) {
                 List<String[][]> weaponMatrix = new ArrayList<>();
                 showMessage("in " + spawn +" there are the following weapons");

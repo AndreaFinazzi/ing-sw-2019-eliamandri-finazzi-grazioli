@@ -6,6 +6,7 @@
 <?import java.lang.String?>
 <TilePane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
+          fx:id="boardSquare"
           alignment="CENTER" hgap="10.0"
           styleClass="gameBoardSquare" vgap="10.0">
     <padding>
@@ -13,7 +14,7 @@
     </padding>
     <children>
         <ImageView fx:id="ammoCard"
-                   fitHeight="50.0" fitWidth="50.0" pickOnBounds="true"
+                   fitWidth="40.0" pickOnBounds="true"
                    preserveRatio="true">
             <styleClass>
                 <String fx:value="gameBoardItem"/>

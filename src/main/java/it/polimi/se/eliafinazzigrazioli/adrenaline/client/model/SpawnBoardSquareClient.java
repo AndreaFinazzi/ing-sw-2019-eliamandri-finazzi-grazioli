@@ -2,9 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +20,6 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         weaponCards = new ArrayList<>();
     }
 
-    public List<WeaponCardClient> getWeaponCards() {
-        return weaponCards;
-    }
-
     public void addWeapon(WeaponCardClient weaponCard) {
         List<Integer> weaponPositions = new ArrayList<>();
         int index = 0;
@@ -33,7 +27,7 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
             weaponPositions.add(weaponCardClient.getSlotPosition());
         while (weaponPositions.contains(index))
             index++;
-        weaponCard.setSlotPosition(index);
+        weaponCard.setSlotPosition(room, index);
         if (!weaponCards.contains(weaponCard)) {
             weaponCard.setLoaded(true);
             weaponCards.add(weaponCard);
@@ -45,7 +39,7 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         for (WeaponCardClient weaponCardClient: weaponCards)
             if (weaponCard.equals(weaponCardClient.getWeaponName()))
                 toRemove = weaponCardClient;
-        toRemove.setSlotPosition(-1);
+        toRemove.setSlotPosition(null, -1);
         weaponCards.remove(toRemove);
         return toRemove;
     }
@@ -56,8 +50,16 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
     }
 
     @Override
-    public List<WeaponCardClient> getWeapons() {
+    public List<WeaponCardClient> getWeaponCards() {
         return weaponCards;
+    }
+
+    public WeaponCardClient getWeaponCardsBySlotPosition(int slotPosition) {
+        for (WeaponCardClient weaponCard : weaponCards) {
+            if (weaponCard.getSlotPosition() == slotPosition) return weaponCard;
+        }
+
+        return null;
     }
 
     @Override

@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
@@ -32,11 +33,13 @@ public class WeaponCardClient implements Serializable, CardInterface {
 
     private final static int LIGTH_WIDTH = 24;
     private final static int LIGHT_HEIGHT = 12;
+
+    private Room spawnBoardSquare;
+
     private int slotPosition;
-
     private final static int width = 24;
-    private final static int height = 24;
 
+    private final static int height = 24;
 
     public WeaponCardClient(WeaponCard weaponCard) {
         weaponName = weaponCard.getWeaponName();
@@ -94,8 +97,17 @@ public class WeaponCardClient implements Serializable, CardInterface {
         return slotPosition;
     }
 
-    public void setSlotPosition(int slotPosition) {
+    public void setSlotPosition(Room spawnBoardSquare, int slotPosition) {
+        this.spawnBoardSquare = spawnBoardSquare;
         this.slotPosition = slotPosition;
+    }
+
+    public Room getSpawnBoardSquare() {
+        return spawnBoardSquare;
+    }
+
+    public void setSpawnBoardSquare(Room spawnBoardSquare) {
+        this.spawnBoardSquare = spawnBoardSquare;
     }
 
     @Override

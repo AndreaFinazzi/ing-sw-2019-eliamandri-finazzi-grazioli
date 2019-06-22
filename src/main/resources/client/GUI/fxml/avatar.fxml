@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import java.lang.String?>
+<ImageView xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           fx:id="ammoCard"
+           fitWidth="60.0" pickOnBounds="true"
+           preserveRatio="true">
+    <styleClass>
+        <String fx:value="gameBoardItem"/>
+        <String fx:value="playerAvatar"/>
+    </styleClass>
+</ImageView>

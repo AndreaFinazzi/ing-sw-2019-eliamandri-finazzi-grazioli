@@ -5,7 +5,7 @@
 <Button xmlns:fx="http://javafx.com/fxml/1"
         alignment="CENTER" mnemonicParsing="false">
     <styleClass>
+        <String fx:value="card"/>
         <String fx:value="powerUpCard"/>
-        <String fx:value="myPowerUp"/>
     </styleClass>
 </Button>

@@ -44,7 +44,7 @@ public class PlayerClient {
             slotPositions.add(weaponCardClient.getSlotPosition());
         while (slotPositions.contains(index))
             index++;
-        weapon.setSlotPosition(index);
+        weapon.setSlotPosition(null, index);
         weapons.add(weapon);
     }
 
@@ -55,7 +55,7 @@ public class PlayerClient {
                 toRemove = weaponCardClient;
         }
         weapons.remove(toRemove);
-        toRemove.setSlotPosition(-1);
+        toRemove.setSlotPosition(null, -1);
         return toRemove;
     }
 
