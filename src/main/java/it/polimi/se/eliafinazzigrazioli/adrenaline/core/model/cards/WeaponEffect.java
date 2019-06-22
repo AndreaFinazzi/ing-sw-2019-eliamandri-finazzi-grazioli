@@ -43,15 +43,17 @@ public class WeaponEffect {
     /*
      * Lists used to build the list of selectable items
      */
-    private List<Player> toSelectPlayers = new ArrayList<>();
-    private List<BoardSquare> toSelectBoardSquares = new ArrayList<>();
-    private List<Room> toSelectRooms = new ArrayList<>();
+    private List<Player> toSelectPlayers;
+    private List<BoardSquare> toSelectBoardSquares;
+    private List<Room> toSelectRooms;
 
     /*
      * Other support attributes.
      */
     private Iterator<EffectState> stateIterator = effectStates.iterator();
     private boolean alreadyUsed = false;
+
+    private boolean needsSelection = false;
 
 
     public WeaponEffect(EffectState currentState, List<Player> players) {
@@ -154,7 +156,7 @@ public class WeaponEffect {
             if (stateIterator.hasNext()) {
                 currentState = stateIterator.next();
             } else {
-                events.add(new SelectableEffectsEvent(currentPlayer.getPlayerNickname(), getNextCallableEffects(invoker)));
+                events.add(new SelectableEffectsEvent(currentPlayer, invoker.getWeaponName(), getNextCallableEffects(invoker)));
             }
         }
         return events;
@@ -263,5 +265,13 @@ public class WeaponEffect {
 
     public List<Ammo> getPrice() {
         return price;
+    }
+
+    public boolean needsSelection() {
+        return needsSelection;
+    }
+
+    public void setNeedsSelection(boolean needsSelection) {
+        this.needsSelection = needsSelection;
     }
 }

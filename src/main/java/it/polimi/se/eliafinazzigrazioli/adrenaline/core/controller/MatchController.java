@@ -53,7 +53,7 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
         eventController = new EventController(this);
         playerController = new PlayerController(eventController, this);
-        cardController = new CardController(eventController, this);
+        cardController = new CardController(eventController, match);
 
         turnController = new TurnController(eventController, match);
 

@@ -138,6 +138,10 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(SelectableEffectsEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
 
 
 

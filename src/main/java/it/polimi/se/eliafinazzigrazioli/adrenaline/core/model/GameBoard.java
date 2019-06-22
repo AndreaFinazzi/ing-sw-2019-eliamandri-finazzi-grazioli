@@ -214,7 +214,10 @@ public class GameBoard {
                 spawnBoardSquare = boardSquare;
 
         movePlayer(player, spawnBoardSquare);
-        return new PlayerSpawnedEvent(player, spawnBoardSquare.getCoordinates(), powerUpCard);
+        if (spawnBoardSquare == null)
+            return null;
+        else
+            return new PlayerSpawnedEvent(player, spawnBoardSquare.getCoordinates(), powerUpCard);
     }
 
     /**

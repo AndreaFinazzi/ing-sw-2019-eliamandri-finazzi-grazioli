@@ -183,16 +183,8 @@ public class TurnController implements ViewEventsListenerInterface {
             }
             if (finalPosition.isSpawnPoint()) {
                 WeaponCard weaponCard = ((SpawnBoardSquare) finalPosition).collectWeapon(event.getWeaponCollected());
-                List<String> powerUpIds = new ArrayList<>();
-                List<PowerUpCard> powerUpsToSpend = new ArrayList<>();
-                for (PowerUpCardClient powerUpCardClient: event.getPowerUpsToPay())
-                    powerUpIds.add(powerUpCardClient.getId());
 
-                for (PowerUpCard powerUpCard: currentPlayer.getPowerUps())
-                    if (powerUpIds.contains(powerUpCard.getId())) {
-                        powerUpsToSpend.add(powerUpCard);
-                        powerUpIds.remove(powerUpCard.getId());
-                    }
+                List<PowerUpCard> powerUpsToSpend = currentPlayer.getRealModelReferences(event.getPowerUpsToPay());
 
                 //weapon replacement
                 WeaponCard weaponDropped = null;

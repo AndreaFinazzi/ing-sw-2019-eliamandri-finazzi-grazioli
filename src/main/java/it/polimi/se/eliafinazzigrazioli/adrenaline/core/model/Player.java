@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.BeginTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.EndTurnEvent;
@@ -194,6 +195,20 @@ public class Player implements Selectable {
             return true;
         else
             return false;
+    }
+
+    public List<PowerUpCard> getRealModelReferences(List<PowerUpCardClient> powerUpCardsClient) {
+        List<String> powerUpIds = new ArrayList<>();
+        List<PowerUpCard> realPowerups = new ArrayList<>();
+        for (PowerUpCardClient powerUpCardClient: powerUpCardsClient)
+            powerUpIds.add(powerUpCardClient.getId());
+
+        for (PowerUpCard powerUpCard: powerUps)
+            if (powerUpIds.contains(powerUpCard.getId())) {
+                realPowerups.add(powerUpCard);
+                powerUpIds.remove(powerUpCard.getId());
+            }
+        return realPowerups;
     }
 
     public List<Ammo> spendPrice(List<Ammo> price, List<PowerUpCard> powerUpsToSpend) {
