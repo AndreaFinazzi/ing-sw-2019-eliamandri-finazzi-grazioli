@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class WeaponCardClient implements Serializable, CardInterface {
 
+    private static final long serialVersionUID = 9000;
+
     private String weaponName;
     private String id;
 
@@ -81,6 +83,10 @@ public class WeaponCardClient implements Serializable, CardInterface {
 
     public List<Ammo> getLoader() {
         return loader;
+    }
+
+    public List<WeaponEffectClient> getEffects() {
+        return effects;
     }
 
     public boolean isLoaded() {

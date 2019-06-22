@@ -8,6 +8,8 @@ import java.util.List;
 
 public class AmmoCardClient implements Serializable {
 
+    private static final long serialVersionUID = 9001;
+
     private String id;
     private List<Ammo> ammos;
     private boolean powerUp;
