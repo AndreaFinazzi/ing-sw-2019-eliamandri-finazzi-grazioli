@@ -128,7 +128,7 @@ public class WeaponCardClient implements Serializable, CardInterface {
         return string;
     }
 
-    private String toStringLight() {
+    public String toStringLight() {
         String string = weaponName + " :\n\n";
         int count = 1;
         for (WeaponEffectClient effect: effects) {

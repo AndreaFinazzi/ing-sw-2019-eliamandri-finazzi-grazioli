@@ -96,8 +96,8 @@ public class CLI implements RemoteView, Runnable {
                 nextInt = input.nextInt();
                 input.nextLine();
             } catch(NoSuchElementException e) {
-                e.printStackTrace();
                 nextInt = -1;
+                input.nextLine();
             }
             if(nextInt < 1 || nextInt > size) {
                 showMessage("Choice out of bound. Sit down and focus, you can do it: ");
@@ -135,9 +135,9 @@ public class CLI implements RemoteView, Runnable {
                 }
                 showMessage(CLIUtils.alignSquare(weaponCardsMatrix));
             }
-            /*if( choice.equals(PlayerAction.SHOW_OWNED_PLAYERBOARD)) {
-                showMessage(CLIUtils.serializeMap(localModel.getPlayerBoards()));
-            }*/
+            if( choice.equals(PlayerAction.SHOW_OWNED_PLAYERBOARD)) {
+                //showMessage(CLIUtils.serializeMap(localModel.getPlayerBoards()));
+            }
             if(choice.equals(PlayerAction.SHOW_OWNED_POWERUPS)) {
                 List<PowerUpCardClient> powerUpCardClients = localModel.getPowerUpCards();
                 List<String[][]> powerUpsMatrix = new ArrayList<>();
@@ -145,6 +145,9 @@ public class CLI implements RemoteView, Runnable {
                     powerUpsMatrix.add(iterator.drawCard());
                 }
                 showMessage(CLIUtils.alignSquare(powerUpsMatrix));
+            }
+            if(choice.equals(PlayerAction.SHOW_SPAWN_WEAPON)) {
+                showWeaponOnSpawn();
             }
         } while (choice.toString().contains("Show"));
 
@@ -382,6 +385,22 @@ public class CLI implements RemoteView, Runnable {
         showMessage(message);
     }
 
+    public void showWeaponOnSpawn() {
+        List<WeaponCardClient> weaponCardClients;
+        for(BoardSquareClient spawn : localModel.getListSpawn()) {
+            weaponCardClients = spawn.getWeapons();
+            if(weaponCardClients != null) {
+                List<String[][]> weaponMatrix = new ArrayList<>();
+                showMessage("in " + spawn +" there are the following weapons");
+                for(WeaponCardClient weapon : weaponCardClients){
+                    weaponMatrix.add(weapon.drawCard());
+                }
+                showMessage(CLIUtils.alignSquare(weaponMatrix));
+            }
+
+        }
+    }
+
     @Override
     public synchronized void showMessage(Object message) {
         System.out.println(message);
@@ -396,11 +415,4 @@ public class CLI implements RemoteView, Runnable {
     public List<Observer> getObservers() {
         return observers;
     }
-
-
-
-    // RICHIEDE DIMENSIONI MAGGIORI DI 2X2
-
-
-
 }

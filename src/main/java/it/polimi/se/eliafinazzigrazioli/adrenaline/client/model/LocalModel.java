@@ -209,4 +209,8 @@ public class LocalModel {
     public void addOpponent(String player) {
         opponentsInfo.put(player, new PlayerClient());
     }
+
+    public List<BoardSquareClient> getListSpawn() {
+        return listSpawn;
+    }
 }

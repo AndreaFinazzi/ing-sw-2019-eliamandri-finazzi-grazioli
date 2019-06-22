@@ -9,8 +9,7 @@ public enum Ammo {
 
 
     //Todo
-    @Override
-    public String toString() {
+    public String toString(boolean bool) {
         switch(this) {
             case YELLOW:
                 return "Y";
@@ -21,5 +20,10 @@ public enum Ammo {
             default:
                 return "A";
         }
+    }
+
+    //todo
+    public String toString() {
+        return Color.ammoToColor(this) + "\u2B1B";
     }
 }

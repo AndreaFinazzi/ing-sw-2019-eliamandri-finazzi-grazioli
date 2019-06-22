@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AmmoNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
@@ -18,9 +20,12 @@ public class PlayerBoard {
     private ArrayList<DamageMark> marks;
     private ArrayList<Ammo> ammos;
     private ArrayList<Integer> deathScores;
-    int movementsAllowed;
-    int movementsBeforeCollectingAllowed;
-    int movementsBeforeShootingAllowed;
+    private int movementsAllowed;
+    private int movementsBeforeCollectingAllowed;
+    private int movementsBeforeShootingAllowed;
+
+    private final static int WIDTH = 30;
+    private final static int HEIGHT = 7;
 
 
     public PlayerBoard() {
@@ -168,6 +173,37 @@ public class PlayerBoard {
 
     public boolean isOverkill() {
         return overkill;
+    }
+
+    public String[][] toDraw() {
+        String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGHT, Color.BLUE);
+        String string = "Skulls: " + skulls;
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][1] = String.valueOf(string.charAt(i));
+        }
+        string = "Death score: " + deathScores.get(0);
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][2] = String.valueOf(string.charAt(i));
+        }
+        string = "Death: " + (death ? "Yes" : "No");
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][3] = String.valueOf(string.charAt(i));
+        }
+        string = "Movementes allowed: " + movementsAllowed;
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][4] = String.valueOf(string.charAt(i));
+        }
+        string = "ammos: ";
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][5] = String.valueOf(string.charAt(i));
+        }
+        int poseX = string.length()+2;
+        for(int i=0; i<ammos.size(); i++) {
+            matrix[poseX+i][5] = ammos.get(i).toString();
+            poseX++;
+        }
+
+        return  matrix;
     }
 
     @Override

@@ -9,7 +9,7 @@ public enum Color {
     GREEN("\u001B[32m"),
     GRAY("\u001B[37m"),
     BLUE("\u001B[34m"),
-    RED("\u001B[41m"),
+    RED("\u001B[31m"),
     RESET("\u001B[0m");
 
     private String ansiColor;

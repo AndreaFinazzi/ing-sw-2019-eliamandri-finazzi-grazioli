@@ -210,7 +210,7 @@ public class GameBoardClient {
 
 
     public String[][] getSquareText(BoardSquareClient boardSquare, List<Avatar> avatars) {
-        int width = 12; int height = 6;
+        int width = DIM_X; int height = DIM_Y;
         Random random = new Random();
         String[][] squareText = new String[width][height];
         for(int i=0; i<width; i++) {

@@ -7,7 +7,9 @@ public enum PlayerAction {
     SHOW_MAP("Show map"),
     SHOW_OWNED_WEAPONS("Show owned weapon"),
     SHOW_OWNED_POWERUPS("Show owned powerup"),
-    SHOW_OWNED_PLAYERBOARD("Show owned playerboard");
+    SHOW_OWNED_PLAYERBOARD("Show owned playerboard"),
+    SHOW_SPAWN_WEAPON("Show weapons on spawns");
+
 
 
     private String label;

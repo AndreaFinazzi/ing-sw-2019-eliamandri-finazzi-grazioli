@@ -6,11 +6,17 @@ import java.util.Map;
 
 public class CLIUtils {
 
+    //dopo questa stringa ci sono 4 spazi
+    private static final String ANSI_ESCAPE_COLOR = "\u001B";
 
     public static String[][] drawEmptyBox(int width, int height, Color color){
         if(width <= 0 || height <= 0)
             return null;
         String[][] emptyBox = new String[width][height];
+        for(int i=0; i<width; i++) {
+            for(int j=0; j<height; j++)
+                emptyBox[i][j] = " ";
+        }
 
         emptyBox[0][0] = color.toString() + "╔";
         emptyBox[width-1][0] = color.toString() + "╗";
@@ -50,10 +56,10 @@ public class CLIUtils {
         int poseX = 1;
         int poseY = 1;
 
-
+        int strlen = width -4;
 
         for(int i=0; i<length; i++) {
-            if(string.charAt(i) != "\n".charAt(0) && string.charAt(i) != "\t".charAt(0)) {
+            if(string.charAt(i) != "\n".charAt(0) && string.charAt(i) != "\t".charAt(0) && string.charAt(i) != ANSI_ESCAPE_COLOR.charAt(0)) {
                 if(poseX >= width-3) {
                     poseX = 2;
                     poseY++;
@@ -63,11 +69,13 @@ public class CLIUtils {
                 if(poseY >= height-1)
                     return matrix;
                 matrix[poseX][poseY] = String.valueOf(string.charAt(i));
+
             } else if(string.charAt(i) == "\n".charAt(0)){
                 if(poseY >= height-1)
                     return matrix;
                 poseY++;
                 poseX = 2;
+
             } else if(string.charAt(i) == "\t".charAt(0)){
                 poseX +=4;
                 if(poseX >= width-3) {
@@ -76,8 +84,30 @@ public class CLIUtils {
                 }
                 if(poseY >= height-1)
                     return matrix;
+
+            } else if(string.charAt(i) == ANSI_ESCAPE_COLOR.charAt(0)) {
+                String color = "";
+                while(string.charAt(i) != "m".charAt(0)) {
+                    color = color + String.valueOf(string.charAt(i));
+                    i++;
+                }
+                color = color + String.valueOf(string.charAt(i));
+                i++; //Prendo il carattere
+                color = color + String.valueOf(string.charAt(i));
+
+                if(poseX >= width-3) {
+                    poseX = 2;
+                    poseY++;
+                }
+                else
+                    poseX++;
+                if(poseY >= height-1)
+                    return matrix;
+                matrix[poseX][poseY] = color;
             }
         }
+
+
         return matrix;
     }
 
@@ -113,7 +143,7 @@ public class CLIUtils {
 
         while (iterator.hasNext()) {
             index++;
-            result = result.concat(String.format("%d)\t%s%n\t", index, iterator.next()));
+            result = result.concat(String.format("%d)%s%n", index, iterator.next()));
         }
         return result;
     }
