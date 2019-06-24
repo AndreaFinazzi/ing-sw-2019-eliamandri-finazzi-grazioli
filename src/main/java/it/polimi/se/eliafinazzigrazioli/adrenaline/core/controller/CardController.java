@@ -122,6 +122,7 @@ public class CardController implements ViewEventsListenerInterface {
             currentExecutingEffect.nextState();
             match.notifyObservers(currentExecutingEffect.execute(currentPlayingWeapon, match.getGameBoard(), currentPlayer));
         }
+        currentExecutingEffect.setNeedsSelection(false);
 
         if (!currentExecutingEffect.hasNextState()) {
             currentExecutingEffect.setAlreadyUsed(true);

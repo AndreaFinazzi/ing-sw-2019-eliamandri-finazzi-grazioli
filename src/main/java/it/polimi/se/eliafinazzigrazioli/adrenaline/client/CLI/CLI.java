@@ -178,7 +178,7 @@ public class CLI implements RemoteView, Runnable {
 
     @Override
     public Coordinates selectCoordinates(List<Coordinates> selectable) {
-        showMessage("You can select this square: ");
+        showMessage("You can select this squares: ");
         int count = 1;
         for (Coordinates coordinates : selectable) {
             BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(coordinates);
@@ -188,7 +188,7 @@ public class CLI implements RemoteView, Runnable {
             }
         }
         int choice = nextInt(selectable.size());
-        Coordinates square = selectable.get(choice - 1);
+        Coordinates square = selectable.get(choice);
         return square;
     }
 

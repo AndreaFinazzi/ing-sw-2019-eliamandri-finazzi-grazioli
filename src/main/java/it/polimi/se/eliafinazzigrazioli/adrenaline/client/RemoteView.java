@@ -452,7 +452,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     void error(Exception e);
 
-    //OUTGOING communications
+
+
+
+    /**OUTGOING communications*/
 
     default void notifyLoginRequestEvent(String nickname, Avatar avatar) {
         notifyObservers(new LoginRequestEvent(getClient().getClientID(), nickname, avatar));
