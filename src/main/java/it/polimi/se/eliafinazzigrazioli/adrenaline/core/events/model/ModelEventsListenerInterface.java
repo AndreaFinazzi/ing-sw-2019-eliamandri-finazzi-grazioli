@@ -146,6 +146,11 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(PlayerMovedByWeaponEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+
 
 
 

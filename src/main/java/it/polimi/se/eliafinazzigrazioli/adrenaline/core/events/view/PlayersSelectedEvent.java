@@ -17,4 +17,8 @@ public class PlayersSelectedEvent extends AbstractViewEvent {
     public void handle(ViewEventsListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);
     }
+
+    public List<String> getPlayers() {
+        return players;
+    }
 }

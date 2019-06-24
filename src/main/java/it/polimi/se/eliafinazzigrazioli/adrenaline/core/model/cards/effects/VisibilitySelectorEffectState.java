@@ -31,6 +31,7 @@ public class VisibilitySelectorEffectState extends SelectorEffectState {
                 break;
             case PLAYER:
                 List<Player> playersToSelect = new ArrayList<>(gameBoard.getVisiblePlayers(reference, notVisible));
+                playersToSelect.remove(currentPlayer);
                 invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
                 break;
             case ROOM:

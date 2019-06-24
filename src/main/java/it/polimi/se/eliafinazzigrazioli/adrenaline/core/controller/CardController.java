@@ -36,8 +36,8 @@ public class CardController implements ViewEventsListenerInterface {
         eventController.addViewEventsListener(WeaponToUseSelectedEvent.class, this);
         eventController.addViewEventsListener(EffectSelectedEvent.class, this);
         eventController.addViewEventsListener(TargetSelectedEvent.class, this);
-        eventController.addViewEventsListener(EffectSelectedEvent.class, this);
         eventController.addViewEventsListener(SquareSelectedEvent.class, this);
+        eventController.addViewEventsListener(PlayersSelectedEvent.class, this);
     }
 
     @Override
@@ -98,6 +98,16 @@ public class CardController implements ViewEventsListenerInterface {
         for (Coordinates coordinates: event.getSquares())
             selectedBoardSquares.add(gameBoard.getBoardSquareByCoordinates(coordinates));
         currentExecutingEffect.addSelectedBoardSquares(selectedBoardSquares);
+
+        effectExecutionLoop(match.getCurrentPlayer());
+    }
+
+    @Override
+    public void handleEvent(PlayersSelectedEvent event) throws HandlerNotImplementedException {
+        List<Player> selectedPlayers = new ArrayList<>();
+        for (String player: event.getPlayers())
+            selectedPlayers.add(match.getPlayer(player));
+        currentExecutingEffect.addSelectedPlayers(selectedPlayers);
 
         effectExecutionLoop(match.getCurrentPlayer());
     }

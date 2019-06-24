@@ -32,6 +32,7 @@ public class CardinalDirectionSelectorEffectState extends SelectorEffectState {
                 List<Player> playersToSelect = null;
                 try {
                     playersToSelect = new ArrayList<>(gameBoard.getPlayersByCardinalDirection(reference, direction));
+                    playersToSelect.remove(currentPlayer);
                 } catch (Exception e) {
 
                 }

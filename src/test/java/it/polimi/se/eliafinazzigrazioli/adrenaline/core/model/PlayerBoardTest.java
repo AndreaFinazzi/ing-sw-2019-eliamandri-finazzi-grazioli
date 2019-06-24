@@ -17,12 +17,7 @@ public class PlayerBoardTest {
     @Test
     public void testAddOneDamage() {
         PlayerBoard playerBoard = new PlayerBoard();
-        try {
-            playerBoard.addDamage(DamageMark.BLUE);
-        } catch (OutOfBoundException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            fail();
-        }
+        playerBoard.addDamage(DamageMark.BLUE);
         assertEquals(1, playerBoard.getScores().size());
         assertEquals(DamageMark.BLUE, playerBoard.getScores().get(0));
         assertFalse("not dead", playerBoard.isDeath());
@@ -34,37 +29,24 @@ public class PlayerBoardTest {
         PlayerBoard playerBoard = new PlayerBoard();
         ArrayList<DamageMark> tempList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            try {
-                playerBoard.addDamage(DamageMark.GREY);
-                tempList.add(DamageMark.GREY);
-                assertEquals(i + 1, playerBoard.getScores().size());
-            } catch (OutOfBoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-                fail();
-            }
+            playerBoard.addDamage(DamageMark.GREY);
+            tempList.add(DamageMark.GREY);
+            assertEquals(i + 1, playerBoard.getScores().size());
         }
         assertEquals(10, playerBoard.getScores().size());
         assertFalse(playerBoard.isDeath());
         assertFalse(playerBoard.isOverkill());
 
-        try {
-            playerBoard.addDamage(DamageMark.GREEN);
-            tempList.add(DamageMark.GREEN);
-        } catch (OutOfBoundException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            fail();
-        }
+        playerBoard.addDamage(DamageMark.GREEN);
+        tempList.add(DamageMark.GREEN);
+
         assertEquals(11, playerBoard.getScores().size());
         assertTrue("Is death", playerBoard.isDeath());
         assertFalse(playerBoard.isOverkill());
 
-        try {
-            playerBoard.addDamage(DamageMark.GREEN);
-            tempList.add(DamageMark.GREEN);
-        } catch (OutOfBoundException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            fail();
-        }
+        playerBoard.addDamage(DamageMark.GREEN);
+        tempList.add(DamageMark.GREEN);
+
 
         assertEquals(12, playerBoard.getScores().size());
         for (int i = 0; i < tempList.size(); i++) {
@@ -122,12 +104,8 @@ public class PlayerBoardTest {
     @Test
     public void testAddOneMark() {
         PlayerBoard playerBoard = new PlayerBoard();
-        try {
-            playerBoard.addMark(DamageMark.YELLOW);
-        } catch (OutOfBoundException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            fail();
-        }
+        playerBoard.addMark(DamageMark.YELLOW);
+
         assertEquals(1, playerBoard.numMarkType(DamageMark.YELLOW));
         assertEquals(0, playerBoard.numMarkType(DamageMark.PURPLE));
         assertEquals(0, playerBoard.numMarkType(DamageMark.GREEN));
@@ -141,12 +119,8 @@ public class PlayerBoardTest {
         PlayerBoard playerBoard = new PlayerBoard();
         ArrayList<DamageMark> tempList = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            try {
-                playerBoard.addMark(DamageMark.PURPLE);
+            if (playerBoard.addMark(DamageMark.PURPLE) != null)
                 tempList.add(DamageMark.PURPLE);
-            } catch (OutOfBoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-            }
         }
         for (int i = 0; i < tempList.size(); i++) {
             assertEquals(tempList.get(i), playerBoard.getMarks().get(i));
@@ -250,12 +224,9 @@ public class PlayerBoardTest {
                     fail();
                 }
             }
-            try {
-                playerBoard.addDamage(DamageMark.GREEN);
-                playerBoard.addMark(DamageMark.YELLOW);
-            } catch (OutOfBoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-            }
+            playerBoard.addDamage(DamageMark.GREEN);
+            playerBoard.addMark(DamageMark.YELLOW);
+
         }
         toAdd.add(Ammo.YELLOW);
         toAdd.add(Ammo.RED);
@@ -289,12 +260,9 @@ public class PlayerBoardTest {
                     fail();
                 }
             }
-            try {
-                playerBoard.addDamage(DamageMark.GREEN);
-                playerBoard.addMark(DamageMark.YELLOW);
-            } catch (OutOfBoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-            }
+            playerBoard.addDamage(DamageMark.GREEN);
+            playerBoard.addMark(DamageMark.YELLOW);
+
         }
         toAdd.add(Ammo.YELLOW);
         toAdd.add(Ammo.RED);

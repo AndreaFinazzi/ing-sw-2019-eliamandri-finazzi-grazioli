@@ -43,6 +43,7 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
                 List<Player> playersToSelect = null;
                 try {
                     playersToSelect = new ArrayList<>(gameBoard.getPlayersByDistance(reference, maxDistance, minDistance));
+                    playersToSelect.remove(currentPlayer);
                 } catch (Exception e) {
 
                 }

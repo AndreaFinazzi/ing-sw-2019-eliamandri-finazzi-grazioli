@@ -58,7 +58,7 @@
           "type": "DamageActionEffectState",
           "damageAmount": 2,
           "markAmount": 0,
-          "playerToAffectSource": "basic mode",
+          "playerToAffectSource": "basic effect",
           "toAffectPlayerSelectionOrder": 0
         }
       ],

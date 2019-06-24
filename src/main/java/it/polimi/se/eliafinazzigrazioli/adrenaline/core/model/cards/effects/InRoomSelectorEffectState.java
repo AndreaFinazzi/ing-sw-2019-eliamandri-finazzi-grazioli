@@ -23,6 +23,7 @@ public class InRoomSelectorEffectState extends SelectorEffectState {
                 break;
             case PLAYER:
                 List<Player> playersToSelect = new ArrayList<>(gameBoard.getRoomPlayers(reference));
+                playersToSelect.remove(currentPlayer);
                 invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
                 break;
             default:

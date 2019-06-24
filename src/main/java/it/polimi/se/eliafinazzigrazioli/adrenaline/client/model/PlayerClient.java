@@ -99,12 +99,12 @@ public class PlayerClient implements CardInterface{
         return powerUps;
     }
 
-    public void addDamage(DamageMark damage) {
-        damages.add(damage);
+    public void addDamages(List<DamageMark> damages) {
+        damages.addAll(damages);
     }
 
-    public void addMark(DamageMark mark) {
-        marks.add(mark);
+    public void addMarks(List<DamageMark> marks) {
+        marks.addAll(marks);
     }
 
     public void cleanPlayerBoard() {

@@ -37,7 +37,7 @@ public class MoveActionEffectState extends ActionEffectState {
             toMove = currentPlayer;
         if (toMove != null) {
             gameBoard.movePlayer(toMove, destination);
-            events.add(new PlayerMovedByWeaponEvent(currentPlayer.getPlayerNickname(), invoker.getWeaponName(), toMove.getPlayerNickname()));
+            events.add(new PlayerMovedByWeaponEvent(currentPlayer, invoker.getWeaponName(), toMove.getPlayerNickname(), destination.getCoordinates()));
             return events;
         }
         return new ArrayList<>();

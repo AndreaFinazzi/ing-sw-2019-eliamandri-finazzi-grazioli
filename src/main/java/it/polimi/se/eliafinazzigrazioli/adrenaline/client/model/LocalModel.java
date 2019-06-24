@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -19,6 +20,9 @@ public class LocalModel {
     private List<PowerUpCardClient> powerUpCards;
     private List<Ammo> ammos;
 
+    private List<DamageMark> damages;
+    private List<DamageMark> marks;
+
     //Public information
     private GameBoardClient gameBoard;
     private List<String> players;
@@ -31,6 +35,9 @@ public class LocalModel {
         powerUpCards = new ArrayList<>();
         ammos = new ArrayList<>();
 
+        damages = new ArrayList<>();
+        marks = new ArrayList<>();
+
         players = new ArrayList<>();
         opponentsInfo = new HashMap<>();
         playerToAvatarMap = new HashMap<>();
@@ -41,17 +48,6 @@ public class LocalModel {
     public void generatesGameBoard(MapType mapType) {
         gameBoard = new GameBoardClient(mapType);
         listSpawn = gameBoard.getSpawnBoardSquareClient();
-    }
-
-    public void updateWeapons(WeaponCardClient collectedWeapon, WeaponCardClient dropOfWeapon) {
-
-        if (!weaponCards.remove(dropOfWeapon))
-            System.out.println("Invalid drop");
-
-        if (weaponCards.size() < Rules.PLAYER_CARDS_MAX_WEAPONS && !weaponCards.contains(collectedWeapon))
-            weaponCards.add(collectedWeapon);
-        else
-            System.out.println("Invalid collect");
     }
 
     public boolean addPowerUp(PowerUpCardClient card) {
@@ -234,5 +230,16 @@ public class LocalModel {
 
     public List<SpawnBoardSquareClient> getListSpawn() {
         return listSpawn;
+    }
+
+    public void performDamage(String self, String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
+        if (self.equals(damagedPlayer)) {
+            this.damages.addAll(damages);
+            this.marks.addAll(marks);
+        }
+        else {
+            getOpponentInfo(damagedPlayer).addDamages(damages);
+            getOpponentInfo(damagedPlayer).addMarks(marks);
+        }
     }
 }

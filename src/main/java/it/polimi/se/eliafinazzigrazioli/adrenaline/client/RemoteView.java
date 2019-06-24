@@ -363,6 +363,20 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     @Override
+    default void handleEvent(PlayerMovedByWeaponEvent event) throws HandlerNotImplementedException {
+        LocalModel localModel = getLocalModel();
+        localModel.getGameBoard().setPlayerPosition(event.getMovedPlayer(), event.getFinalPosition());
+        showPlayerMovedByWeaponUpdate(event.getPlayer(), event.getMovedPlayer(), event.getMovingWeapon(), event.getFinalPosition());
+    }
+
+    @Override
+    default void handleEvent(PlayerShotEvent event) throws HandlerNotImplementedException {
+        LocalModel localModel = getLocalModel();
+        localModel.performDamage(getClient().getPlayerName(), event.getTarget(), event.getDamages(), event.getMarks());
+        showShotPlayerUpdate(event.getTarget(), event.getDamages(), event.getMarks());
+    }
+
+    @Override
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
@@ -403,21 +417,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void handleEvent(NotAllowedPlayEvent event) throws HandlerNotImplementedException {
         showMessage(event.getMessage());
         showMessage("ACTION FAILED!");
-
-    }
-
-    //TODO to implement
-
-    @Override
-    default void handleEvent(PlayerDamagedEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
-    //TODO to implement
-
-    @Override
-    default void handleEvent(PlayerShotEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
     }
 
     //TODO to implement
@@ -534,6 +533,25 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     void showWeaponCollectionUpdate(String player, WeaponCardClient collectedCard, WeaponCardClient droppedCard, Room roomColor);
 
+    default void showPlayerMovedByWeaponUpdate(String attackingPlayer, String playerMoved, String weaponUsed, Coordinates finalPosition) {
+        String message;
+        if (attackingPlayer.equals(getClient().getPlayerName()))
+            message = "You ";
+        else
+            message = attackingPlayer;
+        message = message + " moved ";
+        if (playerMoved.equals(getClient().getPlayerName()))
+            message = message + "you ";
+        else
+            message = message + playerMoved;
+        message = message + " to square " + getLocalModel().getGameBoard().getBoardSquareByCoordinates(finalPosition) + " using weapon " + weaponUsed + "!";
+        showMessage(message);
+    }
+
+    default void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
+        showMessage(damagedPlayer + " received damages " + damages + " and marks " + marks);
+    }
+
     default void showPlayerMovementUpdate(String player, List<Coordinates> path) {
         if (path != null && path.size() > 0) {
             if (player.equals(getClient().getPlayerName()))
@@ -610,8 +628,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     PowerUpCardClient selectPowerUp(List<PowerUpCardClient> cards);
 
     default Coordinates selectCoordinates(List<Coordinates> coordinates) {
+        if (coordinates.isEmpty())
+            return null;
         int count = 0;
-        showMessage("Select a boardSquare");
+        showMessage("Select a boardSquare: ");
         for (Coordinates square: coordinates) {
             count++;
             showMessage(count + ") " + square);
@@ -626,8 +646,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default String selectPlayer(List<String> players) {
+        if (players.isEmpty())
+            return null;
         int count = 0;
-        showMessage("Select a boardSquare");
+        showMessage("Select a player: ");
         for (String player: players) {
             count++;
             showMessage(count + ") " + player);
@@ -796,6 +818,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                 coordinates.remove(selection);
             }
         } while (selectedCoordinates.size() < maxSelections && selection != null);
+
         return selectedCoordinates;
     }
 

@@ -28,6 +28,7 @@ public class PreselectionBasedSelectorEffectState extends SelectorEffectState {
             for (Integer selectionOrder : effectIndexesEntry.getValue()) {
                 try {
                     selectedPlayers.add(invoker.getEffectByName(effectIndexesEntry.getKey()).getSelectedPlayer(selectionOrder));
+                    selectedPlayers.remove(currentPlayer);
                 } catch (IndexOutOfBoundsException e) {
 
                 }

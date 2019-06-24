@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerShotEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PlayerBoard;
@@ -29,6 +30,8 @@ public class DamageActionEffectState extends ActionEffectState {
     @Override
     public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
         List<AbstractModelEvent> events = new ArrayList<>();
+        List<DamageMark> damages = new ArrayList<>();
+        List<DamageMark> marks = new ArrayList<>();
         Player toDamage;
         try {
             toDamage = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(toAffectPlayerSelectionOrder);
@@ -37,22 +40,16 @@ public class DamageActionEffectState extends ActionEffectState {
         }
         if (toDamage != null) {
             PlayerBoard playerBoard = toDamage.getPlayerBoard();
-            for (int i = 0; i < damageAmount; i++) {
-                try {
-                    playerBoard.addDamage(currentPlayer.getDamageMarkDelivered());
-                    //TODO change addDamage method's return for events like suddenDeath and 'infierire' and addition to events
-                } catch (OutOfBoundException e) {
-                    //TODO held exception
-                }
-            }
+
+            for (int i = 0; i < damageAmount; i++)
+                damages.add(playerBoard.addDamage(currentPlayer.getDamageMarkDelivered()));
+
             for (int i = 0; i < markAmount; i++) {
-                try {
-                    playerBoard.addMark(currentPlayer.getDamageMarkDelivered());
-                } catch (OutOfBoundException e) {
-                    //TODO held exception
-                }
+                marks.add(playerBoard.addMark(currentPlayer.getDamageMarkDelivered()));
+                marks.remove(null);
             }
-            events.add(new PlayerShotEvent(currentPlayer.getPlayerNickname(), toDamage.getPlayerNickname(), invoker.getWeaponName()));
+
+            events.add(new PlayerShotEvent(currentPlayer, toDamage.getPlayerNickname(), damages, marks));
             return events;
         }
         return new ArrayList<>();

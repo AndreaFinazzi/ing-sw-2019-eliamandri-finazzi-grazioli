@@ -38,20 +38,22 @@ public class PlayerBoard {
         movementsBeforeShootingAllowed = Rules.MAX_MOVEMENTS_BEFORE_SHOOTING;
     }
 
-    public void addDamage(DamageMark damage) throws OutOfBoundException {
-        if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
-            throw new OutOfBoundException(Messages.MESSAGE_EXCEPTIONS_GAME_PLAYER_DAMAGES_OUT_OF_BOUND);
+    public DamageMark addDamage(DamageMark damage) {
         damages.add(damage);
         if (damages.size() == Rules.PLAYER_BOARD_DEAD_SHOOT)
             death = true;
         else if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
             overkill = true;
+        return damage;
     }
 
-    public void addMark(DamageMark mark) throws OutOfBoundException {
-        if (marks.size() == Rules.PLAYER_BOARD_MAX_MARKS || numMarkType(mark) >= Rules.PLAYER_BOARD_MAX_MARKS_PER_TYPE)
-            throw new OutOfBoundException(Messages.MESSAGE_EXCEPTIONS_GAME_PLAYER_MARKS_OUT_OF_BOUND);
-        marks.add(mark);
+    public DamageMark addMark(DamageMark mark) {
+        if (numMarkType(mark) == Rules.PLAYER_BOARD_MAX_MARKS_PER_TYPE)
+            return null;
+        else {
+            this.marks.add(mark);
+            return mark;
+        }
     }
 
     /**
