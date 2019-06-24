@@ -9,7 +9,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -21,7 +20,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -78,17 +76,6 @@ public class MainGUIController extends AbstractGUIController {
         this.selectedWeapon = selectedWeapon;
     }
 
-    private Node getChildrenById(List<Node> weaponCards, String id) {
-        for (Node weaponCard :
-                weaponCards) {
-            if (weaponCard.hasProperties()) {
-                if (weaponCard.getProperties().getOrDefault("id", "").equals(id)) return weaponCard;
-            }
-        }
-
-        return null;
-    }
-
     public void setVoteMap(ArrayList<MapType> availableMaps) {
         mapVoteOverlayStackPane.setVisible(true);
 
@@ -97,8 +84,7 @@ public class MainGUIController extends AbstractGUIController {
             @Override
             public void changed(ObservableValue<? extends MapType> observable, MapType oldValue, MapType newValue) {
 
-                File mapImageFile = new File(getClass().getResource(view.getMapFileName(newValue)).getFile());
-                Image mapImage = new Image(mapImageFile.toURI().toString());
+                Image mapImage = new Image(view.getMapAsset(newValue));
 
                 // TODO not working
                 voteMapPreviewImage.setImage(mapImage);
@@ -158,7 +144,7 @@ public class MainGUIController extends AbstractGUIController {
         } else {
             weaponCardSlot.getProperties().put("id", weaponCard.getId());
             String uri = rotatedAssetsRooms.contains(weaponCard.getSpawnBoardSquare()) ? view.getWeaponRotatedAsset(weaponCard.getId()) : view.getWeaponAsset(weaponCard.getId());
-            Platform.runLater(() -> weaponCardSlot.setStyle("-fx-background-image: url('" + uri + "'); "));
+            view.applyBackground(weaponCardSlot, uri);
         }
     }
 
@@ -174,7 +160,7 @@ public class MainGUIController extends AbstractGUIController {
             } else {
                 uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(GUI.ASSET_ID_HIDDEN_CARD) : view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD);
             }
-            Platform.runLater(() -> weaponCardSlot.setStyle("-fx-background-image: url('" + uri + "'); "));
+            view.applyBackground(weaponCardSlot, uri);
         }
     }
 
@@ -188,11 +174,18 @@ public class MainGUIController extends AbstractGUIController {
     }
 
     public void removeWeaponCardFromMap(Room room, String cardId) {
-        Node weaponCard = getChildrenById(roomWeaponCardSlotsEnumMap.get(room).getChildren(), cardId);
+        Node weaponCard = GUI.getChildrenById(roomWeaponCardSlotsEnumMap.get(room).getChildren(), cardId);
         if (weaponCard != null) {
             String uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(GUI.ASSET_ID_HIDDEN_CARD) : view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD);
-            Platform.runLater(() -> weaponCard.setStyle("-fx-background-image: url('" + uri + "'); "));
+            view.applyBackground(weaponCard, uri);
         }
+    }
+
+    public void moveAvatar(Avatar avatar, Coordinates destination) throws IOException {
+        for (BoardSquareGUIController boardSquare : coordinatesBoardSquareGUIControllerMap.values()) {
+            if (boardSquare.removeAvatar(avatar)) break;
+        }
+        coordinatesBoardSquareGUIControllerMap.get(destination).addAvatar(avatar);
     }
 
     @Override
@@ -267,14 +260,14 @@ public class MainGUIController extends AbstractGUIController {
                         CommandsGUIController commandsGUIController = new CommandsGUIController(view);
                         loadFXML(GUI.FXML_PATH_COMMANDS, commandsContainerAnchorPane, commandsGUIController);
                         view.setCommandsGUIController(commandsGUIController);
-                        commandsGUIController.loadMyPlayerBoard(view.getLocalModel().getPlayersAvatarMap().get(player));
+                        commandsGUIController.loadMyPlayerBoard();
 
                     } else {
                         OpponentPlayerGUIController opponentPlayerGUIController = new OpponentPlayerGUIController(view);
                         loadFXML(GUI.FXML_PATH_OPPONENT_PLAYER_INFO, playerBoardsVBox, opponentPlayerGUIController);
 
                         opponentPlayerToGUIControllerMap.put(player, opponentPlayerGUIController);
-                        opponentPlayerGUIController.loadPlayerBoard(view.getLocalModel().getPlayersAvatarMap().get(player));
+                        opponentPlayerGUIController.loadPlayerBoard(player);
                     }
                 }
                 view.setOpponentPlayerToGUIControllerMap(opponentPlayerToGUIControllerMap);
@@ -284,13 +277,6 @@ public class MainGUIController extends AbstractGUIController {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
-    }
-
-    public void moveAvatar(Avatar avatar, Coordinates destination) throws IOException {
-        for (BoardSquareGUIController boardSquare : coordinatesBoardSquareGUIControllerMap.values()) {
-            if (boardSquare.removeAvatar(avatar)) break;
-        }
-        coordinatesBoardSquareGUIControllerMap.get(destination).addAvatar(avatar);
     }
 
 }

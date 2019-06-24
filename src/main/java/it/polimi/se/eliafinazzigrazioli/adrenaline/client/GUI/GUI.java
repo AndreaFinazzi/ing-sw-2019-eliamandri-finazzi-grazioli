@@ -4,6 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
@@ -14,6 +15,7 @@ import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -73,6 +75,10 @@ public class GUI extends Application implements RemoteView {
     public static final String FXML_PATH_POWER_UP = FXML_PATH_ROOT + "power_up_card.fxml";
     public static final String FXML_PATH_WEAPON = FXML_PATH_ROOT + "weapon_card.fxml";
     public static final String FXML_PATH_AVATAR = FXML_PATH_ROOT + "avatar.fxml";
+
+    public static final String PROPERTIES_CARD_ID_KEY = "card_id";
+    public static final String PROPERTIES_AVATAR_KEY = "card_id";
+    public static final String PROPERTIES_AMMO_KEY = "ammo_name";
 
     private static GUI instance;
     static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
@@ -147,6 +153,14 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void showAmmoCollected(String player, Ammo ammo, boolean actuallyCollected) {
+        if (!player.equals(client.getPlayerName()))
+            opponentPlayerToGUIControllerMap.get(player).showAmmoCollected(ammo, actuallyCollected);
+        else
+            commandsGUIController.showAmmoCollected(ammo, actuallyCollected);
+    }
+
+    @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Adrenaline");
@@ -176,6 +190,9 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showSelectableSquare(List<Coordinates> selectable) {
+        if (!selectable.isEmpty()) {
+
+        }
 
     }
 
@@ -191,7 +208,12 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showMessage(Object message) {
-
+        if (commandsGUIController != null)
+            commandsGUIController.showMessage(message);
+        else if (loginGUIController != null)
+            loginGUIController.showMessage(message);
+        else
+            LOGGER.log(Level.INFO, message.toString());
     }
 
     @Override
@@ -219,24 +241,29 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons) {
-        AtomicReference<WeaponCardClient> selectedWeaponCard = new AtomicReference<>();
+        if (!selectableWeapons.isEmpty()) {
 
-        commandsGUIController.setSelectableWeapon(selectableWeapons);
-        commandsGUIController.setSelectedWeapon(selectedWeaponCard);
+            AtomicReference<WeaponCardClient> selectedWeaponCard = new AtomicReference<>();
 
-        Semaphore semaphore = new Semaphore(0);
-        commandsGUIController.setSemaphore(semaphore);
+            commandsGUIController.setSelectableWeapon(selectableWeapons);
+            commandsGUIController.setSelectedWeapon(selectedWeaponCard);
 
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            Thread.currentThread().interrupt();
+            Semaphore semaphore = new Semaphore(0);
+            commandsGUIController.setSemaphore(semaphore);
+
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+
+            synchronized (semaphore) {
+                return selectedWeaponCard.get();
+            }
         }
 
-        synchronized (semaphore) {
-            return selectedWeaponCard.get();
-        }
+        return null;
     }
 
     @Override
@@ -246,36 +273,44 @@ public class GUI extends Application implements RemoteView {
 
     //todo implement
     @Override
-    public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> cards) {
-        AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
+    public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> selectablePowerUps) {
+        if (!selectablePowerUps.isEmpty()) {
 
-        commandsGUIController.setSelectablePowerUp(cards);
-        commandsGUIController.setSelectedPowerUp(selectedPowerUp);
+            AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
 
-        Semaphore semaphore = new Semaphore(0);
-        commandsGUIController.setSemaphore(semaphore);
+            commandsGUIController.setSelectablePowerUp(selectablePowerUps);
+            commandsGUIController.setSelectedPowerUp(selectedPowerUp);
 
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            Thread.currentThread().interrupt();
+            Semaphore semaphore = new Semaphore(0);
+            commandsGUIController.setSemaphore(semaphore);
+
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+
+            synchronized (semaphore) {
+                return selectedPowerUp.get();
+            }
         }
 
-        synchronized (semaphore) {
-            return selectedPowerUp.get();
-        }
+        return null;
     }
 
     //todo implement
     @Override
     public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
+        if (!reloadableWeapons.isEmpty()) {
+
+        }
         return null;
     }
 
     @Override
     public void updatePlayerPosition(String nickname, Coordinates coordinates) {
-        localModel.getGameBoard().getBoardSquareByCoordinates(coordinates).getRoom();
+
     }
 
     @Override
@@ -382,13 +417,14 @@ public class GUI extends Application implements RemoteView {
         if (!player.equals(getClient().getPlayerName())) {
             try {
                 opponentPlayerToGUIControllerMap.get(player).setCardCollected(collectedCard);
-                mainGUIController.removeWeaponCardFromMap(roomColor, collectedCard.getId());
             } catch (IOException e) {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         } else {
             commandsGUIController.updateWeaponCards();
         }
+        mainGUIController.removeWeaponCardFromMap(roomColor, collectedCard.getId());
+
     }
 
     @Override
@@ -397,6 +433,15 @@ public class GUI extends Application implements RemoteView {
             for (WeaponCardClient weaponCard : coordinatesWeaponsEntry.getValue()) {
                 mainGUIController.updateWeaponCardOnMap(weaponCard);
             }
+        }
+    }
+
+    @Override
+    public void showPaymentUpdate(String player, List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos) {
+        if (!player.equals(client.getPlayerName())) {
+            opponentPlayerToGUIControllerMap.get(player).showPaymentUpdate(powerUpCardClients, ammos);
+        } else {
+            commandsGUIController.showPaymentUpdate(powerUpCardClients, ammos);
         }
     }
 
@@ -421,20 +466,14 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
-        commandsGUIController.setPowerUpCards(cards);
+        commandsGUIController.setSpawnPowerUpCards(cards);
 
-        return selectPowerUp(cards);
-    }
+        AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
 
-    @Override
-    public WeaponCardClient selectWeaponCardFromSpawnSquare(List<WeaponCardClient> selectableWeapons) {
-        AtomicReference<WeaponCardClient> selectedWeapon = new AtomicReference<>();
-
-        mainGUIController.setSelectableWeaponCards(selectableWeapons);
-        mainGUIController.setSelectedWeapon(selectedWeapon);
+        commandsGUIController.setSelectedPowerUp(selectedPowerUp);
 
         Semaphore semaphore = new Semaphore(0);
-        mainGUIController.setSemaphore(semaphore);
+        commandsGUIController.setSemaphore(semaphore);
 
         try {
             semaphore.acquire();
@@ -444,8 +483,41 @@ public class GUI extends Application implements RemoteView {
         }
 
         synchronized (semaphore) {
-            return selectedWeapon.get();
+            return selectedPowerUp.get();
         }
+    }
+
+    @Override
+    public WeaponCardClient selectWeaponCardFromSpawnSquare(Coordinates coordinates, List<WeaponCardClient> selectableWeapons) {
+
+        if (!selectableWeapons.isEmpty()) {
+            try {
+                mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(client.getPlayerName()), coordinates);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+
+            AtomicReference<WeaponCardClient> selectedWeapon = new AtomicReference<>();
+
+            mainGUIController.setSelectableWeaponCards(selectableWeapons);
+            mainGUIController.setSelectedWeapon(selectedWeapon);
+
+            Semaphore semaphore = new Semaphore(0);
+            mainGUIController.setSemaphore(semaphore);
+
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+
+            synchronized (semaphore) {
+                return selectedWeapon.get();
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -537,11 +609,36 @@ public class GUI extends Application implements RemoteView {
 
     }
 
-    public String getMapFileName(MapType mapType) {
-        return "/client/GUI/assets/maps/" + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_PREFIX + mapType.name() + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_FORMAT;
+    public String getMapAsset(MapType mapType) {
+        String uri = ASSET_PATH_MAPS_ROOT + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_PREFIX + mapType.name() + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_FORMAT;
+        return this.getClass().getResource(uri).toExternalForm();
     }
 
     public void setOpponentPlayerToGUIControllerMap(Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap) {
         this.opponentPlayerToGUIControllerMap = opponentPlayerToGUIControllerMap;
     }
+
+    public PowerUpCardClient getPowerUpById(List<PowerUpCardClient> powerUpCards, String id) {
+        for (PowerUpCardClient powerUpCard : powerUpCards) {
+            if (powerUpCard.getId().equals(id)) return powerUpCard;
+        }
+
+        return null;
+    }
+
+    public static Node getChildrenById(List<Node> weaponCards, String id) {
+        for (Node weaponCard :
+                weaponCards) {
+            if (weaponCard.hasProperties()) {
+                if (weaponCard.getProperties().getOrDefault("id", "").equals(id)) return weaponCard;
+            }
+        }
+
+        return null;
+    }
+
+    public void applyBackground(Node element, String url) {
+        Platform.runLater(() -> element.setStyle("-fx-background-image: url('" + url + "'); "));
+    }
+
 }

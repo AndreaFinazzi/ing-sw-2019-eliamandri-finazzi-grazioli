@@ -112,6 +112,15 @@ public class LocalModel {
         return powerUpCards;
     }
 
+    public PowerUpCardClient getPowerUpCardById(String powerUpId) {
+        for (PowerUpCardClient powerUpCard : powerUpCards) {
+            if (powerUpCard.getId().equals(powerUpId))
+                return powerUpCard;
+        }
+
+        return null;
+    }
+
     public boolean updateWeaponsSpawn(WeaponCardClient weaponCardClient, Coordinates pose) {
         BoardSquareClient boardSquareClient = getGameBoard().getBoardSquareByCoordinates(pose);
         if(boardSquareClient != null && boardSquareClient.isSpawnBoard()) {
@@ -155,6 +164,19 @@ public class LocalModel {
             if(list != null) {
                 for(int i=0; i<list.size(); i++) {
                     if(list.get(i).getWeaponName().equals(weaponName))
+                        return list.get(i);
+                }
+            }
+        }
+        return null;
+    }
+
+    public WeaponCardClient getWeaponCardByIdOnMap(String weaponId) {
+        for (BoardSquareClient square : listSpawn) {
+            List<WeaponCardClient> list = square.getWeaponCards();
+            if (list != null) {
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getId().equals(weaponId))
                         return list.get(i);
                 }
             }

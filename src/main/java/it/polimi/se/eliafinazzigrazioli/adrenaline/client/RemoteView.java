@@ -124,7 +124,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         if (finalPosition.isSpawnBoard()) {
                             List<WeaponCardClient> collectibleWeapons = calculatePayableWeapons(finalPosition.getWeaponCards(), getLocalModel(), false);
 
-                            WeaponCardClient selectedWeapon = selectWeaponCardFromSpawnSquare(collectibleWeapons);  /** SELECTION HERE */
+                            WeaponCardClient selectedWeapon = selectWeaponCardFromSpawnSquare(finalPosition.getCoordinates(), collectibleWeapons);  /** SELECTION HERE */
 
                             if (selectedWeapon != null) { //Weapon has been selected
                                 //Selection of the power ups the user wants to pay with
@@ -133,7 +133,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                                 //Confirmation of the feasibility of the payment, if the payment isn't feasible generated event remains null and the procedure is repeated
                                 if (getLocalModel().canPay(selectedWeapon.getLoader(), powerUpsSelected)) {
                                     if (getLocalModel().isWeaponHandFull()) {
-                                        showMessage("You have too may weapons, drop one:");
+                                        showMessage("You have too many weapons, drop one:");
                                         WeaponCardClient weaponCardToDiscard = selectWeaponCardFromHand(getLocalModel().getWeaponCards());    /**SELECTION HERE*/
                                         if (weaponCardToDiscard != null)
                                             generatedEvent = new WeaponCollectionEvent(
@@ -176,12 +176,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void handleEvent(WeaponCollectedEvent event) throws HandlerNotImplementedException {
         //TODO add card position settings
         LocalModel localModel = getLocalModel();
-        SpawnBoardSquareClient collectionSpawnPoint =(SpawnBoardSquareClient) getLocalModel().getGameBoard().getBoardSquareByCoordinates(event.getCollectionSpawnPoint());
+        SpawnBoardSquareClient collectionSpawnPoint = (SpawnBoardSquareClient) getLocalModel().getGameBoard().getBoardSquareByCoordinates(event.getCollectionSpawnPoint());
         WeaponCardClient weaponCard = collectionSpawnPoint.remove(event.getCollectedWeapon());
         WeaponCardClient droppedWeapon = null;
 
         List<PowerUpCardClient> powerUpsActuallySpent = new ArrayList<>();
-
 
         if (event.getPlayer().equals(getClient().getPlayerName())) {
             for (PowerUpCardClient powerUpCardClient: localModel.getPowerUpCards())
@@ -801,6 +800,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             } while (choice < 1 || count > selectableWeapons.size());
             return selectableWeapons.get(choice - 1);
         }
+    }
+
+    default WeaponCardClient selectWeaponCardFromSpawnSquare(Coordinates coordinates, List<WeaponCardClient> selectableWeapons) {
+        return selectWeaponCardFromSpawnSquare(selectableWeapons);
     }
 
     static Coordinates calculateCoordinates(Coordinates initialCoordinates, MoveDirection moveDirection) {

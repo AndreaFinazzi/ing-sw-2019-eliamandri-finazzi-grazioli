@@ -8,7 +8,9 @@ import java.util.List;
 public class PlayerClient {
 
     private int powerUps;
+
     private List<WeaponCardClient> weapons;
+
     private List<Ammo> ammos;
 
     public PlayerClient() {
@@ -16,7 +18,6 @@ public class PlayerClient {
         weapons = new ArrayList<>();
         ammos = new ArrayList<>();
     }
-
     public void initAmmos(int startingAmmosPerColor) {
         for (int i = 0; i < startingAmmosPerColor; i++) {
             for (Ammo ammo: Ammo.values()) {
@@ -59,6 +60,10 @@ public class PlayerClient {
         return toRemove;
     }
 
+    public List<WeaponCardClient> getWeapons() {
+        return weapons;
+    }
+
     public void addPowerUp() {
         powerUps++;
     }
@@ -67,6 +72,10 @@ public class PlayerClient {
         if (powerUps==0)
             new Exception().printStackTrace();
         powerUps--;
+    }
+
+    public int getPowerUps() {
+        return powerUps;
     }
 
 }

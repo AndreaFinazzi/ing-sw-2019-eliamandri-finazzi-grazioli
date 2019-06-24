@@ -33,6 +33,27 @@
     -fx-text-fill: white;
 }
 
+.text-area {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-wrap-text: true;
+    -fx-alignment: bottom;
+    -fx-text-alignment: bottom;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+
+.text-area .scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
 .overlay {
     -fx-background-color: rgba(57, 57, 57, 0.8);
 }

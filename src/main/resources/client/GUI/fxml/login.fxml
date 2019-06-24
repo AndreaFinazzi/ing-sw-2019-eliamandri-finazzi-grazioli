@@ -78,6 +78,18 @@
                 </GridPane>
             </HBox>
         </bottom>
+        <center>
+            <AnchorPane BorderPane.alignment="BOTTOM_LEFT">
+                <children>
+                    <TextArea fx:id="messageTextArea" prefHeight="330.0" prefWidth="412.0" styleClass="messageTextArea"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="164.0"
+                              AnchorPane.topAnchor="90.0"/>
+                </children>
+                <BorderPane.margin>
+                    <Insets bottom="10.0" top="35.0"/>
+                </BorderPane.margin>
+            </AnchorPane>
+        </center>
     </BorderPane>
     <AnchorPane fx:id="overlayAnchorPane" prefHeight="200.0" prefWidth="200.0" styleClass="overlay" visible="false">
         <children>

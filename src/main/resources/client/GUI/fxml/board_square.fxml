@@ -13,7 +13,7 @@
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
     </padding>
     <children>
-        <ImageView fx:id="ammoCard"
+        <ImageView fx:id="ammoCardSlot"
                    fitWidth="40.0" pickOnBounds="true"
                    preserveRatio="true">
             <styleClass>

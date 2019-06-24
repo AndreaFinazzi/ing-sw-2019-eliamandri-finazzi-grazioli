@@ -10,13 +10,13 @@
 <?import javafx.scene.text.Font?>
 <StackPane stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <GridPane id="rootGridPane" prefHeight="1080.0" prefWidth="1920.0">
+        <GridPane id="rootGridPane" maxHeight="1080.0" maxWidth="1920.0" prefHeight="1080.0" prefWidth="1920.0">
             <rowConstraints>
                 <RowConstraints minHeight="1080.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER"/>
             </rowConstraints>
             <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" minWidth="960.0" prefWidth="960.0"/>
-                <ColumnConstraints hgrow="NEVER" minWidth="960.0" prefWidth="960.0"/>
+                <ColumnConstraints hgrow="NEVER" percentWidth="45.0"/>
+                <ColumnConstraints hgrow="NEVER" minWidth="960.0" percentWidth="55.0" prefWidth="960.0"/>
             </columnConstraints>
             <children>
                 <GridPane prefHeight="1044.0" prefWidth="960.0" GridPane.columnIndex="1">
@@ -40,12 +40,12 @@
                 <AnchorPane>
                     <children>
                         <Pane id="mainBoardPane" fx:id="mainBoardPane" maxHeight="1030.0" maxWidth="960.0"
-                              minHeight="1030.0" minWidth="960.0" prefHeight="1030.0" prefWidth="960.0"
+                              minHeight="1030.0" minWidth="767.0" prefHeight="1030.0" prefWidth="960.0"
                               styleClass="map_NONE" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0"
                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
                             <children>
                                 <GridPane id="gameBoardGridPane" fx:id="gameBoardGridPane" alignment="CENTER"
-                                          gridLinesVisible="true" hgap="18.0" layoutX="256.0" layoutY="162.0"
+                                          gridLinesVisible="true" hgap="18.0" layoutX="207.0" layoutY="163.0"
                                           maxHeight="701.0" maxWidth="526.0" minHeight="701.0" minWidth="526.0"
                                           nodeOrientation="LEFT_TO_RIGHT" prefHeight="701.0" prefWidth="526.0"
                                           stylesheets="@../css/player_board.css" vgap="18.0">
@@ -71,7 +71,7 @@
                                         <Insets bottom="18.0" left="18.0" right="18.0" top="18.0"/>
                                     </padding>
                                 </GridPane>
-                                <VBox fx:id="weaponCardSlots_BLUE" alignment="CENTER" layoutX="90.0" layoutY="156.0"
+                                <VBox fx:id="weaponCardSlots_BLUE" alignment="CENTER" layoutX="42.0" layoutY="156.0"
                                       maxHeight="333.0" maxWidth="150.0" minHeight="333.0" minWidth="150.0"
                                       prefHeight="333.0" prefWidth="150.0" spacing="15.0">
                                     <opaqueInsets>
@@ -83,7 +83,7 @@
                                     <children>
                                     </children>
                                 </VBox>
-                                <HBox fx:id="weaponCardSlots_YELLOW" alignment="CENTER" layoutX="527.0" layoutY="-3.0"
+                                <HBox fx:id="weaponCardSlots_YELLOW" alignment="CENTER" layoutX="476.0" layoutY="-3.0"
                                       maxHeight="150.0" maxWidth="333.0" minHeight="150.0" minWidth="333.0"
                                       prefHeight="150.0" prefWidth="333.0" spacing="15.0">
                                     <padding>
@@ -92,7 +92,7 @@
                                     <children>
                                     </children>
                                 </HBox>
-                                <HBox fx:id="weaponCardSlots_RED" alignment="CENTER" layoutX="369.0" layoutY="878.0"
+                                <HBox fx:id="weaponCardSlots_RED" alignment="CENTER" layoutX="320.0" layoutY="878.0"
                                       maxHeight="150.0" maxWidth="333.0" minHeight="150.0" minWidth="333.0"
                                       prefHeight="150.0" prefWidth="333.0" spacing="15.0">
                                     <padding>

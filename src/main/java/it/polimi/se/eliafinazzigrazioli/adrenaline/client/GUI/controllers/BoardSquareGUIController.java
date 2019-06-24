@@ -24,17 +24,16 @@ public class BoardSquareGUIController extends AbstractGUIController {
     @FXML
     private TilePane boardSquare;
     @FXML
-    private ImageView ammoCard;
+    private ImageView ammoCardSlot;
 
 
     public void setAmmo(AmmoCardClient ammoCard) {
 
         if (ammoCard != null) {
             String uri = view.getAmmoAsset(ammoCard.getId());
-            Platform.runLater(() -> this.ammoCard.setImage(new Image(uri)));
+            Platform.runLater(() -> ammoCardSlot.setImage(new Image(uri)));
         } else
-            Platform.runLater(() -> this.ammoCard.setImage(null));
-
+            Platform.runLater(() -> ammoCardSlot.setImage(null));
     }
 
     @Override
@@ -45,7 +44,7 @@ public class BoardSquareGUIController extends AbstractGUIController {
 
     public void addAvatar(Avatar avatar) throws IOException {
         ImageView avatarNode = (ImageView) loadFXML(GUI.FXML_PATH_AVATAR, boardSquare, this);
-        avatarNode.getProperties().put("avatar", avatar);
+        avatarNode.getProperties().put(GUI.PROPERTIES_AVATAR_KEY, avatar);
 
         String uri = view.getAvatarAsset(avatar.getDamageMark().name());
         Platform.runLater(() -> avatarNode.setImage(new Image(uri)));
@@ -56,7 +55,7 @@ public class BoardSquareGUIController extends AbstractGUIController {
 
         while (childrenIterator.hasNext()) {
             Node child = childrenIterator.next();
-            if (child.hasProperties() && child.getProperties().get("avatar") == avatar) {
+            if (child.hasProperties() && child.getProperties().get(GUI.PROPERTIES_AVATAR_KEY) == avatar) {
                 Platform.runLater(childrenIterator::remove);
                 return true;
             }

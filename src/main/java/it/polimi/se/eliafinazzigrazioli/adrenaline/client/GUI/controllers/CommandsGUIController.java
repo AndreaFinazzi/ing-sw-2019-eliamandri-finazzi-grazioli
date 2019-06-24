@@ -5,13 +5,14 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.MoveDirection;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PlayerAction;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -28,7 +29,6 @@ import java.util.logging.Level;
 public class CommandsGUIController extends AbstractGUIController {
 
     private List<PowerUpCardClient> myPowerUps;
-    private List<WeaponCardClient> myWeaponCards;
 
     private AtomicReference<PowerUpCardClient> selectedPowerUp;
 
@@ -45,12 +45,19 @@ public class CommandsGUIController extends AbstractGUIController {
     @FXML
     private AnchorPane myPlayerBoardAnchorPane;
 
-
     @FXML
-    private HBox myPowerUpSlots;
+    private HBox spawnPowerUpSlots;
+    @FXML
+    private GridPane myCardsGridPane;
+    @FXML
+    private HBox myPowerUpCardSlots;
     @FXML
     private HBox myWeaponCardSlots;
+    @FXML
+    private Button proceedCardsButton;
 
+    @FXML
+    private TextArea messagesTextArea;
 
     @FXML
     private Button arrowUP;
@@ -68,50 +75,58 @@ public class CommandsGUIController extends AbstractGUIController {
         super(view);
     }
 
-    public void setPowerUpCards(List<PowerUpCardClient> powerUpCards) {
-        myPowerUps = powerUpCards;
-        resetPowerUpSlots();
-        for (int i = 0; i < powerUpCards.size(); i++) {
-            int position = i;
-            Platform.runLater(() -> myPowerUpSlots.getChildren().get(position).setStyle("-fx-background-image: url('" + view.getPowerUpAsset(powerUpCards.get(position).getId()) + "'); "));
+    public void setSpawnPowerUpCards(List<PowerUpCardClient> powerUpCards) {
+        for (PowerUpCardClient powerUpCard : powerUpCards) {
+            try {
+                Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, this);
+                button.setDisable(false);
+                button.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
+                view.applyBackground(button, view.getPowerUpAsset(powerUpCard.getId()));
+                button.setOnAction(event -> {
+                    selectedPowerUp.set(view.getPowerUpById(powerUpCards, (String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                    spawnPowerUpSlots.getChildren().clear();
+                    spawnPowerUpSlots.setVisible(false);
+                    myCardsGridPane.setVisible(true);
+                    semaphore.release();
+                });
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
         }
+
+        myCardsGridPane.setVisible(false);
+        spawnPowerUpSlots.setVisible(true);
     }
 
     public void updatePowerUpCards() {
         resetPowerUpSlots();
         for (PowerUpCardClient powerUpCard : view.getLocalModel().getPowerUpCards()) {
-            Platform.runLater(() -> myPowerUpSlots.getChildren().get(powerUpCard.getSlotPosition()).setStyle("-fx-background-image: url('" + view.getPowerUpAsset(powerUpCard.getId()) + "'); "));
+            view.applyBackground(myPowerUpCardSlots.getChildren().get(powerUpCard.getSlotPosition()), view.getPowerUpAsset(powerUpCard.getId()));
         }
     }
 
     public void updateWeaponCards() {
         resetWeaponSlots();
         for (WeaponCardClient weaponCard : view.getLocalModel().getWeaponCards()) {
-            Platform.runLater(() -> myPowerUpSlots.getChildren().get(weaponCard.getSlotPosition()).setStyle("-fx-background-image: url('" + view.getWeaponAsset(weaponCard.getId()) + "'); "));
+            Platform.runLater(() -> {
+                Node weaponSlot = myWeaponCardSlots.getChildren().get(weaponCard.getSlotPosition());
+                weaponSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
+                view.applyBackground(weaponSlot, view.getWeaponAsset(weaponCard.getId()));
+            });
         }
     }
 
     private void resetPowerUpSlots() {
-        for (Node slot : myPowerUpSlots.getChildren()) {
-            Platform.runLater(() -> slot.setStyle("-fx-background-image: url('" + view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD) + "'); "));
+        for (Node slot : myPowerUpCardSlots.getChildren()) {
+            view.applyBackground(slot, view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD));
         }
     }
 
     private void resetWeaponSlots() {
         for (Node slot : myWeaponCardSlots.getChildren()) {
-            Platform.runLater(() -> slot.setStyle("-fx-background-image: url('" + view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD) + "'); "));
+            view.applyBackground(slot, view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD));
         }
     }
-
-    // Weapon card id is missing
-//    public void setWeaponCards(List<WeaponCardClient> weaponCards) {
-//        myWeaponCards = weaponCards;
-//        for (int i = 0; i < weaponCards.size(); i++) {
-//            int position = i;
-//            Platform.runLater(() -> myWeaponCardSlots.getChildren().get(position).setStyle("-fx-background-image: url('" + view.getWeaponAsset(weaponCards.get(position).getId()) + "'); "));
-
-//        }
-//    }
 
     public void setSelectedWeapon(AtomicReference<WeaponCardClient> selectedWeapon) {
         this.selectedWeapon = selectedWeapon;
@@ -131,13 +146,19 @@ public class CommandsGUIController extends AbstractGUIController {
 
     public void setSelectablePowerUp(List<PowerUpCardClient> cards) {
         for (PowerUpCardClient card : cards) {
-            myPowerUpSlots.getChildren().get(myPowerUps.indexOf(card)).setDisable(false);
+            if (card.getSlotPosition() != -1) {
+                myPowerUpCardSlots.getChildren().get(card.getSlotPosition()).setDisable(false);
+            } else {
+                myPowerUpCardSlots.getChildren().get(myPowerUps.indexOf(card)).setDisable(false);
+            }
         }
+
+        proceedCardsButton.setDisable(false);
     }
 
     public void setSelectableWeapon(List<WeaponCardClient> selectableWeapons) {
         for (WeaponCardClient card : selectableWeapons) {
-            myWeaponCardSlots.getChildren().get(myWeaponCards.indexOf(card)).setDisable(false);
+            myWeaponCardSlots.getChildren().get(card.getSlotPosition()).setDisable(false);
         }
     }
 
@@ -158,9 +179,10 @@ public class CommandsGUIController extends AbstractGUIController {
             arrow.setDisable(true);
         }
     }
+
     public void disableCards() {
-        myPowerUpSlots.setDisable(true);
-        myWeaponCardSlots.setDisable(true);
+        myPowerUpCardSlots.getChildren().forEach(card -> card.setDisable(true));
+        myWeaponCardSlots.getChildren().forEach(card -> card.setDisable(true));
     }
 // USELESS
 //    public void arrowPressed(MouseEvent actionEvent) {
@@ -200,8 +222,8 @@ public class CommandsGUIController extends AbstractGUIController {
         actionsFlowPane.setVisible(false);
     }
 
-    public void loadMyPlayerBoard(Avatar avatar) throws IOException {
-        playerBoardGUIController = new PlayerBoardGUIController(view, avatar);
+    public void loadMyPlayerBoard() throws IOException {
+        playerBoardGUIController = new PlayerBoardGUIController(view, view.getClient().getPlayerName(), false);
         loadFXML(GUI.FXML_PATH_PLAYER_BOARD, myPlayerBoardAnchorPane, playerBoardGUIController);
 
     }
@@ -239,7 +261,7 @@ public class CommandsGUIController extends AbstractGUIController {
                     button.setDisable(true);
                     button.setOnAction(event -> {
                         disableCards();
-                        selectedWeapon.set(myWeaponCards.get((button.getParent().getChildrenUnmodifiable().indexOf(button))));
+                        selectedWeapon.set(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
                         semaphore.release();
                     });
                 } catch (IOException e) {
@@ -250,17 +272,24 @@ public class CommandsGUIController extends AbstractGUIController {
             // PowerUps
             for (int i = 0; i < Rules.PLAYER_CARDS_MAX_POWER_UPS; i++) {
                 try {
-                    Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, myPowerUpSlots, this);
+                    Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, myPowerUpCardSlots, this);
                     button.setDisable(true);
                     button.setOnAction(event -> {
                         disableCards();
-                        selectedPowerUp.set(myPowerUps.get((button.getParent().getChildrenUnmodifiable().indexOf(button))));
+                        proceedCardsButton.setDisable(true);
+                        selectedPowerUp.set(view.getLocalModel().getPowerUpCardById((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
                         semaphore.release();
                     });
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 }
             }
+
+            proceedCardsButton.setOnAction(event -> {
+                proceedCardsButton.setDisable(true);
+                selectedPowerUp.set(null);
+                semaphore.release();
+            });
 
             // Arrow panel initialization
             String initialText;
@@ -291,5 +320,27 @@ public class CommandsGUIController extends AbstractGUIController {
 
 
         }
+    }
+
+    public void showMessage(Object message) {
+        Platform.runLater(() -> {
+
+            messagesTextArea.appendText(String.format("%n%s", message.toString()));
+            messagesTextArea.setScrollTop(Double.MIN_VALUE);
+        });
+    }
+
+
+    public void showAmmoCollected(Ammo ammo, boolean actuallyCollected) {
+        if (actuallyCollected) playerBoardGUIController.addAmmoToStack(ammo);
+    }
+
+    public void updateMyAmmo() {
+        playerBoardGUIController.updateAmmoStack();
+    }
+
+    public void showPaymentUpdate(List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos) {
+        playerBoardGUIController.showPayment(powerUpCardClients, ammos);
+
     }
 }

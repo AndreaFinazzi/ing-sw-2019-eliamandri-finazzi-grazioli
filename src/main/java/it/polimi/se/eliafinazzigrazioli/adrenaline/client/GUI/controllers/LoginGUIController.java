@@ -25,6 +25,9 @@ public class LoginGUIController extends AbstractGUIController {
     private Label errorLabel;
 
     @FXML
+    private TextArea messageTextArea;
+
+    @FXML
     private Button buttonLogin;
 
     @FXML
@@ -78,5 +81,12 @@ public class LoginGUIController extends AbstractGUIController {
         super.initialize(location, resources);
 
         Platform.runLater(() -> rootStackPane.getChildren().add(loaderBox));
+    }
+
+    public void showMessage(Object message) {
+        Platform.runLater(() -> {
+            messageTextArea.appendText(String.format("%n%s", message.toString()));
+            messageTextArea.setScrollTop(Double.MIN_VALUE);
+        });
     }
 }
