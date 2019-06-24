@@ -33,13 +33,13 @@ public class SelectionRequestEffectState extends EffectState {
                     List<String> selectablePlayers = new ArrayList<>();
                     for (Player player : invoker.getActiveEffect().getToSelectPlayers())
                         selectablePlayers.add(player.getPlayerNickname());
-                    events.add(new SelectablePlayersEvent(currentPlayer.getPlayerNickname(), selectablePlayers, maxSelectableItems));
+                    events.add(new SelectablePlayersEvent(currentPlayer, selectablePlayers, maxSelectableItems));
                     break;
                 case BOARDSQUARE:
                     List<Coordinates> selectableSquares = new ArrayList<>();
                     for (BoardSquare boardSquare : invoker.getActiveEffect().getToSelectBoardSquares())
                         selectableSquares.add(gameBoard.getCoordinates(boardSquare));
-                    events.add(new SelectableBoardSquaresEvent(currentPlayer.getPlayerNickname(), selectableSquares, maxSelectableItems));
+                    events.add(new SelectableBoardSquaresEvent(currentPlayer, selectableSquares, maxSelectableItems));
                     break;
                 case ROOM:
                     events.add(new SelectableRoomsEvent(currentPlayer.getPlayerNickname(), invoker.getActiveEffect().getToSelectRooms()));
@@ -48,6 +48,7 @@ public class SelectionRequestEffectState extends EffectState {
                     events.add(new SelectDirectionEvent(currentPlayer.getPlayerNickname()));
                     break;
             }
+            invoker.getActiveEffect().setNeedsSelection(true);
         } else {
             invoker.getActiveEffect().automaticSelection();
         }

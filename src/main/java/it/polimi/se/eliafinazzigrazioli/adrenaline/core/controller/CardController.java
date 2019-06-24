@@ -37,6 +37,7 @@ public class CardController implements ViewEventsListenerInterface {
         eventController.addViewEventsListener(EffectSelectedEvent.class, this);
         eventController.addViewEventsListener(TargetSelectedEvent.class, this);
         eventController.addViewEventsListener(EffectSelectedEvent.class, this);
+        eventController.addViewEventsListener(SquareSelectedEvent.class, this);
     }
 
     @Override
@@ -46,7 +47,9 @@ public class CardController implements ViewEventsListenerInterface {
 
     @Override
     public void handleEvent(WeaponToUseSelectedEvent event) throws HandlerNotImplementedException {
-        if (event.getPlayer().equals(match.getCurrentPlayer().getPlayerNickname())) {
+        Player currentPlayer = match.getCurrentPlayer();
+        currentPlayingWeapon = currentPlayer.getWeaponByName(event.getWeaponName());
+        if (!event.getPlayer().equals(currentPlayer.getPlayerNickname())) {
             LOGGER.log(Level.SEVERE, "Player tried use a card out of his turn.", new Exception());
             return;
         }
@@ -56,9 +59,7 @@ public class CardController implements ViewEventsListenerInterface {
         }
         List<AbstractModelEvent> events = new ArrayList<>();
         GameBoard gameBoard = match.getGameBoard();
-        Player currentPlayer = match.getCurrentPlayer();
         List<Coordinates> path = event.getPath();
-        currentPlayingWeapon = currentPlayer.getWeaponByName(event.getWeaponName());
         currentPlayingWeapon.initialize();
         List<String> callableEffects = currentPlayingWeapon.getCallableEffects();
 
@@ -73,13 +74,13 @@ public class CardController implements ViewEventsListenerInterface {
 
     @Override
     public void handleEvent(EffectSelectedEvent event) {
-        if (event.getPlayer().equals(match.getCurrentPlayer().getPlayerNickname())) {
+        if (!event.getPlayer().equals(match.getCurrentPlayer().getPlayerNickname())) {
             LOGGER.log(Level.SEVERE, "Player tried use a card out of his turn.", new Exception());
             return;
         }
 
-        List<AbstractModelEvent> events = new ArrayList<>();
         Player currentPlayer = match.getCurrentPlayer();
+        currentPlayingWeapon.setActiveEffect(event.getEffect());
         currentExecutingEffect = currentPlayingWeapon.getEffectByName(event.getEffect());
         List<PowerUpCard> powerUpsToSpend = currentPlayer.getRealModelReferences(event.getPowerUpsToPay());
         List<Ammo> ammosSpent = currentPlayer.spendPrice(currentExecutingEffect.getPrice(), powerUpsToSpend);
@@ -87,12 +88,19 @@ public class CardController implements ViewEventsListenerInterface {
 
         currentExecutingEffect.initialize();
 
-
-
+        effectExecutionLoop(currentPlayer);
     }
 
+    @Override
+    public void handleEvent(SquareSelectedEvent event) throws HandlerNotImplementedException {
+        List<BoardSquare> selectedBoardSquares = new ArrayList<>();
+        GameBoard gameBoard = match.getGameBoard();
+        for (Coordinates coordinates: event.getSquares())
+            selectedBoardSquares.add(gameBoard.getBoardSquareByCoordinates(coordinates));
+        currentExecutingEffect.addSelectedBoardSquares(selectedBoardSquares);
 
-
+        effectExecutionLoop(match.getCurrentPlayer());
+    }
 
     @Override
     public void handleEvent(CardSelectedEvent event) {
@@ -107,5 +115,17 @@ public class CardController implements ViewEventsListenerInterface {
     @Override
     public void handleEvent(CollectPlayEvent event) {
         System.out.println("called for " + event.getPlayer());
+    }
+
+    private void effectExecutionLoop(Player currentPlayer) {
+        while (!currentExecutingEffect.needsSelection() && currentExecutingEffect.hasNextState()) {
+            currentExecutingEffect.nextState();
+            match.notifyObservers(currentExecutingEffect.execute(currentPlayingWeapon, match.getGameBoard(), currentPlayer));
+        }
+
+        if (!currentExecutingEffect.hasNextState()) {
+            currentExecutingEffect.setAlreadyUsed(true);
+            match.notifyObservers(new SelectableEffectsEvent(currentPlayer, currentPlayingWeapon.getWeaponName(), currentExecutingEffect.getNextCallableEffects(currentPlayingWeapon)));
+        }
     }
 }

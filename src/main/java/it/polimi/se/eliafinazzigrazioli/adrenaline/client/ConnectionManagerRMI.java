@@ -36,7 +36,7 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
     @Override
     public void init() {
         try {
-            registry = LocateRegistry.getRegistry("192.168.43.185", 1099);
+            registry = LocateRegistry.getRegistry(1099);
             serverRemoteRMI = (ServerRemoteRMI) registry.lookup("ServerRMIManager");
 
             LOGGER.info("ClientHandlerRMI: Lookup successfully executed.");

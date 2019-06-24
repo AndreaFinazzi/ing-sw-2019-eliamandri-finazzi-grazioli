@@ -27,7 +27,7 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
         try {
             reference = getReference(invoker, gameBoard, currentPlayer);
         } catch (Exception e) {
-            //TODO held exception
+            e.printStackTrace();
         }
         switch (selectionType) {
             case BOARDSQUARE:
@@ -35,7 +35,7 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
                 try {
                     boardSquaresToSelect = new ArrayList<>(gameBoard.getSquaresByDistance(reference, maxDistance, minDistance));
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
                 invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);
                 break;
@@ -52,6 +52,6 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
                 //TODO define and throw exception
                 break;
         }
-        return null;
+        return new ArrayList<>();
     }
 }

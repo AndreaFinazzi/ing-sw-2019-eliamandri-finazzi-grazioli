@@ -39,6 +39,6 @@ public class PreselectionBasedSelectorEffectState extends SelectorEffectState {
             players.removeAll(selectedPlayers);
             invoker.getActiveEffect().updateToSelectPlayers(players);
         }
-        return null;
+        return new ArrayList<>();
     }
 }

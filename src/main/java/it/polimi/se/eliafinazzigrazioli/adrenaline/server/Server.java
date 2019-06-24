@@ -38,7 +38,7 @@ public class Server {
         matchBuilder = new MatchBuilder();
 
         try {
-            System.setProperty("java.rmi.server.hostname", "192.168.43.185");
+            //System.setProperty("java.rmi.server.hostname", "192.168.43.185");
 
             registry = LocateRegistry.createRegistry(1099);
         } catch (RemoteException e) {

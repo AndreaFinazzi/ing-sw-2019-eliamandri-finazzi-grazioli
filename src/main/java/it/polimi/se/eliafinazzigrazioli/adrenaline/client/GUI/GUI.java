@@ -153,7 +153,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showAmmoCollected(String player, Ammo ammo, boolean actuallyCollected) {
+    public void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected) {
         if (!player.equals(client.getPlayerName()))
             opponentPlayerToGUIControllerMap.get(player).showAmmoCollected(ammo, actuallyCollected);
         else
@@ -167,7 +167,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showPlayerMovement(String player, List<Coordinates> path) {
+    public void showPlayerMovementUpdate(String player, List<Coordinates> path) {
         if (!path.isEmpty()) {
             try {
                 if (!player.equals(client.getPlayerName())) {
@@ -176,7 +176,7 @@ public class GUI extends Application implements RemoteView {
                     PauseTransition delay = new PauseTransition(Duration.seconds(1));
                     delay.setOnFinished(event -> {
                         path.remove(0);
-                        showPlayerMovement(player, path);
+                        showPlayerMovementUpdate(player, path);
                     });
                     delay.play();
                 } else {
@@ -186,24 +186,6 @@ public class GUI extends Application implements RemoteView {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
-    }
-
-    @Override
-    public void showSelectableSquare(List<Coordinates> selectable) {
-        if (!selectable.isEmpty()) {
-
-        }
-
-    }
-
-    @Override
-    public void selectSelectableSquare(List<Coordinates> selectable) {
-
-    }
-
-    @Override
-    public void selectSelectableEffect(List<String> callableEffects) {
-
     }
 
     @Override
@@ -217,7 +199,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public PlayerAction choseAction() {
+    public PlayerAction selectAction() {
         AtomicReference<PlayerAction> chosenAction = new AtomicReference<>();
         Semaphore semaphore = new Semaphore(0);
 
@@ -266,11 +248,6 @@ public class GUI extends Application implements RemoteView {
         return null;
     }
 
-    @Override
-    public void selectWeaponCard() {
-
-    }
-
     //todo implement
     @Override
     public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> selectablePowerUps) {
@@ -306,11 +283,6 @@ public class GUI extends Application implements RemoteView {
 
         }
         return null;
-    }
-
-    @Override
-    public void updatePlayerPosition(String nickname, Coordinates coordinates) {
-
     }
 
     @Override
@@ -391,17 +363,12 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
-
-    }
-
-    @Override
     public void showMap() {
 
     }
 
     @Override
-    public void showPowerUpCollection(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
+    public void showPowerUpCollectionUpdate(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
         if (isOpponent) {
             try {
                 opponentPlayerToGUIControllerMap.get(player).setCardCollected(cardCollected);
@@ -428,7 +395,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showWeaponCardResetting(Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap) {
+    public void showWeaponCardResettingUpdate(Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap) {
         for (Map.Entry<Coordinates, List<WeaponCardClient>> coordinatesWeaponsEntry : coordinatesWeaponsMap.entrySet()) {
             for (WeaponCardClient weaponCard : coordinatesWeaponsEntry.getValue()) {
                 mainGUIController.updateWeaponCardOnMap(weaponCard);
@@ -446,7 +413,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showAmmoCardCollected(String player, AmmoCardClient ammoCard, Coordinates coordinates) {
+    public void showAmmoCardCollectedUpdate(String player, AmmoCardClient ammoCard, Coordinates coordinates) {
         if (!player.equals(getClient().getPlayerName())) {
             try {
                 opponentPlayerToGUIControllerMap.get(player).setCardCollected(ammoCard);
@@ -458,7 +425,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showAmmoCardResetting(Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap) {
+    public void showAmmoCardResettingUpdate(Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap) {
         for (Map.Entry<Coordinates, AmmoCardClient> coordinatesAmmoCardEntry : coordinatesAmmoCardMap.entrySet()) {
             mainGUIController.updateAmmoCardOnMap(coordinatesAmmoCardEntry.getKey(), coordinatesAmmoCardEntry.getValue());
         }
@@ -521,7 +488,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showBeginTurn(String currentPlayer) {
+    public void showBeginTurnUpdate(String currentPlayer) {
 
     }
 
@@ -531,7 +498,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public MoveDirection getMoveFromUser(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
+    public MoveDirection selectDirection(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
         try {
             mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(client.getPlayerName()), currentPose.getCoordinates());
         } catch (IOException e) {
@@ -565,7 +532,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showSpawn(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
+    public void showSpawnUpdate(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
         try {
             mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(player), spawnPoint);
         } catch (IOException e) {

@@ -38,7 +38,7 @@ public class VisibilitySelectorEffectState extends SelectorEffectState {
                 invoker.getActiveEffect().updateToSelectRooms(roomsToSelect);
                 break;
         }
-        return null;
+        return new ArrayList<>();
     }
 
 

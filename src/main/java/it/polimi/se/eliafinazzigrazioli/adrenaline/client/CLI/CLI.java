@@ -113,7 +113,7 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public PlayerAction choseAction() {
+    public PlayerAction selectAction() {
         ArrayList<PlayerAction> availableActions = new ArrayList<>(Arrays.asList(PlayerAction.values()));
         PlayerAction choice;
         do {
@@ -151,12 +151,6 @@ public class CLI implements RemoteView, Runnable {
         return choice;
     }
 
-    @Override
-    public void showSelectableSquare(List<Coordinates> selectable) {
-        showMessage("You can select this square: ");
-        showMessage(CLIUtils.serializeList(selectable));
-    }
-
     public void collectPlay() {
         List<Coordinates> path = getPathFromUser(Rules.MAX_MOVEMENTS_BEFORE_COLLECTION);
         Coordinates finalCoordinates = path.get(path.size()); // Last element
@@ -169,7 +163,7 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public MoveDirection getMoveFromUser(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
+    public MoveDirection selectDirection(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
         showMessage("You are in " + currentPose);
         MoveDirection choice;
 
@@ -183,17 +177,7 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void selectWeaponCard() {
-        List<WeaponCardClient> weapons = localModel.getWeaponCards();
-        showMessage("Insert your choice");
-        showMessage(CLIUtils.serializeList(weapons));
-        int choice = nextInt(weapons.size());
-        String weapon = weapons.get(choice).getWeaponName();
-        notifySelectedWeaponCard(weapon);
-    }
-
-    @Override
-    public void selectSelectableSquare(List<Coordinates> selectable) {
+    public Coordinates selectCoordinates(List<Coordinates> selectable) {
         showMessage("You can select this square: ");
         int count = 1;
         for (Coordinates coordinates : selectable) {
@@ -204,22 +188,11 @@ public class CLI implements RemoteView, Runnable {
             }
         }
         int choice = nextInt(selectable.size());
-        Coordinates square = selectable.get(choice);
-        notifySelectedSquare(square);
+        Coordinates square = selectable.get(choice - 1);
+        return square;
     }
 
-    @Override
-    public void selectSelectableEffect(List<String> callableEffects) {
-        showMessage("You can select this effects ");
-        showMessage(CLIUtils.serializeList(callableEffects));
-        showMessage("Insert your choice");
-        int choice = nextInt(callableEffects.size());
-        String temp = callableEffects.get(choice);
-        notifySelectedEffects(temp);
-    }
-
-    // TODO Never used
-    @Override
+    /*@Override
     public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
         showMessage("You have collected this Weapon card");
         showMessage(weaponCardClient);
@@ -229,7 +202,7 @@ public class CLI implements RemoteView, Runnable {
         } else
             showMessage("ops, something didn't work");
 
-    }
+    }*/
 
 
     @Override
@@ -238,12 +211,6 @@ public class CLI implements RemoteView, Runnable {
         showMessage(mapText);
     }
 
-
-    @Override
-    public void updatePlayerPosition(String nickname, Coordinates coordinates) {
-        showMessage(nickname + " position it's changed");
-        localModel.getGameBoard().setPlayerPosition(nickname, coordinates);
-    }
 
     @Override
     public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
@@ -323,7 +290,7 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void showSpawn(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
+    public void showSpawnUpdate(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
         String message = "";
         if(isOpponent) {
             message = message + "Player " + player;
@@ -335,7 +302,7 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void showPowerUpCollection(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
+    public void showPowerUpCollectionUpdate(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
         String message = "";
         if (isOpponent)
             message = message + "Player " + player + "collected a powerup\n";

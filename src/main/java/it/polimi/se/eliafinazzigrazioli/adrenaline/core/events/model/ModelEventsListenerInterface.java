@@ -142,6 +142,10 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(PaymentExecutedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
 
 
 

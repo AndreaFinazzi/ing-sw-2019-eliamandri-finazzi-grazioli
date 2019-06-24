@@ -50,6 +50,6 @@ public class CardinalDirectionSelectorEffectState extends SelectorEffectState {
                 //TODO a solution to this useless default is to insert constrains in the constructor
                 break;
         }
-        return null;
+        return new ArrayList<>();
     }
 }

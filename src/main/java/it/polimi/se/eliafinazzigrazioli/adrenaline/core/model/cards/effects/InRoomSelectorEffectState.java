@@ -29,7 +29,7 @@ public class InRoomSelectorEffectState extends SelectorEffectState {
                 //TODO define and throw exception
                 break;
         }
-        return null;
+        return new ArrayList<>();
     }
 
 }

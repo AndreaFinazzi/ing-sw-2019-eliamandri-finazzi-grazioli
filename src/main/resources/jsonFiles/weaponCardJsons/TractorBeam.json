@@ -14,13 +14,13 @@
           "notVisible": false,
           "referenceSource": null,
           "sourceSelectionOrder": 0,
-          "selectionType": "SQUARE",
+          "selectionType": "BOARDSQUARE",
           "referenceType": "PLAYER"
         },
         {
           "type": "SelectionRequestEffectState",
           "userSelectionRequired": true,
-          "selectionType": "SQUARE",
+          "selectionType": "BOARDSQUARE",
           "maxSelectableItems": 1
         },
         {
@@ -30,7 +30,7 @@
           "referenceSource": "basic mode",
           "sourceSelectionOrder": 0,
           "selectionType": "PLAYER",
-          "referenceType": "SQUARE"
+          "referenceType": "BOARDSQUARE"
         },
         {
           "type": "SelectionRequestEffectState",

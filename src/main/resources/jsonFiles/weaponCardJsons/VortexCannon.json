@@ -14,7 +14,7 @@
           "notVisible": false,
           "referenceSource": null,
           "sourceSelectionOrder": -1,
-          "selectionType": "SQUARE",
+          "selectionType": "BOARDSQUARE",
           "referenceType": "PLAYER"
         },
         {
@@ -23,13 +23,13 @@
           "minDistance": 1,
           "referenceSource": "basic effect",
           "sourceSelectionOrder": 0,
-          "selectionType": "SQUARE",
+          "selectionType": "BOARDSQUARE",
           "referenceType": "PLAYER"
         },
         {
           "type": "SelectionRequestEffectState",
           "userSelectionRequired": true,
-          "selectionType": "SQUARE",
+          "selectionType": "BOARDSQUARE",
           "maxSelectableItems": 1
         },
         {
@@ -39,7 +39,7 @@
           "referenceSource": "basic effect",
           "sourceSelectionOrder": 0,
           "selectionType": "PLAYER",
-          "referenceType": "SQUARE"
+          "referenceType": "BOARDSQUARE"
         },
         {
           "type": "SelectionRequestEffectState",
@@ -78,7 +78,7 @@
           "referenceSource": "basic effect",
           "sourceSelectionOrder": 0,
           "selectionType": "PLAYER",
-          "referenceType": "SQUARE"
+          "referenceType": "BOARDSQUARE"
         },{
           "type": "PreselectionBasedSelectorEffectState",
           "previouslySelectedMap": {

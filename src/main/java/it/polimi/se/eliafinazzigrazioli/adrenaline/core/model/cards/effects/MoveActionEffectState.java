@@ -40,7 +40,7 @@ public class MoveActionEffectState extends ActionEffectState {
             events.add(new PlayerMovedByWeaponEvent(currentPlayer.getPlayerNickname(), invoker.getWeaponName(), toMove.getPlayerNickname()));
             return events;
         }
-        return null;
+        return new ArrayList<>();
     }
 
 }

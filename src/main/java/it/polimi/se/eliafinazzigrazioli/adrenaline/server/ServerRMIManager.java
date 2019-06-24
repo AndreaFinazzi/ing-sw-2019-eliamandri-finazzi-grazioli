@@ -20,7 +20,7 @@ public class ServerRMIManager implements Runnable, ServerRemoteRMI {
     public ServerRMIManager(Server server) throws RemoteException {
         this.server = server;
 
-        System.setProperty("java.rmi.server.hostname", "192.168.43.185");
+        //System.setProperty("java.rmi.server.hostname", "192.168.43.185");
 
         UnicastRemoteObject.exportObject(this, 1099);
     }

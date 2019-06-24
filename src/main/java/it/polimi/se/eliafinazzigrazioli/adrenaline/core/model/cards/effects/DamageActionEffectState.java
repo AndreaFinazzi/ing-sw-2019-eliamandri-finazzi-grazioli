@@ -55,7 +55,7 @@ public class DamageActionEffectState extends ActionEffectState {
             events.add(new PlayerShotEvent(currentPlayer.getPlayerNickname(), toDamage.getPlayerNickname(), invoker.getWeaponName()));
             return events;
         }
-        return null;
+        return new ArrayList<>();
     }
 
 
