@@ -24,6 +24,6 @@ public enum Ammo {
 
     //todo
     public String toString() {
-        return Color.ammoToColor(this) + "\u2B1B";
+        return Color.ammoToColor(this) + "\u2B1B" + Color.RESET;
     }
 }

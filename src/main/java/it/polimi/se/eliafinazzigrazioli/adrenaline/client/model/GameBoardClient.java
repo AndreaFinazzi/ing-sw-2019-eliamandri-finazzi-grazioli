@@ -396,7 +396,7 @@ public class GameBoardClient {
                     x = random.nextInt(DIM_X - 2) + 1;
                     y = random.nextInt(DIM_Y - 2) + 1;
                 } while (!squareText[x][y].equals(" "));
-                squareText[x][y] = color + "@";
+                squareText[x][y] = color + "\u263B";
             }
 
         }

@@ -1,18 +1,23 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.AmmoCard;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class AmmoCardClient implements Serializable {
+public class AmmoCardClient implements Serializable, CardInterface {
 
     private static final long serialVersionUID = 9001;
 
     private String id;
     private List<Ammo> ammos;
     private boolean powerUp;
+
+    private final static int WIDTH = 15;
+    private final static int HEIGTH = 5;
 
     public AmmoCardClient(AmmoCard ammoCard) {
         this.id = ammoCard.getId();
@@ -40,5 +45,18 @@ public class AmmoCardClient implements Serializable {
             string = string + count + ") " + ammo + "\n\t";
         }
         return string;
+    }
+
+    @Override
+    public String[][] drawCard() {
+        String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGTH, Color.GRAY);
+
+
+        return matrix;
+    }
+
+    @Override
+    public String[][] drawCard(boolean light) {
+        return new String[0][];
     }
 }

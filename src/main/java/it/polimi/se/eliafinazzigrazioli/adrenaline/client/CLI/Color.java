@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 
 public enum Color {
@@ -51,6 +52,28 @@ public enum Color {
 
             case GRAY:
                 return Color.GRAY;
+
+            case GREEN:
+                return Color.GREEN;
+
+            case PURPLE:
+                return Color.PURPLE;
+
+            case YELLOW:
+                return Color.YELLOW;
+
+            default:
+                return Color.RESET;
+
+        }
+    }
+
+    public static Color damageMarkToColor(DamageMark damageMark) {
+
+        switch(damageMark) {
+
+            case BLUE:
+                return Color.BLUE;
 
             case GREEN:
                 return Color.GREEN;
