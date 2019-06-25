@@ -56,9 +56,8 @@ public class WeaponEffect {
     private boolean needsSelection = false;
 
 
-    public WeaponEffect(EffectState currentState, List<Player> players) {
+    public WeaponEffect(EffectState currentState) {
         this.currentState = currentState;
-        this.toSelectPlayers = players;
 
         selectedRooms = new ArrayList<>(Arrays.asList(Room.PURPLE));
 

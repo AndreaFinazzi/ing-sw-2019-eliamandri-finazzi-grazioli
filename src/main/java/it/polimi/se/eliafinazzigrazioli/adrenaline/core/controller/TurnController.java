@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //TODO DEFINE AND INSERT MESSAGES, IN PARTICULAR FOR NOT ALLOWED PLAY EVENT BECAUSE IT IS THROWN IN A VARIETY OF SITUATIONS
@@ -43,6 +44,7 @@ public class TurnController implements ViewEventsListenerInterface {
         eventController.addViewEventsListener(SpawnPowerUpSelectedEvent.class, this);
         eventController.addViewEventsListener(ReloadWeaponEvent.class, this);
         eventController.addViewEventsListener(WeaponCollectionEvent.class, this);
+        eventController.addViewEventsListener(EffectSelectedEvent.class, this);
     }
 
     /**
@@ -142,7 +144,6 @@ public class TurnController implements ViewEventsListenerInterface {
                 AmmoCard ammoCard = ((GenericBoardSquare) finalPosition).gatherCollectables();
                 events.add(new AmmoCardCollectedEvent(currentPlayer, ammoCard, finalPosition.getCoordinates()));
 
-                //todo verify if it's better to sent the entire ammoCard somehow
                 for (Ammo ammo: ammoCard.getAmmos())
                     events.add(new AmmoCollectedEvent(currentPlayer, ammo, currentPlayer.addAmmo(ammo)));
                 if (ammoCard.containsPowerUpCard()) {
@@ -220,6 +221,16 @@ public class TurnController implements ViewEventsListenerInterface {
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
         }
 
+    }
+
+    @Override
+    public void handleEvent(EffectSelectedEvent event) {
+        if (!event.getPlayer().equals(match.getCurrentPlayer().getPlayerNickname())) {
+            LOGGER.log(Level.SEVERE, "Player tried use a card out of his turn.", new Exception());
+            return;
+        }
+        if (event.getEffect() == null)
+            match.notifyObservers(concludeAction(match.getCurrentPlayer()));
     }
 
     @Override

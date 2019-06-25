@@ -223,15 +223,15 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showPaymentUpdate(event.getPlayer(), powerUpsActuallySpent, event.getAmmosSpent());
     }
 
+    @Override
     default void handleEvent(SelectableEffectsEvent event) throws HandlerNotImplementedException {
-        showMessage("Do you want to play an effect?[Y=1/n=0]");
-        if (selectYesOrNot()) {
+        if (!event.getCallableEffects().isEmpty()) {
+            WeaponCardClient weaponCard = null;
             WeaponEffectClient selectedEffect = null;
             List<PowerUpCardClient> powerUpCardsToPay = new ArrayList<>();
             boolean repeatSelection = true;
             boolean usageConfirmation = true;
             while (repeatSelection) {
-                WeaponCardClient weaponCard = null;
                 List<WeaponEffectClient> toSelect = new ArrayList<>();
                 for (WeaponCardClient weaponCardClient: getLocalModel().getWeaponCards()) {
                     if (event.getWeapon().equals(weaponCardClient.getWeaponName()))
@@ -242,19 +242,25 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         toSelect.add(weaponEffectClient);
                 }
 
-                selectedEffect = selectWeaponEffect(weaponCard, toSelect);
+                if (!toSelect.isEmpty()) {
+                    selectedEffect = selectWeaponEffect(weaponCard, toSelect);
 
-                powerUpCardsToPay = getPowerUpsToPay(selectedEffect.getPrice());
-                if (!getLocalModel().canPay(selectedEffect.getPrice(), powerUpCardsToPay)) {
-                    showMessage("The power ups you selected are not enough to pay, are you sure you want to play this effect?[Y=1/n=0]");
-                    usageConfirmation = selectYesOrNot();
-                    repeatSelection = usageConfirmation;
+                    powerUpCardsToPay = getPowerUpsToPay(selectedEffect.getPrice());
+                    if (!getLocalModel().canPay(selectedEffect.getPrice(), powerUpCardsToPay)) {
+                        showMessage("The power ups you selected are not enough to pay, are you sure you want to play this effect?[Y=1/n=0]");
+                        usageConfirmation = selectYesOrNot();
+                        repeatSelection = usageConfirmation;
+                    }
+                    else
+                        repeatSelection = false;
                 }
                 else
                     repeatSelection = false;
             }
-            if (usageConfirmation)
+            if (usageConfirmation) {
+                weaponCard.setLoaded(false);
                 notifyObservers(new EffectSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), selectedEffect.getEffectName(), powerUpCardsToPay));
+            }
             else
                 notifyObservers(new EffectSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), null, null));
 

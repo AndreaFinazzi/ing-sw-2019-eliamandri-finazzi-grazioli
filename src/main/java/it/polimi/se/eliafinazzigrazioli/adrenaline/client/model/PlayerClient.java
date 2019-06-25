@@ -100,11 +100,11 @@ public class PlayerClient implements CardInterface{
     }
 
     public void addDamages(List<DamageMark> damages) {
-        damages.addAll(damages);
+        this.damages.addAll(damages);
     }
 
     public void addMarks(List<DamageMark> marks) {
-        marks.addAll(marks);
+        this.marks.addAll(marks);
     }
 
     public void cleanPlayerBoard() {
