@@ -4,10 +4,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
@@ -40,9 +37,12 @@ public class GUI extends Application implements RemoteView {
     // static constants
     public static final String STYLE_CLASS_MAP_DEFAULT = "map_NONE";
     public static final String STYLE_CLASS_MAP_PREFIX = "map_";
+    public static final String STYLE_CLASS_HIGHLIGHT = "highlight";
     public static final String STYLE_CLASS_WEAPON_ROTATED = "rotatedWeaponCard";
     public static final String STYLE_CLASS_WEAPON_ON_MAP = "onMapWeaponCard";
     public static final String STYLE_CLASS_WEAPON_MY = "myWeaponCard";
+    public static final String STYLE_CLASS_BOARD_SQUARE_SELECTABLE = "selectableBoardSquare";
+    public static final String STYLE_CLASS_AVATAR_SELECTABLE = "selectableAvatar";
 
     public static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
     public static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
@@ -53,6 +53,7 @@ public class GUI extends Application implements RemoteView {
     public static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + "playerboards/";
     public static final String ASSET_PATH_AVATAR_ROOT = ASSET_PATH_ROOT + "avatars/";
     public static final String ASSET_PATH_ICONS_ROOT = ASSET_PATH_ROOT + "icons/";
+    public static final String ASSET_PATH_MARKS_ROOT = ASSET_PATH_ROOT + "marks/";
 
     public static final String ASSET_FORMAT_CARDS = ".png";
     public static final String ASSET_FORMAT_ICONS = ".png";
@@ -62,6 +63,7 @@ public class GUI extends Application implements RemoteView {
     public static final String ASSET_PREFIX_AMMO = "AD_ammo_";
     public static final String ASSET_PREFIX_AVATAR = "avatar_";
     public static final String ASSET_PREFIX_ICONS_ARROWS = "arrow_";
+    public static final String ASSET_PREFIX_MARKS = "mark_";
 
     public static final String ASSET_ID_HIDDEN_CARD = "02";
     public static final String ASSET_ID_HIDDEN_AMMO = "04";
@@ -75,9 +77,10 @@ public class GUI extends Application implements RemoteView {
     public static final String FXML_PATH_POWER_UP = FXML_PATH_ROOT + "power_up_card.fxml";
     public static final String FXML_PATH_WEAPON = FXML_PATH_ROOT + "weapon_card.fxml";
     public static final String FXML_PATH_AVATAR = FXML_PATH_ROOT + "avatar.fxml";
+    public static final String FXML_PATH_MARK = FXML_PATH_ROOT + "mark.fxml";
 
     public static final String PROPERTIES_CARD_ID_KEY = "card_id";
-    public static final String PROPERTIES_AVATAR_KEY = "card_id";
+    public static final String PROPERTIES_AVATAR_KEY = "avatar";
     public static final String PROPERTIES_AMMO_KEY = "ammo_name";
 
     private static GUI instance;
@@ -94,10 +97,11 @@ public class GUI extends Application implements RemoteView {
     private MainGUIController mainGUIController;
     private CommandsGUIController commandsGUIController;
     private LoginGUIController loginGUIController;
+
     ///TODO define a setter and verify Map is the correct data structure
+
     private Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap;
     private Map<Coordinates, BoardSquareGUIController> coordinatesBoardSquareGUIControllerMap = new HashMap<>();
-
 
     private boolean initialized = false;
 
@@ -124,6 +128,10 @@ public class GUI extends Application implements RemoteView {
         }
 
         return instance;
+    }
+
+    public Map<String, OpponentPlayerGUIController> getOpponentPlayerToGUIControllerMap() {
+        return opponentPlayerToGUIControllerMap;
     }
 
     public void showOverlay() {
@@ -172,7 +180,7 @@ public class GUI extends Application implements RemoteView {
             try {
                 if (!player.equals(client.getPlayerName())) {
                     Coordinates nextDestination = path.get(0);
-                    mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(player), nextDestination);
+                    mainGUIController.movePlayer(player, nextDestination);
                     PauseTransition delay = new PauseTransition(Duration.seconds(1));
                     delay.setOnFinished(event -> {
                         path.remove(0);
@@ -180,12 +188,17 @@ public class GUI extends Application implements RemoteView {
                     });
                     delay.play();
                 } else {
-                    mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(player), path.get(path.size() - 1));
+                    mainGUIController.movePlayer(player, path.get(path.size() - 1));
                 }
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
+    }
+
+    @Override
+    public WeaponEffectClient selectWeaponEffect(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) {
+        return !callableEffects.isEmpty() ? callableEffects.get(0) : null;
     }
 
     @Override
@@ -196,6 +209,28 @@ public class GUI extends Application implements RemoteView {
             loginGUIController.showMessage(message);
         else
             LOGGER.log(Level.INFO, message.toString());
+    }
+
+    @Override
+    public void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
+        try {
+            if (!damagedPlayer.equals(client.getPlayerName())) {
+                opponentPlayerToGUIControllerMap.get(damagedPlayer).showDamageReceived(damages, marks);
+            } else {
+                commandsGUIController.showDamageReceived(damages, marks);
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void showPlayerMovedByWeaponUpdate(String attackingPlayer, String playerMoved, String weaponUsed, Coordinates finalPosition) {
+        try {
+            mainGUIController.movePlayer(playerMoved, finalPosition);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
     @Override
@@ -270,6 +305,32 @@ public class GUI extends Application implements RemoteView {
 
             synchronized (semaphore) {
                 return selectedPowerUp.get();
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String selectPlayer(List<String> players) {
+        if (!players.isEmpty()) {
+            AtomicReference<String> selectedPlayer = new AtomicReference<>();
+
+            mainGUIController.setSelectedPlayer(selectedPlayer);
+            mainGUIController.setSelectablePlayers(players);
+
+            Semaphore semaphore = new Semaphore(0);
+            mainGUIController.setSemaphore(semaphore);
+
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+
+            synchronized (semaphore) {
+                return selectedPlayer.get();
             }
         }
 
@@ -459,7 +520,7 @@ public class GUI extends Application implements RemoteView {
 
         if (!selectableWeapons.isEmpty()) {
             try {
-                mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(client.getPlayerName()), coordinates);
+                mainGUIController.movePlayer(client.getPlayerName(), coordinates);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
@@ -488,6 +549,32 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public Coordinates selectCoordinates(List<Coordinates> coordinates) {
+        if (!coordinates.isEmpty()) {
+            AtomicReference<Coordinates> selectedCoordinates = new AtomicReference<>();
+
+            mainGUIController.setSelectedCoordinates(selectedCoordinates);
+            mainGUIController.setSelectableCoordinates(coordinates);
+
+            Semaphore semaphore = new Semaphore(0);
+            mainGUIController.setSemaphore(semaphore);
+
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+
+            synchronized (semaphore) {
+                return selectedCoordinates.get();
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public void showBeginTurnUpdate(String currentPlayer) {
 
     }
@@ -500,7 +587,7 @@ public class GUI extends Application implements RemoteView {
     @Override
     public MoveDirection selectDirection(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
         try {
-            mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(client.getPlayerName()), currentPose.getCoordinates());
+            mainGUIController.movePlayer(client.getPlayerName(), currentPose.getCoordinates());
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -534,7 +621,7 @@ public class GUI extends Application implements RemoteView {
     @Override
     public void showSpawnUpdate(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
         try {
-            mainGUIController.moveAvatar(localModel.getPlayersAvatarMap().get(player), spawnPoint);
+            mainGUIController.movePlayer(player, spawnPoint);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -581,6 +668,11 @@ public class GUI extends Application implements RemoteView {
         return this.getClass().getResource(uri).toExternalForm();
     }
 
+    public String getMarkAsset(DamageMark damageMark) {
+        String uri = ASSET_PATH_MARKS_ROOT + ASSET_PREFIX_MARKS + damageMark.name() + ASSET_FORMAT_ICONS;
+        return this.getClass().getResource(uri).toExternalForm();
+    }
+
     public void setOpponentPlayerToGUIControllerMap(Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap) {
         this.opponentPlayerToGUIControllerMap = opponentPlayerToGUIControllerMap;
     }
@@ -593,11 +685,10 @@ public class GUI extends Application implements RemoteView {
         return null;
     }
 
-    public static Node getChildrenById(List<Node> weaponCards, String id) {
-        for (Node weaponCard :
-                weaponCards) {
-            if (weaponCard.hasProperties()) {
-                if (weaponCard.getProperties().getOrDefault("id", "").equals(id)) return weaponCard;
+    public static Node getChildrenByProperty(List<Node> nodeCollection, Object key, Object value) {
+        for (Node node : nodeCollection) {
+            if (node.hasProperties()) {
+                if (node.getProperties().getOrDefault(key, "").equals(value)) return node;
             }
         }
 

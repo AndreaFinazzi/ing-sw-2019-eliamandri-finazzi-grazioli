@@ -43,7 +43,7 @@
           "type": "DistanceSelectorEffectState",
           "maxDistance": 0,
           "minDistance": 0,
-          "referenceSource": "basic effect",
+          "referenceSource": "basic mode",
           "sourceSelectionOrder": 0,
           "selectionType": "PLAYER",
           "referenceType": "PLAYER"
@@ -53,13 +53,6 @@
           "userSelectionRequired": false,
           "selectionType": "PLAYER",
           "maxSelectableItems": -1
-        },
-        {
-          "type": "DamageActionEffectState",
-          "damageAmount": 0,
-          "markAmount": 1,
-          "playerToAffectSource": "basic mode",
-          "toAffectPlayerSelectionOrder": 0
         },
         {
           "type": "DamageActionEffectState",
@@ -88,6 +81,13 @@
           "markAmount": 1,
           "playerToAffectSource": "basic mode",
           "toAffectPlayerSelectionOrder": 4
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 1,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 5
         }
       ],
       "nextCallableEffects": []

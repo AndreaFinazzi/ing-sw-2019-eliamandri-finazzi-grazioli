@@ -24,12 +24,14 @@ public class PlayerClient implements CardInterface{
     private int skulls;
     private boolean death;
     private boolean overkill;
+
     private ArrayList<DamageMark> damages;
+
     private ArrayList<DamageMark> marks;
     private ArrayList<Integer> deathScores;
     private int movementsAllowed;
-
     private final static int WIDTH = 30;
+
     private final static int HEIGHT = 10;
 
     public PlayerClient(Avatar avatar) {
@@ -104,11 +106,19 @@ public class PlayerClient implements CardInterface{
     }
 
     public void addDamages(List<DamageMark> damages) {
-        damages.addAll(damages);
+        this.damages.addAll(damages);
+    }
+
+    public List<DamageMark> getDamages() {
+        return damages;
     }
 
     public void addMarks(List<DamageMark> marks) {
-        marks.addAll(marks);
+        this.marks.addAll(marks);
+    }
+
+    public List<DamageMark> getMarks() {
+        return marks;
     }
 
     public void cleanPlayerBoard() {
@@ -177,6 +187,14 @@ public class PlayerClient implements CardInterface{
         }
 
         return  matrix;
+    }
+
+    public WeaponCardClient getWeaponByName(String weapon) {
+        for (WeaponCardClient weaponCardClient: weapons) {
+            if (weapon.equals(weaponCardClient.getWeaponName()))
+                return weaponCardClient;
+        }
+        return null;
     }
 
     @Override

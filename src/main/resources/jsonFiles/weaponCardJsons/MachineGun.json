@@ -1,4 +1,4 @@
-{
+  {
   "weaponName": "Machine Gun",
   "id": "0220",
   "basic effect": "BLUE",
@@ -53,7 +53,7 @@
       "effectStates": [
         {
           "type": "PreselectionBasedSelectorEffectState",
-          "previouslySelectedMap": {
+          "previousSelected": {
             "basic effect": [0, 1]
           },
           "alreadySelected": true
@@ -85,14 +85,14 @@
       "effectStates": [
         {
           "type": "PreselectionBasedSelectorEffectState",
-          "previouslySelectedMap": {
+          "previousSelected": {
             "basic effect": [0, 1]
           },
           "alreadySelected": true
         },
         {
           "type": "PreselectionBasedSelectorEffectState",
-          "previouslySelectedMap": {
+          "previousSelected": {
             "with focus shot": [0]
           },
           "alreadySelected": false
@@ -120,7 +120,7 @@
         },
         {
           "type": "PreselectionBasedSelectorEffectState",
-          "previouslySelectedMap": {
+          "previousSelected": {
             "basic effect": [
               0,
               1

@@ -205,7 +205,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
         else {
             String player = event.getPlayer();
-            for (PowerUpCardClient powerUpCardClient: localModel.getPowerUpCards())
+            for (PowerUpCardClient powerUpCardClient : event.getPowerUpsSpent())
                 localModel.getOpponentInfo(player).removePowerUp();
 
             for (Ammo ammo: event.getAmmosSpent())
@@ -223,38 +223,47 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showPaymentUpdate(event.getPlayer(), powerUpsActuallySpent, event.getAmmosSpent());
     }
 
+    @Override
     default void handleEvent(SelectableEffectsEvent event) throws HandlerNotImplementedException {
-        showMessage("Do you want to play an effect?[Y=1/n=0]");
-        if (selectYesOrNot()) {
+        if (!event.getCallableEffects().isEmpty()) {
+            WeaponCardClient weaponCard = null;
             WeaponEffectClient selectedEffect = null;
             List<PowerUpCardClient> powerUpCardsToPay = new ArrayList<>();
             boolean repeatSelection = true;
             boolean usageConfirmation = true;
+            List<WeaponEffectClient> toSelect = new ArrayList<>();
             while (repeatSelection) {
-                WeaponCardClient weaponCard = null;
-                List<WeaponEffectClient> toSelect = new ArrayList<>();
                 for (WeaponCardClient weaponCardClient: getLocalModel().getWeaponCards()) {
                     if (event.getWeapon().equals(weaponCardClient.getWeaponName()))
                         weaponCard = weaponCardClient;
                 }
                 for (WeaponEffectClient weaponEffectClient: weaponCard.getEffects()) {
-                    if (event.getCallableEffects().contains(weaponEffectClient.getEffectName()))
+                    if (event.getCallableEffects().contains(weaponEffectClient.getEffectName()) && getLocalModel().canPay(weaponEffectClient.getPrice()))
                         toSelect.add(weaponEffectClient);
                 }
 
-                selectedEffect = selectWeaponEffect(weaponCard, toSelect);
+                if (!toSelect.isEmpty()) {
+                    selectedEffect = selectWeaponEffect(weaponCard, toSelect);
 
-                powerUpCardsToPay = getPowerUpsToPay(selectedEffect.getPrice());
-                if (!getLocalModel().canPay(selectedEffect.getPrice(), powerUpCardsToPay)) {
-                    showMessage("The power ups you selected are not enough to pay, are you sure you want to play this effect?[Y=1/n=0]");
-                    usageConfirmation = selectYesOrNot();
-                    repeatSelection = usageConfirmation;
+                    powerUpCardsToPay = getPowerUpsToPay(selectedEffect.getPrice());
+                    if (!getLocalModel().canPay(selectedEffect.getPrice(), powerUpCardsToPay)) {
+                        showMessage("The power ups you selected are not enough to pay, are you sure you want to play this effect?[Y=1/n=0]");
+                        usageConfirmation = selectYesOrNot();
+                        repeatSelection = usageConfirmation;
+                    }
+                    else
+                        repeatSelection = false;
                 }
-                else
+                else {
                     repeatSelection = false;
+                    usageConfirmation = false;
+                    showMessage("No more selectable effects :(");
+                }
             }
-            if (usageConfirmation)
+            if (usageConfirmation) {
+                weaponCard.setLoaded(false);
                 notifyObservers(new EffectSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), selectedEffect.getEffectName(), powerUpCardsToPay));
+            }
             else
                 notifyObservers(new EffectSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), null, null));
 
@@ -296,35 +305,52 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(ReloadWeaponsRequestEvent event) throws HandlerNotImplementedException {
         AbstractViewEvent generatedEvent = null;
-
         List<WeaponCardClient> weaponsList = getLocalModel().getWeaponCards();
         List<WeaponCardClient> reloadableWeapons;
 
-        while (generatedEvent == null) {
-
-            reloadableWeapons = calculatePayableWeapons(weaponsList, getLocalModel(), true);
-            for (WeaponCardClient weaponCardClient: new ArrayList<>(reloadableWeapons)) {
-                if (weaponCardClient.isLoaded())
-                    reloadableWeapons.remove(weaponCardClient);
-            }
-
-            WeaponCardClient selectedWeapon = selectWeaponToReload(reloadableWeapons);  /** SELECTION HERE */
-
-            //todo define payment logic
-
-            if (selectedWeapon != null) { //Weapon has been selected
-                //Selection of the power ups the user wants to pay with
-                List<PowerUpCardClient> powerUpsSelected = getPowerUpsToPay(selectedWeapon.getPrice());
-
-                //Confirmation of the feasibility of the payment, if the payment isn't feasible generated event remains null and the procedure is repeated
-                if (getLocalModel().canPay(selectedWeapon.getPrice(), powerUpsSelected))
-                    generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), selectedWeapon, powerUpsSelected);
-            }
-            else
-                generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), null, null);
+        reloadableWeapons = calculatePayableWeapons(weaponsList, getLocalModel(), true);
+        for (WeaponCardClient weaponCardClient: new ArrayList<>(reloadableWeapons)) {
+            if (weaponCardClient.isLoaded())
+                reloadableWeapons.remove(weaponCardClient);
         }
 
+        if (!reloadableWeapons.isEmpty()) {
+            while (generatedEvent == null) {
+
+                WeaponCardClient selectedWeapon = selectWeaponCardFromHand(reloadableWeapons);  /** SELECTION HERE */
+
+                if (selectedWeapon != null) { //Weapon has been selected
+                    //Selection of the power ups the user wants to pay with
+                    List<PowerUpCardClient> powerUpsSelected = getPowerUpsToPay(selectedWeapon.getPrice());
+
+                    //Confirmation of the feasibility of the payment, if the payment isn't feasible generated event remains null and the procedure is repeated
+                    if (getLocalModel().canPay(selectedWeapon.getPrice(), powerUpsSelected))
+                        generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), selectedWeapon, powerUpsSelected);
+                }
+                else
+                    generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), null, null);
+            }
+        }
+        else
+            generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), null, null);
+
+
         notifyObservers(generatedEvent);
+    }
+
+    @Override
+    default void handleEvent(WeaponReloadedEvent event) throws HandlerNotImplementedException {
+        LocalModel localModel = getLocalModel();
+        WeaponCardClient weaponReloaded;
+        if (event.getPlayer().equals(getClient().getPlayerName())) {
+            weaponReloaded = localModel.getWeaponByName(event.getWeaponReloaded());
+        }
+        else {
+            PlayerClient player = localModel.getOpponentInfo(event.getPlayer());
+            weaponReloaded = player.getWeaponByName(event.getWeaponReloaded());
+        }
+        weaponReloaded.setLoaded(true);
+        showWeaponReloadedUpdate(event.getPlayer(), weaponReloaded);
     }
 
     @Override
@@ -609,10 +635,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showMessage("Weapons are being placed on the spawn points...");
     }
 
+    default void showWeaponReloadedUpdate(String player, WeaponCardClient weaponCard) {
+        showMessage(player + " reloaded " + weaponCard.getWeaponName() + "!");
+    }
 
 
-
-    /**INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS--------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    /**
+     * INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS --------------------------------------------------------------------------------------------------------------------------------------------------------
+     */
 
     MoveDirection selectDirection(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves);
 
@@ -675,7 +705,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             do {
                 showMessage("enter:");
                 choice = scanner.nextInt();
-            } while (choice < 1 || count > selectableWeapons.size());
+            } while (choice < 1 || choice > selectableWeapons.size());
             return selectableWeapons.get(choice - 1);
         }
     }
@@ -695,7 +725,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         do {
             showMessage("enter:");
             choice = scanner.nextInt();
-        } while (choice < 1 || count > selectableWeapons.size() + 1);
+        } while (choice < 1 || choice > selectableWeapons.size() + 1);
         if (choice != count+1)
             return selectableWeapons.get(choice - 1);
         else
@@ -804,6 +834,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default List<Coordinates> getTargetCoordinates(List<Coordinates> coordinates, int maxSelections) {
+        showMessage("select a target square!");
         List<Coordinates> selectedCoordinates = new ArrayList<>();
         Coordinates selection;
         do {
@@ -818,19 +849,19 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default List<String> getTargetPlayers(List<String> players, int maxSelections) {
+        showMessage("select a target player!");
         List<String> selectedPlayers = new ArrayList<>();
         String selection;
+        // TODO fix target selection
         do {
             selection = selectPlayer(players);
             if (selection != null) {
                 selectedPlayers.add(selection);
                 players.remove(selection);
             }
-        } while (players.size() < maxSelections && selection != null);
+        } while (selectedPlayers.size() < maxSelections && selection != null);
         return selectedPlayers;
     }
-
-
 
 
 

@@ -51,6 +51,10 @@
     -fx-background-repeat: no-repeat;
 }
 
+.damageMark {
+
+}
+
 #overlay {
     -fx-background-color: rgba(37, 37, 37, 0.6);
 }

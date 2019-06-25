@@ -2,13 +2,13 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Selectable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -29,17 +29,20 @@ import java.util.logging.Level;
 public class MainGUIController extends AbstractGUIController {
 
     private AtomicReference<WeaponCardClient> selectedWeapon;
+    private AtomicReference<Coordinates> selectedCoordinates;
+    private AtomicReference<String> selectedPlayer;
+
 
     // Slots
-
     @FXML
     private VBox playerBoardsVBox;
+
     @FXML
     private AnchorPane commandsContainerAnchorPane;
     @FXML
     private GridPane gameBoardGridPane;
-
     // Map vote overlay
+
     @FXML
     private ChoiceBox<MapType> availableMapsChoiceBox;
     @FXML
@@ -52,28 +55,40 @@ public class MainGUIController extends AbstractGUIController {
     private AnchorPane overlay;
 
     // Main board
-
     @FXML
     private Pane mainBoardPane;
-    @FXML
-    private Pane weaponCardSlots_RED;
 
     @FXML
+    private Pane weaponCardSlots_RED;
+    @FXML
     private Pane weaponCardSlots_BLUE;
+
     @FXML
     private Pane weaponCardSlots_YELLOW;
     private Map<Room, Pane> roomWeaponCardSlotsEnumMap = new EnumMap<>(Room.class);
-
     private ArrayList<Room> rotatedAssetsRooms = new ArrayList<>();
 
     private Map<Coordinates, BoardSquareGUIController> coordinatesBoardSquareGUIControllerMap = new HashMap<>();
 
+    private Map<String, Node> playersNodeMap;
+
+    private Class<? extends Selectable> selectionTargetType;
+
     public MainGUIController(GUI view) {
         super(view);
+        playersNodeMap = new HashMap<>();
     }
 
     public void setSelectedWeapon(AtomicReference<WeaponCardClient> selectedWeapon) {
         this.selectedWeapon = selectedWeapon;
+    }
+
+    public void setSelectedCoordinates(AtomicReference<Coordinates> selectedCoordinates) {
+        this.selectedCoordinates = selectedCoordinates;
+    }
+
+    public void setSelectedPlayer(AtomicReference<String> selectedPlayer) {
+        this.selectedPlayer = selectedPlayer;
     }
 
     public void setVoteMap(ArrayList<MapType> availableMaps) {
@@ -118,10 +133,6 @@ public class MainGUIController extends AbstractGUIController {
 
     }
 
-    public void showCardCollected(String player, PowerUpCardClient cardCollected) {
-
-    }
-
     private void disableWeaponCards() {
         for (Pane weaponCardSlots : roomWeaponCardSlotsEnumMap.values()) {
             for (Node weaponCard :
@@ -133,8 +144,26 @@ public class MainGUIController extends AbstractGUIController {
 
     public void setSelectableWeaponCards(List<WeaponCardClient> selectableWeapons) {
         for (WeaponCardClient weaponCard : selectableWeapons) {
-            roomWeaponCardSlotsEnumMap.get(weaponCard.getSpawnBoardSquare()).getChildren().get(weaponCard.getSlotPosition()).setDisable(false);
+            Pane weaponCardSlotsPane = roomWeaponCardSlotsEnumMap.get(weaponCard.getSpawnBoardSquare());
+            weaponCardSlotsPane.getChildren().get(weaponCard.getSlotPosition()).setDisable(false);
+            Platform.runLater(weaponCardSlotsPane::requestFocus);
         }
+    }
+
+    public void setSelectableCoordinates(List<Coordinates> selectableCoordinates) {
+        for (Coordinates coordinates : selectableCoordinates) {
+            coordinatesBoardSquareGUIControllerMap.get(coordinates).makeSelectable(event -> {
+                disableBoardSqures();
+                selectedCoordinates.set(coordinates);
+                semaphore.release();
+            });
+        }
+    }
+
+    private void disableBoardSqures() {
+        coordinatesBoardSquareGUIControllerMap.forEach((coordinates, boardSquareGUIController) -> {
+            boardSquareGUIController.makeUnselectable();
+        });
     }
 
     public void updateWeaponCardOnMap(WeaponCardClient weaponCard) {
@@ -142,7 +171,7 @@ public class MainGUIController extends AbstractGUIController {
         if (weaponCardSlot == null) {
             throw new NullPointerException(String.format("WeaponCardSlot not found for:\t%s\n\tin:\t%s", weaponCard, weaponCard.getSpawnBoardSquare()));
         } else {
-            weaponCardSlot.getProperties().put("id", weaponCard.getId());
+            weaponCardSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
             String uri = rotatedAssetsRooms.contains(weaponCard.getSpawnBoardSquare()) ? view.getWeaponRotatedAsset(weaponCard.getId()) : view.getWeaponAsset(weaponCard.getId());
             view.applyBackground(weaponCardSlot, uri);
         }
@@ -174,18 +203,49 @@ public class MainGUIController extends AbstractGUIController {
     }
 
     public void removeWeaponCardFromMap(Room room, String cardId) {
-        Node weaponCard = GUI.getChildrenById(roomWeaponCardSlotsEnumMap.get(room).getChildren(), cardId);
+        Node weaponCard = GUI.getChildrenByProperty(roomWeaponCardSlotsEnumMap.get(room).getChildren(), GUI.PROPERTIES_CARD_ID_KEY, cardId);
         if (weaponCard != null) {
             String uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(GUI.ASSET_ID_HIDDEN_CARD) : view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD);
             view.applyBackground(weaponCard, uri);
         }
     }
 
-    public void moveAvatar(Avatar avatar, Coordinates destination) throws IOException {
+    public void movePlayer(String player, Coordinates destination) throws IOException {
         for (BoardSquareGUIController boardSquare : coordinatesBoardSquareGUIControllerMap.values()) {
-            if (boardSquare.removeAvatar(avatar)) break;
+            if (boardSquare.removePlayer(player)) break;
         }
-        coordinatesBoardSquareGUIControllerMap.get(destination).addAvatar(avatar);
+
+        playersNodeMap.put(player, coordinatesBoardSquareGUIControllerMap.get(destination).addPlayer(player));
+    }
+
+    public void setSelectablePlayers(List<String> players) {
+        players.forEach(player -> {
+            Node playerNode = playersNodeMap.get(player);
+            if (playerNode != null) {
+                playerNode.getStyleClass().add(GUI.STYLE_CLASS_AVATAR_SELECTABLE);
+
+                playerNode.getParent().setDisable(false);
+                playerNode.setDisable(false);
+
+                playerNode.setOnMouseEntered(event -> view.getOpponentPlayerToGUIControllerMap().get(player).highlight(true));
+                playerNode.setOnMouseExited(event -> view.getOpponentPlayerToGUIControllerMap().get(player).highlight(false));
+                playerNode.setOnMouseClicked(event -> {
+                    disablePlayers();
+                    selectedPlayer.set(player);
+                    semaphore.release();
+                });
+            }
+        });
+    }
+
+    private void disablePlayers() {
+        playersNodeMap.forEach((player, node) -> {
+            node.getStyleClass().remove(GUI.STYLE_CLASS_AVATAR_SELECTABLE);
+            view.getOpponentPlayerToGUIControllerMap().get(player).highlight(false);
+            node.setOnMouseEntered(null);
+            node.setOnMouseExited(null);
+            node.setOnMouseClicked(null);
+        });
     }
 
     @Override

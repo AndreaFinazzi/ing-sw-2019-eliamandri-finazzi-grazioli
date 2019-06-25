@@ -23,6 +23,7 @@ public class LocalModel {
     private List<Ammo> ammos;
 
     private List<DamageMark> damages;
+
     private List<DamageMark> marks;
     private int skulls;
     private List<Integer> deathScores;
@@ -31,6 +32,7 @@ public class LocalModel {
     private String playerName;
 
     //Public information
+
     private GameBoardClient gameBoard;
     private List<String> players;
     private Map<String, PlayerClient> opponentsInfo;
@@ -156,6 +158,14 @@ public class LocalModel {
         return playerToAvatarMap;
     }
 
+    public List<DamageMark> getDamages() {
+        return damages;
+    }
+
+    public List<DamageMark> getMarks() {
+        return marks;
+    }
+
     public void setPlayerToAvatarMap(Map<String, Avatar> playerAvatarMap) {
         this.playerToAvatarMap = playerAvatarMap;
     }
@@ -196,6 +206,14 @@ public class LocalModel {
                 }
             }
         }
+        return null;
+    }
+
+    public WeaponCardClient getWeaponByIdInHand(String id) {
+        for (WeaponCardClient weaponCard : weaponCards) {
+            if (weaponCard.getId().equals(id)) return weaponCard;
+        }
+
         return null;
     }
 
@@ -249,6 +267,14 @@ public class LocalModel {
 
     public List<SpawnBoardSquareClient> getListSpawn() {
         return listSpawn;
+    }
+
+    public WeaponCardClient getWeaponByName(String weapon) {
+        for (WeaponCardClient weaponCardClient: weaponCards) {
+            if (weapon.equals(weaponCardClient.getWeaponName()))
+                return weaponCardClient;
+        }
+        return null;
     }
 
     public void performDamage(String self, String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {

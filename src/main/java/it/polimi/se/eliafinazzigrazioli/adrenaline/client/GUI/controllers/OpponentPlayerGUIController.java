@@ -5,6 +5,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
@@ -56,6 +58,15 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
     }
 
     public void showPaymentUpdate(List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos) {
-        playerBoardGUIController.showPayment(powerUpCardClients, ammos);
+        Platform.runLater(() -> playerBoardGUIController.getPaymentTransition(powerUpCardClients, ammos).play());
+    }
+
+    public void highlight(boolean setHighlight) {
+        playerBoardGUIController.highlight(setHighlight);
+    }
+
+    public void showDamageReceived(List<DamageMark> damages, List<DamageMark> marks) throws IOException {
+        playerBoardGUIController.updateDamages();
+        playerBoardGUIController.updateMarks();
     }
 }

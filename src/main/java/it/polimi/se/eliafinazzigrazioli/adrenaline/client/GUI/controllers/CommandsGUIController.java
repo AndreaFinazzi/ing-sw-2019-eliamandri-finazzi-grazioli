@@ -1,12 +1,15 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.Transitions.TransitionManager;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.MoveDirection;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PlayerAction;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
+import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -101,7 +104,10 @@ public class CommandsGUIController extends AbstractGUIController {
     public void updatePowerUpCards() {
         resetPowerUpSlots();
         for (PowerUpCardClient powerUpCard : view.getLocalModel().getPowerUpCards()) {
-            view.applyBackground(myPowerUpCardSlots.getChildren().get(powerUpCard.getSlotPosition()), view.getPowerUpAsset(powerUpCard.getId()));
+            Node powerUpSlot = myPowerUpCardSlots.getChildren().get(powerUpCard.getSlotPosition());
+            powerUpSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
+            view.applyBackground(powerUpSlot, view.getPowerUpAsset(powerUpCard.getId()));
+            disableCards();
         }
     }
 
@@ -112,6 +118,7 @@ public class CommandsGUIController extends AbstractGUIController {
                 Node weaponSlot = myWeaponCardSlots.getChildren().get(weaponCard.getSlotPosition());
                 weaponSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
                 view.applyBackground(weaponSlot, view.getWeaponAsset(weaponCard.getId()));
+                disableCards();
             });
         }
     }
@@ -119,12 +126,14 @@ public class CommandsGUIController extends AbstractGUIController {
     private void resetPowerUpSlots() {
         for (Node slot : myPowerUpCardSlots.getChildren()) {
             view.applyBackground(slot, view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD));
+            if (slot.hasProperties()) slot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, -1);
         }
     }
 
     private void resetWeaponSlots() {
         for (Node slot : myWeaponCardSlots.getChildren()) {
             view.applyBackground(slot, view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD));
+            if (slot.hasProperties()) slot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, -1);
         }
     }
 
@@ -160,6 +169,7 @@ public class CommandsGUIController extends AbstractGUIController {
         for (WeaponCardClient card : selectableWeapons) {
             myWeaponCardSlots.getChildren().get(card.getSlotPosition()).setDisable(false);
         }
+        Platform.runLater(myWeaponCardSlots::requestFocus);
     }
 
     public void setAvailableMoves(ArrayList<MoveDirection> availableMoves) {
@@ -175,9 +185,7 @@ public class CommandsGUIController extends AbstractGUIController {
     }
 
     public void disableArrows() {
-        for (Button arrow : moveDirectionButtonEnumMap.values()) {
-            arrow.setDisable(true);
-        }
+        moveDirectionButtonEnumMap.values().forEach(arrow -> arrow.setDisable(true));
     }
 
     public void disableCards() {
@@ -193,6 +201,44 @@ public class CommandsGUIController extends AbstractGUIController {
 //        semaphore.release();
 
 //    }
+
+    public Node generateCardNode(PowerUpCardClient powerUpCard) {
+        Button button = null;
+        try {
+            button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, this);
+            button.setDisable(true);
+            Button finalButton = button;
+            button.setOnAction(event -> {
+                disableCards();
+                proceedCardsButton.setDisable(true);
+                selectedPowerUp.set(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                semaphore.release();
+            });
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        return button;
+    }
+
+    public Node generateCardNode(WeaponCardClient weaponCardClient) {
+        Button button = null;
+        try {
+            button = (Button) loadFXML(GUI.FXML_PATH_WEAPON, this);
+            button.getStyleClass().add(GUI.STYLE_CLASS_WEAPON_MY);
+            button.setDisable(true);
+            Button finalButton = button;
+            button.setOnAction(event -> {
+                disableCards();
+                selectedWeapon.set(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                semaphore.release();
+            });
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        return button;
+    }
 
     public void myPowerUpSelected(ActionEvent actionEvent) {
         selectedPowerUp.set(myPowerUps.get(((Button) actionEvent.getSource()).getParent().getChildrenUnmodifiable().indexOf(actionEvent.getSource())));
@@ -255,34 +301,12 @@ public class CommandsGUIController extends AbstractGUIController {
             // Initialize my cards
             // Weapons
             for (int i = 0; i < Rules.PLAYER_CARDS_MAX_WEAPONS; i++) {
-                try {
-                    Button button = (Button) loadFXML(GUI.FXML_PATH_WEAPON, myWeaponCardSlots, this);
-                    button.getStyleClass().add(GUI.STYLE_CLASS_WEAPON_MY);
-                    button.setDisable(true);
-                    button.setOnAction(event -> {
-                        disableCards();
-                        selectedWeapon.set(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
-                        semaphore.release();
-                    });
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                }
+                myWeaponCardSlots.getChildren().add(generateCardNode((WeaponCardClient) null));
             }
 
             // PowerUps
             for (int i = 0; i < Rules.PLAYER_CARDS_MAX_POWER_UPS; i++) {
-                try {
-                    Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, myPowerUpCardSlots, this);
-                    button.setDisable(true);
-                    button.setOnAction(event -> {
-                        disableCards();
-                        proceedCardsButton.setDisable(true);
-                        selectedPowerUp.set(view.getLocalModel().getPowerUpCardById((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
-                        semaphore.release();
-                    });
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                }
+                myPowerUpCardSlots.getChildren().add(generateCardNode(((PowerUpCardClient) null)));
             }
 
             proceedCardsButton.setOnAction(event -> {
@@ -339,8 +363,28 @@ public class CommandsGUIController extends AbstractGUIController {
         playerBoardGUIController.updateAmmoStack();
     }
 
-    public void showPaymentUpdate(List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos) {
-        playerBoardGUIController.showPayment(powerUpCardClients, ammos);
+    public void showPaymentUpdate(List<PowerUpCardClient> powerUpCards, List<Ammo> ammos) {
+        // get ammos transition from playerBoard
+        ParallelTransition paymentTransition = playerBoardGUIController.getPaymentTransition(powerUpCards, ammos);
 
+        List<Node> payedPowerUpNodes = new ArrayList<>();
+        for (PowerUpCardClient powerUpCard : powerUpCards) {
+            Node elementNode = GUI.getChildrenByProperty(myPowerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
+            payedPowerUpNodes.add(elementNode);
+        }
+
+        // get powerups transition from TransitionManager and combine it with the previous one
+        paymentTransition.getChildren().add(TransitionManager.generateParallelTransition(TransitionManager.powerUpPaymentAnimator, payedPowerUpNodes));
+
+        paymentTransition.setOnFinished(event -> {
+            updatePowerUpCards();
+        });
+
+        Platform.runLater(paymentTransition::play);
+    }
+
+    public void showDamageReceived(List<DamageMark> damages, List<DamageMark> marks) throws IOException {
+        playerBoardGUIController.updateDamages();
+        playerBoardGUIController.updateMarks();
     }
 }

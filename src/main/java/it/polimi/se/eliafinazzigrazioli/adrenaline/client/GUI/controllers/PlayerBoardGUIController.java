@@ -1,12 +1,15 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.Transitions.TransitionManager;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
-import javafx.animation.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
+import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -20,6 +23,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -28,16 +32,15 @@ public class PlayerBoardGUIController extends AbstractGUIController {
     private static final String PLAYER_BOARD_STYLE_CLASS_DEFAULT = "playerBoard_NONE";
     private static final String PLAYER_BOARD_STYLE_CLASS_PREFIX = "playerBoard_";
 
-    private static final double TRANSITION_PAYMENT_DELTA_Y = -70;
-    private static final double TRANSITION_PAYMENT_DURATION = 2;
-    private static final double TRANSITION_PAYMENT_SCALING_FACTOR = 1.1;
-    private static final double TRANSITION_PAYMENT_FADE_INITIAL = 1;
-    private static final double TRANSITION_PAYMENT_FADE_FINAL = 0;
-
     @FXML
     private HBox overlayHBox;
     @FXML
     private GridPane playerBoardGridPane;
+
+    @FXML
+    private HBox damagesHBox;
+    @FXML
+    private HBox marksHBox;
 
     @FXML
     private TilePane ammoStack;
@@ -155,9 +158,9 @@ public class PlayerBoardGUIController extends AbstractGUIController {
                 Platform.runLater(() -> {
                     if (!weaponCard.isLoaded()) {
                         weaponSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
-                        weaponSlot.setStyle("-fx-background-image: url('" + view.getWeaponAsset(weaponCard.getId()) + "'); ");
+                        view.applyBackground(weaponSlot, view.getWeaponAsset(weaponCard.getId()));
                     } else {
-                        weaponSlot.setStyle("-fx-background-image: url('" + view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD) + "'); ");
+                        view.applyBackground(weaponSlot, view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD));
                     }
                     weaponSlot.setDisable(true);
                 });
@@ -173,34 +176,47 @@ public class PlayerBoardGUIController extends AbstractGUIController {
                 Button weaponSlot = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, powerUpCardSlots, this);
 
                 Platform.runLater(() -> {
-                    weaponSlot.setStyle("-fx-background-image: url('" + view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD) + "'); ");
+                    view.applyBackground(weaponSlot, view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD));
                     weaponSlot.setDisable(true);
                 });
             }
         }
     }
 
-    public void showPayment(List<PowerUpCardClient> powerUpCards, List<Ammo> ammos) {
-        ParallelTransition paymentTransition = new ParallelTransition();
-
-        if (isOpponent) {
-            for (PowerUpCardClient powerUpCard : powerUpCards) {
-                Node elementNode = GUI.getChildrenById(powerUpCardSlots.getChildren(), powerUpCard.getId());
-                view.applyBackground(elementNode, view.getPowerUpAsset(powerUpCard.getId()));
-                paymentTransition.getChildren().add(generatePaymentTransition(elementNode));
-            }
-        }
-
+    public ParallelTransition getPaymentTransition(List<PowerUpCardClient> powerUpCards, List<Ammo> ammos) {
+        List<Node> payedAmmoNodes = new ArrayList<>();
         for (Ammo ammo : ammos) {
             Node ammoNode = getAmmoNodeInStack(ammo);
-            paymentTransition.getChildren().add(generatePaymentTransition(ammoNode));
+            payedAmmoNodes.add(ammoNode);
+        }
+
+        ParallelTransition paymentTransition = TransitionManager.generateParallelTransition(TransitionManager.ammoPaymentAnimator, payedAmmoNodes);
+
+        if (isOpponent) {
+            List<Node> payedPowerUpNodes = new ArrayList<>();
+            for (PowerUpCardClient powerUpCard : powerUpCards) {
+                Node elementNode = GUI.getChildrenByProperty(powerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
+                view.applyBackground(elementNode, view.getPowerUpAsset(powerUpCard.getId()));
+                payedPowerUpNodes.add(elementNode);
+            }
+            ParallelTransition powerUpTransition = TransitionManager.generateParallelTransition(TransitionManager.powerUpPaymentAnimator, payedPowerUpNodes);
+
+            // Back to player board at the end.
+            powerUpTransition.setOnFinished(event -> {
+                cardsGridPane.setVisible(false);
+                playerBoardGridPane.setVisible(true);
+            });
+
+            // Switch to opponent's cards panel
+            Platform.runLater(() -> {
+                playerBoardGridPane.setVisible(false);
+                cardsGridPane.setVisible(true);
+            });
+
+            paymentTransition.getChildren().add(powerUpTransition);
         }
 
         paymentTransition.setOnFinished(event -> {
-            if (isOpponent) {
-                cardsGridPane.setVisible(false);
-                playerBoardGridPane.setVisible(true);
-            }
             try {
                 updateAmmoStack();
                 updatePowerUpCards();
@@ -209,33 +225,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
             }
         });
 
-        Platform.runLater(() -> {
-            if (isOpponent) {
-                playerBoardGridPane.setVisible(false);
-                cardsGridPane.setVisible(true);
-            }
-            paymentTransition.play();
-        });
-
-    }
-
-    private Transition generatePaymentTransition(Node payedElement) {
-        Duration duration = Duration.seconds(TRANSITION_PAYMENT_DURATION);
-
-        TranslateTransition translateTransition = new TranslateTransition(duration, payedElement);
-        ScaleTransition scaleTransition = new ScaleTransition(duration, payedElement);
-        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(TRANSITION_PAYMENT_DURATION + 1), payedElement);
-
-        translateTransition.setByY(TRANSITION_PAYMENT_DELTA_Y);
-
-        scaleTransition.setByX(TRANSITION_PAYMENT_SCALING_FACTOR);
-        scaleTransition.setByY(TRANSITION_PAYMENT_SCALING_FACTOR);
-
-        fadeTransition.setFromValue(TRANSITION_PAYMENT_FADE_INITIAL);
-        fadeTransition.setToValue(TRANSITION_PAYMENT_FADE_FINAL);
-
-        return new ParallelTransition(translateTransition, scaleTransition, fadeTransition);
-
+        return paymentTransition;
     }
 
     private Node getAmmoNodeInStack(Ammo ammo) {
@@ -252,16 +242,54 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         cardsGridPane.setVisible(!playerBoardGridPane.visibleProperty().get());
     }
 
+    public void highlight(boolean setHighlight) {
+        if (setHighlight) playerBoardGridPane.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT);
+        else playerBoardGridPane.getStyleClass().remove(GUI.STYLE_CLASS_HIGHLIGHT);
+    }
+
+    public void updateDamages() throws IOException {
+        List<DamageMark> damages;
+        if (isOpponent) {
+            damages = view.getLocalModel().getOpponentInfo(player).getDamages();
+        } else {
+            damages = view.getLocalModel().getDamages();
+        }
+
+        Platform.runLater(() -> damagesHBox.getChildren().clear());
+        for (DamageMark damageMark : damages) {
+            ImageView damageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, damagesHBox, this);
+            Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(damageMark))));
+        }
+    }
+
+    public void updateMarks() throws IOException {
+        Platform.runLater(() -> marksHBox.getChildren().clear());
+        List<DamageMark> marks;
+        if (isOpponent) {
+            marks = view.getLocalModel().getOpponentInfo(player).getMarks();
+        } else {
+            marks = view.getLocalModel().getMarks();
+        }
+
+        for (DamageMark damageMark : marks) {
+            ImageView damageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, marksHBox, this);
+            Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(damageMark))));
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        super.initialize(location, resources);
+        if (!initialized) {
+            initialized = true;
+            super.initialize(location, resources);
 
-        playerBoardGridPane.getStyleClass().remove(PLAYER_BOARD_STYLE_CLASS_DEFAULT);
-        playerBoardGridPane.getStyleClass().add(PLAYER_BOARD_STYLE_CLASS_PREFIX + avatar.getDamageMark().name());
+            playerBoardGridPane.getStyleClass().remove(PLAYER_BOARD_STYLE_CLASS_DEFAULT);
+            playerBoardGridPane.getStyleClass().add(PLAYER_BOARD_STYLE_CLASS_PREFIX + avatar.getDamageMark().name());
 
-        if (isOpponent) {
-            cardsGridPane.setOnMouseClicked((event) -> toggleView());
-            playerBoardGridPane.setOnMouseClicked((event) -> toggleView());
+            if (isOpponent) {
+                cardsGridPane.setOnMouseClicked((event) -> toggleView());
+                playerBoardGridPane.setOnMouseClicked((event) -> toggleView());
+            }
         }
     }
 }

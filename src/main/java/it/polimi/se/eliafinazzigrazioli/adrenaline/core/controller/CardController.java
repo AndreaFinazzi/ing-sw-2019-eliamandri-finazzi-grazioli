@@ -78,17 +78,19 @@ public class CardController implements ViewEventsListenerInterface {
             LOGGER.log(Level.SEVERE, "Player tried use a card out of his turn.", new Exception());
             return;
         }
+        if (event.getEffect() != null) {
+            currentPlayingWeapon.setLoaded(false);
+            Player currentPlayer = match.getCurrentPlayer();
+            currentPlayingWeapon.setActiveEffect(event.getEffect());
+            currentExecutingEffect = currentPlayingWeapon.getEffectByName(event.getEffect());
+            List<PowerUpCard> powerUpsToSpend = currentPlayer.getRealModelReferences(event.getPowerUpsToPay());
+            List<Ammo> ammosSpent = currentPlayer.spendPrice(currentExecutingEffect.getPrice(), powerUpsToSpend);
+            match.notifyObservers(new PaymentExecutedEvent(currentPlayer, powerUpsToSpend, ammosSpent));
 
-        Player currentPlayer = match.getCurrentPlayer();
-        currentPlayingWeapon.setActiveEffect(event.getEffect());
-        currentExecutingEffect = currentPlayingWeapon.getEffectByName(event.getEffect());
-        List<PowerUpCard> powerUpsToSpend = currentPlayer.getRealModelReferences(event.getPowerUpsToPay());
-        List<Ammo> ammosSpent = currentPlayer.spendPrice(currentExecutingEffect.getPrice(), powerUpsToSpend);
-        match.notifyObservers(new PaymentExecutedEvent(currentPlayer, powerUpsToSpend, ammosSpent));
+            currentExecutingEffect.initialize();
 
-        currentExecutingEffect.initialize();
-
-        effectExecutionLoop(currentPlayer);
+            effectExecutionLoop(currentPlayer);
+        }
     }
 
     @Override

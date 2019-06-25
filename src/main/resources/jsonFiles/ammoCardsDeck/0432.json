@@ -1,5 +1,8 @@
 {
   "id": "0432",
-  "ammos": ["YELLOW", "BLUE"],
+  "ammos": [
+    "YELLOW",
+    "RED"
+  ],
   "powerUp": true
 }
