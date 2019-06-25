@@ -238,7 +238,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         weaponCard = weaponCardClient;
                 }
                 for (WeaponEffectClient weaponEffectClient: weaponCard.getEffects()) {
-                    if (event.getCallableEffects().contains(weaponEffectClient.getEffectName()))
+                    if (event.getCallableEffects().contains(weaponEffectClient.getEffectName()) && getLocalModel().canPay(weaponEffectClient.getPrice()))
                         toSelect.add(weaponEffectClient);
                 }
 
@@ -254,8 +254,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                     else
                         repeatSelection = false;
                 }
-                else
+                else {
                     repeatSelection = false;
+                    showMessage("No more selectable effects :(");
+                }
             }
             if (usageConfirmation) {
                 weaponCard.setLoaded(false);
