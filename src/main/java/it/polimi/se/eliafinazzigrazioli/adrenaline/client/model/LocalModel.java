@@ -232,6 +232,14 @@ public class LocalModel {
         return listSpawn;
     }
 
+    public WeaponCardClient getWeaponByName(String weapon) {
+        for (WeaponCardClient weaponCardClient: weaponCards) {
+            if (weapon.equals(weaponCardClient.getWeaponName()))
+                return weaponCardClient;
+        }
+        return null;
+    }
+
     public void performDamage(String self, String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
         if (self.equals(damagedPlayer)) {
             this.damages.addAll(damages);

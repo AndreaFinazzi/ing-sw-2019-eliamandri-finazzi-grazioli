@@ -171,6 +171,14 @@ public class PlayerClient implements CardInterface{
         return  matrix;
     }
 
+    public WeaponCardClient getWeaponByName(String weapon) {
+        for (WeaponCardClient weaponCardClient: weapons) {
+            if (weapon.equals(weaponCardClient.getWeaponName()))
+                return weaponCardClient;
+        }
+        return null;
+    }
+
     @Override
     public String[][] drawCard(boolean light) {
         return new String[0][];

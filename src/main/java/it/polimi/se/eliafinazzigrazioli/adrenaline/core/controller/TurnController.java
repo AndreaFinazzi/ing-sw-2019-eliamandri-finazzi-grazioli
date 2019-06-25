@@ -239,7 +239,21 @@ public class TurnController implements ViewEventsListenerInterface {
             match.notifyObservers(nextTurn());
         }
         else {
-            //todo payment logic and further reload request
+            Player currentPlayer = match.getCurrentPlayer();
+            WeaponCard weaponReloaded = match.getCurrentPlayer().getWeaponByName(event.getWeapon());
+            List<Ammo> price = new ArrayList<>(weaponReloaded.getLoader());
+            List<PowerUpCard> actualPowerUps = currentPlayer.getRealModelReferences(event.getPowerUpsToPay());
+            price.add(weaponReloaded.getCardColor());
+
+            if (currentPlayer.canSpend(price, actualPowerUps)) {
+                List<Ammo> ammosSpent = currentPlayer.spendPrice(price, actualPowerUps);
+                match.notifyObservers(new PaymentExecutedEvent(currentPlayer, actualPowerUps, ammosSpent));
+                weaponReloaded.setLoaded(true);
+                match.notifyObservers(new WeaponReloadedEvent(currentPlayer, weaponReloaded.getWeaponName()));
+                match.notifyObservers(new ReloadWeaponsRequestEvent(currentPlayer));
+            }
+            else
+                match.notifyObservers(nextTurn());
         }
     }
 
