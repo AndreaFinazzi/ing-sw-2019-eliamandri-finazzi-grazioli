@@ -36,4 +36,10 @@ public class WeaponEffectClient implements Serializable {
         }
         return string;
     }
+
+    @Override
+    public String toString() {
+        return this.effectName +
+                (price.size()==0 ? " " : " at the cost of :" + priceToString());
+    }
 }

@@ -91,7 +91,7 @@ public class PowerUpCardClient implements Serializable, CardInterface {
 
     }
 
-    private String toStringLight() {
-        return "PowerUp card:\n" + powerUpType +"\n";
+    public String toStringLight() {
+        return Color.ammoToColor(equivalentAmmo).toString() + powerUpType;
     }
 }

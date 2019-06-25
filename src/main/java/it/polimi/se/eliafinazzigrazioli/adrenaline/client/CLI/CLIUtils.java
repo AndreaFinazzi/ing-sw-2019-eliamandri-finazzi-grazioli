@@ -143,7 +143,7 @@ public class CLIUtils {
 
         while (iterator.hasNext()) {
             index++;
-            result = result.concat(String.format("%d)%s%n", index, iterator.next()));
+            result = result.concat(String.format("%d) %s%n", index, iterator.next()));
         }
         return result;
     }

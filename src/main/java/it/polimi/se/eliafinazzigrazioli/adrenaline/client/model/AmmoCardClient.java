@@ -39,10 +39,10 @@ public class AmmoCardClient implements Serializable, CardInterface {
 
     @Override
     public String toString() {
-        String string = "Ammo card: \n\t";
+        String string = "Ammo card: \n";
         int count = 1;
         for(Ammo ammo : ammos) {
-            string = string + count + ") " + ammo + "\n\t";
+            string = string + count + ") " + ammo + "\n";
         }
         return string;
     }
@@ -50,7 +50,7 @@ public class AmmoCardClient implements Serializable, CardInterface {
     @Override
     public String[][] drawCard() {
         String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGTH, Color.GRAY);
-
+        matrix = CLIUtils.insertStringToMatrix(matrix, this.toString());
 
         return matrix;
     }

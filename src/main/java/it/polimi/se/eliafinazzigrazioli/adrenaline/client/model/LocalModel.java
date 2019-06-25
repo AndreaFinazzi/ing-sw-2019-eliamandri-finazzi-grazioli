@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
@@ -22,6 +24,11 @@ public class LocalModel {
 
     private List<DamageMark> damages;
     private List<DamageMark> marks;
+    private int skulls;
+    private List<Integer> deathScores;
+    private boolean death;
+    private int movementsAllowed;
+    private String playerName;
 
     //Public information
     private GameBoardClient gameBoard;
@@ -29,6 +36,11 @@ public class LocalModel {
     private Map<String, PlayerClient> opponentsInfo;
     private Map<String, Avatar> playerToAvatarMap;
     private List<SpawnBoardSquareClient> listSpawn;
+
+
+
+    private final static int WIDTH = 30;
+    private final static int HEIGHT = 10;
 
     public LocalModel() {
         weaponCards = new ArrayList<>();
@@ -41,8 +53,15 @@ public class LocalModel {
         players = new ArrayList<>();
         opponentsInfo = new HashMap<>();
         playerToAvatarMap = new HashMap<>();
+        deathScores = new ArrayList<>();
 
         weaponHandFull = false;
+        //todo
+        deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 
     public void generatesGameBoard(MapType mapType) {
@@ -225,7 +244,7 @@ public class LocalModel {
     }
 
     public void addOpponent(String player) {
-        opponentsInfo.put(player, new PlayerClient());
+        opponentsInfo.put(player, new PlayerClient(playerToAvatarMap.get(player)));
     }
 
     public List<SpawnBoardSquareClient> getListSpawn() {
@@ -241,5 +260,49 @@ public class LocalModel {
             getOpponentInfo(damagedPlayer).addDamages(damages);
             getOpponentInfo(damagedPlayer).addMarks(marks);
         }
+    }
+
+    public String[][] drawCard() {
+        String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGHT, Color.damageMarkToColor(playerToAvatarMap.get(playerName).getDamageMark()));
+        String string = "Avatar: " + playerToAvatarMap.get(playerName).getName();
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][1] = String.valueOf(string.charAt(i));
+        }
+        string = "Skulls: " + skulls;
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][2] = String.valueOf(string.charAt(i));
+        }
+        string = "Death score: " + deathScores.get(0);
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][3] = String.valueOf(string.charAt(i));
+        }
+        string = "Death: " + (death ? "Yes" : "No");
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][4] = String.valueOf(string.charAt(i));
+        }
+        string = "Movementes allowed: " + movementsAllowed;
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][5] = String.valueOf(string.charAt(i));
+        }
+        string = "ammos: ";
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][6] = String.valueOf(string.charAt(i));
+        }
+        int poseX = string.length()+2;
+        for(int i=0; i<ammos.size(); i++) {
+            matrix[poseX+i][6] = ammos.get(i).toString();
+            poseX++;
+        }
+        string = "Damages: ";
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][7] = String.valueOf(string.charAt(i));
+        }
+        poseX = 2;
+        for(int i=0; i<damages.size(); i++) {
+            matrix[poseX+i][8] = damages.get(i).toString();
+            poseX++;
+        }
+
+        return  matrix;
     }
 }

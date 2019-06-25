@@ -479,6 +479,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default void initPlayersBoard(List<String> players) {
+        getLocalModel().setPlayerName(getClient().getPlayerName());
         players.remove(getClient().getPlayerName());
         for(String player : players) {
             getLocalModel().addOpponent(player);
@@ -487,8 +488,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     default void buildLocalMap(MapType mapType) {
         getLocalModel().generatesGameBoard(mapType);
-        System.out.println("Map is chosen is: " + mapType);
-        showMap();
     }
 
     default void executePayment(String player, List<PowerUpCardClient> powerUpsToPay, List<Ammo> ammosToPay) {
@@ -609,10 +608,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void showWeaponCardResettingUpdate(Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap) {
         showMessage("Weapons are being placed on the spawn points...");
     }
-
-
-
-
 
 
 

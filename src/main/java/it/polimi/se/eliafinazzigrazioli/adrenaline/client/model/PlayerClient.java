@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -17,6 +18,8 @@ public class PlayerClient implements CardInterface{
 
     private List<Ammo> ammos;
 
+    private Avatar avatar;
+
     //INFO PlayerBoard
     private int skulls;
     private boolean death;
@@ -29,7 +32,7 @@ public class PlayerClient implements CardInterface{
     private final static int WIDTH = 30;
     private final static int HEIGHT = 10;
 
-    public PlayerClient() {
+    public PlayerClient(Avatar avatar) {
         powerUps = 0;
         weapons = new ArrayList<>();
         ammos = new ArrayList<>();
@@ -37,6 +40,7 @@ public class PlayerClient implements CardInterface{
         marks = new ArrayList<>();
         //todo
         deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
+        this.avatar = avatar;
     }
 
     public void initAmmos(int startingAmmosPerColor) {
@@ -132,39 +136,43 @@ public class PlayerClient implements CardInterface{
 
     @Override
     public String[][] drawCard() {
-        String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGHT, Color.BLUE);
-        String string = "Skulls: " + skulls;
+        String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGHT, Color.damageMarkToColor(avatar.getDamageMark()));
+        String string = "Avatar: " + avatar.getName();
         for(int i=0; i<string.length(); i++) {
             matrix[i+2][1] = String.valueOf(string.charAt(i));
         }
-        string = "Death score: " + deathScores.get(0);
+        string = "Skulls: " + skulls;
         for(int i=0; i<string.length(); i++) {
             matrix[i+2][2] = String.valueOf(string.charAt(i));
         }
-        string = "Death: " + (death ? "Yes" : "No");
+        string = "Death score: " + deathScores.get(0);
         for(int i=0; i<string.length(); i++) {
             matrix[i+2][3] = String.valueOf(string.charAt(i));
         }
-        string = "Movementes allowed: " + movementsAllowed;
+        string = "Death: " + (death ? "Yes" : "No");
         for(int i=0; i<string.length(); i++) {
             matrix[i+2][4] = String.valueOf(string.charAt(i));
         }
-        string = "ammos: ";
+        string = "Movementes allowed: " + movementsAllowed;
         for(int i=0; i<string.length(); i++) {
             matrix[i+2][5] = String.valueOf(string.charAt(i));
         }
+        string = "ammos: ";
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][6] = String.valueOf(string.charAt(i));
+        }
         int poseX = string.length()+2;
         for(int i=0; i<ammos.size(); i++) {
-            matrix[poseX+i][5] = ammos.get(i).toString();
+            matrix[poseX+i][6] = ammos.get(i).toString();
             poseX++;
         }
         string = "Damages: ";
         for(int i=0; i<string.length(); i++) {
-            matrix[i+2][6] = String.valueOf(string.charAt(i));
+            matrix[i+2][7] = String.valueOf(string.charAt(i));
         }
         poseX = 2;
         for(int i=0; i<damages.size(); i++) {
-            matrix[poseX+i][7] = damages.get(i).toString();
+            matrix[poseX+i][8] = damages.get(i).toString();
             poseX++;
         }
 
