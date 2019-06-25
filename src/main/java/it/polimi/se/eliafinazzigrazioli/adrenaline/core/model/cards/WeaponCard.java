@@ -115,6 +115,10 @@ public class WeaponCard extends Card {
         return loaded;
     }
 
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
+
     public WeaponEffect getEffectByName(String effectName){
         for (WeaponEffect effect: effects){
             if (effect.getEffectName().equals(effectName))

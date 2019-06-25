@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //TODO DEFINE AND INSERT MESSAGES, IN PARTICULAR FOR NOT ALLOWED PLAY EVENT BECAUSE IT IS THROWN IN A VARIETY OF SITUATIONS
@@ -43,6 +44,7 @@ public class TurnController implements ViewEventsListenerInterface {
         eventController.addViewEventsListener(SpawnPowerUpSelectedEvent.class, this);
         eventController.addViewEventsListener(ReloadWeaponEvent.class, this);
         eventController.addViewEventsListener(WeaponCollectionEvent.class, this);
+        eventController.addViewEventsListener(EffectSelectedEvent.class, this);
     }
 
     /**
@@ -142,7 +144,6 @@ public class TurnController implements ViewEventsListenerInterface {
                 AmmoCard ammoCard = ((GenericBoardSquare) finalPosition).gatherCollectables();
                 events.add(new AmmoCardCollectedEvent(currentPlayer, ammoCard, finalPosition.getCoordinates()));
 
-                //todo verify if it's better to sent the entire ammoCard somehow
                 for (Ammo ammo: ammoCard.getAmmos())
                     events.add(new AmmoCollectedEvent(currentPlayer, ammo, currentPlayer.addAmmo(ammo)));
                 if (ammoCard.containsPowerUpCard()) {
@@ -223,12 +224,36 @@ public class TurnController implements ViewEventsListenerInterface {
     }
 
     @Override
+    public void handleEvent(EffectSelectedEvent event) {
+        if (!event.getPlayer().equals(match.getCurrentPlayer().getPlayerNickname())) {
+            LOGGER.log(Level.SEVERE, "Player tried use a card out of his turn.", new Exception());
+            return;
+        }
+        if (event.getEffect() == null)
+            match.notifyObservers(concludeAction(match.getCurrentPlayer()));
+    }
+
+    @Override
     public void handleEvent(ReloadWeaponEvent event) throws HandlerNotImplementedException {
         if (event.getWeapon() == null) {
             match.notifyObservers(nextTurn());
         }
         else {
-            //todo payment logic and further reload request
+            Player currentPlayer = match.getCurrentPlayer();
+            WeaponCard weaponReloaded = match.getCurrentPlayer().getWeaponByName(event.getWeapon());
+            List<Ammo> price = new ArrayList<>(weaponReloaded.getLoader());
+            List<PowerUpCard> actualPowerUps = currentPlayer.getRealModelReferences(event.getPowerUpsToPay());
+            price.add(weaponReloaded.getCardColor());
+
+            if (currentPlayer.canSpend(price, actualPowerUps)) {
+                List<Ammo> ammosSpent = currentPlayer.spendPrice(price, actualPowerUps);
+                match.notifyObservers(new PaymentExecutedEvent(currentPlayer, actualPowerUps, ammosSpent));
+                weaponReloaded.setLoaded(true);
+                match.notifyObservers(new WeaponReloadedEvent(currentPlayer, weaponReloaded.getWeaponName()));
+                match.notifyObservers(new ReloadWeaponsRequestEvent(currentPlayer));
+            }
+            else
+                match.notifyObservers(nextTurn());
         }
     }
 

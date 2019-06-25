@@ -16,8 +16,8 @@ public class PreselectionBasedSelectorEffectState extends SelectorEffectState {
 
     public PreselectionBasedSelectorEffectState(String previousSelectionSource, int sourceSelectionOrder, Map<String, List<Integer>> previousSelected, boolean alreadySelected) {
         super(previousSelectionSource, sourceSelectionOrder);
-        this.previousSelected = previousSelected;
-        this.alreadySelected = alreadySelected;
+        //this.previousSelected = previousSelected;
+        //this.alreadySelected = alreadySelected;
     }
 
     @Override

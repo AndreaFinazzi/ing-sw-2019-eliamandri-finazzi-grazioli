@@ -5,9 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class SelectableTypeTest {
 
@@ -34,17 +32,18 @@ public class SelectableTypeTest {
         System.out.println(selectableTypes.get(2).getClass());
     }
 
-//    @Test
-//    public void mapSerializationTest() {
-//        Map<Ammo, String> ammoStringMap = new HashMap<>();
-//        ammoStringMap.put(Ammo.RED, "red");
-//        ammoStringMap.put(Ammo.YELLOW, "yellow");
-//        ammoStringMap.put(Ammo.BLUE, "blue");
-//        Gson gson = new Gson();
-//        String json = gson.toJson(ammoStringMap);
-//        Type mapType = new TypeToken<Map<Ammo, String>>() {
-//        }.getType();
-//        ammoStringMap = gson.fromJson(json, mapType);
-//        System.out.println(ammoStringMap.values());
-//    }
+    @Test
+    public void mapSerializationTest() {
+        Map<Ammo, String> ammoStringMap = new HashMap<>();
+        ammoStringMap.put(Ammo.RED, "red");
+        ammoStringMap.put(Ammo.YELLOW, "yellow");
+        ammoStringMap.put(Ammo.BLUE, "blue");
+        Gson gson = new Gson();
+        String json = gson.toJson(ammoStringMap);
+        System.out.println(json);
+        /*Type mapType = new TypeToken<Map<Ammo, String>>() {
+        }.getType();
+        ammoStringMap = gson.fromJson(json, mapType);
+        System.out.println(ammoStringMap.values());*/
+    }
 }

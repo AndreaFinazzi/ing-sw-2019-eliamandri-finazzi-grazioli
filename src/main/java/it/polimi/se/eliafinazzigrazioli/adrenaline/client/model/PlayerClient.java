@@ -104,11 +104,11 @@ public class PlayerClient implements CardInterface{
     }
 
     public void addDamages(List<DamageMark> damages) {
-        damages.addAll(damages);
+        this.damages.addAll(damages);
     }
 
     public void addMarks(List<DamageMark> marks) {
-        marks.addAll(marks);
+        this.marks.addAll(marks);
     }
 
     public void cleanPlayerBoard() {
@@ -177,6 +177,14 @@ public class PlayerClient implements CardInterface{
         }
 
         return  matrix;
+    }
+
+    public WeaponCardClient getWeaponByName(String weapon) {
+        for (WeaponCardClient weaponCardClient: weapons) {
+            if (weapon.equals(weaponCardClient.getWeaponName()))
+                return weaponCardClient;
+        }
+        return null;
     }
 
     @Override

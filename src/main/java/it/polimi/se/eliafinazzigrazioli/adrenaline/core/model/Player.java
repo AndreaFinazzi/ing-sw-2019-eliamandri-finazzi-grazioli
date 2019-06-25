@@ -199,16 +199,16 @@ public class Player implements Selectable {
 
     public List<PowerUpCard> getRealModelReferences(List<PowerUpCardClient> powerUpCardsClient) {
         List<String> powerUpIds = new ArrayList<>();
-        List<PowerUpCard> realPowerups = new ArrayList<>();
+        List<PowerUpCard> realPowerUps = new ArrayList<>();
         for (PowerUpCardClient powerUpCardClient: powerUpCardsClient)
             powerUpIds.add(powerUpCardClient.getId());
 
         for (PowerUpCard powerUpCard: powerUps)
             if (powerUpIds.contains(powerUpCard.getId())) {
-                realPowerups.add(powerUpCard);
+                realPowerUps.add(powerUpCard);
                 powerUpIds.remove(powerUpCard.getId());
             }
-        return realPowerups;
+        return realPowerUps;
     }
 
     public List<Ammo> spendPrice(List<Ammo> price, List<PowerUpCard> powerUpsToSpend) {
