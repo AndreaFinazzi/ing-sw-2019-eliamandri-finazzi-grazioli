@@ -34,7 +34,7 @@ public class LocalModel {
     //Public information
 
     private GameBoardClient gameBoard;
-    private List<String> players;
+    //private List<String> players;
     private Map<String, PlayerClient> opponentsInfo;
     private Map<String, Avatar> playerToAvatarMap;
     private List<SpawnBoardSquareClient> listSpawn;
@@ -52,7 +52,7 @@ public class LocalModel {
         damages = new ArrayList<>();
         marks = new ArrayList<>();
 
-        players = new ArrayList<>();
+        //players = new ArrayList<>();
         opponentsInfo = new HashMap<>();
         playerToAvatarMap = new HashMap<>();
         deathScores = new ArrayList<>();
@@ -149,11 +149,11 @@ public class LocalModel {
     public List<Ammo> getAmmos() {
         return ammos;
     }
-
+    /*
     public List<String> getPlayers() {
         return players;
     }
-
+     */
     public Map<String, Avatar> getPlayersAvatarMap() {
         return playerToAvatarMap;
     }
@@ -259,6 +259,14 @@ public class LocalModel {
 
     public PlayerClient getOpponentInfo(String player) {
         return opponentsInfo.get(player);
+    }
+
+    public List<PlayerClient> getOpponentsList() {
+        List<PlayerClient> opponents = new ArrayList<>();
+        for(Map.Entry<String, PlayerClient> entry : opponentsInfo.entrySet()) {
+            opponents.add(entry.getValue());
+        }
+        return opponents;
     }
 
     public void addOpponent(String player) {

@@ -95,8 +95,8 @@ public class CLI implements RemoteView, Runnable {
         if (player.equals(getClient().getPlayerName()))
             message = "You ";
         else
-            message = "Player " + player;
-        message = message + "payed the fallowing power ups:";
+            message = "Player " + player + " " + localModel.getPlayersAvatarMap().get(player);
+        message = message + " payed the fallowing power ups:";
         for (PowerUpCardClient powerUpCardClient: powerUpCardClients)
             powerUpsMatrix.add(powerUpCardClient.drawCard(true));
         message = message + CLIUtils.alignSquare(powerUpsMatrix);
@@ -142,7 +142,7 @@ public class CLI implements RemoteView, Runnable {
     public void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
         String message;
         if(damagedPlayer.equals(getClient().getPlayerName()))
-            message = "You ";
+            message = "You";
         else
             message = damagedPlayer;
 
@@ -228,7 +228,7 @@ public class CLI implements RemoteView, Runnable {
             return;
         }
         if (player.equals(getClient().getPlayerName()))
-            showMessage("You collected a " + avatar +" "+ ammo.toString() + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
+            showMessage("You collected a " + " "+ ammo.toString() + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
         else
             showMessage(player + " " + avatar + " collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but his playerBoard was full!"));
     }
@@ -305,10 +305,8 @@ public class CLI implements RemoteView, Runnable {
             }
             if(choice.equals(PlayerAction.SHOW_PLAYERBOARDS)) {
                 List<PlayerClient> playerClients = new ArrayList<>();
-                for(String player : localModel.getPlayers()) {
-                    if(localModel.getOpponentInfo(player) != null) {
-                        playerClients.add(localModel.getOpponentInfo(player));
-                    }
+                for(PlayerClient playerClient : localModel.getOpponentsList()) {
+                    playerClients.add(playerClient);
                 }
                 for(PlayerClient playerClient : playerClients) {
                     showMessage(CLIUtils.matrixToString(playerClient.drawCard()));
@@ -391,7 +389,7 @@ public class CLI implements RemoteView, Runnable {
             return null;
         }
         showMessage("You can select this square: ");
-        CLIUtils.serializeList(players);
+        showMessage(CLIUtils.serializeList(players));
         return players.get(nextInt(players.size()));
     }
 
@@ -438,18 +436,20 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons) {
         if(selectableWeapons == null) {
-            showMessage("ops, something didn't work");
+            showMessage("ops, something didn't work\n");
             return null;
         }
         if(selectableWeapons.isEmpty()) {
-            showMessage("No weapon to select.");
+            showMessage("No weapon to select.\n");
             return null;
         }
         List<String> weaponsName = new ArrayList<>();
         for(WeaponCardClient selectableWeapon : selectableWeapons) {
             weaponsName.add(Color.ammoToColor(selectableWeapon.getWeaponColor()).toString() + selectableWeapon.getWeaponName() + Color.RESET);
         }
-        showMessage(CLIUtils.serializeList(selectableWeapons));
+        showMessage("You can select :\n");
+        showMessage(CLIUtils.serializeList(weaponsName));
+        showMessage("Enter: ");
         return selectableWeapons.get(nextInt(selectableWeapons.size()));
     }
 
@@ -457,9 +457,12 @@ public class CLI implements RemoteView, Runnable {
     public WeaponEffectClient selectWeaponEffect(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) {
         showMessage("You can select this effects from " + weapon.getWeaponName());
         showMessage(CLIUtils.serializeList(callableEffects));
+        showMessage(callableEffects.size()+1 + ") Nothing");
         showMessage("Enter: ");
-        int select = nextInt(callableEffects.size());
+        int select = nextInt(callableEffects.size()+1);
         if(select == -1)
+            return null;
+        if(select == callableEffects.size())
             return null;
         return callableEffects.get(select);
     }
