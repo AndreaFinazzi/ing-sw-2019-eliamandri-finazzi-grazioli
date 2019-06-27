@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WeaponEffectClient implements Serializable {
@@ -26,7 +27,7 @@ public class WeaponEffectClient implements Serializable {
     }
 
     public List<Ammo> getPrice() {
-        return price;
+        return new ArrayList<>(price);
     }
 
     public String priceToString() {
