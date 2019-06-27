@@ -56,5 +56,33 @@
 }
 
 #overlay {
-    -fx-background-color: rgba(37, 37, 37, 0.6);
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+}
+
+.detailsGridPane {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+}
+
+.detailsTextScrollPane,
+.detailsTextScrollPane > .viewport,
+.detailsTextScrollPane * {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-wrap-text: true;
+}
+
+.effectLabel {
+    -fx-text-fill: white;
+}
+
+.effectLabel:disabled {
+    -fx-opacity: 1.0
+}
+
+.selectableEffectLabel:hover {
+    -fx-border-style: solid;
+    -fx-border-color: linear-gradient(to top, #ffe1da 0%, #edd6c8 50%, #ffdcf6 75%, #b6d1ed 100%);
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-border-insets: -1;
 }
