@@ -73,6 +73,10 @@ public abstract class BoardSquareClient {
         return false;
     }
 
+    public AmmoCardClient getAmmoCard() {
+        return null;
+    }
+
     public Coordinates getCoordinates() {
         return coordinates;
     }

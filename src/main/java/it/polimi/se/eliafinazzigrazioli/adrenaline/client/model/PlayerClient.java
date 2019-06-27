@@ -32,7 +32,7 @@ public class PlayerClient implements CardInterface{
     private int movementsAllowed;
     private final static int WIDTH = 30;
 
-    private final static int HEIGHT = 10;
+    private final static int HEIGHT = 13;
 
     public PlayerClient(Avatar avatar) {
         powerUps = 0;
@@ -188,6 +188,19 @@ public class PlayerClient implements CardInterface{
         for(int i=0; i<damages.size(); i++) {
             matrix[poseX+i][8] = damages.get(i).toString();
             poseX++;
+        }
+        string = "Marks: ";
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][9] = String.valueOf(string.charAt(i));
+        }
+        poseX = 2;
+        for(int i=0; i<marks.size(); i++) {
+            matrix[poseX+i][10] = marks.get(i).toString();
+            poseX++;
+        }
+        string = "Number of powerUp: " + powerUps;
+        for(int i=0; i<string.length(); i++) {
+            matrix[i+2][11] = String.valueOf(string.charAt(i));
         }
 
         return  matrix;

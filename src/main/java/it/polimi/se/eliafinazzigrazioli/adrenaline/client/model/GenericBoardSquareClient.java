@@ -35,6 +35,11 @@ public class GenericBoardSquareClient extends BoardSquareClient {
     }
 
     @Override
+    public AmmoCardClient getAmmoCard() {
+        return ammoCard;
+    }
+
+    @Override
     public void removeAmmoCard() {
         ammoCard = null;
     }

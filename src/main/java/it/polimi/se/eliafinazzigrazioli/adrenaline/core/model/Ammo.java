@@ -9,21 +9,21 @@ public enum Ammo {
 
 
     //Todo
-    public String toString(boolean bool) {
+    public String toStringToMap() {
         switch(this) {
             case YELLOW:
-                return "Y";
+                return Color.ammoToColor(this) + "Y";
             case BLUE:
-                return "B";
+                return Color.ammoToColor(this) + "B";
             case RED:
-                return "R";
+                return Color.ammoToColor(this) + "R";
             default:
-                return "A";
+                return Color.ammoToColor(this) + "A";
         }
     }
 
     //todo
     public String toString() {
-        return Color.ammoToColor(this) + "\u2B1B" + Color.RESET;
+        return Color.ammoToColor(this) + "\u2B1B";
     }
 }

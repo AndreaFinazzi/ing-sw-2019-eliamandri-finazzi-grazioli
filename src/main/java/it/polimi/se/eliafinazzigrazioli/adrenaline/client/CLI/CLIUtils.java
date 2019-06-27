@@ -56,8 +56,6 @@ public class CLIUtils {
         int poseX = 1;
         int poseY = 1;
 
-        int strlen = width -4;
-
         for(int i=0; i<length; i++) {
             if(string.charAt(i) != "\n".charAt(0) && string.charAt(i) != "\t".charAt(0) && string.charAt(i) != ANSI_ESCAPE_COLOR.charAt(0)) {
                 if(poseX >= width-3) {
@@ -104,6 +102,7 @@ public class CLIUtils {
                 if(poseY >= height-1)
                     return matrix;
                 matrix[poseX][poseY] = color;
+                //for windows matrix[poseX+1][poseY] = "";
             }
         }
 

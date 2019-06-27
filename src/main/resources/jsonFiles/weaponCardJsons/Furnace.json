@@ -8,14 +8,142 @@
       "effectName": "basic mode",
       "effectDescription": "Choose a room you can see, but not the room you are in. Deal 1 damage to everyone in that room.",
       "price": [],
-      "effectStates": [],
+      "effectStates": [
+        {
+          "type": "VisibilitySelectorEffectState",
+          "notVisible": false,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "ROOM",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "ROOM",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "InRoomSelectorEffectState",
+          "referenceSource": "basic mode",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": false,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": -1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 0
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 2
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 3
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 0,
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 4
+        }
+      ],
       "nextCallableEffects": []
     },
     {
       "effectName": "in cozy fire mode",
       "effectDescription": "Choose a square exactly one move away. Deal 1 damage and 1 mark to everyone on that square.",
       "price": [],
-      "effectStates": [],
+      "effectStates": [
+        {
+          "type": "DistanceSelectorEffectState",
+          "minDistance": 1,
+          "maxDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": true,
+          "selectionType": "BOARDSQUARE",
+          "maxSelectableItems": 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "minDistance": 0,
+          "maxDistance": 0,
+          "referenceSource": "in cozy fire mode",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "BOARDSQUARE"
+        },
+        {
+          "type": "SelectionRequestEffectState",
+          "userSelectionRequired": false,
+          "selectionType": "PLAYER",
+          "maxSelectableItems": -1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 1,
+          "playerToAffectSource": "in cozy fire mode",
+          "toAffectPlayerSelectionOrder": 0
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 1,
+          "playerToAffectSource": "in cozy fire mode",
+          "toAffectPlayerSelectionOrder": 1
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 1,
+          "playerToAffectSource": "in cozy fire mode",
+          "toAffectPlayerSelectionOrder": 2
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 1,
+          "playerToAffectSource": "in cozy fire mode",
+          "toAffectPlayerSelectionOrder": 3
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 1,
+          "markAmount": 1,
+          "playerToAffectSource": "in cozy fire mode",
+          "toAffectPlayerSelectionOrder": 4
+        }
+      ],
       "nextCallableEffects": []
     }
   ],

@@ -16,8 +16,8 @@ public class AmmoCardClient implements Serializable, CardInterface {
     private List<Ammo> ammos;
     private boolean powerUp;
 
-    private final static int WIDTH = 15;
-    private final static int HEIGTH = 5;
+    private final static int WIDTH = 17;
+    private final static int HEIGTH = 8;
 
     public AmmoCardClient(AmmoCard ammoCard) {
         this.id = ammoCard.getId();
@@ -39,11 +39,14 @@ public class AmmoCardClient implements Serializable, CardInterface {
 
     @Override
     public String toString() {
-        String string = "Ammo card: \n";
+        String string = "Ammo card: \n\n";
         int count = 1;
         for(Ammo ammo : ammos) {
-            string = string + count + ") " + ammo + "\n";
+            string = string + count + ": " + ammo + "\n";
+            count++;
         }
+        if(powerUp)
+            string = string + count + ": PowerUp!";
         return string;
     }
 
@@ -51,7 +54,6 @@ public class AmmoCardClient implements Serializable, CardInterface {
     public String[][] drawCard() {
         String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGTH, Color.GRAY);
         matrix = CLIUtils.insertStringToMatrix(matrix, this.toString());
-
         return matrix;
     }
 

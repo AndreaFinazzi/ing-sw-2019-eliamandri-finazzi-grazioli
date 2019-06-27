@@ -11,6 +11,6 @@ public enum DamageMark {
 
     @Override
     public String toString() {
-        return Color.damageMarkToColor(this) + "\u26AB" + Color.RESET;
+        return Color.damageMarkToColor(this) + "\u2688" + Color.RESET;
     }
 }

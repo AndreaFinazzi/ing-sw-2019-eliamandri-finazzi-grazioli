@@ -19,9 +19,9 @@ import java.util.Random;
 
 public class AmmoCardsDeck {
 
-    List<AmmoCard> discardedCards;
+    private List<AmmoCard> discardedCards;
 
-    List<AmmoCard> deck;
+    private List<AmmoCard> deck;
 
     public AmmoCardsDeck() throws WeaponFileNotFoundException {
 
