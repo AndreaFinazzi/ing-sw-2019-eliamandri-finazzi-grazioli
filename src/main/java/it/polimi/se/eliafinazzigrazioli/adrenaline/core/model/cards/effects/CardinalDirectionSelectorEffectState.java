@@ -20,36 +20,38 @@ public class CardinalDirectionSelectorEffectState extends SelectorEffectState {
 
     @Override
     public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
-        BoardSquare reference = null;
+        BoardSquare reference;
         CardinalDirection direction = invoker.getEffectByName(directionSource).getSelectedDirection(directionSelectionOrder);
         try {
             reference = getReference(invoker, gameBoard, currentPlayer);
         } catch (Exception e) {
-            //TODO held exception
+            reference = null;
         }
-        switch (selectionType) {
-            case PLAYER:
-                List<Player> playersToSelect = null;
-                try {
-                    playersToSelect = new ArrayList<>(gameBoard.getPlayersByCardinalDirection(reference, direction));
-                    playersToSelect.remove(currentPlayer);
-                } catch (Exception e) {
+        if (reference != null) {
+            switch (selectionType) {
+                case PLAYER:
+                    List<Player> playersToSelect = null;
+                    try {
+                        playersToSelect = new ArrayList<>(gameBoard.getPlayersByCardinalDirection(reference, direction));
+                        playersToSelect.remove(currentPlayer);
+                    } catch (Exception e) {
 
-                }
-                invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
-                break;
-            case BOARDSQUARE:
-                List<BoardSquare> boardSquaresToSelect = null;
-                try {
-                    boardSquaresToSelect = new ArrayList<>(gameBoard.getBoardSquaresByCardinalDirection(reference, direction));
-                } catch (Exception e) {
+                    }
+                    invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
+                    break;
+                case BOARDSQUARE:
+                    List<BoardSquare> boardSquaresToSelect = null;
+                    try {
+                        boardSquaresToSelect = new ArrayList<>(gameBoard.getBoardSquaresByCardinalDirection(reference, direction));
+                    } catch (Exception e) {
 
-                }
-                invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);
-                break;
-            default:
-                //TODO a solution to this useless default is to insert constrains in the constructor
-                break;
+                    }
+                    invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);
+                    break;
+                default:
+                    //TODO a solution to this useless default is to insert constrains in the constructor
+                    break;
+            }
         }
         return new ArrayList<>();
     }

@@ -25,8 +25,8 @@
         },
         {
           "type": "DistanceSelectorEffectState",
-          "maxDistance": 2,
           "minDistance": 0,
+          "maxDistance": 2,
           "referenceSource": "basic mode",
           "sourceSelectionOrder": 0,
           "selectionType": "PLAYER",
@@ -62,8 +62,8 @@
       "effectStates": [
         {
           "type": "DistanceSelectorEffectState",
-          "maxDistance": 0,
-          "minDistance": 2,
+          "minDistance": 0,
+          "maxDistance": 2,
           "referenceSource": null,
           "sourceSelectionOrder": -1,
           "selectionType": "PLAYER",
@@ -86,7 +86,7 @@
           "type": "DamageActionEffectState",
           "damageAmount": 3,
           "markAmount": 0,
-          "playerToAffectSource": "basic mode",
+          "playerToAffectSource": "in punisher mode",
           "toAffectPlayerSelectionOrder": 0
         }
       ],

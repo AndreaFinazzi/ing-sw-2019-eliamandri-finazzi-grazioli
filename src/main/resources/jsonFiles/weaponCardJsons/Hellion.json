@@ -19,8 +19,8 @@
         },
         {
           "type": "DistanceSelectorEffectState",
-          "maxDistance": 20,
           "minDistance": 1,
+          "maxDistance": 20,
           "referenceSource": null,
           "sourceSelectionOrder": -1,
           "selectionType": "PLAYER",
@@ -107,8 +107,8 @@
         },
         {
           "type": "DistanceSelectorEffectState",
-          "maxDistance": 20,
           "minDistance": 1,
+          "maxDistance": 20,
           "referenceSource": null,
           "sourceSelectionOrder": -1,
           "selectionType": "PLAYER",
@@ -124,14 +124,14 @@
           "type": "DamageActionEffectState",
           "damageAmount": 1,
           "markAmount": 0,
-          "playerToAffectSource": "basic mode",
+          "playerToAffectSource": "in nano-tracer mode",
           "toAffectPlayerSelectionOrder": 0
         },
         {
           "type": "DistanceSelectorEffectState",
           "maxDistance": 0,
           "minDistance": 0,
-          "referenceSource": "basic effect",
+          "referenceSource": "in nano-tracer mode",
           "sourceSelectionOrder": 0,
           "selectionType": "PLAYER",
           "referenceType": "PLAYER"
@@ -146,36 +146,36 @@
           "type": "DamageActionEffectState",
           "damageAmount": 0,
           "markAmount": 2,
-          "playerToAffectSource": "basic mode",
-          "toAffectPlayerSelectionOrder": 0
-        },
-        {
-          "type": "DamageActionEffectState",
-          "damageAmount": 0,
-          "markAmount": 2,
-          "playerToAffectSource": "basic mode",
+          "playerToAffectSource": "in nano-tracer mode",
           "toAffectPlayerSelectionOrder": 1
         },
         {
           "type": "DamageActionEffectState",
           "damageAmount": 0,
           "markAmount": 2,
-          "playerToAffectSource": "basic mode",
+          "playerToAffectSource": "in nano-tracer mode",
           "toAffectPlayerSelectionOrder": 2
         },
         {
           "type": "DamageActionEffectState",
           "damageAmount": 0,
           "markAmount": 2,
-          "playerToAffectSource": "basic mode",
+          "playerToAffectSource": "in nano-tracer mode",
           "toAffectPlayerSelectionOrder": 3
         },
         {
           "type": "DamageActionEffectState",
           "damageAmount": 0,
           "markAmount": 2,
-          "playerToAffectSource": "basic mode",
+          "playerToAffectSource": "in nano-tracer mode",
           "toAffectPlayerSelectionOrder": 4
+        },
+        {
+          "type": "DamageActionEffectState",
+          "damageAmount": 0,
+          "markAmount": 2,
+          "playerToAffectSource": "in nano-tracer mode",
+          "toAffectPlayerSelectionOrder": 5
         }
       ],
       "nextCallableEffects": []

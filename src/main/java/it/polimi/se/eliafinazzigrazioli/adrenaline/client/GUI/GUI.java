@@ -212,7 +212,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
+    public void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks, List<DamageMark> removedMarks) {
         try {
             if (!damagedPlayer.equals(client.getPlayerName())) {
                 opponentPlayerToGUIControllerMap.get(damagedPlayer).showDamageReceived(damages, marks);

@@ -285,14 +285,16 @@ public class LocalModel {
         return null;
     }
 
-    public void performDamage(String self, String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
+    public void performDamage(String self, String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks, List<DamageMark> removedMarks) {
         if (self.equals(damagedPlayer)) {
             this.damages.addAll(damages);
+            this.marks.removeAll(removedMarks);
             this.marks.addAll(marks);
         }
         else {
             getOpponentInfo(damagedPlayer).addDamages(damages);
             getOpponentInfo(damagedPlayer).addMarks(marks);
+            getOpponentInfo(damagedPlayer).removeMarks(removedMarks);
         }
     }
 

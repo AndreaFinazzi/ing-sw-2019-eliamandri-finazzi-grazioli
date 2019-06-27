@@ -25,9 +25,13 @@ public class MoveActionEffectState extends ActionEffectState {
 
     public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
         List<AbstractModelEvent> events = new ArrayList<>();
-        BoardSquare destination = invoker.getEffectByName(movementDestinationSource).getSelectedBoardSquare(destinationSelectionOrder);
+        BoardSquare destination;
         Player toMove;
-        if (movementDestinationSource != null) {
+        if (movementDestinationSource != null)
+            destination = invoker.getEffectByName(movementDestinationSource).getSelectedBoardSquare(destinationSelectionOrder);
+        else
+            destination = gameBoard.getPlayerPosition(currentPlayer);
+        if (playerToAffectSource != null) {
             try {
                 toMove = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(destinationSelectionOrder);
             } catch (IndexOutOfBoundsException e) {

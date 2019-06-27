@@ -29,7 +29,7 @@ public abstract class SelectorEffectState extends EffectState {
         this.referenceType = null;
     }
 
-    protected BoardSquare getReference(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) throws Exception { //TODO define exception type
+    protected BoardSquare getReference(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) throws Exception ,IndexOutOfBoundsException { //TODO define exception type
         BoardSquare reference;
         if (referenceSource == null)
             reference = gameBoard.getPlayerPosition(currentPlayer);

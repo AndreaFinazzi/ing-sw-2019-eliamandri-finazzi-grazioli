@@ -139,10 +139,10 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
+    public void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks, List<DamageMark> removedMarks) {
         String message;
         if(damagedPlayer.equals(getClient().getPlayerName()))
-            message = "You";
+            message = "You ";
         else
             message = damagedPlayer;
 
@@ -155,6 +155,8 @@ public class CLI implements RemoteView, Runnable {
             stringDamages = stringDamages + damage.toString() + " ";
         }
         message = message + " receive damages " + stringDamages + " " + (marks.size() > 0 ? "\n and marks " + marks : "");
+        if (removedMarks.size() > 0)
+            message = message + "\n" + removedMarks.size() + " damages were previously delivered marks.";
         showMessage(message);
     }
 
@@ -366,7 +368,7 @@ public class CLI implements RemoteView, Runnable {
 
     @Override
     public Coordinates selectCoordinates(List<Coordinates> selectable) {
-        showMessage("You can select this squares: ");
+        showMessage("Select a boardSquare: ");
         int count = 1;
         for (Coordinates coordinates : selectable) {
             BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(coordinates);
@@ -388,7 +390,6 @@ public class CLI implements RemoteView, Runnable {
             showMessage("No player to select.");
             return null;
         }
-        showMessage("You can select this square: ");
         showMessage(CLIUtils.serializeList(players));
         return players.get(nextInt(players.size()));
     }

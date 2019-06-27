@@ -244,15 +244,20 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
                 if (!toSelect.isEmpty()) {
                     selectedEffect = selectWeaponEffect(weaponCard, toSelect);
-
-                    powerUpCardsToPay = getPowerUpsToPay(selectedEffect.getPrice());
-                    if (!getLocalModel().canPay(selectedEffect.getPrice(), powerUpCardsToPay)) {
-                        showMessage("The power ups you selected are not enough to pay, are you sure you want to play this effect?[Y=1/n=0]");
-                        usageConfirmation = selectYesOrNot();
-                        repeatSelection = usageConfirmation;
-                    }
-                    else
+                    if (selectedEffect == null) {
                         repeatSelection = false;
+                        usageConfirmation = false;
+                    }
+                    else {
+                        powerUpCardsToPay = getPowerUpsToPay(selectedEffect.getPrice());
+                        if (!getLocalModel().canPay(selectedEffect.getPrice(), powerUpCardsToPay)) {
+                            showMessage("The power ups you selected are not enough to pay, are you sure you want to play this effect?[Y=1/n=0]");
+                            usageConfirmation = selectYesOrNot();
+                            repeatSelection = usageConfirmation;
+                        }
+                        else
+                            repeatSelection = false;
+                    }
                 }
                 else {
                     repeatSelection = false;
@@ -315,6 +320,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
 
         if (!reloadableWeapons.isEmpty()) {
+
+            showMessage("Select a weapon you want to reload!");
+
             while (generatedEvent == null) {
 
                 WeaponCardClient selectedWeapon = selectWeaponCardFromHand(reloadableWeapons);  /** SELECTION HERE */
@@ -326,14 +334,17 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                     //Confirmation of the feasibility of the payment, if the payment isn't feasible generated event remains null and the procedure is repeated
                     if (getLocalModel().canPay(selectedWeapon.getPrice(), powerUpsSelected))
                         generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), selectedWeapon, powerUpsSelected);
+                    else
+                        showMessage("You didn't select enough power ups. Select another weapon and pay your debts >:(");
                 }
                 else
                     generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), null, null);
             }
         }
-        else
+        else {
+            showMessage("You can't reload any weapon.");
             generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), null, null);
-
+        }
 
         notifyObservers(generatedEvent);
     }
@@ -398,8 +409,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(PlayerShotEvent event) throws HandlerNotImplementedException {
         LocalModel localModel = getLocalModel();
-        localModel.performDamage(getClient().getPlayerName(), event.getTarget(), event.getDamages(), event.getMarks());
-        showShotPlayerUpdate(event.getTarget(), event.getDamages(), event.getMarks());
+        localModel.performDamage(getClient().getPlayerName(), event.getTarget(), event.getDamages(), event.getMarks(), event.getMarksDelivered());
+        showShotPlayerUpdate(event.getTarget(), event.getDamages(), event.getMarks(), event.getMarksDelivered());
     }
 
     @Override
@@ -573,7 +584,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showMessage(message);
     }
 
-    default void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks) {
+    default void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks, List<DamageMark> removedMarks) {
         showMessage(damagedPlayer + " received damages " + damages + " and marks " + marks);
     }
 
@@ -739,14 +750,19 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             count++;
             showMessage(count + ") " + weaponEffectClient.getEffectName());
         }
+        count++;
+        showMessage(count + ") Stop using weapon.");
 
         int choice = 0;
         Scanner scanner = new Scanner(System.in);
         do {
             showMessage("enter:");
             choice = scanner.nextInt();
-        } while (choice < 1 || count > callableEffects.size());
-        return callableEffects.get(choice - 1);
+        } while (choice < 1 || choice > callableEffects.size() + 1);
+        if (choice == callableEffects.size() + 1)
+            return null;
+        else
+            return callableEffects.get(choice - 1);
     }
 
     default boolean selectYesOrNot() {
@@ -849,18 +865,24 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     default List<String> getTargetPlayers(List<String> players, int maxSelections) {
-        showMessage("select a target player!");
-        List<String> selectedPlayers = new ArrayList<>();
-        String selection;
-        // TODO fix target selection
-        do {
-            selection = selectPlayer(players);
-            if (selection != null) {
-                selectedPlayers.add(selection);
-                players.remove(selection);
-            }
-        } while (selectedPlayers.size() < maxSelections && selection != null);
-        return selectedPlayers;
+        if (!players.isEmpty()) {
+            showMessage("select a target player!");
+            List<String> selectedPlayers = new ArrayList<>();
+            String selection;
+            // TODO fix target selection
+            do {
+                selection = selectPlayer(players);
+                if (selection != null) {
+                    selectedPlayers.add(selection);
+                    players.remove(selection);
+                }
+            } while (selectedPlayers.size() < maxSelections && selection != null && !players.isEmpty());
+            return selectedPlayers;
+        }
+        else {
+            showMessage("There are no players to select :(");
+            return new ArrayList<>();
+        }
     }
 
 
