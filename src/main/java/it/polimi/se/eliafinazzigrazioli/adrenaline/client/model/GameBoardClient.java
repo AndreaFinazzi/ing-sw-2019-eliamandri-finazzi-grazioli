@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -360,12 +361,15 @@ public class GameBoardClient {
 
         }
         if (boardSquare.hasAmmoCard()) {
-            int x, y;
-            do {
-                x = random.nextInt(DIM_X - 2) + 1;
-                y = random.nextInt(DIM_Y - 2) + 1;
-            } while (!squareText[x][y].equals(" "));
-            squareText[x][y] = color + "X";
+            int x = (DIM_X/2)-1; int y = (DIM_Y/2);
+            for(Ammo ammo : boardSquare.getAmmoCard().getAmmos()) {
+                squareText[x][y] = ammo.toStringToMap();
+                x++;
+            }
+
+            if(boardSquare.getAmmoCard().containsPowerUp()) {
+                squareText[x][y] = Color.RESET + "P";
+            }
         }
         addPlayers(squareText, avatars);
         System.out.print(ANSI_RESET);
