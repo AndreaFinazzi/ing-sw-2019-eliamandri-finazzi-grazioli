@@ -23,35 +23,40 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
 
     @Override
     public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) { //TODO define exception type (invalid reference)
-        BoardSquare reference = null;
+        BoardSquare reference;
         try {
             reference = getReference(invoker, gameBoard, currentPlayer);
         } catch (Exception e) {
-            e.printStackTrace();
+            reference = null;
         }
-        switch (selectionType) {
-            case BOARDSQUARE:
-                List<BoardSquare> boardSquaresToSelect = null;
-                try {
-                    boardSquaresToSelect = new ArrayList<>(gameBoard.getSquaresByDistance(reference, maxDistance, minDistance));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);
-                break;
-            case PLAYER:
-                List<Player> playersToSelect = null;
-                try {
-                    playersToSelect = new ArrayList<>(gameBoard.getPlayersByDistance(reference, maxDistance, minDistance));
-                    playersToSelect.remove(currentPlayer);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
-                break;
-            case ROOM:
-                //TODO define and throw exception
-                break;
+        if (reference != null) {
+            switch (selectionType) {
+                case BOARDSQUARE:
+                    List<BoardSquare> boardSquaresToSelect = null;
+                    try {
+                        boardSquaresToSelect = new ArrayList<>(gameBoard.getSquaresByDistance(reference, maxDistance, minDistance));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);
+                    break;
+                case PLAYER:
+                    List<Player> playersToSelect = null;
+                    try {
+                        playersToSelect = new ArrayList<>(gameBoard.getPlayersByDistance(reference, maxDistance, minDistance));
+                        playersToSelect.remove(currentPlayer);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
+                    break;
+                case ROOM:
+                    //TODO define and throw exception
+                    break;
+            }
+        }
+        else {
+            invoker.getActiveEffect().updateToSelectPlayers(new ArrayList<>());
         }
         return new ArrayList<>();
     }

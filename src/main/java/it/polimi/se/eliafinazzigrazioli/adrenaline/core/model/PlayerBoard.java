@@ -20,31 +20,44 @@ public class PlayerBoard {
     private ArrayList<DamageMark> marks;
     private ArrayList<Ammo> ammos;
     private ArrayList<Integer> deathScores;
-    private int movementsAllowed;
-    private int movementsBeforeCollectingAllowed;
-    private int movementsBeforeShootingAllowed;
 
-    private final static int WIDTH = 30;
-    private final static int HEIGHT = 7;
+    private int deliverableMarks;
 
 
     public PlayerBoard() {
         this.damages = new ArrayList<>();
         this.marks = new ArrayList<>();
         this.ammos = new ArrayList<>();
+
         deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
-        movementsAllowed = Rules.MAX_MOVEMENTS;
-        movementsBeforeCollectingAllowed = Rules.MAX_MOVEMENTS_BEFORE_COLLECTION;
-        movementsBeforeShootingAllowed = Rules.MAX_MOVEMENTS_BEFORE_SHOOTING;
+        deliverableMarks = Rules.PLAYER_BOARD_MAX_MARKS_DELIVERED;
+    }
+
+    public boolean canUseMark() {
+        if (deliverableMarks > 0) {
+            deliverableMarks--;
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public void increaseDeliverableMarks() {
+        if (deliverableMarks < Rules.PLAYER_BOARD_MAX_MARKS_DELIVERED)
+            deliverableMarks++;
     }
 
     public DamageMark addDamage(DamageMark damage) {
-        damages.add(damage);
-        if (damages.size() == Rules.PLAYER_BOARD_DEAD_SHOOT)
-            death = true;
-        else if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
-            overkill = true;
-        return damage;
+        if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
+            return null;
+        else {
+            damages.add(damage);
+            if (damages.size() == Rules.PLAYER_BOARD_DEAD_SHOOT)
+                death = true;
+            else if (damages.size() == Rules.PLAYER_BOARD_MAX_DAMAGE)
+                overkill = true;
+            return damage;
+        }
     }
 
     public DamageMark addMark(DamageMark mark) {
@@ -54,6 +67,15 @@ public class PlayerBoard {
             this.marks.add(mark);
             return mark;
         }
+    }
+
+    public DamageMark removeMark(DamageMark mark) {
+        if (marks.contains(mark)) {
+            marks.remove(mark);
+            return mark;
+        }
+        else
+            return null;
     }
 
     /**
@@ -177,44 +199,13 @@ public class PlayerBoard {
         return overkill;
     }
 
-    public String[][] toDraw() {
-        String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGHT, Color.BLUE);
-        String string = "Skulls: " + skulls;
-        for(int i=0; i<string.length(); i++) {
-            matrix[i+2][1] = String.valueOf(string.charAt(i));
-        }
-        string = "Death score: " + deathScores.get(0);
-        for(int i=0; i<string.length(); i++) {
-            matrix[i+2][2] = String.valueOf(string.charAt(i));
-        }
-        string = "Death: " + (death ? "Yes" : "No");
-        for(int i=0; i<string.length(); i++) {
-            matrix[i+2][3] = String.valueOf(string.charAt(i));
-        }
-        string = "Movementes allowed: " + movementsAllowed;
-        for(int i=0; i<string.length(); i++) {
-            matrix[i+2][4] = String.valueOf(string.charAt(i));
-        }
-        string = "ammos: ";
-        for(int i=0; i<string.length(); i++) {
-            matrix[i+2][5] = String.valueOf(string.charAt(i));
-        }
-        int poseX = string.length()+2;
-        for(int i=0; i<ammos.size(); i++) {
-            matrix[poseX+i][5] = ammos.get(i).toString();
-            poseX++;
-        }
-
-        return  matrix;
-    }
-
     @Override
     public String toString() {
         return "PlayerBoard " +
                 "skulls: " + skulls +
                 "\n death: " + death +
                 ", overkill: " + overkill +
-                "\n movementsAllowed: " + movementsAllowed +
+                "\n movementsAllowed: " + Rules.MAX_MOVEMENTS +
                 ", deathScore: " +deathScores.get (0) +
                 '\n';
     }

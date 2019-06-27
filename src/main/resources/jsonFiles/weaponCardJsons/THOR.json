@@ -50,7 +50,7 @@
         },
         {
           "type": "PreselectionBasedSelectorEffectState",
-          "previouslySelectedMap": {
+          "previousSelected": {
             "basic effect": [0]
           },
           "alreadySelected": false
@@ -88,14 +88,14 @@
         },
         {
           "type": "PreselectionBasedSelectorEffectState",
-          "previouslySelectedMap": {
+          "previousSelected": {
             "basic effect": [0]
           },
           "alreadySelected": false
         },
         {
           "type": "PreselectionBasedSelectorEffectState",
-          "previouslySelectedMap": {
+          "previousSelected": {
             "with chain reaction": [0]
           },
           "alreadySelected": false

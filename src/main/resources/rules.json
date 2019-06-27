@@ -2,6 +2,7 @@
   "default": {
     "player": {
       "board": {
+        "max_marks_delivered": 3,
         "max_marks_per_type": 3,
         "max_skulls": 6,
         "max_damage": 12,

@@ -36,6 +36,7 @@ public final class Rules {
     public static final int PLAYER_CARDS_MAX_POWER_UPS = CARDS.get("max_power_ups").asInt(3);
     // PLAYER PLAYER_BOARD
     private static final JsonNode PLAYER_BOARD = PLAYER.get("board");
+    public static final int PLAYER_BOARD_MAX_MARKS_DELIVERED = PLAYER_BOARD.get("max_marks_delivered").asInt(3);
     public static final int PLAYER_BOARD_MAX_MARKS_PER_TYPE = PLAYER_BOARD.get("max_marks_per_type").asInt(3);
     public static final int PLAYER_BOARD_MAX_SKULLS = PLAYER_BOARD.get("max_skulls").asInt(6);
     public static final int PLAYER_BOARD_MAX_DAMAGE = PLAYER_BOARD.get("max_damage").asInt(12);

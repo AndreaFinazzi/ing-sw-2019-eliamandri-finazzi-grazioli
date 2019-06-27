@@ -38,7 +38,7 @@
         {
           "type": "DamageActionEffectState",
           "damageAmount": 3,
-          "markAmount": 0,
+          "markAmount": 1,
           "playerToAffectSource": "effect",
           "toAffectPlayerSelectionOrder": 0
         }

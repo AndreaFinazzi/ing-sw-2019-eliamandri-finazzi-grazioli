@@ -118,7 +118,7 @@
           "damageAmount": 1,
           "markAmount": 0,
           "playerToAffectSource": "with black hole",
-          "toAffectPlayerSelectionOrder": 0
+          "toAffectPlayerSelectionOrder": 1
         }
       ],
       "nextCallableEffects": []

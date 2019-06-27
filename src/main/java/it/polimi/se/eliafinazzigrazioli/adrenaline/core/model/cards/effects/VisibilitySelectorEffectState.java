@@ -18,26 +18,31 @@ public class VisibilitySelectorEffectState extends SelectorEffectState {
 
     @Override
     public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) { //TODO define exception type (invalid reference)
-        BoardSquare reference = null;
+        BoardSquare reference;
         try {
             reference = getReference(invoker, gameBoard, currentPlayer);
         } catch (Exception e) {
-            //TODO held exception
+            reference  = null;
         }
-        switch (selectionType) {
-            case BOARDSQUARE:
-                List<BoardSquare> boardSquaresToSelect = new ArrayList<>(gameBoard.getVisibleSquares(reference, notVisible));
-                invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);
-                break;
-            case PLAYER:
-                List<Player> playersToSelect = new ArrayList<>(gameBoard.getVisiblePlayers(reference, notVisible));
-                playersToSelect.remove(currentPlayer);
-                invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
-                break;
-            case ROOM:
-                List<Room> roomsToSelect = new ArrayList<>(gameBoard.getVisibleRooms(reference, notVisible));
-                invoker.getActiveEffect().updateToSelectRooms(roomsToSelect);
-                break;
+        if (reference != null) {
+            switch (selectionType) {
+                case BOARDSQUARE:
+                    List<BoardSquare> boardSquaresToSelect = new ArrayList<>(gameBoard.getVisibleSquares(reference, notVisible));
+                    invoker.getActiveEffect().updateToSelectBoardSquares(boardSquaresToSelect);
+                    break;
+                case PLAYER:
+                    List<Player> playersToSelect = new ArrayList<>(gameBoard.getVisiblePlayers(reference, notVisible));
+                    playersToSelect.remove(currentPlayer);
+                    invoker.getActiveEffect().updateToSelectPlayers(playersToSelect);
+                    break;
+                case ROOM:
+                    List<Room> roomsToSelect = new ArrayList<>(gameBoard.getVisibleRooms(reference, notVisible));
+                    invoker.getActiveEffect().updateToSelectRooms(roomsToSelect);
+                    break;
+            }
+        }
+        else {
+            invoker.getActiveEffect().updateToSelectPlayers(new ArrayList<>());
         }
         return new ArrayList<>();
     }

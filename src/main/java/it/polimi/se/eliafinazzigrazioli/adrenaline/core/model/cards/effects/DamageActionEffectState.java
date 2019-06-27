@@ -30,8 +30,10 @@ public class DamageActionEffectState extends ActionEffectState {
     @Override
     public List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer) {
         List<AbstractModelEvent> events = new ArrayList<>();
+        DamageMark deliveredMark = currentPlayer.getDamageMarkDelivered();
         List<DamageMark> damages = new ArrayList<>();
         List<DamageMark> marks = new ArrayList<>();
+        List<DamageMark> marksRemoved = new ArrayList<>();
         Player toDamage;
         try {
             toDamage = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(toAffectPlayerSelectionOrder);
@@ -41,15 +43,25 @@ public class DamageActionEffectState extends ActionEffectState {
         if (toDamage != null) {
             PlayerBoard playerBoard = toDamage.getPlayerBoard();
 
-            for (int i = 0; i < damageAmount; i++)
-                damages.add(playerBoard.addDamage(currentPlayer.getDamageMarkDelivered()));
+            for (int i = 0; i < damageAmount; i++) {
+                damages.add(playerBoard.addDamage(deliveredMark));
+                damages.remove(null);
+            }
 
-            for (int i = 0; i < markAmount; i++) {
+            while (toDamage.getPlayerBoard().getMarks().contains(deliveredMark)) {
+                marksRemoved.add(playerBoard.removeMark(deliveredMark));
+                marksRemoved.remove(null);
+                damages.add(playerBoard.addDamage(deliveredMark));
+                damages.remove(null);
+            }
+
+
+            for (int i = 0; i < markAmount && currentPlayer.getPlayerBoard().canUseMark(); i++) {
                 marks.add(playerBoard.addMark(currentPlayer.getDamageMarkDelivered()));
                 marks.remove(null);
             }
 
-            events.add(new PlayerShotEvent(currentPlayer, toDamage.getPlayerNickname(), damages, marks));
+            events.add(new PlayerShotEvent(currentPlayer, toDamage.getPlayerNickname(), damages, marks, marksRemoved));
             return events;
         }
         return new ArrayList<>();

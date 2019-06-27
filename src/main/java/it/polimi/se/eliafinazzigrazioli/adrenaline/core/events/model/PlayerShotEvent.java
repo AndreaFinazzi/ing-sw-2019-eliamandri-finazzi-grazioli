@@ -11,12 +11,14 @@ public class PlayerShotEvent extends AbstractModelEvent {
     private String target;
     private List<DamageMark> damages;
     private List<DamageMark> marks;
+    private List<DamageMark> marksDelivered;
 
-    public PlayerShotEvent(Player player, String target, List<DamageMark> damages, List<DamageMark> marks) {
+    public PlayerShotEvent(Player player, String target, List<DamageMark> damages, List<DamageMark> marks, List<DamageMark> marksDelivered) {
         super(player);
         this.target = target;
         this.damages = damages;
         this.marks = marks;
+        this.marksDelivered = marksDelivered;
     }
 
     @Override
@@ -34,5 +36,9 @@ public class PlayerShotEvent extends AbstractModelEvent {
 
     public List<DamageMark> getMarks() {
         return marks;
+    }
+
+    public List<DamageMark> getMarksDelivered() {
+        return marksDelivered;
     }
 }

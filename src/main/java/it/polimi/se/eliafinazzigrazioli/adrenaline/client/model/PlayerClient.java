@@ -121,6 +121,10 @@ public class PlayerClient implements CardInterface{
         return marks;
     }
 
+    public void removeMarks(List<DamageMark> removedMarks) {
+        marks.removeAll(removedMarks);
+    }
+
     public void cleanPlayerBoard() {
         damages.clear();
         death = false;
