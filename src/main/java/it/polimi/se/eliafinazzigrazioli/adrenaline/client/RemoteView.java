@@ -386,7 +386,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         notifyObservers(new PlayersSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), selectedPlayers));
     }
 
-
+    @Override
+    default void handleEvent(SelectableRoomsEvent event) throws HandlerNotImplementedException {
+        Room selectedRoom = selectRoom(event.getSelectableRooms());
+        notifyObservers(new RoomSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), selectedRoom));
+    }
 
     @Override
     default void handleEvent(EndTurnEvent event) throws HandlerNotImplementedException {
@@ -457,13 +461,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     //TODO to implement
-
-    @Override
-    default void handleEvent(SelectableRoomsEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-    //TODO to implement
-
     @Override
     default void handleEvent(SelectableTargetEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
@@ -663,23 +660,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     PowerUpCardClient selectPowerUp(List<PowerUpCardClient> cards);
 
-    default Coordinates selectCoordinates(List<Coordinates> coordinates) {
-        if (coordinates.isEmpty())
-            return null;
-        int count = 0;
-        showMessage("Select a boardSquare: ");
-        for (Coordinates square: coordinates) {
-            count++;
-            showMessage(count + ") " + square);
-        }
-        int choice = 0;
-        Scanner scanner = new Scanner(System.in);
-        do {
-            showMessage("enter:");
-            choice = scanner.nextInt();
-        } while (choice < 1 || count > coordinates.size());
-        return coordinates.get(choice - 1);
-    }
+    Coordinates selectCoordinates(List<Coordinates> coordinates);
 
     default String selectPlayer(List<String> players) {
         if (players.isEmpty())
@@ -697,6 +678,24 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             choice = scanner.nextInt();
         } while (choice < 1 || count > players.size());
         return players.get(choice - 1);
+    }
+
+    default Room selectRoom(List<Room> rooms) {
+        if (rooms.isEmpty())
+            return null;
+        int count = 0;
+        showMessage("Select a player: ");
+        for (Room room: rooms) {
+            count++;
+            showMessage(count + ") " + room);
+        }
+        int choice = 0;
+        Scanner scanner = new Scanner(System.in);
+        do {
+            showMessage("enter:");
+            choice = scanner.nextInt();
+        } while (choice < 1 || count > rooms.size());
+        return rooms.get(choice - 1);
     }
 
     default WeaponCardClient selectWeaponCardFromSpawnSquare(Coordinates coordinates, List<WeaponCardClient> selectableWeapons) {

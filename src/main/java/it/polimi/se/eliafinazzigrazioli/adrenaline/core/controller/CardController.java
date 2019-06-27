@@ -13,6 +13,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +39,7 @@ public class CardController implements ViewEventsListenerInterface {
         eventController.addViewEventsListener(TargetSelectedEvent.class, this);
         eventController.addViewEventsListener(SquareSelectedEvent.class, this);
         eventController.addViewEventsListener(PlayersSelectedEvent.class, this);
+        eventController.addViewEventsListener(RoomSelectedEvent.class, this);
     }
 
     @Override
@@ -111,6 +113,12 @@ public class CardController implements ViewEventsListenerInterface {
             selectedPlayers.add(match.getPlayer(player));
         currentExecutingEffect.addSelectedPlayers(selectedPlayers);
 
+        effectExecutionLoop(match.getCurrentPlayer());
+    }
+
+    @Override
+    public void handleEvent(RoomSelectedEvent event) throws HandlerNotImplementedException {
+        currentExecutingEffect.addSelectedRooms(new ArrayList<>(Arrays.asList(event.getRoom())));
         effectExecutionLoop(match.getCurrentPlayer());
     }
 

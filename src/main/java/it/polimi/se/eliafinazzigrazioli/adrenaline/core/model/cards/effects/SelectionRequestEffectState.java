@@ -42,7 +42,7 @@ public class SelectionRequestEffectState extends EffectState {
                     events.add(new SelectableBoardSquaresEvent(currentPlayer, selectableSquares, maxSelectableItems));
                     break;
                 case ROOM:
-                    events.add(new SelectableRoomsEvent(currentPlayer.getPlayerNickname(), invoker.getActiveEffect().getToSelectRooms()));
+                    events.add(new SelectableRoomsEvent(currentPlayer, invoker.getActiveEffect().getToSelectRooms()));
                     break;
                 case DIRECTION:
                     events.add(new SelectDirectionEvent(currentPlayer.getPlayerNickname()));
