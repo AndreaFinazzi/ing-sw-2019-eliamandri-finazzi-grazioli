@@ -82,11 +82,11 @@ public class WeaponCardClient implements Serializable, CardInterface {
     }
 
     public List<Ammo> getLoader() {
-        return loader;
+        return new ArrayList<>(loader);
     }
 
     public List<WeaponEffectClient> getEffects() {
-        return effects;
+        return new ArrayList<>(effects);
     }
 
     public boolean isLoaded() {
