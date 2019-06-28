@@ -15,7 +15,7 @@ public class PaymentExecutedEvent extends AbstractModelEvent {
     private List<Ammo> ammosSpent;
 
     public PaymentExecutedEvent(Player player, List<PowerUpCard> powerUpsSpent, List<Ammo> ammosSpent) {
-        super(true, player);
+        super(player);
         this.powerUpsSpent = new ArrayList<>();
         for (PowerUpCard powerUpCard: powerUpsSpent)
             this.powerUpsSpent.add(new PowerUpCardClient(powerUpCard));

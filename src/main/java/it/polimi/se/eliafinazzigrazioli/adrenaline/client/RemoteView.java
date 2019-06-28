@@ -174,25 +174,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     @Override
     default void handleEvent(WeaponCollectedEvent event) throws HandlerNotImplementedException {
-        //TODO add card position settings
         LocalModel localModel = getLocalModel();
         SpawnBoardSquareClient collectionSpawnPoint = (SpawnBoardSquareClient) getLocalModel().getGameBoard().getBoardSquareByCoordinates(event.getCollectionSpawnPoint());
         WeaponCardClient weaponCard = collectionSpawnPoint.remove(event.getCollectedWeapon());
         WeaponCardClient droppedWeapon = null;
 
-        List<PowerUpCardClient> powerUpsActuallySpent = new ArrayList<>();
-
         if (event.getPlayer().equals(getClient().getPlayerName())) {
-            for (PowerUpCardClient powerUpCardClient: localModel.getPowerUpCards())
-                if (event.getPowerUpsSpent().contains(powerUpCardClient)) {
-                    powerUpsActuallySpent.add(powerUpCardClient);
-                }
 
-            for (PowerUpCardClient powerUpCardClient: powerUpsActuallySpent)
-                localModel.removePowerUp(powerUpCardClient);
-
-            for (Ammo ammo: event.getAmmosSpent())
-                localModel.removeAmmo(ammo);
+            executePayment(event.getPlayer(), event.getPowerUpsSpent(), event.getAmmosSpent());
 
             if (event.getDropOffWeapon() != null) {
                 droppedWeapon =  localModel.removeWeapon(event.getDropOffWeapon());
@@ -205,11 +194,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
         else {
             String player = event.getPlayer();
-            for (PowerUpCardClient powerUpCardClient : event.getPowerUpsSpent())
-                localModel.getOpponentInfo(player).removePowerUp();
 
-            for (Ammo ammo: event.getAmmosSpent())
-                localModel.getOpponentInfo(player).removeAmmo(ammo);
+            executePayment(player, event.getPowerUpsSpent(), event.getAmmosSpent());
 
             if (event.getDropOffWeapon() != null) {
                 droppedWeapon =  localModel.getOpponentInfo(player).removeWeapon(event.getDropOffWeapon());
@@ -219,8 +205,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             localModel.getOpponentInfo(player).addWeapon(weaponCard);
         }
 
+        showPaymentUpdate(event.getPlayer(), event.getPowerUpsSpent(), event.getAmmosSpent());
         showWeaponCollectionUpdate(event.getPlayer(), weaponCard, droppedWeapon, collectionSpawnPoint.getRoom());
-        showPaymentUpdate(event.getPlayer(), powerUpsActuallySpent, event.getAmmosSpent());
     }
 
     @Override
@@ -526,8 +512,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     default void executePayment(String player, List<PowerUpCardClient> powerUpsToPay, List<Ammo> ammosToPay) {
         if (player.equals(getClient().getPlayerName())) {
-            List<PowerUpCardClient> actualPowerUpsToPay;
-            actualPowerUpsToPay = extractActualPowerUps(powerUpsToPay);
+            List<PowerUpCardClient> actualPowerUpsToPay = extractActualPowerUps(powerUpsToPay);
             for (PowerUpCardClient powerUpCardClient: actualPowerUpsToPay)
                 getLocalModel().removePowerUp(powerUpCardClient);
             for (Ammo ammo: ammosToPay)
@@ -930,12 +915,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         for (PowerUpCardClient powerUpCardClient: powerUpCopies)
             powerUpIds.add(powerUpCardClient.getId());
         for (PowerUpCardClient powerUpCardClient: getLocalModel().getPowerUpCards()) {
-            if (powerUpIds.contains(powerUpCardClient.getId()))
+            if (powerUpIds.contains(powerUpCardClient.getId())) {
                 actualPowerUps.add(powerUpCardClient);
+                powerUpIds.remove(powerUpCardClient.getId());
+            }
         }
         return actualPowerUps;
     }
-
-
-
 }

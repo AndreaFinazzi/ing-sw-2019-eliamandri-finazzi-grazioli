@@ -174,10 +174,6 @@ public class LocalModel {
         return weaponHandFull;
     }
 
-    public void updatePowerUpCards() {
-        //TODO
-    }
-
     public void setWeaponHandFull() {
         weaponHandFull = true;
     }
