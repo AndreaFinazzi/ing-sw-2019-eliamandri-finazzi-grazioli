@@ -384,7 +384,7 @@ public class CommandsGUIController extends AbstractGUIController {
 
 
     public void showAmmoCollected(Ammo ammo, boolean actuallyCollected) {
-        if (actuallyCollected) playerBoardGUIController.addAmmoToStack(ammo);
+        playerBoardGUIController.updateAmmoStack();
     }
 
     public void updateMyAmmo() {

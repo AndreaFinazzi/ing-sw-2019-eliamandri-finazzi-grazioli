@@ -9,9 +9,9 @@
 
             <children>
                 <!--Here we'll have player_board.fxml-->
-                <TextArea fx:id="playerInfoTextArea" opacity="0.4" promptText="Prompt" styleClass="playerInfoTextArea"
-                          text="Player info" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="750.0"
-                          AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                <TextArea fx:id="playerInfoTextArea" editable="false" opacity="0.4" promptText="Prompt"
+                          styleClass="playerInfoTextArea" text="Player info" AnchorPane.bottomAnchor="10.0"
+                          AnchorPane.leftAnchor="750.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <font>
                         <Font size="18.0"/>
                     </font>

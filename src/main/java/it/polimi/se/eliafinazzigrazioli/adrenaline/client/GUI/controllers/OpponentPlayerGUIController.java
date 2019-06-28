@@ -52,7 +52,7 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
     }
 
     public void showAmmoCollected(Ammo ammo, boolean actuallyCollected) {
-        if (actuallyCollected) playerBoardGUIController.addAmmoToStack(ammo);
+        playerBoardGUIController.updateAmmoStack();
     }
 
     public void updatePlayerAmmo() {

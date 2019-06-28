@@ -116,6 +116,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         updateWeaponCards();
     }
 
+
     public void setCardCollected(AmmoCardClient cardCollected) throws IOException {
         overlayHBox.setVisible(true);
         //TODO should define a specific fxml?
@@ -141,7 +142,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         });
     }
 
-    public void updateAmmoStack() {
+    public synchronized void updateAmmoStack() {
         List<Ammo> ammos;
         if (isOpponent)
             ammos = view.getLocalModel().getOpponentInfo(player).getAmmos();
@@ -208,7 +209,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         if (isOpponent) {
             List<Node> payedPowerUpNodes = new ArrayList<>();
             for (PowerUpCardClient powerUpCard : powerUpCards) {
-                Node elementNode = GUI.getChildrenByProperty(powerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
+                Node elementNode = powerUpCardSlots.getChildren().get(0);
                 view.applyBackground(elementNode, view.getPowerUpAsset(powerUpCard.getId()));
                 payedPowerUpNodes.add(elementNode);
             }
