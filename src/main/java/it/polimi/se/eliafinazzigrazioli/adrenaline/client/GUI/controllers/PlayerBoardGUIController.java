@@ -1,10 +1,11 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.Transitions.TransitionManager;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.transitions.TransitionManager;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponEffectClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
@@ -14,11 +15,13 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -26,16 +29,21 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class PlayerBoardGUIController extends AbstractGUIController {
-    private static final String PLAYER_BOARD_STYLE_CLASS_DEFAULT = "playerBoard_NONE";
-    private static final String PLAYER_BOARD_STYLE_CLASS_PREFIX = "playerBoard_";
 
     @FXML
     private HBox overlayHBox;
     @FXML
     private GridPane playerBoardGridPane;
+    @FXML
+    private GridPane detailsGridPane;
+    @FXML
+    private HBox detailsImageHBox;
+    @FXML
+    private VBox detailsTextVBox;
 
     @FXML
     private HBox damagesHBox;
@@ -56,6 +64,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
     private Avatar avatar;
     private boolean isOpponent;
 
+    private AtomicReference<WeaponEffectClient> selectedWeaponEffect;
 
     public PlayerBoardGUIController(GUI view, String player, boolean isOpponent) {
         super(view);
@@ -71,6 +80,10 @@ public class PlayerBoardGUIController extends AbstractGUIController {
 
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+    }
+
+    public void setSelectedWeaponEffect(AtomicReference<WeaponEffectClient> selectedWeaponEffect) {
+        this.selectedWeaponEffect = selectedWeaponEffect;
     }
 
     public void setCardCollected(PowerUpCardClient cardCollected) throws IOException {
@@ -204,12 +217,10 @@ public class PlayerBoardGUIController extends AbstractGUIController {
             // Back to player board at the end.
             powerUpTransition.setOnFinished(event -> {
                 cardsGridPane.setVisible(false);
-                playerBoardGridPane.setVisible(true);
             });
 
             // Switch to opponent's cards panel
             Platform.runLater(() -> {
-                playerBoardGridPane.setVisible(false);
                 cardsGridPane.setVisible(true);
             });
 
@@ -237,9 +248,14 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         return null;
     }
 
-    private void toggleView() {
-        playerBoardGridPane.setVisible(cardsGridPane.visibleProperty().get());
-        cardsGridPane.setVisible(!playerBoardGridPane.visibleProperty().get());
+    private void toggleCardsView() {
+//        playerBoardGridPane.setVisible(cardsGridPane.visibleProperty().get());
+        cardsGridPane.setVisible(!cardsGridPane.visibleProperty().get());
+    }
+
+    private void toggleDetailsView() {
+//        playerBoardGridPane.setVisible(detailsGridPane.visibleProperty().get());
+        detailsGridPane.setVisible(!detailsGridPane.visibleProperty().get());
     }
 
     public void highlight(boolean setHighlight) {
@@ -277,18 +293,91 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         }
     }
 
+    public void showDetails(WeaponCardClient weaponCard) throws IOException {
+        if (!isOpponent && weaponCard != null) {
+            Platform.runLater(() -> {
+                detailsImageHBox.getChildren().clear();
+                detailsTextVBox.getChildren().clear();
+            });
+            detailsGridPane.setVisible(true);
+            Node imageNode = loadFXML(GUI.FXML_PATH_WEAPON, detailsImageHBox, null);
+            view.applyBackground(imageNode, view.getWeaponAsset(weaponCard.getId()));
+
+            Platform.runLater(() -> {
+                for (WeaponEffectClient effect : weaponCard.getEffects()) {
+                    Label effectLabel = new Label(effect.getEffectName().toUpperCase() + String.format("%n") + effect.getEffectDescription());
+                    effectLabel.getProperties().put(GUI.PROPERTIES_EFFECT_KEY, effect.getEffectName());
+                    effectLabel.getStyleClass().add(GUI.STYLE_CLASS_EFFECT_DEFAULT);
+                    detailsTextVBox.getChildren().add(effectLabel);
+                }
+            });
+        }
+    }
+
+    public void showDetails(PowerUpCardClient powerUpCard) throws IOException {
+        if (!isOpponent && powerUpCard != null) {
+            Platform.runLater(() -> {
+                detailsImageHBox.getChildren().clear();
+                detailsTextVBox.getChildren().clear();
+            });
+            detailsGridPane.setVisible(true);
+            Node imageNode = loadFXML(GUI.FXML_PATH_POWER_UP, detailsImageHBox, null);
+            view.applyBackground(imageNode, view.getPowerUpAsset(powerUpCard.getId()));
+
+            Platform.runLater(() -> {
+                Label descriptionLabel = new Label(powerUpCard.getPowerUpType().toUpperCase() + String.format("%n") + powerUpCard.getDescription());
+                descriptionLabel.getStyleClass().add(GUI.STYLE_CLASS_EFFECT_DEFAULT);
+                detailsTextVBox.getChildren().add(descriptionLabel);
+            });
+        }
+    }
+
+    public void hideDetails() {
+        if (!isOpponent) {
+            detailsGridPane.setVisible(false);
+        }
+    }
+
+    public void setSelectableEffects(WeaponCardClient weaponCard, List<WeaponEffectClient> callableEffects) throws IOException {
+        showDetails(weaponCard);
+        Platform.runLater(() -> {
+            for (WeaponEffectClient effect : callableEffects) {
+                Label effectLabel = (Label) GUI.getChildrenByProperty(detailsTextVBox.getChildren(), GUI.PROPERTIES_EFFECT_KEY, effect.getEffectName());
+                effectLabel.setDisable(false);
+                effectLabel.getStyleClass().add(GUI.STYLE_CLASS_EFFECT_SELECTABLE);
+                effectLabel.setOnMouseClicked(event -> {
+                    selectedWeaponEffect.set(effect);
+                    disableEffects();
+                    semaphore.release();
+                });
+            }
+        });
+    }
+
+    private void disableEffects() {
+        Platform.runLater(() -> {
+            detailsTextVBox.getChildren().forEach(label -> {
+                label.getStyleClass().remove(GUI.STYLE_CLASS_EFFECT_SELECTABLE);
+                label.setDisable(true);
+            });
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (!initialized) {
             initialized = true;
             super.initialize(location, resources);
 
-            playerBoardGridPane.getStyleClass().remove(PLAYER_BOARD_STYLE_CLASS_DEFAULT);
-            playerBoardGridPane.getStyleClass().add(PLAYER_BOARD_STYLE_CLASS_PREFIX + avatar.getDamageMark().name());
+            playerBoardGridPane.getStyleClass().remove(GUI.STYLE_CLASS_PLAYER_BOARD_DEFAULT);
+            playerBoardGridPane.getStyleClass().add(GUI.STYLE_CLASS_PLAYER_BOARD_PREFIX + avatar.getDamageMark().name());
 
             if (isOpponent) {
-                cardsGridPane.setOnMouseClicked((event) -> toggleView());
-                playerBoardGridPane.setOnMouseClicked((event) -> toggleView());
+                cardsGridPane.setOnMouseClicked((event) -> toggleCardsView());
+                playerBoardGridPane.setOnMouseClicked((event) -> toggleCardsView());
+            } else {
+                detailsGridPane.setOnMouseClicked((event) -> toggleDetailsView());
+                playerBoardGridPane.setOnMouseClicked((event) -> toggleDetailsView());
             }
         }
     }

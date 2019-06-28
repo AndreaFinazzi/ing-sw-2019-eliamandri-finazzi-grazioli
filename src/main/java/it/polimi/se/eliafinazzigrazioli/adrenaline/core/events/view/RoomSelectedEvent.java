@@ -16,4 +16,8 @@ public class RoomSelectedEvent extends AbstractViewEvent {
     public void handle(ViewEventsListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);
     }
+
+    public Room getRoom() {
+        return room;
+    }
 }

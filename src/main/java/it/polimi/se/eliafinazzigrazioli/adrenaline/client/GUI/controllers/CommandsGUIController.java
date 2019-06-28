@@ -1,11 +1,8 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.Transitions.TransitionManager;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.MoveDirection;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PlayerAction;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.transitions.TransitionManager;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -18,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -39,17 +37,19 @@ public class CommandsGUIController extends AbstractGUIController {
 
     private AtomicReference<MoveDirection> selectedMove;
     private AtomicReference<PlayerAction> chosenAction;
+
     private PlayerBoardGUIController playerBoardGUIController;
 
     @FXML
     private FlowPane actionsFlowPane;
+
     @FXML
     private GridPane arrowsGridPane;
     @FXML
     private AnchorPane myPlayerBoardAnchorPane;
-
     @FXML
     private HBox spawnPowerUpSlots;
+
     @FXML
     private GridPane myCardsGridPane;
     @FXML
@@ -58,12 +58,12 @@ public class CommandsGUIController extends AbstractGUIController {
     private HBox myWeaponCardSlots;
     @FXML
     private Button proceedCardsButton;
-
     @FXML
     private TextArea messagesTextArea;
 
     @FXML
     private Button arrowUP;
+
     @FXML
     private Button arrowRIGHT;
     @FXML
@@ -73,7 +73,6 @@ public class CommandsGUIController extends AbstractGUIController {
     @FXML
     private Button arrowSTOP;
     private Map<MoveDirection, Button> moveDirectionButtonEnumMap = new EnumMap<>(MoveDirection.class);
-
     public CommandsGUIController(GUI view) {
         super(view);
     }
@@ -99,6 +98,10 @@ public class CommandsGUIController extends AbstractGUIController {
 
         myCardsGridPane.setVisible(false);
         spawnPowerUpSlots.setVisible(true);
+    }
+
+    public PlayerBoardGUIController getPlayerBoardGUIController() {
+        return playerBoardGUIController;
     }
 
     public void updatePowerUpCards() {
@@ -208,11 +211,19 @@ public class CommandsGUIController extends AbstractGUIController {
             button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, this);
             button.setDisable(true);
             Button finalButton = button;
-            button.setOnAction(event -> {
-                disableCards();
-                proceedCardsButton.setDisable(true);
-                selectedPowerUp.set(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
-                semaphore.release();
+            button.setOnMouseClicked(event -> {
+                if (event.getButton().equals(MouseButton.SECONDARY)) {
+                    try {
+                        playerBoardGUIController.showDetails(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                    } catch (IOException e) {
+                        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    }
+                } else {
+                    disableCards();
+                    proceedCardsButton.setDisable(true);
+                    selectedPowerUp.set(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                    semaphore.release();
+                }
             });
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -228,10 +239,18 @@ public class CommandsGUIController extends AbstractGUIController {
             button.getStyleClass().add(GUI.STYLE_CLASS_WEAPON_MY);
             button.setDisable(true);
             Button finalButton = button;
-            button.setOnAction(event -> {
-                disableCards();
-                selectedWeapon.set(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
-                semaphore.release();
+            button.setOnMouseClicked(event -> {
+                if (event.getButton().equals(MouseButton.SECONDARY)) {
+                    try {
+                        playerBoardGUIController.showDetails(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                    } catch (IOException e) {
+                        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    }
+                } else {
+                    disableCards();
+                    selectedWeapon.set(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                    semaphore.release();
+                }
             });
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -386,5 +405,13 @@ public class CommandsGUIController extends AbstractGUIController {
     public void showDamageReceived(List<DamageMark> damages, List<DamageMark> marks) throws IOException {
         playerBoardGUIController.updateDamages();
         playerBoardGUIController.updateMarks();
+    }
+
+    public void showDetails(WeaponCardClient weaponCard) throws IOException {
+        playerBoardGUIController.showDetails(weaponCard);
+    }
+
+    public void setSelectableEffects(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) throws IOException {
+        playerBoardGUIController.setSelectableEffects(weapon, callableEffects);
     }
 }

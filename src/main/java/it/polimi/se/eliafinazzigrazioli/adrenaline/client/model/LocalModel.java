@@ -293,8 +293,8 @@ public class LocalModel {
         }
         else {
             getOpponentInfo(damagedPlayer).addDamages(damages);
-            getOpponentInfo(damagedPlayer).addMarks(marks);
             getOpponentInfo(damagedPlayer).removeMarks(removedMarks);
+            getOpponentInfo(damagedPlayer).addMarks(marks);
         }
     }
 

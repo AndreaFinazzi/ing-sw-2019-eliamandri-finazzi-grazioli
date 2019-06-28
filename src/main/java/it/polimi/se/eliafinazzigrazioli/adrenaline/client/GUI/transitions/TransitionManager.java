@@ -1,4 +1,4 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.Transitions;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.transitions;
 
 import javafx.animation.*;
 import javafx.scene.Node;

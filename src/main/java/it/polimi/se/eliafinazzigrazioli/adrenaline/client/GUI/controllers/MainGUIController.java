@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
@@ -202,11 +203,15 @@ public class MainGUIController extends AbstractGUIController {
         }
     }
 
-    public void removeWeaponCardFromMap(Room room, String cardId) {
-        Node weaponCard = GUI.getChildrenByProperty(roomWeaponCardSlotsEnumMap.get(room).getChildren(), GUI.PROPERTIES_CARD_ID_KEY, cardId);
-        if (weaponCard != null) {
-            String uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(GUI.ASSET_ID_HIDDEN_CARD) : view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD);
-            view.applyBackground(weaponCard, uri);
+    public void removeWeaponCardFromMap(Room room, WeaponCardClient weaponCard, WeaponCardClient droppedCard) {
+        String uri;
+        Node weaponCardNode = GUI.getChildrenByProperty(roomWeaponCardSlotsEnumMap.get(room).getChildren(), GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
+        if (weaponCardNode != null) {
+            if (droppedCard == null)
+                uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(GUI.ASSET_ID_HIDDEN_CARD) : view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD);
+            else
+                uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(droppedCard.getId()) : view.getWeaponAsset(droppedCard.getId());
+            view.applyBackground(weaponCardNode, uri);
         }
     }
 
@@ -238,10 +243,12 @@ public class MainGUIController extends AbstractGUIController {
         });
     }
 
+
     private void disablePlayers() {
         playersNodeMap.forEach((player, node) -> {
             node.getStyleClass().remove(GUI.STYLE_CLASS_AVATAR_SELECTABLE);
-            view.getOpponentPlayerToGUIControllerMap().get(player).highlight(false);
+            OpponentPlayerGUIController opponentPlayerGUIController = view.getOpponentPlayerToGUIControllerMap().get(player);
+            if (opponentPlayerGUIController != null) opponentPlayerGUIController.highlight(false);
             node.setOnMouseEntered(null);
             node.setOnMouseExited(null);
             node.setOnMouseClicked(null);
@@ -271,10 +278,14 @@ public class MainGUIController extends AbstractGUIController {
                             button.getStyleClass().add(GUI.STYLE_CLASS_WEAPON_ON_MAP);
                         button.setDisable(true);
                         int slotPosition = i;
-                        button.setOnAction(event -> {
-                            disableWeaponCards();
-                            selectedWeapon.set(view.getLocalModel().getGameBoard().getSpawnBoardSquareClientByRoom(weaponCardSlot.getKey()).getWeaponCardsBySlotPosition(slotPosition));
-                            semaphore.release();
+                        button.setOnMouseClicked(event -> {
+                            if (event.getButton().equals(MouseButton.SECONDARY)) {
+                                view.showCardDetails(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                            } else {
+                                disableWeaponCards();
+                                selectedWeapon.set(view.getLocalModel().getGameBoard().getSpawnBoardSquareClientByRoom(weaponCardSlot.getKey()).getWeaponCardsBySlotPosition(slotPosition));
+                                semaphore.release();
+                            }
                         });
                     } catch (IOException e) {
                         LOGGER.log(Level.SEVERE, e.getMessage(), e);

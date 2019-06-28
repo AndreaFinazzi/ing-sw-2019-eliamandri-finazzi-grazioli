@@ -158,7 +158,7 @@ public class GameBoard {
                 for (int y = 0; y < y_max; y++) {
                     if (squaresMatrix[x][y] != null && squaresMatrix[x][y].isSpawnPoint() && !((SpawnBoardSquare) squaresMatrix[x][y]).weaponsSlotIsFull() && !deck.isEmpty()) {
                         weaponsOnSpawn = new ArrayList<>();
-                        for (int i = 0; i < Rules.GAME_BOARD_MAX_WEAPONS_ON_SPAWN && !((SpawnBoardSquare) squaresMatrix[x][y]).weaponsSlotIsFull(); i++) {
+                        for (int i = 0; i < Rules.GAME_BOARD_MAX_WEAPONS_ON_SPAWN && !((SpawnBoardSquare) squaresMatrix[x][y]).weaponsSlotIsFull() && !deck.isEmpty(); i++) {
                             try {
                                 weaponCard = WeaponCard.jsonParser(deck.drawCard());
                             } catch (WeaponFileNotFoundException e) {

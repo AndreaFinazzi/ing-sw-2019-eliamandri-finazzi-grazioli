@@ -43,6 +43,10 @@ public class GUI extends Application implements RemoteView {
     public static final String STYLE_CLASS_WEAPON_MY = "myWeaponCard";
     public static final String STYLE_CLASS_BOARD_SQUARE_SELECTABLE = "selectableBoardSquare";
     public static final String STYLE_CLASS_AVATAR_SELECTABLE = "selectableAvatar";
+    public static final String STYLE_CLASS_EFFECT_SELECTABLE = "selectableEffectLabel";
+    public static final String STYLE_CLASS_EFFECT_DEFAULT = "effectLabel";
+    public static final String STYLE_CLASS_PLAYER_BOARD_DEFAULT = "playerBoard_NONE";
+    public static final String STYLE_CLASS_PLAYER_BOARD_PREFIX = "playerBoard_";
 
     public static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
     public static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
@@ -80,6 +84,7 @@ public class GUI extends Application implements RemoteView {
     public static final String FXML_PATH_MARK = FXML_PATH_ROOT + "mark.fxml";
 
     public static final String PROPERTIES_CARD_ID_KEY = "card_id";
+    public static final String PROPERTIES_EFFECT_KEY = "effect_name";
     public static final String PROPERTIES_AVATAR_KEY = "avatar";
     public static final String PROPERTIES_AMMO_KEY = "ammo_name";
 
@@ -197,11 +202,6 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public WeaponEffectClient selectWeaponEffect(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) {
-        return !callableEffects.isEmpty() ? callableEffects.get(0) : null;
-    }
-
-    @Override
     public void showMessage(Object message) {
         if (commandsGUIController != null)
             commandsGUIController.showMessage(message);
@@ -231,6 +231,34 @@ public class GUI extends Application implements RemoteView {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
+    }
+
+    @Override
+    public WeaponEffectClient selectWeaponEffect(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) {
+        if (!callableEffects.isEmpty()) {
+            AtomicReference<WeaponEffectClient> selectedEffect = new AtomicReference<>();
+            Semaphore semaphore = new Semaphore(0);
+
+            commandsGUIController.getPlayerBoardGUIController().setSemaphore(semaphore);
+            commandsGUIController.getPlayerBoardGUIController().setSelectedWeaponEffect(selectedEffect);
+
+
+            try {
+                commandsGUIController.setSelectableEffects(weapon, callableEffects);
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+
+            synchronized (semaphore) {
+                return selectedEffect.get();
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -451,7 +479,7 @@ public class GUI extends Application implements RemoteView {
         } else {
             commandsGUIController.updateWeaponCards();
         }
-        mainGUIController.removeWeaponCardFromMap(roomColor, collectedCard.getId());
+        mainGUIController.removeWeaponCardFromMap(roomColor, collectedCard, droppedCard);
 
     }
 
@@ -622,6 +650,14 @@ public class GUI extends Application implements RemoteView {
     public void showSpawnUpdate(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
         try {
             mainGUIController.movePlayer(player, spawnPoint);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+
+    public void showCardDetails(WeaponCardClient weaponCard) {
+        try {
+            commandsGUIController.showDetails(weaponCard);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
