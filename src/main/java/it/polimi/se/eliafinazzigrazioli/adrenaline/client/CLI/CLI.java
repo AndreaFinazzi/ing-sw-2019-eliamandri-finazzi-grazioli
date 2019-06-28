@@ -62,7 +62,7 @@ public class CLI implements RemoteView, Runnable {
         showMessage(mapText);
     }
 
-    public void showLogin(ArrayList<Avatar> availableAvatars) {
+    public void showLogin(List<Avatar> availableAvatars) {
         showMessage("Insert your player name");
         String username = input.nextLine();
 
@@ -77,7 +77,7 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void showMapVote(ArrayList<MapType> availableMaps) {
+    public void showMapVote(List<MapType> availableMaps) {
         showMessage("Vote one of the following maps: ");
         showMessage(CLIUtils.serializeList(availableMaps));
         notifyMapVoteEvent(availableMaps.get(nextInt(availableMaps.size())));

@@ -43,19 +43,21 @@ public class BoardSquareGUIController extends AbstractGUIController {
             Platform.runLater(() -> ammoCardSlot.setImage(null));
     }
 
-    public Node addPlayer(String player) throws IOException {
-        players.add(player);
-        ImageView avatarNode = (ImageView) loadFXML(GUI.FXML_PATH_AVATAR, boardSquare, this);
-        avatarNode.getProperties().put(GUI.PROPERTIES_AVATAR_KEY, player);
+    public synchronized Node addPlayer(String player) throws IOException {
+        if (!hasPlayer(player)) {
+            players.add(player);
+            ImageView avatarNode = (ImageView) loadFXML(GUI.FXML_PATH_AVATAR, boardSquare, this);
+            avatarNode.getProperties().put(GUI.PROPERTIES_AVATAR_KEY, player);
 
-        String uri = view.getAvatarAsset(view.getLocalModel().getPlayersAvatarMap().get(player).getDamageMark().name());
-        Platform.runLater(() -> avatarNode.setImage(new Image(uri)));
+            String uri = view.getAvatarAsset(view.getLocalModel().getPlayersAvatarMap().get(player).getDamageMark().name());
+            Platform.runLater(() -> avatarNode.setImage(new Image(uri)));
+            return avatarNode;
+        }
 
-        return avatarNode;
+        return null;
     }
 
-    public boolean removePlayer(String player) {
-        players.remove(player);
+    public synchronized boolean removePlayer(String player) {
 
         Iterator<Node> childrenIterator = boardSquare.getChildren().iterator();
 
@@ -63,10 +65,10 @@ public class BoardSquareGUIController extends AbstractGUIController {
             Node child = childrenIterator.next();
             if (child.hasProperties() && child.getProperties().get(GUI.PROPERTIES_AVATAR_KEY).equals(player)) {
                 Platform.runLater(childrenIterator::remove);
+                players.remove(player);
                 return true;
             }
         }
-
         return false;
     }
 
@@ -76,7 +78,6 @@ public class BoardSquareGUIController extends AbstractGUIController {
     }
 
     public Node makeSelectable(EventHandler<MouseEvent> onMouseClicked) {
-        boardSquare.setDisable(false);
         boardSquare.getStyleClass().add(GUI.STYLE_CLASS_BOARD_SQUARE_SELECTABLE);
         boardSquare.setOnMouseClicked(onMouseClicked);
 

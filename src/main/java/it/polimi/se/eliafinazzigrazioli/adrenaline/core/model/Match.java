@@ -1,6 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
@@ -11,7 +10,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -228,7 +226,7 @@ public class Match implements Observable {
         } else {
             tempPlayer = players.add(clientID, nickname);
             if (!availableAvatars.contains(avatar))
-                avatar = availableAvatars.get(new Random().nextInt(availableAvatars.size() - 1));
+                avatar = availableAvatars.get(0);
 
             tempPlayer.setAvatar(avatar);
             availableAvatars.remove(avatar);

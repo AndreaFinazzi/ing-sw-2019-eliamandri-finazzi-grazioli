@@ -28,6 +28,7 @@ public class Player implements Selectable {
     private boolean placed;
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
+
     // Define additional methods, granting access to players list by nickname (unique key)
     // These are implemented in anonymous class in Match
     public abstract static class AbstractPlayerList extends ArrayList<Player> {
@@ -44,6 +45,7 @@ public class Player implements Selectable {
 
 
     }
+
     public Player(String playerNickname) {
         this.playerNickname = playerNickname;
         weapons = new ArrayList<>();
@@ -113,7 +115,7 @@ public class Player implements Selectable {
     //TODO define type exception
     public WeaponCard removeWeapon(String weapon) throws Exception {
         WeaponCard weaponToRemove = null;
-        for (WeaponCard weaponCard: weapons) {
+        for (WeaponCard weaponCard : weapons) {
             if (weapon.equals(weaponCard.getWeaponName())) {
                 weaponToRemove = weaponCard;
             }
@@ -145,7 +147,7 @@ public class Player implements Selectable {
 
     //TODO define type excpetion
     public PowerUpCollectedEvent addPowerUp(PowerUpCard powerUpCard, PowerUpsDeck deck) {
-        if (powerUps.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && powerUpCard != null){
+        if (powerUps.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && powerUpCard != null) {
             powerUps.add(powerUpCard);
             return new PowerUpCollectedEvent(playerNickname, powerUpCard, true);
         }
@@ -153,7 +155,7 @@ public class Player implements Selectable {
         return new PowerUpCollectedEvent(playerNickname, powerUpCard, false);
     }
 
-    public void addAmmos(List<Ammo> ammoList){
+    public void addAmmos(List<Ammo> ammoList) {
         playerBoard.addAmmos(ammoList);
     }
 
@@ -163,12 +165,13 @@ public class Player implements Selectable {
 
     /**
      * Given a color of the ammos returns the sum of the ammos and equivalent powerUps of that color.
+     *
      * @param ammoType
      * @return
      */
-    public int ammosNum(Ammo ammoType){
+    public int ammosNum(Ammo ammoType) {
         int numOfAmmos = playerBoard.numAmmoType(ammoType);
-        for (PowerUpCard powerUpCard: powerUps) {
+        for (PowerUpCard powerUpCard : powerUps) {
             if (powerUpCard.getAmmo().equals(ammoType))
                 numOfAmmos++;
         }
@@ -177,18 +180,19 @@ public class Player implements Selectable {
 
     /**
      * Returns true only if the player can somehow (with ammos or with powerUps) pay the given price.
+     *
      * @param price
      * @return
      */
-    public boolean canSpend(List<Ammo> price, List<PowerUpCard> powerUps){
+    public boolean canSpend(List<Ammo> price, List<PowerUpCard> powerUps) {
         List<Ammo> priceCopy = new ArrayList<>(price);
-        for (PowerUpCard powerUpCard: powerUps) {
+        for (PowerUpCard powerUpCard : powerUps) {
             if (priceCopy.contains(powerUpCard.getAmmo()))
                 priceCopy.remove(powerUpCard.getAmmo());
             else
                 return false;
         }
-        for (Ammo ammo: playerBoard.getAmmos())
+        for (Ammo ammo : playerBoard.getAmmos())
             if (priceCopy.contains(ammo))
                 priceCopy.remove(ammo);
         if (priceCopy.isEmpty())
@@ -200,10 +204,10 @@ public class Player implements Selectable {
     public List<PowerUpCard> getRealModelReferences(List<PowerUpCardClient> powerUpCardsClient) {
         List<String> powerUpIds = new ArrayList<>();
         List<PowerUpCard> realPowerUps = new ArrayList<>();
-        for (PowerUpCardClient powerUpCardClient: powerUpCardsClient)
+        for (PowerUpCardClient powerUpCardClient : powerUpCardsClient)
             powerUpIds.add(powerUpCardClient.getId());
 
-        for (PowerUpCard powerUpCard: powerUps)
+        for (PowerUpCard powerUpCard : powerUps)
             if (powerUpIds.contains(powerUpCard.getId())) {
                 realPowerUps.add(powerUpCard);
                 powerUpIds.remove(powerUpCard.getId());
@@ -213,7 +217,7 @@ public class Player implements Selectable {
 
     public List<Ammo> spendPrice(List<Ammo> price, List<PowerUpCard> powerUpsToSpend) {
         List<Ammo> priceCopy = new ArrayList<>(price);
-        for (PowerUpCard powerUpCard: powerUpsToSpend) {
+        for (PowerUpCard powerUpCard : powerUpsToSpend) {
             priceCopy.remove(powerUpCard.getAmmo());
             powerUps.remove(powerUpCard);
         }
@@ -291,8 +295,7 @@ public class Player implements Selectable {
 
     public void setAvatar(Avatar avatar) {
         if (avatar != null) {
-            if (this.avatar == null)
-                this.avatar = avatar;
+            this.avatar = avatar;
             damageMarkDelivered = avatar.getDamageMark();
         }
     }

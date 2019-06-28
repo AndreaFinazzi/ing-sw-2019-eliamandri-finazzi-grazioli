@@ -30,7 +30,7 @@ public class EventController implements Observer {
 
 
     @Override
-    public void update(AbstractViewEvent event) {
+    public synchronized void update(AbstractViewEvent event) {
         LOGGER.info("Updating eventController");
 
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(event.getClass());
@@ -48,7 +48,7 @@ public class EventController implements Observer {
     }
 
     @Override
-    public void update(AbstractModelEvent event) {
+    public synchronized void update(AbstractModelEvent event) {
         if (virtualViews == null) return;
 
         if (event.isPrivateEvent()) {
@@ -62,7 +62,7 @@ public class EventController implements Observer {
         }
     }
 
-    public void addViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) {
+    public synchronized void addViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) {
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(key);
 
         if (listeners != null) {
@@ -74,7 +74,7 @@ public class EventController implements Observer {
         }
     }
 
-    public void addVirtualView(AbstractClientHandler virtualView) {
+    public synchronized void addVirtualView(AbstractClientHandler virtualView) {
         if (virtualViews == null) {
             virtualViews = new ArrayList<>();
         }
@@ -82,12 +82,12 @@ public class EventController implements Observer {
             virtualViews.add(virtualView);
     }
 
-    public void removeViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) throws ListenerNotFoundException {
+    public synchronized void removeViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) throws ListenerNotFoundException {
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(key);
         if (!listeners.remove(value)) throw new ListenerNotFoundException();
     }
 
-    public AbstractClientHandler popVirtualView(int clientID) {
+    public synchronized AbstractClientHandler popVirtualView(int clientID) {
         for (AbstractClientHandler virtualView : virtualViews) {
             if (virtualView.getClientID() == clientID) {
                 virtualViews.remove(virtualView);

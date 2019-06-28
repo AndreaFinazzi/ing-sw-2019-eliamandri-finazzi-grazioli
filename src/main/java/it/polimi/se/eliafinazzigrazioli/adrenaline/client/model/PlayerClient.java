@@ -77,13 +77,14 @@ public class PlayerClient implements CardInterface{
     }
 
     public WeaponCardClient removeWeapon(String weapon) {
+
         WeaponCardClient toRemove = null;
         for (WeaponCardClient weaponCardClient: weapons) {
-            if (weapon.equals(weaponCardClient))
+            if (weapon.equals(weaponCardClient.getWeaponName()))
                 toRemove = weaponCardClient;
         }
         weapons.remove(toRemove);
-        toRemove.setSlotPosition(null, -1);
+        if (toRemove != null) toRemove.setSlotPosition(null, -1);
         return toRemove;
     }
 

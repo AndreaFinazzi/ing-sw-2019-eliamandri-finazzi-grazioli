@@ -92,7 +92,7 @@ public class MainGUIController extends AbstractGUIController {
         this.selectedPlayer = selectedPlayer;
     }
 
-    public void setVoteMap(ArrayList<MapType> availableMaps) {
+    public void setVoteMap(List<MapType> availableMaps) {
         mapVoteOverlayStackPane.setVisible(true);
 
         availableMapsChoiceBox.getItems().addAll(availableMaps);
@@ -136,9 +136,9 @@ public class MainGUIController extends AbstractGUIController {
 
     private void disableWeaponCards() {
         for (Pane weaponCardSlots : roomWeaponCardSlotsEnumMap.values()) {
-            for (Node weaponCard :
-                    weaponCardSlots.getChildren()) {
+            for (Node weaponCard : weaponCardSlots.getChildren()) {
                 weaponCard.setDisable(true);
+                Platform.runLater(() -> weaponCard.getStyleClass().remove(GUI.STYLE_CLASS_HIGHLIGHT));
             }
         }
     }
@@ -146,8 +146,11 @@ public class MainGUIController extends AbstractGUIController {
     public void setSelectableWeaponCards(List<WeaponCardClient> selectableWeapons) {
         for (WeaponCardClient weaponCard : selectableWeapons) {
             Pane weaponCardSlotsPane = roomWeaponCardSlotsEnumMap.get(weaponCard.getSpawnBoardSquare());
-            weaponCardSlotsPane.getChildren().get(weaponCard.getSlotPosition()).setDisable(false);
-            Platform.runLater(weaponCardSlotsPane::requestFocus);
+            Node weaponCardNode = GUI.getChildrenByProperty(weaponCardSlotsPane.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
+            if (weaponCardNode != null) {
+                weaponCardNode.setDisable(false);
+                Platform.runLater(() -> weaponCardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
+            }
         }
     }
 
@@ -170,7 +173,7 @@ public class MainGUIController extends AbstractGUIController {
     public void updateWeaponCardOnMap(WeaponCardClient weaponCard) {
         Node weaponCardSlot = roomWeaponCardSlotsEnumMap.get(weaponCard.getSpawnBoardSquare()).getChildren().get(weaponCard.getSlotPosition());
         if (weaponCardSlot == null) {
-            throw new NullPointerException(String.format("WeaponCardSlot not found for:\t%s\n\tin:\t%s", weaponCard, weaponCard.getSpawnBoardSquare()));
+            throw new NullPointerException(String.format("WeaponCardSlot not found for:\t%s%n\tin:\t%s", weaponCard, weaponCard.getSpawnBoardSquare()));
         } else {
             weaponCardSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
             String uri = rotatedAssetsRooms.contains(weaponCard.getSpawnBoardSquare()) ? view.getWeaponRotatedAsset(weaponCard.getId()) : view.getWeaponAsset(weaponCard.getId());
@@ -215,12 +218,13 @@ public class MainGUIController extends AbstractGUIController {
         }
     }
 
-    public void movePlayer(String player, Coordinates destination) throws IOException {
+    public synchronized void movePlayer(String player, Coordinates destination) throws IOException {
         for (BoardSquareGUIController boardSquare : coordinatesBoardSquareGUIControllerMap.values()) {
             if (boardSquare.removePlayer(player)) break;
         }
 
-        playersNodeMap.put(player, coordinatesBoardSquareGUIControllerMap.get(destination).addPlayer(player));
+        Node playerNode = coordinatesBoardSquareGUIControllerMap.get(destination).addPlayer(player);
+        if (playerNode != null) playersNodeMap.put(player, playerNode);
     }
 
     public void setSelectablePlayers(List<String> players) {
@@ -277,13 +281,12 @@ public class MainGUIController extends AbstractGUIController {
                         else
                             button.getStyleClass().add(GUI.STYLE_CLASS_WEAPON_ON_MAP);
                         button.setDisable(true);
-                        int slotPosition = i;
                         button.setOnMouseClicked(event -> {
                             if (event.getButton().equals(MouseButton.SECONDARY)) {
                                 view.showCardDetails(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
                             } else {
                                 disableWeaponCards();
-                                selectedWeapon.set(view.getLocalModel().getGameBoard().getSpawnBoardSquareClientByRoom(weaponCardSlot.getKey()).getWeaponCardsBySlotPosition(slotPosition));
+                                selectedWeapon.set(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
                                 semaphore.release();
                             }
                         });

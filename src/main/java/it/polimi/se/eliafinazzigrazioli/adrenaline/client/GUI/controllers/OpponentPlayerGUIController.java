@@ -35,6 +35,8 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
         this.player = player;
         playerBoardGUIController = new PlayerBoardGUIController(view, player, true);
         loadFXML(GUI.FXML_PATH_PLAYER_BOARD, mainAnchorPane, playerBoardGUIController);
+
+        playerInfoTextArea.setText(String.format("%s%n%n%s", player, playerBoardGUIController.getAvatar()));
     }
 
     public void setCardCollected(PowerUpCardClient cardCollected) throws IOException {

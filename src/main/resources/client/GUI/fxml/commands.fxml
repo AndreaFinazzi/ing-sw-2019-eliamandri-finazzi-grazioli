@@ -15,23 +15,16 @@
         <RowConstraints maxHeight="193.0" minHeight="10.0" percentHeight="38.0" prefHeight="155.0" vgrow="SOMETIMES"/>
     </rowConstraints>
     <children>
-        <AnchorPane prefHeight="240.0" prefWidth="290.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
-            <children>
-                <TextArea fx:id="messagesTextArea" maxHeight="230.0" maxWidth="290.0" prefHeight="230.0"
-                          prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-            </children>
-        </AnchorPane>
         <AnchorPane fx:id="myPlayerBoardAnchorPane" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
             <!--Here we'll have my player board-->
         </AnchorPane>
-        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+        <AnchorPane GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
             <children>
                 <StackPane styleClass="cardSlots" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                            AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                     <children>
-                        <HBox fx:id="spawnPowerUpSlots" alignment="CENTER" prefHeight="100.0" prefWidth="200.0"
-                              spacing="5.0" styleClass="myPowerUp" visible="false" StackPane.alignment="CENTER"/>
+                        <HBox fx:id="spawnPowerUpSlots" alignment="CENTER" spacing="5.0" styleClass="myPowerUp"
+                              visible="false" StackPane.alignment="CENTER"/>
                         <GridPane fx:id="myCardsGridPane">
                             <columnConstraints>
                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0"/>
@@ -52,8 +45,7 @@
                                 <AnchorPane GridPane.columnIndex="1">
                                     <children>
                                         <HBox id="powerUpSlots" fx:id="myPowerUpCardSlots" alignment="CENTER"
-                                              prefHeight="239.0" prefWidth="191.0" spacing="5.0"
-                                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                              spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                         <Button fx:id="proceedCardsButton" alignment="CENTER" disable="true"
                                                 mnemonicParsing="false" text="Proceed" AnchorPane.bottomAnchor="10.0"
@@ -66,7 +58,7 @@
                 </StackPane>
             </children>
         </AnchorPane>
-        <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
             <children>
                 <GridPane fx:id="arrowsGridPane" alignment="CENTER" disable="true" nodeOrientation="LEFT_TO_RIGHT">
                     <columnConstraints>
@@ -126,5 +118,12 @@
                 </FlowPane>
             </children>
         </StackPane>
+        <AnchorPane GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+            <children>
+                <TextArea fx:id="messagesTextArea" editable="false" maxHeight="230.0" maxWidth="290.0"
+                          prefHeight="230.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+            </children>
+        </AnchorPane>
     </children>
 </GridPane>

@@ -57,7 +57,7 @@
 }
 
 #overlay {
-    -fx-background-color: rgba(37, 37, 37, 0.6);
+    -fx-background-color: rgba(37, 37, 37, 0.8);
 }
 
 .mapVoteBackground {
@@ -131,11 +131,11 @@
 }
 
 .cardSlots {
-    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-color: rgba(0, 0, 0, 0.8);
 }
 
 .cardSlots:focused {
-    -fx-effect: dropshadow(three-pass-box, rgb(180, 88, 255), 10, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgb(97, 93, 230), 5, 0.5, 0, 0);
 }
 
 .arrowButton {
@@ -160,7 +160,7 @@
 }
 
 .highlight {
-    -fx-effect: dropshadow(gaussian, rgb(180, 88, 255), 5, 5, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgb(136, 155, 255), 5, 0.5, 0, 0);
 
     -fx-scale-x: 1.00;
     -fx-scale-y: 1.00;

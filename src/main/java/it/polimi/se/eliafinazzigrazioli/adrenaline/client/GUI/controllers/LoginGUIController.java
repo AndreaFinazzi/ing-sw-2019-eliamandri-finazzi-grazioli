@@ -11,7 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class LoginGUIController extends AbstractGUIController {
@@ -68,7 +68,7 @@ public class LoginGUIController extends AbstractGUIController {
         loaderBox.setVisible(false);
     }
 
-    public void setAvailableAvatarsList(ArrayList<Avatar> availableAvatars) {
+    public void setAvailableAvatarsList(List<Avatar> availableAvatars) {
         availableAvatarsList.getItems().addAll(availableAvatars);
     }
 

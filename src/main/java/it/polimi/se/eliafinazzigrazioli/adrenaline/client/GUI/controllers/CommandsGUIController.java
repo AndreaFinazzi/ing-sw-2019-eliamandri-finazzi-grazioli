@@ -73,6 +73,7 @@ public class CommandsGUIController extends AbstractGUIController {
     @FXML
     private Button arrowSTOP;
     private Map<MoveDirection, Button> moveDirectionButtonEnumMap = new EnumMap<>(MoveDirection.class);
+
     public CommandsGUIController(GUI view) {
         super(view);
     }
@@ -158,24 +159,29 @@ public class CommandsGUIController extends AbstractGUIController {
 
     public void setSelectablePowerUp(List<PowerUpCardClient> cards) {
         for (PowerUpCardClient card : cards) {
-            if (card.getSlotPosition() != -1) {
-                myPowerUpCardSlots.getChildren().get(card.getSlotPosition()).setDisable(false);
-            } else {
-                myPowerUpCardSlots.getChildren().get(myPowerUps.indexOf(card)).setDisable(false);
+            Node cardNode = GUI.getChildrenByProperty(myPowerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, card.getId());
+            if (cardNode != null) {
+                cardNode.setDisable(false);
+                Platform.runLater(() -> cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
             }
         }
 
         proceedCardsButton.setDisable(false);
+
     }
 
     public void setSelectableWeapon(List<WeaponCardClient> selectableWeapons) {
         for (WeaponCardClient card : selectableWeapons) {
-            myWeaponCardSlots.getChildren().get(card.getSlotPosition()).setDisable(false);
+            Node cardNode = GUI.getChildrenByProperty(myWeaponCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, card.getId());
+            if (cardNode != null) {
+                cardNode.setDisable(false);
+                Platform.runLater(() -> cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
+            }
         }
-        Platform.runLater(myWeaponCardSlots::requestFocus);
+        proceedCardsButton.setDisable(false);
     }
 
-    public void setAvailableMoves(ArrayList<MoveDirection> availableMoves) {
+    public void setAvailableMoves(List<MoveDirection> availableMoves) {
         arrowsGridPane.setDisable(false);
         for (Map.Entry<MoveDirection, Button> moveDirectionButtonEntry : moveDirectionButtonEnumMap.entrySet()) {
             if (availableMoves.contains(moveDirectionButtonEntry.getKey()))
@@ -192,18 +198,16 @@ public class CommandsGUIController extends AbstractGUIController {
     }
 
     public void disableCards() {
-        myPowerUpCardSlots.getChildren().forEach(card -> card.setDisable(true));
-        myWeaponCardSlots.getChildren().forEach(card -> card.setDisable(true));
+        myPowerUpCardSlots.getChildren().forEach(card -> {
+            card.setDisable(true);
+            card.getStyleClass().remove(GUI.STYLE_CLASS_HIGHLIGHT);
+        });
+        myWeaponCardSlots.getChildren().forEach(card -> {
+            card.setDisable(true);
+            card.getStyleClass().remove(GUI.STYLE_CLASS_HIGHLIGHT);
+        });
+
     }
-// USELESS
-//    public void arrowPressed(MouseEvent actionEvent) {
-//        selectedMove.set(MoveDirection.STOP);
-
-//        disableArrows();
-
-//        semaphore.release();
-
-//    }
 
     public Node generateCardNode(PowerUpCardClient powerUpCard) {
         Button button = null;
@@ -248,6 +252,7 @@ public class CommandsGUIController extends AbstractGUIController {
                     }
                 } else {
                     disableCards();
+                    proceedCardsButton.setDisable(true);
                     selectedWeapon.set(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
                     semaphore.release();
                 }
@@ -308,12 +313,14 @@ public class CommandsGUIController extends AbstractGUIController {
 
             // Initialize player actions
             for (PlayerAction playerAction : PlayerAction.values()) {
-                Button actionButton = new Button(playerAction.toString());
-                actionButton.setOnAction(event -> {
-                    chosenAction.set(playerAction);
-                    semaphore.release();
-                });
-                actionsFlowPane.getChildren().add(actionButton);
+                if (playerAction.isGuiEnabled()) {
+                    Button actionButton = new Button(playerAction.toString());
+                    actionButton.setOnAction(event -> {
+                        chosenAction.set(playerAction);
+                        semaphore.release();
+                    });
+                    actionsFlowPane.getChildren().add(actionButton);
+                }
             }
             actionsFlowPane.setDisable(true);
 
@@ -330,8 +337,10 @@ public class CommandsGUIController extends AbstractGUIController {
 
             proceedCardsButton.setOnAction(event -> {
                 proceedCardsButton.setDisable(true);
-                selectedPowerUp.set(null);
-                semaphore.release();
+                if (selectedPowerUp != null) selectedPowerUp.set(null);
+                if (selectedWeapon != null) selectedWeapon.set(null);
+                disableCards();
+                this.semaphore.release();
             });
 
             // Arrow panel initialization
@@ -395,9 +404,7 @@ public class CommandsGUIController extends AbstractGUIController {
         // get powerups transition from TransitionManager and combine it with the previous one
         paymentTransition.getChildren().add(TransitionManager.generateParallelTransition(TransitionManager.powerUpPaymentAnimator, payedPowerUpNodes));
 
-        paymentTransition.setOnFinished(event -> {
-            updatePowerUpCards();
-        });
+        paymentTransition.setOnFinished(event -> updatePowerUpCards());
 
         Platform.runLater(paymentTransition::play);
     }

@@ -234,6 +234,19 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public Room selectRoom(List<Room> rooms) {
+        List<Coordinates> selectableCoordinates = new ArrayList<>();
+        if (!rooms.isEmpty()) {
+            for (Room room : rooms) {
+                localModel.getGameBoard().getRoomSquares(room).forEach(boardSquare -> selectableCoordinates.add(boardSquare.getCoordinates()));
+            }
+
+        }
+
+        return localModel.getGameBoard().getBoardSquareByCoordinates(selectCoordinates(selectableCoordinates)).getRoom();
+    }
+
+    @Override
     public WeaponEffectClient selectWeaponEffect(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) {
         if (!callableEffects.isEmpty()) {
             AtomicReference<WeaponEffectClient> selectedEffect = new AtomicReference<>();
@@ -380,7 +393,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showLogin(ArrayList<Avatar> availableAvatars) {
+    public void showLogin(List<Avatar> availableAvatars) {
         if (!initialized) {
             initialized = true;
 
@@ -416,7 +429,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showMapVote(ArrayList<MapType> availableMaps) {
+    public void showMapVote(List<MapType> availableMaps) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource(FXML_PATH_MAIN));
         mainGUIController = new MainGUIController(this);
@@ -434,7 +447,15 @@ public class GUI extends Application implements RemoteView {
         Platform.runLater(() -> {
             primaryStage.getScene().setRoot(finalRoot);
             primaryStage.setFullScreen(true);
-            primaryStage.setResizable(true);
+            primaryStage.setMaximized(true);
+            primaryStage.setResizable(false);
+
+            primaryStage.fullScreenProperty().addListener((v, o, n) -> {
+                if (!primaryStage.isFullScreen()) {
+                    primaryStage.setResizable(false);
+                    primaryStage.setResizable(true);
+                }
+            });
         });
 
         mainGUIController.setVoteMap(availableMaps);
