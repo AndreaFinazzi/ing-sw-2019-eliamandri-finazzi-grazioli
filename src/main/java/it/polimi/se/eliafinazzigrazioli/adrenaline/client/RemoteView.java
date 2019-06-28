@@ -828,12 +828,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         List<PowerUpCardClient> powerUpsSelected = new ArrayList<>();
         PowerUpCardClient powerUpCardUsedToPay;
         List<PowerUpCardClient> spendablePowerUps;
+        List<PowerUpCardClient> playerHand = getLocalModel().getPowerUpCards();
 
 
-        spendablePowerUps = calculateSpendablePowerUps(price, getLocalModel().getPowerUpCards());
+        spendablePowerUps = calculateSpendablePowerUps(price, playerHand);
+
         do {
             if (!spendablePowerUps.isEmpty()) {
-                showMessage("Select a power up you want to use to pay:");
+                showMessage("Select a power up you want to use to pay ");
                 powerUpCardUsedToPay = selectPowerUp(spendablePowerUps);   /** SELECTION HERE */
             }
             else
@@ -841,8 +843,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
             if (powerUpCardUsedToPay != null) {
                 powerUpsSelected.add(powerUpCardUsedToPay);
+                playerHand.remove(powerUpCardUsedToPay);
                 price.remove(powerUpCardUsedToPay.getEquivalentAmmo());
-                spendablePowerUps = calculateSpendablePowerUps(price, spendablePowerUps);
+                spendablePowerUps = calculateSpendablePowerUps(price, playerHand);
             }
         } while (powerUpCardUsedToPay != null);
         return powerUpsSelected;
@@ -902,13 +905,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     static List<PowerUpCardClient> calculateSpendablePowerUps(List<Ammo> price, List<PowerUpCardClient> powerUpCards){
-        List<Ammo> priceCopy = new ArrayList<>(price);
         List<PowerUpCardClient> spendablePowerUps = new ArrayList<>();
         for (PowerUpCardClient powerUpCardClient: powerUpCards) {
-            if (priceCopy.contains(powerUpCardClient.getEquivalentAmmo())) {
-                priceCopy.remove(powerUpCardClient.getEquivalentAmmo());
+            if (price.contains(powerUpCardClient.getEquivalentAmmo()))
                 spendablePowerUps.add(powerUpCardClient);
-            }
         }
         return spendablePowerUps;
     }

@@ -126,7 +126,7 @@ public class LocalModel {
     }
 
     public List<PowerUpCardClient> getPowerUpCards() {
-        return powerUpCards;
+        return new ArrayList<>(powerUpCards);
     }
 
     public PowerUpCardClient getPowerUpCardById(String powerUpId) {
