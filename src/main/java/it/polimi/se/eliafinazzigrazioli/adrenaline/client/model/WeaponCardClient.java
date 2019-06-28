@@ -136,21 +136,23 @@ public class WeaponCardClient implements Serializable, CardInterface {
 
     @Override
     public String toString() {
-        String string = weaponName + " :\n\n";
+        String string = String.format("%s%n", weaponName);
         int count = 1;
         for (WeaponEffectClient effect: effects) {
             //System.out.println("Key : " + entry.getKey() + " Value : " + entry.getValue());
-            string = string + count + ": " + effect.getEffectName() + ": " + effect.getEffectDescription() + "\n";
+            string = string + count + ": " + effect.getEffectName() + ": " + effect.getEffectDescription();
+            string = String.format("%s%n", string);
             count++;
         }
         return string;
     }
 
     public String toStringLight() {
-        String string = weaponName + " :\n\n";
+        String string = String.format("%s%n", weaponName);
         int count = 1;
         for (WeaponEffectClient effect: effects) {
-            string = string + count + ": " + effect.getEffectName() + " price: " + effect.priceToString() + "\n\n";
+            string = string + count + ": " + effect.getEffectName() + " price: " + effect.priceToString();
+            string = String.format("%s%n", string);
             count++;
         }
         return string;
