@@ -143,8 +143,13 @@ public class TurnController implements ViewEventsListenerInterface {
                 AmmoCard ammoCard = ((GenericBoardSquare) finalPosition).gatherCollectables();
                 events.add(new AmmoCardCollectedEvent(currentPlayer, ammoCard, finalPosition.getCoordinates()));
 
-                for (Ammo ammo: ammoCard.getAmmos())
-                    events.add(new AmmoCollectedEvent(currentPlayer, ammo, currentPlayer.addAmmo(ammo)));
+                for (Ammo ammo : ammoCard.getAmmos()) {
+                    if (ammoCard.getAmmos().indexOf(ammo) == ammoCard.getAmmos().size() - 1)
+                        events.add(new AmmoCollectedEvent(currentPlayer, ammo, currentPlayer.addAmmo(ammo), true));
+                    else
+                        events.add(new AmmoCollectedEvent(currentPlayer, ammo, currentPlayer.addAmmo(ammo)));
+                }
+
                 if (ammoCard.containsPowerUpCard()) {
                     PowerUpsDeck deck = match.getPowerUpsDeck();
                     events.add(currentPlayer.addPowerUp(deck.drawCard(), deck));

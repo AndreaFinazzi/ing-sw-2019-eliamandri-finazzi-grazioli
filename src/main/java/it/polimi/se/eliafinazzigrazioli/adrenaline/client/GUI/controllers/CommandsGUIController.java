@@ -111,7 +111,7 @@ public class CommandsGUIController extends AbstractGUIController {
             Node powerUpSlot = myPowerUpCardSlots.getChildren().get(powerUpCard.getSlotPosition());
             powerUpSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
             view.applyBackground(powerUpSlot, view.getPowerUpAsset(powerUpCard.getId()));
-            disableCards();
+            powerUpSlot.setDisable(true);
         }
     }
 
@@ -398,7 +398,7 @@ public class CommandsGUIController extends AbstractGUIController {
         List<Node> payedPowerUpNodes = new ArrayList<>();
         for (PowerUpCardClient powerUpCard : powerUpCards) {
             Node elementNode = GUI.getChildrenByProperty(myPowerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
-            payedPowerUpNodes.add(elementNode);
+            if (elementNode != null) payedPowerUpNodes.add(elementNode);
         }
 
         // get powerups transition from TransitionManager and combine it with the previous one

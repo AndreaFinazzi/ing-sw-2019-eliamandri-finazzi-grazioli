@@ -357,7 +357,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                 getLocalModel().addAmmo(event.getAmmoCollected());
             else
                 getLocalModel().getOpponentInfo(event.getPlayer()).addAmmo(event.getAmmoCollected());
-        showAmmoCollectedUpdate(event.getPlayer(), event.getAmmoCollected(), event.isActuallyCollected());
+        showAmmoCollectedUpdate(event.getPlayer(), event.getAmmoCollected(), event.isActuallyCollected(), event.isLastOfCard());
     }
 
     @Override
@@ -605,7 +605,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             showMessage(player + " concluded his turn!");
     }
 
-    default void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected) {
+    default void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected, boolean lastOfCard) {
         if (player.equals(getClient().getPlayerName()))
             showMessage("You collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
         else

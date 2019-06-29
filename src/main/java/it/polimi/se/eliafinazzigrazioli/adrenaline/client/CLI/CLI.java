@@ -223,7 +223,7 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
-    public void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected) {
+    public void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected, boolean lastOfCard) {
         Avatar avatar = localModel.getPlayersAvatarMap().get(player);
         if(avatar == null) {
             showMessage("ops, something didn't work");

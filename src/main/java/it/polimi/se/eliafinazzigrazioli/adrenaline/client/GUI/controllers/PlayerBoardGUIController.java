@@ -150,13 +150,15 @@ public class PlayerBoardGUIController extends AbstractGUIController {
             ammos = view.getLocalModel().getAmmos();
 
         Platform.runLater(() -> {
-            ammoStack.getChildren().clear();
-            for (Ammo ammo : ammos) {
-                Image ammoIcon = new Image(view.getAmmoAsset(ammo.name()), 20, 20, true, true);
-                ImageView ammoSlot = new ImageView(ammoIcon);
-                ammoSlot.getProperties().put(GUI.PROPERTIES_AMMO_KEY, ammo.name());
+            synchronized (ammoStack.getChildren()) {
+                ammoStack.getChildren().clear();
+                for (Ammo ammo : ammos) {
+                    Image ammoIcon = new Image(view.getAmmoAsset(ammo.name()), 20, 20, true, true);
+                    ImageView ammoSlot = new ImageView(ammoIcon);
+                    ammoSlot.getProperties().put(GUI.PROPERTIES_AMMO_KEY, ammo.name());
 
-                ammoStack.getChildren().add(ammoSlot);
+                    ammoStack.getChildren().add(ammoSlot);
+                }
             }
         });
     }
@@ -187,11 +189,11 @@ public class PlayerBoardGUIController extends AbstractGUIController {
             Platform.runLater(() -> powerUpCardSlots.getChildren().clear());
 
             for (int i = 0; i < view.getLocalModel().getOpponentInfo(player).getPowerUps(); i++) {
-                Button weaponSlot = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, powerUpCardSlots, this);
+                Button powerUpSlot = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, powerUpCardSlots, this);
 
                 Platform.runLater(() -> {
-                    view.applyBackground(weaponSlot, view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD));
-                    weaponSlot.setDisable(true);
+                    view.applyBackground(powerUpSlot, view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD));
+                    powerUpSlot.setDisable(true);
                 });
             }
         }
@@ -201,7 +203,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         List<Node> payedAmmoNodes = new ArrayList<>();
         for (Ammo ammo : ammos) {
             Node ammoNode = getAmmoNodeInStack(ammo);
-            payedAmmoNodes.add(ammoNode);
+            if (ammoNode != null) payedAmmoNodes.add(ammoNode);
         }
 
         ParallelTransition paymentTransition = TransitionManager.generateParallelTransition(TransitionManager.ammoPaymentAnimator, payedAmmoNodes);
@@ -241,12 +243,9 @@ public class PlayerBoardGUIController extends AbstractGUIController {
     }
 
     private Node getAmmoNodeInStack(Ammo ammo) {
-        for (Node ammoNode : ammoStack.getChildren()) {
-            if (ammoNode.hasProperties() && ammoNode.getProperties().get(GUI.PROPERTIES_AMMO_KEY).equals(ammo.name()))
-                return ammoNode;
-        }
-
-        return null;
+        Node ammoNode = GUI.getChildrenByProperty(ammoStack.getChildren(), GUI.PROPERTIES_AMMO_KEY, ammo.name());
+        if (ammoNode != null) ammoNode.getProperties().remove(GUI.PROPERTIES_AMMO_KEY);
+        return ammoNode;
     }
 
     private void toggleCardsView() {
@@ -344,13 +343,16 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         Platform.runLater(() -> {
             for (WeaponEffectClient effect : callableEffects) {
                 Label effectLabel = (Label) GUI.getChildrenByProperty(detailsTextVBox.getChildren(), GUI.PROPERTIES_EFFECT_KEY, effect.getEffectName());
-                effectLabel.setDisable(false);
-                effectLabel.getStyleClass().add(GUI.STYLE_CLASS_EFFECT_SELECTABLE);
-                effectLabel.setOnMouseClicked(event -> {
-                    selectedWeaponEffect.set(effect);
-                    disableEffects();
-                    semaphore.release();
-                });
+                if (effectLabel != null) {
+
+                    effectLabel.setDisable(false);
+                    effectLabel.getStyleClass().add(GUI.STYLE_CLASS_EFFECT_SELECTABLE);
+                    effectLabel.setOnMouseClicked(event -> {
+                        selectedWeaponEffect.set(effect);
+                        disableEffects();
+                        semaphore.release();
+                    });
+                }
             }
         });
     }

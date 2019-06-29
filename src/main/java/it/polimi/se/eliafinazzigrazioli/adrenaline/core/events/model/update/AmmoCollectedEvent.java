@@ -10,11 +10,17 @@ public class AmmoCollectedEvent extends AbstractModelEvent {
 
     private Ammo ammoCollected;
     private boolean actuallyCollected;
+    private boolean lastOfCard;
 
     public AmmoCollectedEvent(Player player, Ammo ammoCollected, boolean actuallyCollected) {
+        this(player, ammoCollected, actuallyCollected, false);
+    }
+
+    public AmmoCollectedEvent(Player player, Ammo ammoCollected, boolean actuallyCollected, boolean lastOfCard) {
         super(player);
         this.ammoCollected = ammoCollected;
         this.actuallyCollected = actuallyCollected;
+        this.lastOfCard = lastOfCard;
     }
 
     @Override
@@ -28,5 +34,9 @@ public class AmmoCollectedEvent extends AbstractModelEvent {
 
     public boolean isActuallyCollected() {
         return actuallyCollected;
+    }
+
+    public boolean isLastOfCard() {
+        return lastOfCard;
     }
 }

@@ -166,11 +166,13 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
-    public void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected) {
-        if (!player.equals(client.getPlayerName()))
-            opponentPlayerToGUIControllerMap.get(player).showAmmoCollected(ammo, actuallyCollected);
-        else
-            commandsGUIController.showAmmoCollected(ammo, actuallyCollected);
+    public void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected, boolean lastOfCard) {
+        if (lastOfCard) {
+            if (!player.equals(client.getPlayerName()))
+                opponentPlayerToGUIControllerMap.get(player).showAmmoCollected(ammo, actuallyCollected);
+            else
+                commandsGUIController.showAmmoCollected(ammo, actuallyCollected);
+        }
     }
 
     @Override
@@ -303,8 +305,8 @@ public class GUI extends Application implements RemoteView {
 
             AtomicReference<WeaponCardClient> selectedWeaponCard = new AtomicReference<>();
 
-            commandsGUIController.setSelectableWeapon(selectableWeapons);
             commandsGUIController.setSelectedWeapon(selectedWeaponCard);
+            commandsGUIController.setSelectableWeapon(selectableWeapons);
 
             Semaphore semaphore = new Semaphore(0);
             commandsGUIController.setSemaphore(semaphore);
@@ -526,6 +528,7 @@ public class GUI extends Application implements RemoteView {
     public void showAmmoCardCollectedUpdate(String player, AmmoCardClient ammoCard, Coordinates coordinates) {
         if (!player.equals(getClient().getPlayerName())) {
             try {
+
                 opponentPlayerToGUIControllerMap.get(player).setCardCollected(ammoCard);
             } catch (IOException e) {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
