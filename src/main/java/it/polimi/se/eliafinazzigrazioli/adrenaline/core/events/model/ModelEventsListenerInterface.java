@@ -115,7 +115,7 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(SuddenDeathEvent event) throws HandlerNotImplementedException {
+    default void handleEvent(PlayerDeathEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 
@@ -159,12 +159,17 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(PointsAssignmentEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
 
+    default void handleEvent(SkullRemovalEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
 
-
-
-
-
+    default void handleEvent(CleanPlayerBoardEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
 
 
 }

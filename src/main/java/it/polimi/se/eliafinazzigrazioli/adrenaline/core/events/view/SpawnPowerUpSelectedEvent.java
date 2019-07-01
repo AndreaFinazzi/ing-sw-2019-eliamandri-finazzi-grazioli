@@ -8,11 +8,13 @@ public class SpawnPowerUpSelectedEvent extends AbstractViewEvent {
 
     private PowerUpCardClient toKeep;
     private PowerUpCardClient spawnCard;
+    private boolean firstSpawn;
 
-    public SpawnPowerUpSelectedEvent(int clientID, String player, PowerUpCardClient toKeep, PowerUpCardClient spawnCard) {
+    public SpawnPowerUpSelectedEvent(int clientID, String player, PowerUpCardClient toKeep, PowerUpCardClient spawnCard, boolean firstSpawn) {
         super(clientID, player);
         this.toKeep = toKeep;
         this.spawnCard = spawnCard;
+        this.firstSpawn = firstSpawn;
     }
 
     @Override
@@ -26,5 +28,9 @@ public class SpawnPowerUpSelectedEvent extends AbstractViewEvent {
 
     public PowerUpCard getSpawnCard() {
         return PowerUpCard.clientCopyToServer(spawnCard);
+    }
+
+    public boolean isFirstSpawn() {
+        return firstSpawn;
     }
 }

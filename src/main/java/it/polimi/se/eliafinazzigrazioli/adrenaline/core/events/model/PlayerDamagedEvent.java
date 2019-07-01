@@ -21,13 +21,13 @@ public class PlayerDamagedEvent extends AbstractModelEvent {
         this.marks = marks;
     }
 
-    public String getShooter() {
-        return shooter;
-    }
-
     @Override
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);
+    }
+
+    public String getShooter() {
+        return shooter;
     }
 
     public String getTarget() {

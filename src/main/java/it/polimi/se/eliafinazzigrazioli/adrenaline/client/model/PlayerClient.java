@@ -150,7 +150,6 @@ public class PlayerClient implements Serializable, CardInterface {
         damages.clear();
         death = false;
         overkill = false;
-        skulls = 0;
     }
 
     public boolean isDeath() {

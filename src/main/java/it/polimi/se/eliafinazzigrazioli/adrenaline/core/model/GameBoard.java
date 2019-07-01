@@ -215,12 +215,17 @@ public class GameBoard {
             playerPositions.put(player, position);
     }
 
+    public void removePlayer(Player player) {
+        playerPositions.remove(player);
+    }
+
     public void movePlayer(Player player, BoardSquare destination) {
         playerPositions.put(player, destination);
     }
 
 
-    public PlayerSpawnedEvent spawnPlayer(Player player, PowerUpCard powerUpCard) {
+
+    public PlayerSpawnedEvent spawnPlayer(Player player, PowerUpCard powerUpCard, boolean firstSpawn) {
         Ammo ammoColor = powerUpCard.getAmmo();
         List<BoardSquare> room;
         BoardSquare spawnBoardSquare = null;
@@ -245,7 +250,7 @@ public class GameBoard {
         if (spawnBoardSquare == null)
             return null;
         else
-            return new PlayerSpawnedEvent(player, spawnBoardSquare.getCoordinates(), powerUpCard);
+            return new PlayerSpawnedEvent(player, spawnBoardSquare.getCoordinates(), powerUpCard, firstSpawn);
     }
 
     /**

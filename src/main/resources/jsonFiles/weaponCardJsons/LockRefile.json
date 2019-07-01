@@ -55,9 +55,7 @@
         {
           "type": "PreselectionBasedSelectorEffectState",
           "previousSelected": {
-            "basic effect": [
-              0
-            ]
+            "basic effect": [0]
           },
           "alreadySelected": false
         },

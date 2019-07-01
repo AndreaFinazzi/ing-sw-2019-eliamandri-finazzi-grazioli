@@ -5,6 +5,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PlayerClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerShotEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.SkullRemovalEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
@@ -81,6 +83,7 @@ public class Match implements Observable {
 
     private GameBoard gameBoard;
 
+    KillTrack killTrack;
     private MatchPhase phase;
     private Player currentPlayer;
     private Player firstPlayer;
@@ -93,27 +96,42 @@ public class Match implements Observable {
 
     public Match() {
         phase = MatchPhase.INITIALIZATION;
+        killTrack = new KillTrack(Rules.GAME_MAX_KILL_TRACK_SKULLS);
         powerUpsDeck = new PowerUpsDeck();
         weaponsDeck = new WeaponsDeck();
         try {
             ammoCardsDeck = new AmmoCardsDeck();
         } catch (WeaponFileNotFoundException e) {
-
+            ammoCardsDeck = null;
         }
     }
 
+    public List<AbstractModelEvent> skullsAssignment() {
+        List<AbstractModelEvent> events = new ArrayList<>();
+        for (Player deadPlayer: getDeadPlayers()) {
+            PlayerBoard deadPlayerBoard = deadPlayer.getPlayerBoard();
+            boolean trackFull = killTrack.isFull();
+            if (!trackFull)
+                deadPlayer.getPlayerBoard().addSkull();
+            killTrack.removeSkull(currentPlayer, deadPlayerBoard.isOverkill());
 
-    /*
-     * Player-related methods
-     */
-    public ArrayList<Player> getPlayersOnSquare(BoardSquare square) {
-        ArrayList<Player> onSquare = new ArrayList<>();
-        for (Player player : players) {
-            if (player.getPosition() == square) {
-                onSquare.add(player);
+            if (deadPlayer.getPlayerBoard().isOverkill() &&
+                    currentPlayer.getPlayerBoard().numMarkType(deadPlayer.getDamageMarkDelivered()) < Rules.PLAYER_BOARD_MAX_MARKS_PER_TYPE && deadPlayerBoard.canUseMark()) {
+                currentPlayer.getPlayerBoard().addMark(deadPlayer.getDamageMarkDelivered());
+                events.add(new PlayerShotEvent(currentPlayer, currentPlayer.getPlayerNickname(), new ArrayList<>(), new ArrayList<>(Arrays.asList(deadPlayer.getDamageMarkDelivered())), new ArrayList<>()));
             }
+            events.add(new SkullRemovalEvent(currentPlayer, currentPlayer.getDamageMarkDelivered(), deadPlayer.getPlayerNickname(), deadPlayer.getPlayerBoard().isOverkill(), trackFull));
         }
-        return onSquare;
+        return events;
+    }
+
+
+
+
+
+    public void updatePoints(Map<String, Integer> playerPoints) {
+        for (Map.Entry<String, Integer> points: playerPoints.entrySet())
+            players.get(points.getKey()).addPoints(points.getValue());
     }
 
     public int getMatchID() {
@@ -279,6 +297,23 @@ public class Match implements Observable {
         gameBoard = new GameBoard(mapType);
     }
 
+    public List<Player> getDeadPlayers() {
+        List<Player> deadPlayers = new ArrayList<>();
+        for (Player player: players) {
+            if (player.isDead())
+                deadPlayers.add(player);
+        }
+        return deadPlayers;
+    }
+
+    public Player getPlayerByMark(DamageMark damageMark) {
+        for (Player player: players){
+            if (player.getDamageMarkDelivered() == damageMark)
+                return player;
+        }
+        return null;
+    }
+
 
     /*
      * Match flow related methods
@@ -332,7 +367,7 @@ public class Match implements Observable {
 
     //TODO who should create the event?
     public void beginTurn() {
-        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard())));
+        notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard()), true));
     }
 
     public ArrayList<Avatar> getAvailableAvatars() {

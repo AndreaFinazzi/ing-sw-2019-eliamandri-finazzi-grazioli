@@ -35,7 +35,10 @@
         "x_max": 4,
         "y_max": 3,
         "max_weapons_on_spawn": 3
-      }
+      },
+      "first_blood_points": 1,
+      "double_kill_points": 1,
+      "max_kill_track_skulls": 8
     },
     "turn" : {
       "max_moves_simple" : 3,

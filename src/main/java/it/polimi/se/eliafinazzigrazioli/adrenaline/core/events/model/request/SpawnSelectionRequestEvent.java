@@ -13,18 +13,14 @@ import java.util.List;
 public class SpawnSelectionRequestEvent extends AbstractModelEvent {
 
     List<PowerUpCardClient> selectableCards;
+    boolean firstSpawn;
 
-    public SpawnSelectionRequestEvent(String player, List<PowerUpCardClient> selectableCards) {
-        super(player, true);
-
-        this.selectableCards = selectableCards;
-    }
-
-    public SpawnSelectionRequestEvent(Player player, List<PowerUpCard> selectableCards) {
+    public SpawnSelectionRequestEvent(Player player, List<PowerUpCard> selectableCards, boolean firstSpawn) {
         super(true, player);
         this.selectableCards = new ArrayList<>();
         for (PowerUpCard powerUpCard: selectableCards)
             this.selectableCards.add(new PowerUpCardClient(powerUpCard));
+        this.firstSpawn = firstSpawn;
     }
 
     @Override
@@ -34,5 +30,9 @@ public class SpawnSelectionRequestEvent extends AbstractModelEvent {
 
     public List<PowerUpCardClient> getSelectableCards() {
         return selectableCards;
+    }
+
+    public boolean isFirstSpawn() {
+        return firstSpawn;
     }
 }

@@ -2,10 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -18,6 +15,9 @@ import java.util.Map;
 public class LocalModel implements Serializable {
 
     //Private information
+    private Map<String, Integer> points;
+
+    private KillTrack killTrack;
 
     private List<WeaponCardClient> weaponCards; //user's weapon
     private boolean weaponHandFull;
@@ -53,6 +53,10 @@ public class LocalModel implements Serializable {
 
     private final static int HEIGHT = 12;
     public LocalModel() {
+        //TODO define a way to receive the size from the server
+        KillTrack killTrack = new KillTrack(8);
+        points = new HashMap<>();
+
         weaponCards = new ArrayList<>();
         powerUpCards = new ArrayList<>();
         ammos = new ArrayList<>();
@@ -60,7 +64,6 @@ public class LocalModel implements Serializable {
         damages = new ArrayList<>();
         marks = new ArrayList<>();
 
-        //players = new ArrayList<>();
         opponentsInfo = new HashMap<>();
         playerToAvatarMap = new HashMap<>();
         deathScores = new ArrayList<>();
@@ -72,6 +75,7 @@ public class LocalModel implements Serializable {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+        points.put(playerName, 0);
     }
 
     public void setWeaponCards(List<WeaponCardClient> weaponCards) {
@@ -116,6 +120,19 @@ public class LocalModel implements Serializable {
 
     public void setListSpawn(List<SpawnBoardSquareClient> listSpawn) {
         this.listSpawn = listSpawn;
+    }
+
+    public void clearDamages() {
+        damages.clear();
+    }
+
+    public KillTrack getKillTrack() {
+        return killTrack;
+    }
+
+    public void updatePoints(Map<String, Integer> newPoints) {
+        for (Map.Entry<String, Integer> playerPoints: newPoints.entrySet())
+            points.put(playerPoints.getKey(), points.get(playerPoints.getKey()) + playerPoints.getValue());
     }
 
     public void generatesGameBoard(MapType mapType) {
@@ -335,6 +352,7 @@ public class LocalModel implements Serializable {
 
     public void addOpponent(String player) {
         opponentsInfo.put(player, new PlayerClient(playerToAvatarMap.get(player)));
+        points.put(player, 0);
     }
 
     public List<SpawnBoardSquareClient> getListSpawn() {

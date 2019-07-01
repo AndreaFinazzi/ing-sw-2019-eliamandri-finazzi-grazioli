@@ -57,6 +57,7 @@ public class CardController implements ViewEventsListenerInterface {
         }
         if (!currentPlayingWeapon.isLoaded()) {
             LOGGER.log(Level.SEVERE, "Player tried to use an unloaded card.", new Exception());
+            LOGGER.log(Level.INFO, currentPlayingWeapon.getWeaponName());
             return;
         }
         List<AbstractModelEvent> events = new ArrayList<>();
@@ -86,7 +87,7 @@ public class CardController implements ViewEventsListenerInterface {
             currentPlayingWeapon.setActiveEffect(event.getEffect());
             currentExecutingEffect = currentPlayingWeapon.getEffectByName(event.getEffect());
             List<PowerUpCard> powerUpsToSpend = currentPlayer.getRealModelReferences(event.getPowerUpsToPay());
-            List<Ammo> ammosSpent = currentPlayer.spendPrice(currentExecutingEffect.getPrice(), powerUpsToSpend);
+            List<Ammo> ammosSpent = currentPlayer.spendPrice(currentExecutingEffect.getPrice(), powerUpsToSpend, match.getPowerUpsDeck());
             match.notifyObservers(new PaymentExecutedEvent(currentPlayer, powerUpsToSpend, ammosSpent));
 
             currentExecutingEffect.initialize();
@@ -120,21 +121,6 @@ public class CardController implements ViewEventsListenerInterface {
     public void handleEvent(RoomSelectedEvent event) throws HandlerNotImplementedException {
         currentExecutingEffect.addSelectedRooms(new ArrayList<>(Arrays.asList(event.getRoom())));
         effectExecutionLoop(match.getCurrentPlayer());
-    }
-
-    @Override
-    public void handleEvent(CardSelectedEvent event) {
-
-    }
-
-    @Override
-    public void handleEvent(TargetSelectedEvent event) {
-        System.out.println("called for " + event.getPlayer());
-    }
-
-    @Override
-    public void handleEvent(CollectPlayEvent event) {
-        System.out.println("called for " + event.getPlayer());
     }
 
     private void effectExecutionLoop(Player currentPlayer) {

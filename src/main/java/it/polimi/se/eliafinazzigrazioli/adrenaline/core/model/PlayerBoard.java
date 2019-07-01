@@ -6,7 +6,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayerBoard {
 
@@ -69,6 +71,12 @@ public class PlayerBoard {
         }
     }
 
+    public void resuscitate() {
+        death = false;
+        overkill = false;
+        cleanPlayerBoard();
+    }
+
     public DamageMark removeMark(DamageMark mark) {
         if (marks.contains(mark)) {
             marks.remove(mark);
@@ -124,10 +132,9 @@ public class PlayerBoard {
     }
 
     public void cleanPlayerBoard() {
-        damages.clear();
         death = false;
         overkill = false;
-        skulls = 0;
+        damages.clear();
     }
 
     public void decreaseDeathScore() {
@@ -185,10 +192,13 @@ public class PlayerBoard {
         return skulls;
     }
 
-    public void addSkull() throws OutOfBoundException {
-        if (skulls == Rules.PLAYER_BOARD_MAX_SKULLS)
-            throw new OutOfBoundException(Messages.MESSAGE_EXCEPTIONS_GAME_PLAYER_SKULLS_OUT_OF_BOUND);
-        skulls++;
+    public DamageMark getKillerDamage() {
+        return damages.get(Rules.PLAYER_BOARD_DEAD_SHOOT - 1);
+    }
+
+    public void addSkull() {
+        if (skulls != Rules.PLAYER_BOARD_MAX_SKULLS)
+            skulls++;
     }
 
     public List getScores() {
@@ -205,6 +215,45 @@ public class PlayerBoard {
 
     public boolean isOverkill() {
         return overkill;
+    }
+
+    public Player getFirstBloodShooter(List<Player> players) {
+        for (Player player: players) {
+            if (damages.get(0) == player.getDamageMarkDelivered())
+                return player;
+        }
+        return null;
+    }
+
+    public List<DamageMark> damageAmountRanking() {
+        Map<DamageMark,Integer> markOccurrencesMap = new HashMap<>();
+        List<DamageMark> shootingOrder = new ArrayList<>();
+        List<DamageMark> ranking = new ArrayList<>();
+        for (DamageMark damageMark: damages) {
+            if (!shootingOrder.contains(damageMark))
+                shootingOrder.add(damageMark);
+        }
+        for (DamageMark damageMark: shootingOrder)
+            markOccurrencesMap.put(damageMark, 0);
+        for (DamageMark damageMark: damages)
+            markOccurrencesMap.put(damageMark, markOccurrencesMap.get(damageMark) + 1);
+
+        int maxOccurrences = 0;
+        DamageMark mostUsedMark = null;
+        while (!shootingOrder.isEmpty()) {
+            for (DamageMark damageMark: shootingOrder) {
+                if (markOccurrencesMap.get(damageMark) > maxOccurrences)
+                    mostUsedMark = damageMark;
+            }
+            ranking.add(mostUsedMark);
+            shootingOrder.remove(mostUsedMark);
+            maxOccurrences = 0;
+        }
+        return ranking;
+    }
+
+    public int getPointsByDamageRank(int position) {
+        return deathScores.get(skulls + position);
     }
 
     @Override

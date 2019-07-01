@@ -59,12 +59,7 @@ public class PlayerBoardTest {
     @Test
     public void testAddOneSkull() {
         PlayerBoard playerBoard = new PlayerBoard();
-        try {
-            playerBoard.addSkull();
-        } catch (OutOfBoundException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            fail();
-        }
+        playerBoard.addSkull();
         assertTrue(playerBoard.getSkulls() == 1);
     }
 
@@ -72,13 +67,8 @@ public class PlayerBoardTest {
     public void testAddAllSkulls() {
         PlayerBoard playerBoard = new PlayerBoard();
         for (int i = 0; i < 6; i++) {
-            try {
-                playerBoard.addSkull();
-                assertEquals(i + 1, playerBoard.getSkulls());
-            } catch (OutOfBoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-                fail();
-            }
+            playerBoard.addSkull();
+            assertEquals(i + 1, playerBoard.getSkulls());
         }
         assertEquals(6, playerBoard.getSkulls());
     }
@@ -217,12 +207,7 @@ public class PlayerBoardTest {
         ArrayList<Ammo> toAdd = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
             if (i < Rules.PLAYER_BOARD_DEATH_SCORES.size()) {
-                try {
-                    playerBoard.addSkull();
-                } catch (OutOfBoundException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
-                    fail();
-                }
+                playerBoard.addSkull();
             }
             playerBoard.addDamage(DamageMark.GREEN);
             playerBoard.addMark(DamageMark.YELLOW);
@@ -241,7 +226,7 @@ public class PlayerBoardTest {
         assertEquals(0, playerBoard.getScores().size());
         assertFalse(playerBoard.isDeath());
         assertFalse(playerBoard.isOverkill());
-        assertEquals(0, playerBoard.getSkulls());
+        assertEquals(Rules.PLAYER_BOARD_DEATH_SCORES.size(), playerBoard.getSkulls());
         assertEquals(3, playerBoard.getAmmos().size());
         assertEquals(3, playerBoard.getMarks().size());
 
@@ -252,14 +237,8 @@ public class PlayerBoardTest {
         PlayerBoard playerBoard = new PlayerBoard();
         ArrayList<Ammo> toAdd = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            if (i < 6) {
-                try {
-                    playerBoard.addSkull();
-                } catch (OutOfBoundException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
-                    fail();
-                }
-            }
+            if (i < 6)
+                playerBoard.addSkull();
             playerBoard.addDamage(DamageMark.GREEN);
             playerBoard.addMark(DamageMark.YELLOW);
 
@@ -277,7 +256,7 @@ public class PlayerBoardTest {
         assertEquals(0, playerBoard.getScores().size());
         assertFalse(playerBoard.isDeath());
         assertFalse(playerBoard.isOverkill());
-        assertEquals(0, playerBoard.getSkulls());
+        assertEquals(6, playerBoard.getSkulls());
         assertEquals(3, playerBoard.getAmmos().size());
         assertEquals(0, playerBoard.getMarks().size());
     }

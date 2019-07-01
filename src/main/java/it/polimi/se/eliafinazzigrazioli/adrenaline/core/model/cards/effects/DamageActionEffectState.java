@@ -53,6 +53,7 @@ public class DamageActionEffectState extends ActionEffectState {
                 marksRemoved.remove(null);
                 damages.add(playerBoard.addDamage(deliveredMark));
                 damages.remove(null);
+                currentPlayer.getPlayerBoard().increaseDeliverableMarks();
             }
 
 

@@ -16,8 +16,11 @@ import java.util.List;
 public class Player implements Selectable {
     private int clientID;
 
+
     private String playerNickname;
     private Avatar avatar;
+
+    private int points;
 
     private BoardSquare position;
 
@@ -57,6 +60,7 @@ public class Player implements Selectable {
         weapons = new ArrayList<>();
         powerUps = new ArrayList<>();
         playerBoard = new PlayerBoard();
+        points = 0;
     }
 
     public Player(String playerNickname, DamageMark damageMarkDelivered) {
@@ -66,6 +70,25 @@ public class Player implements Selectable {
         powerUps = new ArrayList<>();
     }
 
+    public void addPoints(int newPoints) {
+        points += newPoints;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void resuscitate() {
+        playerBoard.resuscitate();
+    }
+
+    public boolean isDead() {
+        return playerBoard.isDeath();
+    }
+
+    public boolean isOverKilled() {
+        return playerBoard.isOverkill();
+    }
 
     public int getClientID() {
         return clientID;
@@ -141,10 +164,13 @@ public class Player implements Selectable {
     }
 
     public List<PowerUpCard> getPowerUps() {
-        return powerUps;
+        return new ArrayList<>(powerUps);
     }
 
-    //TODO define type excpetion
+    public void removePowerUp(PowerUpCard powerUpCard) {
+        powerUps.remove(powerUpCard);
+    }
+
     public PowerUpCollectedEvent addPowerUp(PowerUpCard powerUpCard, PowerUpsDeck deck) {
         if (powerUps.size() < Rules.PLAYER_CARDS_MAX_POWER_UPS && powerUpCard != null) {
             powerUps.add(powerUpCard);
@@ -214,11 +240,12 @@ public class Player implements Selectable {
         return realPowerUps;
     }
 
-    public List<Ammo> spendPrice(List<Ammo> price, List<PowerUpCard> powerUpsToSpend) {
+    public List<Ammo> spendPrice(List<Ammo> price, List<PowerUpCard> powerUpsToSpend, PowerUpsDeck deck) {
         List<Ammo> priceCopy = new ArrayList<>(price);
         for (PowerUpCard powerUpCard : powerUpsToSpend) {
             priceCopy.remove(powerUpCard.getAmmo());
             powerUps.remove(powerUpCard);
+            deck.discardPowerUp(powerUpCard);
         }
         try {
             playerBoard.spendAmmo(priceCopy);

@@ -51,6 +51,11 @@ public final class Rules {
     public static final int GAME_MAX_PLAYERS = GAME.get("max_players").asInt(5);
     public static final int GAME_MAX_MAPS = GAME.get("max_maps").asInt(4);
     public static final int GAME_AMMO_CARDS_DUPLICATES = GAME.get("ammo_cards_duplicates").asInt(3);
+    public static final int GAME_FIRST_BLOOD_POINTS = GAME.get("first_blood_points").asInt(1);
+    public static final int GAME_DOUBLE_KILL_POINTS = GAME.get("double_kill_points").asInt(1);
+    public static final int GAME_MAX_KILL_TRACK_SKULLS = GAME.get("max_kill_track_skulls").asInt(8);
+
+
 
     // TURN
     private static final JsonNode TURN = RULES.get("turn");

@@ -184,6 +184,10 @@ public class GameBoardClient {
         return playerPositions.get(playerName);
     }
 
+    public void removePlayer(String player) {
+        playerPositions.remove(player);
+    }
+
     public Map<String, BoardSquareClient> getPlayersPosition() {
         return playerPositions;
     }

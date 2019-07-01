@@ -1,6 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.TestSupportClasses;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.TestSupportClasses;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -219,14 +219,14 @@ public class MatchTest {
         GameBoard gameBoard = match.getGameBoard();
         assertEquals(3, match.getPlayers().size());
 
-        gameBoard.spawnPlayer(match.getPlayer("SGrez"), new PowerUpCard(null, Ammo.BLUE));
+        gameBoard.spawnPlayer(match.getPlayer("SGrez"), new PowerUpCard(null, Ammo.BLUE), true);
         assertEquals(new Coordinates(2, 2), gameBoard.getPlayerPosition(match.getPlayer("SGrez")).getCoordinates());
 
-        gameBoard.spawnPlayer(match.getPlayer("ToniIlBello"), new PowerUpCard(null, Ammo.RED));
+        gameBoard.spawnPlayer(match.getPlayer("ToniIlBello"), new PowerUpCard(null, Ammo.RED), true);
         assertEquals(new Coordinates(0, 1), gameBoard.getPlayerPosition(match.getPlayer("ToniIlBello")).getCoordinates());
 
 
-        gameBoard.spawnPlayer(match.getPlayer("FinazIlDuro-X("), new PowerUpCard(null, Ammo.YELLOW));
+        gameBoard.spawnPlayer(match.getPlayer("FinazIlDuro-X("), new PowerUpCard(null, Ammo.YELLOW), true);
         assertEquals(new Coordinates(3, 0), gameBoard.getPlayerPosition(match.getPlayer("FinazIlDuro-X(")).getCoordinates());
 
 

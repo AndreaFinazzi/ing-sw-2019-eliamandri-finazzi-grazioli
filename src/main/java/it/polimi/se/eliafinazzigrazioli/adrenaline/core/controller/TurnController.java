@@ -9,6 +9,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.Rel
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.AmmoCollectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PointsAssignmentEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
@@ -17,10 +18,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +31,8 @@ public class TurnController implements ViewEventsListenerInterface {
     private Match match;
 
     private int actionsPerformed;
+
+    private PowerUpCard powerUpForRespawn;
 
 
     public TurnController(EventController eventController, Match match) {
@@ -59,19 +59,45 @@ public class TurnController implements ViewEventsListenerInterface {
     @Override
     public void handleEvent(SpawnPowerUpSelectedEvent event) throws HandlerNotImplementedException {
         List<AbstractModelEvent> events = new ArrayList<>();
-
         GameBoard gameBoard = match.getGameBoard();
-        Player currentPlayer = match.getCurrentPlayer();
-        events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard()));
-        events.add(currentPlayer.addPowerUp(event.getToKeep(), match.getPowerUpsDeck()));
-        match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
-        events.add(new ActionRequestEvent(
-                currentPlayer,
-                Rules.MAX_ACTIONS_AVAILABLE,
-                currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
-                currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
-                currentPlayer.getPlayerBoard().preShootingMaxMoves()));
+        if (event.isFirstSpawn()) {
+            Player currentPlayer = match.getCurrentPlayer();
+            events.add(gameBoard.spawnPlayer(currentPlayer, event.getSpawnCard(), true));
+            events.add(currentPlayer.addPowerUp(event.getToKeep(), match.getPowerUpsDeck()));
+            match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
+            events.add(new ActionRequestEvent(
+                    currentPlayer,
+                    Rules.MAX_ACTIONS_AVAILABLE,
+                    currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
+                    currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
+                    currentPlayer.getPlayerBoard().preShootingMaxMoves()));
+        }
+        else {
+            Player deadPlayer = match.getPlayer(event.getPlayer());
+            events.add(gameBoard.spawnPlayer(deadPlayer, event.getSpawnCard(), false));
+            PowerUpCard powerUpToDiscard = null;
+            for (PowerUpCard powerUpCard: deadPlayer.getPowerUps()) {
+                if (powerUpCard.getId().equals(event.getSpawnCard().getId()))
+                    powerUpToDiscard = powerUpCard;
+            }
+            if (powerUpToDiscard != null) {
+                deadPlayer.removePowerUp(powerUpToDiscard);
+                match.getPowerUpsDeck().discardPowerUp(powerUpToDiscard);
+                events.add(deadPlayer.addPowerUp(powerUpForRespawn, match.getPowerUpsDeck()));
+            }
+            else
+                match.getPowerUpsDeck().discardPowerUp(powerUpForRespawn);
+            deadPlayer.resuscitate();
+            events.add(new CleanPlayerBoardEvent(deadPlayer));
 
+
+            if (!match.getDeadPlayers().isEmpty()) {
+                powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
+                events.add(new SpawnSelectionRequestEvent(match.getDeadPlayers().get(0), Arrays.asList(powerUpForRespawn), false));
+            }
+            else
+                events.addAll(nextTurn());
+        }
         match.notifyObservers(events);
     }
 
@@ -212,7 +238,8 @@ public class TurnController implements ViewEventsListenerInterface {
                     }
                 }
                 //payment
-                List<Ammo> ammosSpent = currentPlayer.spendPrice(weaponCard.getLoader(), powerUpsToSpend);
+                List<Ammo> ammosSpent = currentPlayer.spendPrice(weaponCard.getLoader(), powerUpsToSpend, match.getPowerUpsDeck());
+                weaponCard.setLoaded(true);
                 events.add(new WeaponCollectedEvent(currentPlayer, weaponCard, weaponDropped, finalPosition.getCoordinates(), powerUpsToSpend, ammosSpent, currentPlayer.weaponHandIsFull()));
 
                 events.add(concludeAction(currentPlayer));
@@ -240,7 +267,7 @@ public class TurnController implements ViewEventsListenerInterface {
     @Override
     public void handleEvent(ReloadWeaponEvent event) throws HandlerNotImplementedException {
         if (event.getWeapon() == null) {
-            match.notifyObservers(nextTurn());
+            match.notifyObservers(concludeTurn());
         }
         else {
             Player currentPlayer = match.getCurrentPlayer();
@@ -250,26 +277,86 @@ public class TurnController implements ViewEventsListenerInterface {
             price.add(weaponReloaded.getCardColor());
 
             if (currentPlayer.canSpend(price, actualPowerUps)) {
-                List<Ammo> ammosSpent = currentPlayer.spendPrice(price, actualPowerUps);
+                List<Ammo> ammosSpent = currentPlayer.spendPrice(price, actualPowerUps, match.getPowerUpsDeck());
                 match.notifyObservers(new PaymentExecutedEvent(currentPlayer, actualPowerUps, ammosSpent));
                 weaponReloaded.setLoaded(true);
                 match.notifyObservers(new WeaponReloadedEvent(currentPlayer, weaponReloaded.getWeaponName()));
                 match.notifyObservers(new ReloadWeaponsRequestEvent(currentPlayer));
             }
             else
-                match.notifyObservers(nextTurn());
+                match.notifyObservers(concludeTurn());
         }
     }
 
     @Override
     public void handleEvent(EndTurnRequestEvent event) throws HandlerNotImplementedException {
-        //todo points assignment and end turn resets
-        match.notifyObservers(nextTurn());
+        match.notifyObservers(concludeTurn());
     }
 
 
 
     //SUPPORT METHODS
+
+    //doesn't count the double kill bonus point
+    private Map<String,Integer> singleDeathPointsAssignment(Player deadPlayer) {
+        PlayerBoard deadPlayerBoard = deadPlayer.getPlayerBoard();
+        Map<Player,Integer> playerPointsMap = new HashMap<>();
+        Map<String,Integer> playerPointsMapStringVersion = new HashMap<>();
+
+        for (Player player: match.getPlayers()) {
+            if (player != deadPlayer)
+                playerPointsMap.put(player, 0);
+        }
+
+        //First Blood
+        Player firstBloodShooter = deadPlayerBoard.getFirstBloodShooter(new ArrayList<>(playerPointsMap.keySet()));
+        playerPointsMap.put(firstBloodShooter, playerPointsMap.get(firstBloodShooter) + Rules.GAME_FIRST_BLOOD_POINTS);
+
+        //Damages points
+        List<Player> playersRanking = new ArrayList<>();
+        for (DamageMark damageMark: deadPlayerBoard.damageAmountRanking()) {
+            playersRanking.add(match.getPlayerByMark(damageMark));
+            playersRanking.remove(null);
+        }
+
+        for (int rank = 0; rank < playersRanking.size(); rank++) {
+            Player player = playersRanking.get(rank);
+            playerPointsMap.put(player, playerPointsMap.get(player) + deadPlayerBoard.getPointsByDamageRank(rank));
+        }
+
+        for (Map.Entry<Player, Integer> playerPoints: playerPointsMap.entrySet())
+            playerPointsMapStringVersion.put(playerPoints.getKey().getPlayerNickname(), playerPoints.getValue());
+        return playerPointsMapStringVersion;
+    }
+
+    private Map<String,Integer> pointsAssignment(List<Player> deadPlayers) {
+        Map<String, Integer> playersPoints = new HashMap<>();
+        for (Player player: match.getPlayers())
+            playersPoints.put(player.getPlayerNickname(), 0);
+
+        for (Player player: deadPlayers) {
+            for (Map.Entry<String, Integer> playerPointsEntry: singleDeathPointsAssignment(player).entrySet()) {
+                String pointsAssignee = playerPointsEntry.getKey();
+                playersPoints.put(pointsAssignee, playersPoints.get(pointsAssignee) + playerPointsEntry.getValue());
+            }
+        }
+        if (deadPlayers.size() > 1) {
+            String currentPlayer = match.getCurrentPlayer().getPlayerNickname();
+            playersPoints.put(currentPlayer, playersPoints.get(currentPlayer) + Rules.GAME_DOUBLE_KILL_POINTS);
+        }
+
+        return playersPoints;
+    }
+
+    private List<AbstractModelEvent> deadPlayersRemoval() {
+        List<AbstractModelEvent> events = new ArrayList<>();
+        for (Player player: match.getDeadPlayers()) {
+            match.getGameBoard().removePlayer(player);
+            events.add(new PlayerDeathEvent(match.getCurrentPlayer(), player));
+        }
+        return events;
+    }
+
     private List<AbstractModelEvent> nextTurn() {
         List<AbstractModelEvent> events = new ArrayList<>();
         Map<Coordinates, AmmoCardClient> ammoCardsReplaced = match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck());
@@ -280,16 +367,13 @@ public class TurnController implements ViewEventsListenerInterface {
 
         events.add(new EndTurnEvent(match.getCurrentPlayer(), ammoCardsReplaced, weaponCardsReplaced));
 
-        //todo all next turn setup (points, replace cards...)
-
-
         match.nextCurrentPlayer();
 
         match.increaseTurn(); //increases turn if nextPlayer is the first player
 
         events.add(new BeginTurnEvent(match.getCurrentPlayer()));
         if (match.getTurn() == 0)
-            events.add(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), Arrays.asList(match.getPowerUpsDeck().drawCard(), match.getPowerUpsDeck().drawCard())));
+            events.add(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), Arrays.asList(match.getPowerUpsDeck().drawCard(), match.getPowerUpsDeck().drawCard()), true));
         else {
             PlayerBoard playerBoard = match.getCurrentPlayer().getPlayerBoard();
             events.add(new ActionRequestEvent(
@@ -320,5 +404,33 @@ public class TurnController implements ViewEventsListenerInterface {
         else
             return new ReloadWeaponsRequestEvent(currentPlayer);
     }
+
+    private List<AbstractModelEvent> concludeTurn() {
+        if (match.getDeadPlayers().isEmpty())
+            return nextTurn();
+        else {
+            List<AbstractModelEvent> events = new ArrayList<>();
+
+            //Points
+            Map<String, Integer> playerPointsMap = pointsAssignment(match.getDeadPlayers());
+            match.updatePoints(playerPointsMap);
+            events.add(new PointsAssignmentEvent(playerPointsMap));
+
+            //Dead players removal from map
+            events.addAll(deadPlayersRemoval());
+
+            //Skulls assignment and dead path
+            events.addAll(match.skullsAssignment());
+
+            //Trigger respawn
+            Player firstDeadPlayer = match.getDeadPlayers().get(0);
+            powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
+            events.add(new SpawnSelectionRequestEvent(firstDeadPlayer, new ArrayList<>(Arrays.asList(powerUpForRespawn)), false));
+
+            return events;
+        }
+    }
+
+
 
 }

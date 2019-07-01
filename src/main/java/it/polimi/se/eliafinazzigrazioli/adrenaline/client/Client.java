@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.InputTestClass;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -102,9 +103,17 @@ public class Client {
     }
 
     public static void main(String[] args) {
+
         Scanner input = new Scanner(System.in);
         String commandView, commandNetwork;
         Client client = new Client(args);
+
+        if (args.length > 0 && args[0].equals("test")) {
+            client.setView(new InputTestClass(client));
+            client.setConnectionManager(new ConnectionManagerSocket(client));
+            client.init();
+        }
+
 
         System.out.println("to CLI or not to CLI? [Y/n]");
         commandView = input.nextLine();

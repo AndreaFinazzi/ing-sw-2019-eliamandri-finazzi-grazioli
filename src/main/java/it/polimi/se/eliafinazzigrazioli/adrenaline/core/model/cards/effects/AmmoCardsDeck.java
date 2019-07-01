@@ -56,10 +56,15 @@ public class AmmoCardsDeck {
         AmmoCard drawedCard;
         drawedCard = deck.get(new Random().nextInt(deck.size()));
         deck.remove(drawedCard);
+        discard(drawedCard);
+        if (deck.isEmpty()) {
+            deck = discardedCards;
+            discardedCards = new ArrayList<>();
+        }
         return drawedCard;
     }
 
-    public void discard(AmmoCard card) {
+    private void discard(AmmoCard card) {
         discardedCards.add(card);
     }
 }

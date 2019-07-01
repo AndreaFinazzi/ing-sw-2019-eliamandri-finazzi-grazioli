@@ -94,7 +94,8 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
                 match.getCurrentPlayer(),
                 Arrays.asList(
                         match.getPowerUpsDeck().drawCard(),
-                        match.getPowerUpsDeck().drawCard())
+                        match.getPowerUpsDeck().drawCard()),
+                true
                 )
         );
     }

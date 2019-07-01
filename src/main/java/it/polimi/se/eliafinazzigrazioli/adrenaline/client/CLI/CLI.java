@@ -356,7 +356,6 @@ public class CLI implements RemoteView, Runnable {
 
     @Override
     public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
-        showMessage("Choose your ");
         List<String[][]> list = new ArrayList<>();
         List<String> powerUpName = new ArrayList<>();
         for(PowerUpCardClient iterator:cards){
