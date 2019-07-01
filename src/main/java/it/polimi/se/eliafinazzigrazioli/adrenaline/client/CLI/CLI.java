@@ -96,12 +96,21 @@ public class CLI implements RemoteView, Runnable {
             message = "You ";
         else
             message = "Player " + player + " " + localModel.getPlayersAvatarMap().get(player);
-        message = message + " payed the fallowing power ups:";
+        //message = message + " payed the fallowing power ups:";
         for (PowerUpCardClient powerUpCardClient: powerUpCardClients)
             powerUpsMatrix.add(powerUpCardClient.drawCard(true));
-        message = message + CLIUtils.alignSquare(powerUpsMatrix);
-        message = message + "\nand the fallowing ammos: " + ammos;
-
+        if(powerUpsMatrix.size() > 0) {
+            message = message + " payed the fallowing power ups:";
+            message = message + CLIUtils.alignSquare(powerUpsMatrix);
+            if(ammos.size() > 0) {
+                message = message + "\nand the fallowing ammos: ";
+                for(Ammo ammo : ammos) {
+                    message = message.concat(ammo.toString()).concat(" ");
+                }
+            }
+        } else {
+            message = "You don't pay!!!";
+        }
         showMessage(message);
     }
 
@@ -230,9 +239,9 @@ public class CLI implements RemoteView, Runnable {
             return;
         }
         if (player.equals(getClient().getPlayerName()))
-            showMessage("You collected a " + " "+ ammo.toString() + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
+            showMessage("You collected a " + " "+ ammo.toString() + Color.RESET + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
         else
-            showMessage(player + " " + avatar + " collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but his playerBoard was full!"));
+            showMessage(player + " " + avatar + " collected a " + ammo.toString() + Color.RESET + " munition " + (actuallyCollected ? "!" : " but his playerBoard was full!"));
     }
 
     @Override
@@ -268,6 +277,11 @@ public class CLI implements RemoteView, Runnable {
         }
     }
 
+    @Override
+    public void showWeaponReloadedUpdate(String player, WeaponCardClient weaponCard) {
+        showMessage(player + " reloaded " + CLIUtils.matrixToString(weaponCard.drawCard(true)));
+    }
+
     /**INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS--------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
     @Override
@@ -289,39 +303,22 @@ public class CLI implements RemoteView, Runnable {
             showMessage(CLIUtils.serializeList(availableActions));
 
             choice = availableActions.get(nextInt(availableActions.size()));
-            if (choice == PlayerAction.SHOW_MAP) {
+
+            if (choice.equals(PlayerAction.SHOW_MAP)) {
                 showMap();
+                showOwnedPlayerBoard();
             }
             if(choice.equals(PlayerAction.SHOW_OWNED_WEAPONS)){
-                List<WeaponCardClient> weaponCardClients = localModel.getWeaponCards();
-                if(weaponCardClients.isEmpty()) {
-                    showMessage("No weapon to show");
-                }
-                else {
-                    List<String[][]> weaponCardsMatrix = new ArrayList<>();
-                    for(WeaponCardClient iterator : weaponCardClients) {
-                        weaponCardsMatrix.add(iterator.drawCard());
-                    }
-                    showMessage(CLIUtils.alignSquare(weaponCardsMatrix));
-                }
+                showOwnedWeapon();
             }
             if(choice.equals(PlayerAction.SHOW_PLAYERBOARDS)) {
-                List<PlayerClient> playerClients = new ArrayList<>();
-                for(PlayerClient playerClient : localModel.getOpponentsList()) {
-                    playerClients.add(playerClient);
-                }
-                for(PlayerClient playerClient : playerClients) {
-                    showMessage(CLIUtils.matrixToString(playerClient.drawCard()));
-                }
-                showMessage(CLIUtils.matrixToString(localModel.drawCard()));
+                showPlayerBoards();
+            }
+            if(choice.equals(PlayerAction.SHOW_OPPONENT_WEAPON)) {
+                showOpponentWeapon();
             }
             if(choice.equals(PlayerAction.SHOW_OWNED_POWERUPS)) {
-                List<PowerUpCardClient> powerUpCardClients = localModel.getPowerUpCards();
-                List<String[][]> powerUpsMatrix = new ArrayList<>();
-                for(PowerUpCardClient iterator:powerUpCardClients) {
-                    powerUpsMatrix.add(iterator.drawCard());
-                }
-                showMessage(CLIUtils.alignSquare(powerUpsMatrix));
+                showOwnedPowerUps();
             }
             if(choice.equals(PlayerAction.SHOW_SPAWN_WEAPON)) {
                 showWeaponOnSpawn();
@@ -380,8 +377,8 @@ public class CLI implements RemoteView, Runnable {
         int choice = nextInt(selectable.size());
         if(choice == -1)
             return null;
-        Coordinates square = selectable.get(choice);
-        return square;
+
+        return selectable.get(choice);
     }
 
     @Override
@@ -392,6 +389,18 @@ public class CLI implements RemoteView, Runnable {
         }
         showMessage(CLIUtils.serializeList(players));
         return players.get(nextInt(players.size()));
+    }
+
+    @Override
+    public Room selectRoom(List<Room> rooms) {
+        if(rooms.isEmpty())
+            return null;
+        showMessage("Select a room: ");
+        CLIUtils.serializeList(rooms);
+        int selected = nextInt(rooms.size());
+        if(selected<0)
+            return null;
+        return rooms.get(nextInt(rooms.size()));
     }
 
     @Override
@@ -459,6 +468,11 @@ public class CLI implements RemoteView, Runnable {
         showMessage("You can select this effects from " + weapon.getWeaponName());
         showMessage(CLIUtils.serializeList(callableEffects));
         showMessage(callableEffects.size()+1 + ") Nothing");
+        String ammos = "";
+        for(Ammo ammo : localModel.getAmmos()) {
+            ammos = ammos + ammo + " ";
+        }
+        showMessage("Your ammos: " + ammos);
         showMessage("Enter: ");
         int select = nextInt(callableEffects.size()+1);
         if(select == -1)
@@ -500,7 +514,6 @@ public class CLI implements RemoteView, Runnable {
             try {
                 inputString = input.nextLine();
                 nextInt = Integer.parseInt(inputString);
-                //input.nextLine();
             } catch(Exception e) {
                 nextInt = -1;
             }
@@ -528,7 +541,7 @@ public class CLI implements RemoteView, Runnable {
                 List<String[][]> weaponMatrix = new ArrayList<>();
                 showMessage("in " + spawn +" there are the following weapons");
                 for(WeaponCardClient weapon : weaponCardClients){
-                    weaponMatrix.add(weapon.drawCard());
+                    weaponMatrix.add(weapon.drawCard(true));
                 }
                 showMessage(CLIUtils.alignSquare(weaponMatrix));
             }
@@ -538,7 +551,7 @@ public class CLI implements RemoteView, Runnable {
 
     public void collectPlay() {
         List<Coordinates> path = getPathFromUser(Rules.MAX_MOVEMENTS_BEFORE_COLLECTION);
-        Coordinates finalCoordinates = path.get(path.size()); // Last element
+        Coordinates finalCoordinates = path.get(path.size()-1); // Last element
         BoardSquareClient boardSquareClient = localModel.getGameBoard().getBoardSquareByCoordinates(finalCoordinates);
         if (boardSquareClient.isSpawnBoard()) {
             //new Weapon collect event
@@ -547,42 +560,52 @@ public class CLI implements RemoteView, Runnable {
         }
     }
 
-    /*@Override
-    public void updateWeaponOnMap(WeaponCardClient weaponCardClient, Coordinates coordinates) {
-        showMessage("You have collected this Weapon card");
-        showMessage(weaponCardClient);
-        if(localModel.getGameBoard().getBoardSquareByCoordinates(coordinates).addWeaponCard(weaponCardClient)) {
-            showMessage(weaponCardClient);
-            showMessage("is drawed on coordinates: " + coordinates);
-        } else
-            showMessage("ops, something didn't work");
-
-    }*/
-
-    //todo implement
-
-    /*@Override
-    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
-        if(reloadableWeapons == null) {
-            showMessage("ops, something didn't work");
-            return null;
-        }
-        else if (!reloadableWeapons.isEmpty()) {
-            int choice;
-            showMessage("Do you want to reload a weapon? [Y/n]");
-            String temp = input.nextLine();
-            if (temp.equalsIgnoreCase("n") || temp.equalsIgnoreCase("no") || temp.equalsIgnoreCase("not"))
-                return null;
-            showMessage("Insert your choice: ");
-            showMessage(serializeList(reloadableWeapons));
-            choice = nextInt(reloadableWeapons.size());
-            return reloadableWeapons.get(choice);
+    public void showOwnedWeapon() {
+        List<WeaponCardClient> weaponCardClients = localModel.getWeaponCards();
+        if(weaponCardClients.isEmpty()) {
+            showMessage("No weapon to show");
         }
         else {
-            showMessage("No weapons can be reloaded.");
-            return null;
+            List<String[][]> weaponCardsMatrix = new ArrayList<>();
+            for(WeaponCardClient iterator : weaponCardClients) {
+                weaponCardsMatrix.add(iterator.drawCard(true));
+            }
+            showMessage(CLIUtils.alignSquare(weaponCardsMatrix));
         }
-    }*/
+    }
+
+    public void showPlayerBoards() {
+        List<String[][]> playerClients = new ArrayList<>();
+        for(PlayerClient playerClient : localModel.getOpponentsList()) {
+            playerClients.add(playerClient.drawCard());
+        }
+        showMessage(CLIUtils.alignSquare(playerClients));
+        showOwnedPlayerBoard();
+    }
+
+    public void showOwnedPlayerBoard() {
+        showMessage(CLIUtils.matrixToString(localModel.drawCard()));
+    }
+
+    public void showOpponentWeapon() {
+        for(PlayerClient playerClient : localModel.getOpponentsList()) {
+            List<String[][]> opponentWeapon = new ArrayList<>();
+            for(WeaponCardClient weapon : playerClient.getWeapons()) {
+                opponentWeapon.add(weapon.drawCard(true));
+            }
+            showMessage(playerClient.getAvatar() + " : ");
+            showMessage(CLIUtils.alignSquare(opponentWeapon));
+        }
+    }
+
+    public void showOwnedPowerUps() {
+        List<PowerUpCardClient> powerUpCardClients = localModel.getPowerUpCards();
+        List<String[][]> powerUpsMatrix = new ArrayList<>();
+        for(PowerUpCardClient iterator:powerUpCardClients) {
+            powerUpsMatrix.add(iterator.drawCard());
+        }
+        showMessage(CLIUtils.alignSquare(powerUpsMatrix));
+    }
 
     @Override
     public void run() {

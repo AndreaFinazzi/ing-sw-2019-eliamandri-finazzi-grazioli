@@ -28,7 +28,6 @@ public class LocalModel {
     private int skulls;
     private List<Integer> deathScores;
     private boolean death;
-    private int movementsAllowed;
     private String playerName;
 
     //Public information
@@ -42,7 +41,7 @@ public class LocalModel {
 
 
     private final static int WIDTH = 30;
-    private final static int HEIGHT = 13;
+    private final static int HEIGHT = 12;
 
     public LocalModel() {
         weaponCards = new ArrayList<>();
@@ -312,40 +311,36 @@ public class LocalModel {
         for(int i=0; i<string.length(); i++) {
             matrix[i+2][4] = String.valueOf(string.charAt(i));
         }
-        string = "Movementes allowed: " + movementsAllowed;
+        string = "ammos: ";
         for(int i=0; i<string.length(); i++) {
             matrix[i+2][5] = String.valueOf(string.charAt(i));
         }
-        string = "ammos: ";
-        for(int i=0; i<string.length(); i++) {
-            matrix[i+2][6] = String.valueOf(string.charAt(i));
-        }
         int poseX = string.length()+2;
         for(int i=0; i<ammos.size(); i++) {
-            matrix[poseX+i][6] = ammos.get(i).toString();
+            matrix[poseX+i][5] = ammos.get(i).toString();
             poseX++;
         }
         string = "Damages: ";
         for(int i=0; i<string.length(); i++) {
-            matrix[i+2][7] = String.valueOf(string.charAt(i));
+            matrix[i+2][6] = String.valueOf(string.charAt(i));
         }
         poseX = 2;
         for(int i=0; i<damages.size(); i++) {
-            matrix[poseX+i][8] = damages.get(i).toString();
+            matrix[poseX+i][7] = damages.get(i).toString();
             poseX++;
         }
         string = "Marks: ";
         for(int i=0; i<string.length(); i++) {
-            matrix[i+2][9] = String.valueOf(string.charAt(i));
+            matrix[i+2][8] = String.valueOf(string.charAt(i));
         }
         poseX = 2;
         for(int i=0; i<marks.size(); i++) {
-            matrix[poseX+i][10] = marks.get(i).toString();
+            matrix[poseX+i][9] = marks.get(i).toString();
             poseX++;
         }
         string = "Number of powerUp: " + powerUpCards.size();
         for(int i=0; i<string.length(); i++) {
-            matrix[i+2][11] = String.valueOf(string.charAt(i));
+            matrix[i+2][10] = String.valueOf(string.charAt(i));
         }
 
         return  matrix;

@@ -44,7 +44,6 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
             clientSocket = new Socket(IP_SERVER, PORT_SEVER);
             sender = new ObjectOutputStream(clientSocket.getOutputStream());
             receiver = new ObjectInputStream(clientSocket.getInputStream());
-
             startListener();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);

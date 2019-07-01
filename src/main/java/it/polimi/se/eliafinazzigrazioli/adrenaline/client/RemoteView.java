@@ -627,7 +627,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void showWeaponCardResettingUpdate(Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap) {
         showMessage("Weapons are being placed on the spawn points...");
     }
-
+    //Implemented on CLI
     default void showWeaponReloadedUpdate(String player, WeaponCardClient weaponCard) {
         showMessage(player + " reloaded " + weaponCard.getWeaponName() + "!");
     }
@@ -664,7 +664,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         } while (choice < 1 || count > players.size());
         return players.get(choice - 1);
     }
-
+    //Implemented on CLI
     default Room selectRoom(List<Room> rooms) {
         if (rooms.isEmpty())
             return null;
@@ -704,7 +704,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             return selectableWeapons.get(choice - 1);
         }
     }
-
 
     WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons);
 
@@ -755,13 +754,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         choice = scanner.nextInt();
         return choice == 1;
     }
-
-
-
-
-
-
-
 
     /**COMPOSITE SELECTION METHODS--------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -872,17 +864,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
     /**SUPPORT EVALUATION AND DATA EXTRACTION METHODS--------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
     static Coordinates calculateCoordinates(Coordinates initialCoordinates, MoveDirection moveDirection) {
@@ -900,7 +881,9 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     static List<WeaponCardClient> calculatePayableWeapons(List<WeaponCardClient> weaponsList, LocalModel localModel, boolean toReload) {
         List<WeaponCardClient> payableWeapons = new ArrayList<>();
-        for (WeaponCardClient weaponCard: weaponsList) {
+        Iterator<WeaponCardClient> iterator = weaponsList.iterator();
+        while(iterator.hasNext()) {
+            WeaponCardClient weaponCard = iterator.next();
             List<Ammo> totalPrice = new ArrayList<>(toReload ? weaponCard.getPrice() : weaponCard.getLoader());
             if (localModel.canPay(totalPrice)) {
                 payableWeapons.add(weaponCard);
