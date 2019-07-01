@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 
 public class Server {
 
+    protected static final int PING_TIMEOUT = 1000;
+
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     private ServerSocketManager serverSocketManager;

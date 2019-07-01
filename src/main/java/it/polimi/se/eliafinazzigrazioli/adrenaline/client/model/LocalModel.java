@@ -9,28 +9,33 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LocalModel {
+public class LocalModel implements Serializable {
 
     //Private information
+
     private List<WeaponCardClient> weaponCards; //user's weapon
     private boolean weaponHandFull;
     private List<PowerUpCardClient> powerUpCards;
     private List<Ammo> ammos;
-
     private List<DamageMark> damages;
 
     private List<DamageMark> marks;
+
     private int skulls;
     private List<Integer> deathScores;
     private boolean death;
+    private boolean overkill;
+    private int movementsAllowed;
     private String playerName;
 
     //Public information
+    private MapType mapType;
 
     private GameBoardClient gameBoard;
     //private List<String> players;
@@ -38,11 +43,15 @@ public class LocalModel {
     private Map<String, Avatar> playerToAvatarMap;
     private List<SpawnBoardSquareClient> listSpawn;
 
+    // temp field used in reconnection update
 
+    private Map<Coordinates, List<WeaponCardClient>> serverWeaponCardsSetup;
+    private Map<Coordinates, AmmoCardClient> serverAmmoCardsSetup;
+    private Map<String, Coordinates> serverPlayerPositions;
 
     private final static int WIDTH = 30;
-    private final static int HEIGHT = 12;
 
+    private final static int HEIGHT = 12;
     public LocalModel() {
         weaponCards = new ArrayList<>();
         powerUpCards = new ArrayList<>();
@@ -63,6 +72,50 @@ public class LocalModel {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+    }
+
+    public void setWeaponCards(List<WeaponCardClient> weaponCards) {
+        this.weaponCards = weaponCards;
+    }
+
+    public void setPowerUpCards(List<PowerUpCardClient> powerUpCards) {
+        this.powerUpCards = powerUpCards;
+    }
+
+    public void setAmmos(List<Ammo> ammos) {
+        this.ammos = ammos;
+    }
+
+    public void setDamages(List<DamageMark> damages) {
+        this.damages = damages;
+    }
+
+    public void setMarks(List<DamageMark> marks) {
+        this.marks = marks;
+    }
+
+    public void setSkulls(int skulls) {
+        this.skulls = skulls;
+    }
+
+    public void setDeathScores(List<Integer> deathScores) {
+        this.deathScores = deathScores;
+    }
+
+    public void setDeath(boolean death) {
+        this.death = death;
+    }
+
+    public void setGameBoard(GameBoardClient gameBoard) {
+        this.gameBoard = gameBoard;
+    }
+
+    public void setOpponentsInfo(Map<String, PlayerClient> opponentsInfo) {
+        this.opponentsInfo = opponentsInfo;
+    }
+
+    public void setListSpawn(List<SpawnBoardSquareClient> listSpawn) {
+        this.listSpawn = listSpawn;
     }
 
     public void generatesGameBoard(MapType mapType) {
@@ -148,6 +201,7 @@ public class LocalModel {
     public List<Ammo> getAmmos() {
         return ammos;
     }
+
     /*
     public List<String> getPlayers() {
         return players;
@@ -156,7 +210,6 @@ public class LocalModel {
     public Map<String, Avatar> getPlayersAvatarMap() {
         return playerToAvatarMap;
     }
-
     public List<DamageMark> getDamages() {
         return damages;
     }
@@ -177,6 +230,22 @@ public class LocalModel {
         weaponHandFull = true;
     }
 
+    public Map<Coordinates, List<WeaponCardClient>> getWeaponCardsSetup() {
+
+        Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap = new HashMap<>();
+        for (BoardSquareClient square : listSpawn) {
+            coordinatesWeaponsMap.put(square.getCoordinates(), square.getWeaponCards());
+        }
+        return coordinatesWeaponsMap;
+    }
+
+    public Map<Coordinates, List<WeaponCardClient>> getServerWeaponCardsSetup() {
+        return serverWeaponCardsSetup;
+    }
+
+    public Map<Coordinates, AmmoCardClient> getServerAmmoCardsSetup() {
+        return serverAmmoCardsSetup;
+    }
 
     public WeaponCardClient getWeaponCardByNameOnMap(String weaponName) {
         for(BoardSquareClient square : listSpawn){
@@ -344,5 +413,33 @@ public class LocalModel {
         }
 
         return  matrix;
+    }
+
+    public void setOverkill(boolean overkill) {
+        this.overkill = overkill;
+    }
+
+    public MapType getMapType() {
+        return mapType;
+    }
+
+    public void setMapType(MapType mapType) {
+        this.mapType = mapType;
+    }
+
+    public void setWeaponCardsSetup(Map<Coordinates, List<WeaponCardClient>> weaponCardsSetup) {
+        this.serverWeaponCardsSetup = weaponCardsSetup;
+    }
+
+    public void setAmmoCardsSetup(Map<Coordinates, AmmoCardClient> ammoCardsSetup) {
+        this.serverAmmoCardsSetup = ammoCardsSetup;
+    }
+
+    public Map<String, Coordinates> getServerPlayerPositions() {
+        return serverPlayerPositions;
+    }
+
+    public void setServerPlayerPositions(Map<String, Coordinates> serverPlayerPositions) {
+        this.serverPlayerPositions = serverPlayerPositions;
     }
 }

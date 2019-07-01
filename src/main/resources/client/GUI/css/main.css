@@ -171,6 +171,11 @@
     -fx-scale-y: 1.05;
 }
 
+.disable {
+    -fx-opacity: 0.5;
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
 .button:hover {
     -fx-border-style: solid;
     -fx-border-color: linear-gradient(to top, #bf4e1c 0%, #eda386 50%, #bb3e7f 75%, #93ceed 100%);

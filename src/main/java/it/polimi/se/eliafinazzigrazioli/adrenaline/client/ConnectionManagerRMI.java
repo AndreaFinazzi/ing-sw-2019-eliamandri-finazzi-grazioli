@@ -29,8 +29,19 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
             LOGGER.info("Client ConnectionManagerRMI sending event: " + event);
             serverRemoteRMI.receive(event);
         } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
+            LOGGER.log(Level.WARNING, e.toString(), e);
+            connection_attempts++;
+            try {
+                LOGGER.info("Trying again in a few seconds");
+                Thread.sleep(CONNECTION_ATTEMPT_DELAY);
+                if (connection_attempts <= CONNECTION_MAX_ATTEMPTS) send(event);
+            } catch (InterruptedException ex) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
         }
+
+        connection_attempts = 0;
     }
 
     @Override
@@ -108,5 +119,10 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
     public void receive(AbstractModelEvent event) throws RemoteException {
         LOGGER.info("Client ConnectionManagerRMI receiving: " + event);
         received(event);
+    }
+
+    @Override
+    public boolean isReachable() throws RemoteException {
+        return true;
     }
 }

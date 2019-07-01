@@ -5,10 +5,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.Act
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ReloadWeaponsRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.AmmoCollectedEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerMovementEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerSpawnedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
 public interface ModelEventsListenerInterface extends EventListenerInterface {
@@ -35,6 +32,10 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     }
 
     default void handleEvent(BeginTurnEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    default void handleEvent(BeginMatchEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 
@@ -78,6 +79,14 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(PlayerDisconnectedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    default void handleEvent(PlayerReconnectedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
     default void handleEvent(PlayerMovementEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
@@ -115,10 +124,6 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     }
 
     default void handleEvent(SpawnSelectionRequestEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
-    default void handleEvent(BeginMatchEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 

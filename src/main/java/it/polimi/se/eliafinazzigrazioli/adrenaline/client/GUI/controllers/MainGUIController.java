@@ -334,14 +334,12 @@ public class MainGUIController extends AbstractGUIController {
                         CommandsGUIController commandsGUIController = new CommandsGUIController(view);
                         loadFXML(GUI.FXML_PATH_COMMANDS, commandsContainerAnchorPane, commandsGUIController);
                         view.setCommandsGUIController(commandsGUIController);
-                        commandsGUIController.loadMyPlayerBoard();
 
                     } else {
-                        OpponentPlayerGUIController opponentPlayerGUIController = new OpponentPlayerGUIController(view);
+                        OpponentPlayerGUIController opponentPlayerGUIController = new OpponentPlayerGUIController(view, player);
                         loadFXML(GUI.FXML_PATH_OPPONENT_PLAYER_INFO, playerBoardsVBox, opponentPlayerGUIController);
 
                         opponentPlayerToGUIControllerMap.put(player, opponentPlayerGUIController);
-                        opponentPlayerGUIController.loadPlayerBoard(player);
                     }
                 }
                 view.setOpponentPlayerToGUIControllerMap(opponentPlayerToGUIControllerMap);

@@ -10,12 +10,18 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 public class OpponentPlayerGUIController extends AbstractGUIController {
+    @FXML
+    private StackPane rootStackPane;
     @FXML
     private AnchorPane mainAnchorPane;
     @FXML
@@ -27,8 +33,23 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
 
     private PlayerBoardGUIController playerBoardGUIController;
 
-    public OpponentPlayerGUIController(GUI view) {
+    public OpponentPlayerGUIController(GUI view, String player) {
         super(view);
+        this.player = player;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
+
+        playerBoardGUIController = new PlayerBoardGUIController(view, player, true);
+        try {
+            loadFXML(GUI.FXML_PATH_PLAYER_BOARD, mainAnchorPane, playerBoardGUIController);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        playerInfoTextArea.setText(String.format("%s%n%n%s", player, playerBoardGUIController.getAvatar()));
     }
 
     public void loadPlayerBoard(String player) throws IOException {
@@ -70,5 +91,21 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
     public void showDamageReceived(List<DamageMark> damages, List<DamageMark> marks) throws IOException {
         playerBoardGUIController.updateDamages();
         playerBoardGUIController.updateMarks();
+    }
+
+    public void setDisconnected() {
+        rootStackPane.setDisable(true);
+        rootStackPane.getStyleClass().add(GUI.STYLE_CLASS_DISABLE);
+    }
+
+    public void setReconnected() throws IOException {
+        rootStackPane.setDisable(false);
+        rootStackPane.getStyleClass().remove(GUI.STYLE_CLASS_DISABLE);
+
+        playerBoardGUIController.updateWeaponCards();
+        playerBoardGUIController.updatePowerUpCards();
+        playerBoardGUIController.updateDamages();
+        playerBoardGUIController.updateMarks();
+        playerBoardGUIController.updateAmmoStack();
     }
 }

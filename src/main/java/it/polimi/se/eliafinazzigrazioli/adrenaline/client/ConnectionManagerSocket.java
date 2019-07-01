@@ -34,7 +34,16 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
             sender.writeObject(event);
             sender.flush();
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
+            LOGGER.log(Level.WARNING, e.toString(), e);
+            connection_attempts++;
+            try {
+                LOGGER.info("Trying again in a few seconds");
+                Thread.sleep(CONNECTION_ATTEMPT_DELAY);
+                if (connection_attempts <= CONNECTION_MAX_ATTEMPTS) send(event);
+            } catch (InterruptedException ex) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -63,17 +72,17 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
     private void startListener() {
         new Thread(() -> {
             AbstractModelEvent event;
-            while (true) {
-                try {
+            try {
+                while (true) {
                     event = (AbstractModelEvent) receiver.readObject();
                     received(event);
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
-                } catch (ClassNotFoundException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
-                } catch (ClassCastException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
                 }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+                if (connection_attempts <= CONNECTION_MAX_ATTEMPTS) startListener();
+                closeConnection();
+            } catch (ClassNotFoundException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
             }
         }).start();
     }

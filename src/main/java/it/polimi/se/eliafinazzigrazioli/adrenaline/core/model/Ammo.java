@@ -2,7 +2,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 
-public enum Ammo {
+import java.io.Serializable;
+
+public enum Ammo implements Serializable {
     RED,
     BLUE,
     YELLOW;

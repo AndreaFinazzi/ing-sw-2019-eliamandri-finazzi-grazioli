@@ -42,6 +42,12 @@ public class CLI implements RemoteView, Runnable {
     }
 
     @Override
+    public void setLocalModel(LocalModel clientModel) {
+        localModel = clientModel;
+        buildLocalMap(clientModel.getMapType());
+    }
+
+    @Override
     public LocalModel getLocalModel() {
         return localModel;
     }
@@ -280,6 +286,26 @@ public class CLI implements RemoteView, Runnable {
     @Override
     public void showWeaponReloadedUpdate(String player, WeaponCardClient weaponCard) {
         showMessage(player + " reloaded " + CLIUtils.matrixToString(weaponCard.drawCard(true)));
+    }
+
+    /**
+     * show info about disconnected player
+     *
+     * @param player
+     */
+    @Override
+    public void showPlayerDisconnection(String player) {
+
+    }
+
+    /**
+     * show info about reconnected player
+     *
+     * @param player
+     */
+    @Override
+    public void showPlayerReconnection(String player) {
+
     }
 
     /**INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS--------------------------------------------------------------------------------------------------------------------------------------------------------*/

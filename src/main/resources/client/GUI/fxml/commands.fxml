@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane fx:id="commandsGridPane" hgap="10.0" maxHeight="396.0" maxWidth="1031.0" minHeight="396.0" minWidth="935.0"
+<GridPane fx:id="rootGridPane" hgap="10.0" maxHeight="396.0" maxWidth="1031.0" minHeight="396.0" minWidth="935.0"
           prefHeight="396.0" prefWidth="1031.0" stylesheets="@../css/main.css" vgap="10.0"
           xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>

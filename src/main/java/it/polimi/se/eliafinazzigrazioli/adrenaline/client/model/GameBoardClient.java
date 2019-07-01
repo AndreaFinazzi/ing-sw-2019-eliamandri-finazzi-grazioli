@@ -226,7 +226,8 @@ public class GameBoardClient {
 
 
     public String[][] getSquareText(BoardSquareClient boardSquare, List<Avatar> avatars) {
-        int width = DIM_X; int height = DIM_Y;
+        int width = DIM_X;
+        int height = DIM_Y;
         Random random = new Random();
         String[][] squareText = new String[width][height];
         for (int i = 0; i < width; i++) {
@@ -361,13 +362,14 @@ public class GameBoardClient {
 
         }
         if (boardSquare.hasAmmoCard()) {
-            int x = (DIM_X/2)-1; int y = (DIM_Y/2);
-            for(Ammo ammo : boardSquare.getAmmoCard().getAmmos()) {
+            int x = (DIM_X / 2) - 1;
+            int y = (DIM_Y / 2);
+            for (Ammo ammo : boardSquare.getAmmoCard().getAmmos()) {
                 squareText[x][y] = ammo.toStringToMap();
                 x++;
             }
 
-            if(boardSquare.getAmmoCard().containsPowerUp()) {
+            if (boardSquare.getAmmoCard().containsPowerUp()) {
                 squareText[x][y] = Color.RESET + "P";
             }
         }
@@ -456,6 +458,24 @@ public class GameBoardClient {
         }
         return map;
     }
+
+    public Map<Coordinates, AmmoCardClient> getCoordinatesAmmoCardMap() {
+        Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap = new HashMap<>();
+
+        for (int i = 0; i < x_max; i++) {
+            for (int j = 0; j < y_max; j++) {
+                if (squaresMatrix[i][j] != null && !squaresMatrix[i][j].isSpawnBoard())
+                    try {
+                        coordinatesAmmoCardMap.put((squaresMatrix[i][j]).getCoordinates(), squaresMatrix[i][j].getAmmoCard());
+                    } catch (ClassCastException e) {
+                        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    }
+            }
+        }
+
+        return coordinatesAmmoCardMap;
+    }
+
 
     public int getX_max() {
         return x_max;

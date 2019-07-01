@@ -2,7 +2,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 
-public enum DamageMark {
+import java.io.Serializable;
+
+public enum DamageMark implements Serializable {
     PURPLE,
     YELLOW,
     GREEN,

@@ -1,15 +1,17 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.LocalModel;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PlayerClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -66,7 +68,7 @@ public class Match implements Observable {
 
         public int size() {
             int cont = 0;
-            for (Player player: players)
+            for (Player player : players)
                 cont++;
             return cont;
         }
@@ -213,14 +215,16 @@ public class Match implements Observable {
         return tempPlayer;
     }
 
-    public synchronized Player addPlayer(int clientID, String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException {
+    public synchronized Player addPlayer(int clientID, String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException, PlayerReconnectionException {
         Player tempPlayer = players.get(nickname);
 
         if (tempPlayer != null) {
             if (tempPlayer.isConnected())
                 throw new PlayerAlreadyPresentException();
-            else
+            else {
                 tempPlayer.connect();
+                throw new PlayerReconnectionException();
+            }
         } else if (players.size() >= Rules.GAME_MAX_PLAYERS) {
             throw new MaxPlayerException();
         } else {
@@ -301,7 +305,7 @@ public class Match implements Observable {
         turn++;
     }
 
-    public void increaseTurn(){
+    public void increaseTurn() {
         if (currentPlayer == firstPlayer)
             turn++;
     }
@@ -359,5 +363,57 @@ public class Match implements Observable {
                     observer.update(event);
                 }
         }
+    }
+
+    public LocalModel generateClientModel(Player player) {
+        LocalModel clientModel = new LocalModel();
+
+        clientModel.setPlayerName(player.getPlayerNickname());
+
+        clientModel.setPlayerToAvatarMap(getAvatarMap());
+
+        // cards on map setup
+        clientModel.setWeaponCardsSetup(gameBoard.getWeaponCardsOnMap());
+        clientModel.setAmmoCardsSetup(gameBoard.getAmmoCardsOnMap());
+
+        // weapons
+        player.getWeapons().forEach(weaponCard ->
+                clientModel.addWeapon(new WeaponCardClient(weaponCard)));
+        if (player.weaponHandIsFull()) clientModel.setWeaponHandFull();
+
+        //powerUps
+        player.getPowerUps().forEach(powerUpCard ->
+                clientModel.addPowerUp(new PowerUpCardClient(powerUpCard)));
+
+        //ammos
+        clientModel.setAmmos(player.getPlayerBoard().getAmmos());
+
+        clientModel.setDamages(player.getPlayerBoard().getDamages());
+
+        clientModel.setMarks(player.getPlayerBoard().getMarks());
+
+        clientModel.setSkulls(player.getPlayerBoard().getSkulls());
+
+        clientModel.setDeathScores(player.getPlayerBoard().getDeathScores());
+
+        clientModel.setDeath(player.getPlayerBoard().isDeath());
+        clientModel.setOverkill(player.getPlayerBoard().isOverkill());
+
+        clientModel.setMapType(gameBoard.getMapType());
+
+        Map<String, PlayerClient> opponentsInfo = new HashMap<>();
+        Map<String, Coordinates> playerPositions = new HashMap<>();
+        players.forEach(serverPlayer -> {
+            if (!serverPlayer.getPlayerNickname().equals(player.getPlayerNickname())) {
+                PlayerClient opponent = new PlayerClient(serverPlayer);
+                opponentsInfo.put(serverPlayer.getPlayerNickname(), opponent);
+            }
+
+            playerPositions.put(serverPlayer.getPlayerNickname(), gameBoard.getPlayerPosition(serverPlayer).getCoordinates());
+        });
+        clientModel.setServerPlayerPositions(playerPositions);
+        clientModel.setOpponentsInfo(opponentsInfo);
+
+        return clientModel;
     }
 }

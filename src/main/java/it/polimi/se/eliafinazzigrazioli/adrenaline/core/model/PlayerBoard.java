@@ -1,7 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AmmoNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
@@ -16,13 +14,15 @@ public class PlayerBoard {
     private int skulls;
     private boolean death;
     private boolean overkill;
+
     private ArrayList<DamageMark> damages;
+
     private ArrayList<DamageMark> marks;
     private ArrayList<Ammo> ammos;
+
     private ArrayList<Integer> deathScores;
 
     private int deliverableMarks;
-
 
     public PlayerBoard() {
         this.damages = new ArrayList<>();
@@ -115,6 +115,10 @@ public class PlayerBoard {
         return cont;
     }
 
+    public ArrayList<DamageMark> getDamages() {
+        return damages;
+    }
+
     public ArrayList<DamageMark> getMarks() {
         return marks;
     }
@@ -141,8 +145,8 @@ public class PlayerBoard {
             marks.clear();
     }
 
-    // Ammo exchange methods
 
+    // Ammo exchange methods
     public void spendAmmo(List<Ammo> toSpend) throws AmmoNotAvailableException {
         if (!ammos.containsAll(toSpend))
             throw new AmmoNotAvailableException();
@@ -189,6 +193,10 @@ public class PlayerBoard {
 
     public List getScores() {
         return damages;
+    }
+
+    public ArrayList<Integer> getDeathScores() {
+        return deathScores;
     }
 
     public boolean isDeath() {

@@ -41,6 +41,9 @@ public class CommandsGUIController extends AbstractGUIController {
     private PlayerBoardGUIController playerBoardGUIController;
 
     @FXML
+    private GridPane rootGridPane;
+
+    @FXML
     private FlowPane actionsFlowPane;
 
     @FXML
@@ -111,7 +114,7 @@ public class CommandsGUIController extends AbstractGUIController {
             Node powerUpSlot = myPowerUpCardSlots.getChildren().get(powerUpCard.getSlotPosition());
             powerUpSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
             view.applyBackground(powerUpSlot, view.getPowerUpAsset(powerUpCard.getId()));
-            powerUpSlot.setDisable(true);
+//            powerUpSlot.setDisable(true);
         }
     }
 
@@ -370,7 +373,15 @@ public class CommandsGUIController extends AbstractGUIController {
             }
             arrowsGridPane.setVisible(false);
 
+            playerBoardGUIController = new PlayerBoardGUIController(view, view.getClient().getPlayerName(), false);
+            try {
+                loadFXML(GUI.FXML_PATH_PLAYER_BOARD, myPlayerBoardAnchorPane, playerBoardGUIController);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
 
+            updatePowerUpCards();
+            updateWeaponCards();
         }
     }
 
@@ -420,5 +431,22 @@ public class CommandsGUIController extends AbstractGUIController {
 
     public void setSelectableEffects(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) throws IOException {
         playerBoardGUIController.setSelectableEffects(weapon, callableEffects);
+    }
+
+    public void setDisconnected() {
+        rootGridPane.setDisable(true);
+        rootGridPane.getStyleClass().add(GUI.STYLE_CLASS_DISABLE);
+    }
+
+
+    public void setReconnected() throws IOException {
+        rootGridPane.setDisable(false);
+        rootGridPane.getStyleClass().remove(GUI.STYLE_CLASS_DISABLE);
+
+        playerBoardGUIController.updateWeaponCards();
+        playerBoardGUIController.updatePowerUpCards();
+        playerBoardGUIController.updateDamages();
+        playerBoardGUIController.updateMarks();
+        playerBoardGUIController.updateAmmoStack();
     }
 }

@@ -2,12 +2,10 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,8 +18,11 @@ public class MatchBuilder {
     private static final Logger LOGGER = Logger.getLogger(MatchBuilder.class.getName());
 
     private MatchController nextMatch;
-    private HashMap<MatchController, BlockingQueue<AbstractViewEvent>> matchToQueueMap = new HashMap<>();
+    private Map<MatchController, BlockingQueue<AbstractViewEvent>> matchToQueueMap = new HashMap<>();
     private int currentMatchID;
+
+    //TODO never populated
+    private Map<String, MatchController> disconnectedPlayerToMatchMap = new HashMap<>();
 
     // Match-threads pools
     private ExecutorService matchesExecutor = Executors.newCachedThreadPool();
@@ -85,7 +86,7 @@ public class MatchBuilder {
         nextMatch.signClient(clientHandler);
     }
 
-    public synchronized void playerLogged(MatchController match) {
+    public synchronized void playerLogged(String player, MatchController match) {
         if (match.isFull()) {
             stopTimer();
             startMatch(match);
@@ -95,12 +96,33 @@ public class MatchBuilder {
         }
     }
 
+    public void disconnectClient(String player, MatchController match) {
+        disconnectedPlayerToMatchMap.put(player, match);
+    }
+
+    public void reconnectClient(String player, MatchController match) {
+        disconnectedPlayerToMatchMap.remove(player, match);
+    }
+
+    public boolean validateLoginRequestEvent(LoginRequestEvent event, MatchController match) {
+        MatchController previousMatch = disconnectedPlayerToMatchMap.get(event.getPlayer());
+        if (previousMatch != null && !previousMatch.equals(match)) {
+            AbstractClientHandler clientHandler = match.popClient(event.getClientID());
+            clientHandler.setEventsQueue(matchToQueueMap.get(match));
+            previousMatch.getEventController().addVirtualView(clientHandler);
+            previousMatch.getEventController().update(event);
+            return false;
+        }
+
+        return true;
+    }
+
     private synchronized void startMatch(MatchController match) {
 
         //TODO: move to Messages
         LOGGER.info("Game starting");
 
-        ArrayList<AbstractClientHandler> notLoggedClients = match.popNotLoggedClients();
+        List<AbstractClientHandler> notLoggedClients = match.popNotLoggedClients();
         // Kick-off next game
         matchesExecutor.execute(match);
         match.setStarted(true);

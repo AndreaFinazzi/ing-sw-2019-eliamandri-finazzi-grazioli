@@ -31,7 +31,6 @@ public abstract class AbstractClientHandler implements Runnable {
 
     public void setEventsQueue(BlockingQueue<AbstractViewEvent> eventsQueue) {
         this.eventsQueue = eventsQueue;
-
     }
 
     protected void received(AbstractViewEvent event) {
@@ -42,7 +41,7 @@ public abstract class AbstractClientHandler implements Runnable {
     }
 
     public void unregister() {
-        eventsQueue.add(new ClientDisconnectionEvent(this));
+        received(new ClientDisconnectionEvent(this));
     }
 
     //TODO: add message constants to dedicated class

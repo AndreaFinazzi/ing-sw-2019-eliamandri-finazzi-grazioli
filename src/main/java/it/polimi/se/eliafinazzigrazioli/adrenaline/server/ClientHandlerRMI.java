@@ -28,12 +28,17 @@ public class ClientHandlerRMI extends AbstractClientHandler {
         this.clientID = clientID;
     }
 
+    public boolean isReachable() throws RemoteException {
+        return clientRemoteRMI.isReachable();
+    }
+
     @Override
     public void send(AbstractModelEvent event) {
         try {
             clientRemoteRMI.receive(event);
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            unregister();
         }
     }
 }

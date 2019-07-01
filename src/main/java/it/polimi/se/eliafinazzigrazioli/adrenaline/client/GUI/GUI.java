@@ -20,10 +20,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -38,6 +35,7 @@ public class GUI extends Application implements RemoteView {
     public static final String STYLE_CLASS_MAP_DEFAULT = "map_NONE";
     public static final String STYLE_CLASS_MAP_PREFIX = "map_";
     public static final String STYLE_CLASS_HIGHLIGHT = "highlight";
+    public static final String STYLE_CLASS_DISABLE = "disable";
     public static final String STYLE_CLASS_WEAPON_ROTATED = "rotatedWeaponCard";
     public static final String STYLE_CLASS_WEAPON_ON_MAP = "onMapWeaponCard";
     public static final String STYLE_CLASS_WEAPON_MY = "myWeaponCard";
@@ -249,6 +247,28 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void showPlayerReconnection(String player) {
+        try {
+            if (!player.equals(client.getPlayerName())) {
+                opponentPlayerToGUIControllerMap.get(player).setReconnected();
+            } else {
+                commandsGUIController.setReconnected();
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void showPlayerDisconnection(String player) {
+        if (!player.equals(client.getPlayerName())) {
+            opponentPlayerToGUIControllerMap.get(player).setDisconnected();
+        } else {
+            commandsGUIController.setDisconnected();
+        }
+    }
+
+    @Override
     public WeaponEffectClient selectWeaponEffect(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) {
         if (!callableEffects.isEmpty()) {
             AtomicReference<WeaponEffectClient> selectedEffect = new AtomicReference<>();
@@ -432,6 +452,12 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showMapVote(List<MapType> availableMaps) {
+        initialize();
+
+        mainGUIController.setVoteMap(availableMaps);
+    }
+
+    private void initialize() {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource(FXML_PATH_MAIN));
         mainGUIController = new MainGUIController(this);
@@ -459,13 +485,18 @@ public class GUI extends Application implements RemoteView {
                 }
             });
         });
-
-        mainGUIController.setVoteMap(availableMaps);
     }
 
     @Override
     public void showBeginMatch() {
         mainGUIController.loadMap();
+
+        showAmmoCardResettingUpdate(localModel.getGameBoard().getCoordinatesAmmoCardMap());
+        showWeaponCardResettingUpdate(localModel.getWeaponCardsSetup());
+        // show players
+        for (Map.Entry<String, BoardSquareClient> positionEntry : localModel.getGameBoard().getPlayersPosition().entrySet())
+            showPlayerMovementUpdate(positionEntry.getKey(), new ArrayList<>(Arrays.asList(positionEntry.getValue().getCoordinates())));
+
         hideOverlay();
     }
 
@@ -723,6 +754,11 @@ public class GUI extends Application implements RemoteView {
 
     }
 
+    @Override
+    public boolean selectYesOrNot() {
+        return false;
+    }
+
     public String getMapAsset(MapType mapType) {
         String uri = ASSET_PATH_MAPS_ROOT + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_PREFIX + mapType.name() + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_FORMAT;
         return this.getClass().getResource(uri).toExternalForm();
@@ -741,8 +777,15 @@ public class GUI extends Application implements RemoteView {
         for (PowerUpCardClient powerUpCard : powerUpCards) {
             if (powerUpCard.getId().equals(id)) return powerUpCard;
         }
-
         return null;
+    }
+
+    @Override
+    public void setLocalModel(LocalModel clientModel) {
+        localModel = clientModel;
+        buildLocalMap(clientModel.getMapType());
+
+        initialize();
     }
 
     public static Node getChildrenByProperty(List<Node> nodeCollection, Object key, Object value) {

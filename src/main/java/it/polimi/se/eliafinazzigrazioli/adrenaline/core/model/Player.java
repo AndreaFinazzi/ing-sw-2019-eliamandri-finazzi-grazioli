@@ -43,7 +43,6 @@ public class Player implements Selectable {
 
         public abstract Player remove(String nickname);
 
-
     }
 
     public Player(String playerNickname) {

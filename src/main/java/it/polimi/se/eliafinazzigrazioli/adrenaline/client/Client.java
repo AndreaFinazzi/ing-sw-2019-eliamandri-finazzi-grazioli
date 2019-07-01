@@ -47,6 +47,7 @@ public class Client {
     // Threads pool
 
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
+
     public Client(String[] args) {
 
     }
@@ -105,36 +106,33 @@ public class Client {
         String commandView, commandNetwork;
         Client client = new Client(args);
 
-        try {
-            System.out.println("to CLI or not to CLI? [Y/n]");
-            commandView = input.nextLine();
-            if (commandView.equals("n") || commandView.equals("no") || commandView.equals("not")) {
-                GUI guiView = GUI.getInstance(args);
-                guiView.setClient(client);
-                client.setView(guiView);
+        System.out.println("to CLI or not to CLI? [Y/n]");
+        commandView = input.nextLine();
+        if (commandView.equals("n") || commandView.equals("no") || commandView.equals("not")) {
+            GUI guiView = GUI.getInstance(args);
+            guiView.setClient(client);
+            client.setView(guiView);
 
-            } else {
-                client.setView(new CLI(client));
-            }
-
-            System.out.println("to RMI or not to RMI? [Y/n]");
-            commandNetwork = input.nextLine();
-            if (commandNetwork.equals("n") || commandNetwork.equals("no") || commandNetwork.equals("not")) {
-                client.setConnectionManager(new ConnectionManagerSocket(client));
-            } else {
-                try {
-                    client.setConnectionManager(new ConnectionManagerRMI(client));
-                } catch (RemoteException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
-                } catch (NotBoundException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
-                }
-            }
-
-            client.init();
-        } finally {
-//            client.disconnect();
+        } else {
+            client.setView(new CLI(client));
         }
+
+        System.out.println("to RMI or not to RMI? [Y/n]");
+        commandNetwork = input.nextLine();
+        if (commandNetwork.equals("n") || commandNetwork.equals("no") || commandNetwork.equals("not")) {
+            client.setConnectionManager(new ConnectionManagerSocket(client));
+        } else {
+            try {
+                client.setConnectionManager(new ConnectionManagerRMI(client));
+            } catch (RemoteException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+                client.disconnect();
+            } catch (NotBoundException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+            }
+        }
+
+        client.init();
     }
 
     public BlockingQueue<AbstractModelEvent> getEventsQueue() {

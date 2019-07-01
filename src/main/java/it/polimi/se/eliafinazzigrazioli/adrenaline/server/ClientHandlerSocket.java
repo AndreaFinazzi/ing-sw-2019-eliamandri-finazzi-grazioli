@@ -8,6 +8,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class ClientHandlerSocket extends AbstractClientHandler {
             sender.flush();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
+            unregister();
         }
     }
 
@@ -50,17 +52,29 @@ public class ClientHandlerSocket extends AbstractClientHandler {
     public void run() {
         new Thread(() -> {
             AbstractViewEvent event;
-            while (server.isUp()) {
-                try {
+            try {
+                while (server.isUp()) {
                     event = (AbstractViewEvent) receiver.readObject();
                     received(event);
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
-                } catch (ClassNotFoundException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
-                } catch (ClassCastException e) {
-                    LOGGER.log(Level.SEVERE, e.toString(), e);
                 }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+                unregister();
+            } catch (ClassNotFoundException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+            }
+        }).start();
+
+        new Thread(() -> {
+            InetAddress inetSocketAddress = socket.getInetAddress();
+            try {
+                while (inetSocketAddress.isReachable(Server.PING_TIMEOUT)) {
+                    Thread.sleep(Server.PING_TIMEOUT);
+                }
+                unregister();
+            } catch (IOException | InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+                unregister();
             }
         }).start();
     }

@@ -5,12 +5,14 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerClient implements CardInterface{
+public class PlayerClient implements Serializable, CardInterface {
 
     private int powerUps;
 
@@ -31,7 +33,8 @@ public class PlayerClient implements CardInterface{
     private ArrayList<Integer> deathScores;
     private final static int WIDTH = 30;
 
-    private final static int HEIGHT = 12;
+    private final static int HEIGHT = 13;
+    private boolean disconnected;
 
     public PlayerClient(Avatar avatar) {
         powerUps = 0;
@@ -42,6 +45,20 @@ public class PlayerClient implements CardInterface{
         //todo
         deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
         this.avatar = avatar;
+    }
+
+    public PlayerClient(Player player) {
+        this(player.getAvatar());
+        powerUps = player.getPowerUps().size();
+        //TODO should be anonymous
+        player.getWeapons().forEach(weaponCard -> weapons.add(new WeaponCardClient(weaponCard)));
+        ammos = player.getPlayerBoard().getAmmos();
+        skulls = player.getPlayerBoard().getSkulls();
+        death = player.getPlayerBoard().isDeath();
+        overkill = player.getPlayerBoard().isOverkill();
+        damages = player.getPlayerBoard().getDamages();
+        marks = player.getPlayerBoard().getMarks();
+        deathScores = player.getPlayerBoard().getDeathScores();
     }
 
     public void initAmmos(int startingAmmosPerColor) {
@@ -217,5 +234,13 @@ public class PlayerClient implements CardInterface{
     @Override
     public String[][] drawCard(boolean light) {
         return new String[0][];
+    }
+
+    public void setDisconnected(boolean disconnected) {
+        this.disconnected = disconnected;
+    }
+
+    public boolean getDisconnected() {
+        return disconnected;
     }
 }

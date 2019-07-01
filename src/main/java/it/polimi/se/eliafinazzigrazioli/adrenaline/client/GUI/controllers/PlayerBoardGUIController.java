@@ -382,6 +382,17 @@ public class PlayerBoardGUIController extends AbstractGUIController {
                 detailsGridPane.setOnMouseClicked((event) -> toggleDetailsView());
                 playerBoardGridPane.setOnMouseClicked((event) -> toggleDetailsView());
             }
+
+            try {
+                updateAmmoStack();
+                updateMarks();
+                updateDamages();
+                updatePowerUpCards();
+                updateWeaponCards();
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+
         }
     }
 }

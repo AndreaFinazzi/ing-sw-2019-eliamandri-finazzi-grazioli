@@ -18,13 +18,15 @@ import java.util.*;
 public class GameBoard {
 
     private BoardSquare[][] squaresMatrix;
-    private int x_max = Rules.GAME_BOARD_X_MAX;
-    private int y_max = Rules.GAME_BOARD_Y_MAX;
+    private int xMax = Rules.GAME_BOARD_X_MAX;
+    private int yMax = Rules.GAME_BOARD_Y_MAX;
     private Map<Player, BoardSquare> playerPositions;
+    private MapType mapType;
 
     public GameBoard(MapType mapType) {
+        this.mapType = mapType;
         if (mapType.equals(MapType.ONE)) {
-            squaresMatrix = new BoardSquare[x_max][y_max];
+            squaresMatrix = new BoardSquare[xMax][yMax];
             squaresMatrix[0][2] = new GenericBoardSquare(Room.RED, new Coordinates(0, 2),
                     InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL);
             squaresMatrix[0][1] = new SpawnBoardSquare(Room.RED, new Coordinates(0, 1),
@@ -52,7 +54,7 @@ public class GameBoard {
         }
 
         if (mapType.equals(MapType.TWO)) {
-            squaresMatrix = new BoardSquare[x_max][y_max];
+            squaresMatrix = new BoardSquare[xMax][yMax];
             squaresMatrix[0][0] = null;
             squaresMatrix[0][1] = new SpawnBoardSquare(Room.RED, new Coordinates(0, 1),
                     InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
@@ -78,7 +80,7 @@ public class GameBoard {
         }
 
         if (mapType.equals(MapType.THREE)) {
-            squaresMatrix = new BoardSquare[x_max][y_max];
+            squaresMatrix = new BoardSquare[xMax][yMax];
             squaresMatrix[0][0] = null;
             squaresMatrix[0][1] = new SpawnBoardSquare(Room.RED, new Coordinates(0, 1),
                     InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
@@ -105,31 +107,31 @@ public class GameBoard {
         }
 
         if (mapType.equals(MapType.FOUR)) {
-                squaresMatrix = new BoardSquare[x_max][y_max];
-                squaresMatrix[0][0] = new GenericBoardSquare(Room.GRAY, new Coordinates(0, 0),
-                        InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
-                squaresMatrix[0][1] = new SpawnBoardSquare(Room.RED, new Coordinates(0, 1),
-                        InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
-                squaresMatrix[1][1] = new GenericBoardSquare(Room.PURPLE, new Coordinates(1, 1),
-                        InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
-                squaresMatrix[1][0] = new GenericBoardSquare(Room.GRAY, new Coordinates(1, 0),
-                        InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
-                squaresMatrix[2][0] = new GenericBoardSquare(Room.YELLOW, new Coordinates(2, 0),
-                        InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
-                squaresMatrix[3][0] = new SpawnBoardSquare(Room.YELLOW, new Coordinates(3, 0),
-                        InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
-                squaresMatrix[3][1] = new GenericBoardSquare(Room.YELLOW, new Coordinates(3, 1),
-                        InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
-                squaresMatrix[2][1] = new GenericBoardSquare(Room.YELLOW, new Coordinates(2, 1),
-                        InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
-                squaresMatrix[0][2] = new GenericBoardSquare(Room.RED, new Coordinates(0, 2),
-                        InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL);
-                squaresMatrix[1][2] = new GenericBoardSquare(Room.BLUE, new Coordinates(1, 2),
-                        InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
-                squaresMatrix[2][2] = new SpawnBoardSquare(Room.BLUE, new Coordinates(2, 2),
-                        InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
-                squaresMatrix[3][2] = new GenericBoardSquare(Room.GREEN, new Coordinates(3, 2),
-                        InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR);
+            squaresMatrix = new BoardSquare[xMax][yMax];
+            squaresMatrix[0][0] = new GenericBoardSquare(Room.GRAY, new Coordinates(0, 0),
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
+            squaresMatrix[0][1] = new SpawnBoardSquare(Room.RED, new Coordinates(0, 1),
+                    InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
+            squaresMatrix[1][1] = new GenericBoardSquare(Room.PURPLE, new Coordinates(1, 1),
+                    InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.WALL);
+            squaresMatrix[1][0] = new GenericBoardSquare(Room.GRAY, new Coordinates(1, 0),
+                    InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
+            squaresMatrix[2][0] = new GenericBoardSquare(Room.YELLOW, new Coordinates(2, 0),
+                    InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
+            squaresMatrix[3][0] = new SpawnBoardSquare(Room.YELLOW, new Coordinates(3, 0),
+                    InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
+            squaresMatrix[3][1] = new GenericBoardSquare(Room.YELLOW, new Coordinates(3, 1),
+                    InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.WALL, InterSquareLink.SAMEROOM);
+            squaresMatrix[2][1] = new GenericBoardSquare(Room.YELLOW, new Coordinates(2, 1),
+                    InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.SAMEROOM, InterSquareLink.WALL);
+            squaresMatrix[0][2] = new GenericBoardSquare(Room.RED, new Coordinates(0, 2),
+                    InterSquareLink.WALL, InterSquareLink.SAMEROOM, InterSquareLink.DOOR, InterSquareLink.WALL);
+            squaresMatrix[1][2] = new GenericBoardSquare(Room.BLUE, new Coordinates(1, 2),
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.SAMEROOM, InterSquareLink.DOOR);
+            squaresMatrix[2][2] = new SpawnBoardSquare(Room.BLUE, new Coordinates(2, 2),
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.DOOR, InterSquareLink.SAMEROOM);
+            squaresMatrix[3][2] = new GenericBoardSquare(Room.GREEN, new Coordinates(3, 2),
+                    InterSquareLink.WALL, InterSquareLink.DOOR, InterSquareLink.WALL, InterSquareLink.DOOR);
 
         }
         playerPositions = new HashMap<>();
@@ -137,8 +139,8 @@ public class GameBoard {
 
     public Map<Coordinates, AmmoCardClient> ammoCardsSetup(AmmoCardsDeck deck) {
         Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap = new HashMap<>();
-        for (int x = 0; x < x_max; x++) {
-            for (int y = 0; y < y_max; y++) {
+        for (int x = 0; x < xMax; x++) {
+            for (int y = 0; y < yMax; y++) {
                 if (squaresMatrix[x][y] != null && !squaresMatrix[x][y].isSpawnPoint() && ((GenericBoardSquare) squaresMatrix[x][y]).getCollectable() == null) {
                     AmmoCard ammoCard = deck.drawCard();
                     ((GenericBoardSquare) squaresMatrix[x][y]).dropCollectables(ammoCard);
@@ -154,8 +156,8 @@ public class GameBoard {
         List<WeaponCardClient> weaponsOnSpawn;
         WeaponCard weaponCard = null;
         if (!deck.isEmpty()) {
-            for (int x = 0; x < x_max; x++) {
-                for (int y = 0; y < y_max; y++) {
+            for (int x = 0; x < xMax; x++) {
+                for (int y = 0; y < yMax; y++) {
                     if (squaresMatrix[x][y] != null && squaresMatrix[x][y].isSpawnPoint() && !((SpawnBoardSquare) squaresMatrix[x][y]).weaponsSlotIsFull() && !deck.isEmpty()) {
                         weaponsOnSpawn = new ArrayList<>();
                         for (int i = 0; i < Rules.GAME_BOARD_MAX_WEAPONS_ON_SPAWN && !((SpawnBoardSquare) squaresMatrix[x][y]).weaponsSlotIsFull() && !deck.isEmpty(); i++) {
@@ -179,6 +181,33 @@ public class GameBoard {
         return coordinatesWeaponCardMap;
     }
 
+    public Map<Coordinates, AmmoCardClient> getAmmoCardsOnMap() {
+        Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap = new HashMap<>();
+        for (int x = 0; x < xMax; x++) {
+            for (int y = 0; y < yMax; y++) {
+                if (squaresMatrix[x][y] != null && !squaresMatrix[x][y].isSpawnPoint() && ((GenericBoardSquare) squaresMatrix[x][y]).getCollectable() != null) {
+                    coordinatesAmmoCardMap.put(squaresMatrix[x][y].getCoordinates(), new AmmoCardClient(((GenericBoardSquare) squaresMatrix[x][y]).getCollectable()));
+                }
+            }
+        }
+        return coordinatesAmmoCardMap;
+    }
+
+    public Map<Coordinates, List<WeaponCardClient>> getWeaponCardsOnMap() {
+        Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponCardMap = new HashMap<>();
+        for (int x = 0; x < xMax; x++) {
+            for (int y = 0; y < yMax; y++) {
+                if (squaresMatrix[x][y] != null && squaresMatrix[x][y].isSpawnPoint()) {
+                    List<WeaponCardClient> weaponCardsInSquare = new ArrayList<>();
+
+                    ((SpawnBoardSquare) squaresMatrix[x][y]).getWeapons().forEach(weaponCard -> weaponCardsInSquare.add(new WeaponCardClient(weaponCard)));
+                    coordinatesWeaponCardMap.put(squaresMatrix[x][y].getCoordinates(), weaponCardsInSquare);
+                }
+            }
+        }
+        return coordinatesWeaponCardMap;
+    }
+
     public void setPlayerPositions(Player player, BoardSquare position) throws OutOfBoundBoardException {
         if (position == null)
             throw new OutOfBoundBoardException("OutOfBoundException");
@@ -189,7 +218,6 @@ public class GameBoard {
     public void movePlayer(Player player, BoardSquare destination) {
         playerPositions.put(player, destination);
     }
-
 
 
     public PlayerSpawnedEvent spawnPlayer(Player player, PowerUpCard powerUpCard) {
@@ -209,7 +237,7 @@ public class GameBoard {
             default:
                 room = null;
         }
-        for (BoardSquare boardSquare: room)
+        for (BoardSquare boardSquare : room)
             if (boardSquare.isSpawnPoint())
                 spawnBoardSquare = boardSquare;
 
@@ -222,6 +250,7 @@ public class GameBoard {
 
     /**
      * Method called by match to perform player movement
+     *
      * @param player
      * @param coordinatesPath
      * @return
@@ -230,7 +259,7 @@ public class GameBoard {
     public PlayerMovementEvent playerMovement(Player player, List<Coordinates> coordinatesPath) {
         List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(coordinatesPath);
 
-        movePlayer(player, boardSquaresPath.get(boardSquaresPath.size()-1));
+        movePlayer(player, boardSquaresPath.get(boardSquaresPath.size() - 1));
         return new PlayerMovementEvent(player, coordinatesPath);
     }
 
@@ -240,14 +269,15 @@ public class GameBoard {
      * position and every other element is adjacent to the previous one.
      * Another validation requirement is that the length of the given path is no bigger then the maximum number of
      * movements allowed in case no other action is performed.
+     *
      * @param player : The player who should perform the movement along given path.
-     * @param path : List of boardSquares. Not null value is required
+     * @param path   : List of boardSquares. Not null value is required
      * @return
      */
-    public boolean pathIsValid(Player player, List<Coordinates> path){
+    public boolean pathIsValid(Player player, List<Coordinates> path) {
         List<BoardSquare> boardSquaresPath = coordinatesToBoardSquares(path);
         BoardSquare playerPosition = getPlayerPosition(player);
-        for (BoardSquare boardSquare:boardSquaresPath){
+        for (BoardSquare boardSquare : boardSquaresPath) {
             if (!getOneStepReachableSquares(playerPosition).contains(boardSquare))
                 return false;
             playerPosition = boardSquare;
@@ -272,10 +302,10 @@ public class GameBoard {
         return boardSquares;
     }
 
-    public List<BoardSquare> getRoomSquares(Room room){
+    public List<BoardSquare> getRoomSquares(Room room) {
         List<BoardSquare> roomSquares = new ArrayList<BoardSquare>();
-        for (int i = 0; i < x_max; i++) {
-            for (int j = 0; j < y_max; j++) {
+        for (int i = 0; i < xMax; i++) {
+            for (int j = 0; j < yMax; j++) {
                 BoardSquare square = squaresMatrix[i][j];
                 if (square != null && square.getRoom() == room) {
                     roomSquares.add(square);
@@ -318,8 +348,8 @@ public class GameBoard {
 
         if (notVisible) {
             List<BoardSquare> notVisibleSquares = new ArrayList<>();
-            for (int i = 0; i < x_max; i++) {
-                for (int j = 0; j < y_max; j++) {
+            for (int i = 0; i < xMax; i++) {
+                for (int j = 0; j < yMax; j++) {
                     if (!visibleSquares.contains(squaresMatrix[i][j])) {
                         if (squaresMatrix[i][j] != null)
                             notVisibleSquares.add(squaresMatrix[i][j]);
@@ -380,6 +410,7 @@ public class GameBoard {
         return new ArrayList<>(belowMaxDistanceSquares);
 
     }
+
     public List<Player> getPlayersByDistance(BoardSquare referenceSquare, int maxDistance, int minDistance) throws Exception { //TODO define exception type
         return convertSquaresIntoPlayers(getSquaresByDistance(referenceSquare, maxDistance, minDistance));
     }
@@ -398,7 +429,7 @@ public class GameBoard {
         int y = referenceSquare.getCoordinates().getYCoordinate();
         switch (direction) {
             case NORTH:
-                for (int i = y + 1; i < y_max; i++) {
+                for (int i = y + 1; i < yMax; i++) {
                     if (squaresMatrix[x][i] != null)
                         squaresByDirection.add(squaresMatrix[x][i]);
                 }
@@ -410,13 +441,13 @@ public class GameBoard {
                 }
                 break;
             case EAST:
-                for (int i = x + 1; i < x_max; i++) {
+                for (int i = x + 1; i < xMax; i++) {
                     if (squaresMatrix[i][y] != null)
                         squaresByDirection.add(squaresMatrix[i][y]);
                 }
                 break;
             case WEST:
-                for (int i = x-1; i >= 0; i--){
+                for (int i = x - 1; i >= 0; i--) {
                     if (squaresMatrix[i][y] != null)
                         squaresByDirection.add(squaresMatrix[i][y]);
                 }
@@ -434,8 +465,8 @@ public class GameBoard {
     }
 
     public Coordinates getCoordinates(BoardSquare boardSquare) {
-        for (int i = 0; i < x_max; i++) {
-            for (int j = 0; j < y_max; j++)
+        for (int i = 0; i < xMax; i++) {
+            for (int j = 0; j < yMax; j++)
                 if (boardSquare == squaresMatrix[i][j])
                     return new Coordinates(i, j);
         }
@@ -498,4 +529,7 @@ public class GameBoard {
     }
 
 
+    public MapType getMapType() {
+        return mapType;
+    }
 }

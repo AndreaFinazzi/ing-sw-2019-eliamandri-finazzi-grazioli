@@ -3,10 +3,13 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
+import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +19,9 @@ public class ServerRMIManager implements Runnable, ServerRemoteRMI {
 
     private Server server;
     private ArrayList<ClientHandlerRMI> clientHandlers = new ArrayList<>();
+
+    private ExecutorService pingersExecutor = Executors.newCachedThreadPool();
+
 
     public ServerRMIManager(Server server) throws RemoteException {
         this.server = server;
@@ -52,10 +58,27 @@ public class ServerRMIManager implements Runnable, ServerRemoteRMI {
 
             server.signIn(newClientHandler);
 
+            startPing(newClientHandler);
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
         LOGGER.log(Level.INFO, "established connection RMI");
+
+    }
+
+    private void startPing(ClientHandlerRMI newClientHandler) {
+        pingersExecutor.execute(() -> {
+            try {
+                while (newClientHandler.isReachable()) {
+                    Thread.sleep(Server.PING_TIMEOUT);
+                }
+                LOGGER.info("RMI Client unreachable!");
+                newClientHandler.unregister();
+            } catch (IOException | InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+                newClientHandler.unregister();
+            }
+        });
     }
 
     // necessary due to security purposes.

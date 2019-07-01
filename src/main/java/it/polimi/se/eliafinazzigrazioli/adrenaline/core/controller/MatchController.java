@@ -8,6 +8,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.LoginRespon
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.MatchStartedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.BeginMatchEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerDisconnectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.update.PlayerReconnectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientDisconnectionEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MapVoteEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
@@ -15,6 +18,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerReconnectionException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -59,6 +63,7 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
         eventController.addViewEventsListener(LoginRequestEvent.class, this);
         eventController.addViewEventsListener(MapVoteEvent.class, this);
+        eventController.addViewEventsListener(ClientDisconnectionEvent.class, this);
 
         match.addObserver(eventController);
     }
@@ -134,7 +139,12 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         return match;
     }
 
-    public ArrayList<AbstractClientHandler> popNotLoggedClients() {
+    public AbstractClientHandler popClient(int clientID) {
+        clientIDToPlayerMap.remove(clientID);
+        return eventController.popVirtualView(clientID);
+    }
+
+    public List<AbstractClientHandler> popNotLoggedClients() {
         ArrayList<AbstractClientHandler> notLoggedClients = new ArrayList<>();
         Iterator<Integer> clientIDs = clientIDToPlayerMap.keySet().iterator();
 
@@ -176,27 +186,46 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
     @Override
     public void handleEvent(LoginRequestEvent event) throws HandlerNotImplementedException {
         LoginResponseEvent responseEvent = new LoginResponseEvent(event.getClientID());
-        try {
-            Player player = match.addPlayer(event.getClientID(), event.getPlayer(), event.getChosenAvatar());
-            responseEvent.setSuccess(true);
-            responseEvent.setPlayer(player.getPlayerNickname());
-            responseEvent.setAssignedAvatar(player.getAvatar());
-            responseEvent.setMatchID(match.getMatchID());
-            responseEvent.setMessage("Welcome to Adrenaline, " + event.getPlayer() + "\nYou're logged to match " + match.getMatchID());
-            clientIDToPlayerMap.put(player.getClientID(), player.getPlayerNickname());
-            matchBuilder.playerLogged(this);
+        if (matchBuilder.validateLoginRequestEvent(event, this)) {
+            try {
+                Player player = match.addPlayer(event.getClientID(), event.getPlayer(), event.getChosenAvatar());
 
-        } catch (MaxPlayerException e) {
-            responseEvent.setSuccess(false);
-            responseEvent.setAvailableAvatars(match.getAvailableAvatars());
-            responseEvent.setMessage("MaxPlayerException thrown");
+                responseEvent.setSuccess(true);
+                responseEvent.setPlayer(player.getPlayerNickname());
+                responseEvent.setAssignedAvatar(player.getAvatar());
+                responseEvent.setMatchID(match.getMatchID());
+                responseEvent.setMessage("Welcome to Adrenaline, " + event.getPlayer() + "\nYou're logged to match " + match.getMatchID());
 
-        } catch (PlayerAlreadyPresentException e) {
-            responseEvent.setSuccess(false);
-            responseEvent.setAvailableAvatars(match.getAvailableAvatars());
-            responseEvent.setMessage("Username already in game, try with a different nick!");
+                clientIDToPlayerMap.put(player.getClientID(), player.getPlayerNickname());
+                matchBuilder.playerLogged(player.getPlayerNickname(), this);
+
+            } catch (MaxPlayerException e) {
+                responseEvent.setSuccess(false);
+                responseEvent.setAvailableAvatars(match.getAvailableAvatars());
+                responseEvent.setMessage("MaxPlayerException thrown");
+
+            } catch (PlayerAlreadyPresentException e) {
+                responseEvent.setSuccess(false);
+                responseEvent.setAvailableAvatars(match.getAvailableAvatars());
+                responseEvent.setMessage("Username already in game, try with a different nick!");
+
+            } catch (PlayerReconnectionException e) {
+                Player player = match.getPlayers().get(event.getPlayer());
+                player.setClientID(event.getClientID());
+                clientIDToPlayerMap.put(player.getClientID(), player.getPlayerNickname());
+
+                responseEvent.setSuccess(true);
+                responseEvent.setReconnection(true);
+                responseEvent.setClientModel(match.generateClientModel(player));
+                responseEvent.setPlayer(player.getPlayerNickname());
+                responseEvent.setAssignedAvatar(player.getAvatar());
+
+                matchBuilder.reconnectClient(player.getPlayerNickname(), this);
+            }
+            eventController.update(responseEvent);
+            if (responseEvent.isReconnection())
+                eventController.update(new PlayerReconnectedEvent(responseEvent.getPlayer()));
         }
-        eventController.update(responseEvent);
     }
 
     @Override
@@ -211,6 +240,19 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         }
     }
 
+
+    @Override
+    public void handleEvent(ClientDisconnectionEvent event) throws HandlerNotImplementedException {
+        Player disconnectingPlayer = match.getPlayers().get(clientIDToPlayerMap.get(event.getClientID()));
+        if (disconnectingPlayer != null) {
+            disconnectingPlayer.setConnected(false);
+            matchBuilder.disconnectClient(disconnectingPlayer.getPlayerNickname(), this);
+            eventController.update(new PlayerDisconnectedEvent(disconnectingPlayer.getPlayerNickname()));
+        }
+        clientIDToPlayerMap.remove(event.getClientID());
+        eventController.popVirtualView(event.getClientID());
+
+    }
 
     @Override
     public void run() {
