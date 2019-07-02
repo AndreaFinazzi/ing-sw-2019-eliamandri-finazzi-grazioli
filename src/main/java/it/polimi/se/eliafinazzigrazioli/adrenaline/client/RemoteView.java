@@ -112,13 +112,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         String player = event.getPlayer();
         localModel.getGameBoard().setPlayerPosition(player, event.getSpawnPoint());
         if (!event.isFirsSpawn()) {
-            PowerUpCardClient powerUpToDiscard = null;
+            PowerUpCardClient powerUpToDiscard;
 
             if (event.getPlayer().equals(getClient().getPlayerName())) {
-                for (PowerUpCardClient powerUpCardClient: getLocalModel().getPowerUpCards()) {
-                    if (powerUpCardClient.getId().equals(event.getDiscardedPowerUp().getId()))
-                        powerUpToDiscard = powerUpCardClient;
-                }
+                powerUpToDiscard = getLocalModel().getPowerUpCardById(event.getDiscardedPowerUp().getId());
                 if (powerUpToDiscard == null)
                     powerUpToDiscard = event.getDiscardedPowerUp();
                 else
@@ -126,6 +123,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                 showPowerUpDiscardedUpdate(player, powerUpToDiscard);
             }
             else {
+                if (event.ownedDiscardedPowerUp())
+                    getLocalModel().getOpponentInfo(event.getPlayer()).removePowerUp();
                 showPowerUpDiscardedUpdate(player, event.getDiscardedPowerUp());
             }
         }
