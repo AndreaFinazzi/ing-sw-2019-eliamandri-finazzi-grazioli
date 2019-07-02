@@ -16,7 +16,7 @@ public class SpawnSelectionRequestEvent extends AbstractModelEvent {
     boolean firstSpawn;
 
     public SpawnSelectionRequestEvent(Player player, List<PowerUpCard> selectableCards, boolean firstSpawn) {
-        super(true, player);
+        super(true, true, player);
         this.selectableCards = new ArrayList<>();
         for (PowerUpCard powerUpCard: selectableCards)
             this.selectableCards.add(new PowerUpCardClient(powerUpCard));

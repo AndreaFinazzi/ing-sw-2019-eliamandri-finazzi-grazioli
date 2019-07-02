@@ -101,6 +101,8 @@ public class GUI extends Application implements RemoteView {
     private CommandsGUIController commandsGUIController;
     private LoginGUIController loginGUIController;
 
+    private Semaphore currentSemaphore;
+
     ///TODO define a setter and verify Map is the correct data structure
 
     private Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap;
@@ -274,12 +276,10 @@ public class GUI extends Application implements RemoteView {
             AtomicReference<WeaponEffectClient> selectedEffect = new AtomicReference<>();
             Semaphore semaphore = new Semaphore(0);
 
-            commandsGUIController.getPlayerBoardGUIController().setSemaphore(semaphore);
-            commandsGUIController.getPlayerBoardGUIController().setSelectedWeaponEffect(selectedEffect);
-
+            currentSemaphore = semaphore;
 
             try {
-                commandsGUIController.setSelectableEffects(weapon, callableEffects);
+                commandsGUIController.setSelectableEffects(semaphore, selectedEffect, weapon, callableEffects);
                 semaphore.acquire();
             } catch (InterruptedException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -289,6 +289,7 @@ public class GUI extends Application implements RemoteView {
             }
 
             synchronized (semaphore) {
+                commandsGUIController.disableCards();
                 return selectedEffect.get();
             }
         }
@@ -301,17 +302,22 @@ public class GUI extends Application implements RemoteView {
         AtomicReference<PlayerAction> chosenAction = new AtomicReference<>();
         Semaphore semaphore = new Semaphore(0);
 
-        commandsGUIController.setSemaphore(semaphore);
-        commandsGUIController.setChosenAction(chosenAction);
+        currentSemaphore = semaphore;
 
-        commandsGUIController.setChoseAction();
+        do {
+            commandsGUIController.setSemaphore(semaphore);
+            commandsGUIController.setChosenAction(chosenAction);
 
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            Thread.currentThread().interrupt();
-        }
+            commandsGUIController.setChoseAction();
+
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+
+        } while (chosenAction.get() == null);
 
         synchronized (semaphore) {
             commandsGUIController.setLockedCommands();
@@ -321,15 +327,24 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons) {
+        Coordinates coordinates = localModel.getGameBoard().getPlayerPositionByName(client.getPlayerName()).getCoordinates();
+        try {
+            mainGUIController.movePlayer(client.getPlayerName(), coordinates);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
         if (!selectableWeapons.isEmpty()) {
 
+            Semaphore semaphore = new Semaphore(0);
             AtomicReference<WeaponCardClient> selectedWeaponCard = new AtomicReference<>();
+
+            currentSemaphore = semaphore;
+            commandsGUIController.setSemaphore(semaphore);
 
             commandsGUIController.setSelectedWeapon(selectedWeaponCard);
             commandsGUIController.setSelectableWeapon(selectableWeapons);
 
-            Semaphore semaphore = new Semaphore(0);
-            commandsGUIController.setSemaphore(semaphore);
 
             try {
                 semaphore.acquire();
@@ -352,12 +367,14 @@ public class GUI extends Application implements RemoteView {
         if (!selectablePowerUps.isEmpty()) {
 
             AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
+            Semaphore semaphore = new Semaphore(0);
+
+            currentSemaphore = semaphore;
+            commandsGUIController.setSemaphore(semaphore);
 
             commandsGUIController.setSelectablePowerUp(selectablePowerUps);
             commandsGUIController.setSelectedPowerUp(selectedPowerUp);
 
-            Semaphore semaphore = new Semaphore(0);
-            commandsGUIController.setSemaphore(semaphore);
 
             try {
                 semaphore.acquire();
@@ -378,12 +395,14 @@ public class GUI extends Application implements RemoteView {
     public String selectPlayer(List<String> players) {
         if (!players.isEmpty()) {
             AtomicReference<String> selectedPlayer = new AtomicReference<>();
+            Semaphore semaphore = new Semaphore(0);
+
+            currentSemaphore = semaphore;
+            mainGUIController.setSemaphore(semaphore);
 
             mainGUIController.setSelectedPlayer(selectedPlayer);
             mainGUIController.setSelectablePlayers(players);
 
-            Semaphore semaphore = new Semaphore(0);
-            mainGUIController.setSemaphore(semaphore);
 
             try {
                 semaphore.acquire();
@@ -580,11 +599,12 @@ public class GUI extends Application implements RemoteView {
         commandsGUIController.setSpawnPowerUpCards(cards);
 
         AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
+        Semaphore semaphore = new Semaphore(0);
+
+        currentSemaphore = semaphore;
+        commandsGUIController.setSemaphore(semaphore);
 
         commandsGUIController.setSelectedPowerUp(selectedPowerUp);
-
-        Semaphore semaphore = new Semaphore(0);
-        commandsGUIController.setSemaphore(semaphore);
 
         try {
             semaphore.acquire();
@@ -600,6 +620,10 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public WeaponCardClient selectWeaponCardFromSpawnSquare(Coordinates coordinates, List<WeaponCardClient> selectableWeapons) {
+        Semaphore semaphore = new Semaphore(0);
+
+        currentSemaphore = semaphore;
+        mainGUIController.setSemaphore(semaphore);
 
         if (!selectableWeapons.isEmpty()) {
             try {
@@ -613,8 +637,6 @@ public class GUI extends Application implements RemoteView {
             mainGUIController.setSelectableWeaponCards(selectableWeapons);
             mainGUIController.setSelectedWeapon(selectedWeapon);
 
-            Semaphore semaphore = new Semaphore(0);
-            mainGUIController.setSemaphore(semaphore);
 
             try {
                 semaphore.acquire();
@@ -635,12 +657,13 @@ public class GUI extends Application implements RemoteView {
     public Coordinates selectCoordinates(List<Coordinates> coordinates) {
         if (!coordinates.isEmpty()) {
             AtomicReference<Coordinates> selectedCoordinates = new AtomicReference<>();
+            Semaphore semaphore = new Semaphore(0);
+
+            currentSemaphore = semaphore;
+            mainGUIController.setSemaphore(semaphore);
 
             mainGUIController.setSelectedCoordinates(selectedCoordinates);
             mainGUIController.setSelectableCoordinates(coordinates);
-
-            Semaphore semaphore = new Semaphore(0);
-            mainGUIController.setSemaphore(semaphore);
 
             try {
                 semaphore.acquire();
@@ -669,14 +692,17 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public MoveDirection selectDirection(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
+        AtomicReference<MoveDirection> selectedMove = new AtomicReference<>();
+        Semaphore semaphore = new Semaphore(0);
+
+
         try {
             mainGUIController.movePlayer(client.getPlayerName(), currentPose.getCoordinates());
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
-        AtomicReference<MoveDirection> selectedMove = new AtomicReference<>();
-        Semaphore semaphore = new Semaphore(0);
+        currentSemaphore = semaphore;
 
         commandsGUIController.setSemaphore(semaphore);
         commandsGUIController.setSelectedMove(selectedMove);
@@ -802,4 +828,11 @@ public class GUI extends Application implements RemoteView {
         Platform.runLater(() -> element.setStyle("-fx-background-image: url('" + url + "'); "));
     }
 
+    public void releaseCurrentSemaphore() {
+        currentSemaphore.release();
+    }
+
+    public void disableAll() {
+        commandsGUIController.disableCards();
+    }
 }

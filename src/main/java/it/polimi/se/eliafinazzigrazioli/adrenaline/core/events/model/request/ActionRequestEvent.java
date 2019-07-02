@@ -14,7 +14,7 @@ public class ActionRequestEvent extends AbstractModelEvent {
     private int actionsRemained;
 
     public ActionRequestEvent(String player, int actionsRemained) {
-        super(player, true);
+        super(true, player);
         this.actionsRemained = actionsRemained;
     }
 
@@ -24,7 +24,7 @@ public class ActionRequestEvent extends AbstractModelEvent {
     }
 
     public ActionRequestEvent(Player player, int actionsRemained, int simpleMovesMax, int collectingMovesMax, int shootingMovesMax) {
-        super(true, player);
+        super(true, true, player);
         this.actionsRemained = actionsRemained;
         this.simpleMovesMax = simpleMovesMax;
         this.collectingMovesMax = collectingMovesMax;

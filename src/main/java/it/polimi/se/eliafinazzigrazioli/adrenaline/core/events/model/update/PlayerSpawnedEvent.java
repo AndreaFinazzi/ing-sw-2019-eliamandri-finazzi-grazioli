@@ -13,11 +13,14 @@ public class PlayerSpawnedEvent extends AbstractModelEvent {
     private Coordinates spawnPoint;
     private PowerUpCardClient discardedPowerUp;
     private boolean firsSpawn;
+    private boolean ownedDiscardedPowerUp;
 
-    public PlayerSpawnedEvent(String player, Coordinates spawnPoint, PowerUpCardClient discardedPowerUp) {
-        super(player);
+    public PlayerSpawnedEvent(Player player, Coordinates spawnPoint, PowerUpCard discardedPowerUp, boolean firsSpawn, boolean ownedDiscardedPowerUp) {
+        super(player.getPlayerNickname(), player.getClientID());
         this.spawnPoint = spawnPoint;
-        this.discardedPowerUp = discardedPowerUp;
+        this.discardedPowerUp = new PowerUpCardClient(discardedPowerUp);
+        this.firsSpawn = firsSpawn;
+        this.ownedDiscardedPowerUp = ownedDiscardedPowerUp;
     }
 
     public PlayerSpawnedEvent(Player player, Coordinates spawnPoint, PowerUpCard discardedPowerUp, boolean firsSpawn) {
@@ -25,6 +28,7 @@ public class PlayerSpawnedEvent extends AbstractModelEvent {
         this.spawnPoint = spawnPoint;
         this.discardedPowerUp = new PowerUpCardClient(discardedPowerUp);
         this.firsSpawn = firsSpawn;
+        ownedDiscardedPowerUp = false;
     }
 
     @Override
@@ -42,5 +46,9 @@ public class PlayerSpawnedEvent extends AbstractModelEvent {
 
     public boolean isFirsSpawn() {
         return firsSpawn;
+    }
+
+    public boolean ownedDiscardedPowerUp() {
+        return ownedDiscardedPowerUp;
     }
 }

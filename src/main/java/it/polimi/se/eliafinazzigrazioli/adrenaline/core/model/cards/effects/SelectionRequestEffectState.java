@@ -45,7 +45,7 @@ public class SelectionRequestEffectState extends EffectState {
                     events.add(new SelectableRoomsEvent(currentPlayer, invoker.getActiveEffect().getToSelectRooms()));
                     break;
                 case DIRECTION:
-                    events.add(new SelectDirectionEvent(currentPlayer.getPlayerNickname()));
+                    events.add(new SelectDirectionEvent(currentPlayer));
                     break;
             }
             invoker.getActiveEffect().setNeedsSelection(true);

@@ -23,10 +23,6 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(AllowedMovesEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
     default void handleEvent(AmmoCardCollectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
@@ -108,10 +104,6 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     }
 
     default void handleEvent(SelectableRoomsEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
-    default void handleEvent(SelectableTargetEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 

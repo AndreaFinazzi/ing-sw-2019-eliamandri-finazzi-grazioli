@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchController;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 
 import java.util.*;
@@ -23,6 +24,7 @@ public class MatchBuilder {
 
     //TODO never populated
     private Map<String, MatchController> disconnectedPlayerToMatchMap = new HashMap<>();
+    private List<String> loggedPlayers = new ArrayList<>();
 
     // Match-threads pools
     private ExecutorService matchesExecutor = Executors.newCachedThreadPool();
@@ -87,6 +89,7 @@ public class MatchBuilder {
     }
 
     public synchronized void playerLogged(String player, MatchController match) {
+        loggedPlayers.add(player);
         if (match.isFull()) {
             stopTimer();
             startMatch(match);
@@ -104,14 +107,16 @@ public class MatchBuilder {
         disconnectedPlayerToMatchMap.remove(player, match);
     }
 
-    public boolean validateLoginRequestEvent(LoginRequestEvent event, MatchController match) {
+    public boolean validateLoginRequestEvent(LoginRequestEvent event, MatchController match) throws PlayerAlreadyPresentException {
         MatchController previousMatch = disconnectedPlayerToMatchMap.get(event.getPlayer());
         if (previousMatch != null && !previousMatch.equals(match)) {
             AbstractClientHandler clientHandler = match.popClient(event.getClientID());
-            clientHandler.setEventsQueue(matchToQueueMap.get(match));
+            clientHandler.setEventsQueue(matchToQueueMap.get(previousMatch));
             previousMatch.getEventController().addVirtualView(clientHandler);
             previousMatch.getEventController().update(event);
             return false;
+        } else if (loggedPlayers.contains(event.getPlayer())) {
+            throw new PlayerAlreadyPresentException();
         }
 
         return true;

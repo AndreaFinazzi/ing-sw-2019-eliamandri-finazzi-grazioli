@@ -11,6 +11,8 @@ public abstract class AbstractModelEvent extends AbstractEvent {
 
     protected boolean privateEvent = false;
 
+    protected boolean request = false;
+
     protected String player;
 
     protected int clientID = -1;
@@ -25,13 +27,12 @@ public abstract class AbstractModelEvent extends AbstractEvent {
     }
 
     public AbstractModelEvent(String player) {
-        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
+        this();
         this.player = player;
     }
 
-    public AbstractModelEvent(String player,boolean privateEvent){
-        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
-        this.player = player;
+    public AbstractModelEvent(boolean privateEvent, String player) {
+        this(player);
         this.privateEvent = privateEvent;
     }
 
@@ -41,29 +42,26 @@ public abstract class AbstractModelEvent extends AbstractEvent {
     }
 
     public AbstractModelEvent(String player, int clientID) {
-        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
-        this.player = player;
+        this(player);
         this.clientID = clientID;
     }
 
     public AbstractModelEvent(boolean privateEvent, String player, int clientID) {
-        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
+        this(player, clientID);
         this.privateEvent = privateEvent;
-        this.player = player;
-        this.clientID = clientID;
     }
 
     public AbstractModelEvent(Player player) {
-        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
-        this.player = player.getPlayerNickname();
-        this.clientID = player.getClientID();
+        this(player.getPlayerNickname(), player.getClientID());
     }
 
     public AbstractModelEvent(boolean privateEvent, Player player) {
-        super(Messages.MESSAGE_EVENTS_MODEL_DEFAULT);
-        this.privateEvent = privateEvent;
-        this.player = player.getPlayerNickname();
-        this.clientID = player.getClientID();
+        this(privateEvent, player.getPlayerNickname(), player.getClientID());
+    }
+
+    public AbstractModelEvent(boolean privateEvent, boolean request, Player player) {
+        this(privateEvent, player.getPlayerNickname(), player.getClientID());
+        this.request = request;
     }
 
     public String getPlayer() {
@@ -80,6 +78,10 @@ public abstract class AbstractModelEvent extends AbstractEvent {
 
     public boolean isPrivateEvent() {
         return privateEvent;
+    }
+
+    public boolean isRequest() {
+        return request;
     }
 
     public void setClientID(int clientID) {

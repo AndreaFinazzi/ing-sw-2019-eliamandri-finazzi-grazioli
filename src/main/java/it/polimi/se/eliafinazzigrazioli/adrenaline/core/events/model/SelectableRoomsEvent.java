@@ -11,7 +11,7 @@ public class SelectableRoomsEvent extends AbstractModelEvent {
     private List<Room> selectableRooms;
 
     public SelectableRoomsEvent(Player player, List<Room> selectableRooms) {
-        super(true, player);
+        super(true, true, player);
         this.selectableRooms = selectableRooms;
     }
 

@@ -1,11 +1,12 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
 public class SelectDirectionEvent extends AbstractModelEvent {
 
-    public SelectDirectionEvent(String player) {
-        super(player);
+    public SelectDirectionEvent(Player player) {
+        super(true, true, player);
     }
 
     @Override

@@ -12,7 +12,7 @@ public class SelectableBoardSquaresEvent extends AbstractModelEvent {
     private int maxSelectableItems;
 
     public SelectableBoardSquaresEvent(Player player, List<Coordinates> selectableBoardSquares, int maxSelectableItems) {
-        super(true, player);
+        super(true, true, player);
         this.selectableBoardSquares = selectableBoardSquares;
         this.maxSelectableItems = maxSelectableItems;
     }

@@ -24,6 +24,7 @@ import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
@@ -60,7 +61,7 @@ public class CommandsGUIController extends AbstractGUIController {
     @FXML
     private HBox myWeaponCardSlots;
     @FXML
-    private Button proceedCardsButton;
+    private Button proceedButton;
     @FXML
     private TextArea messagesTextArea;
 
@@ -169,7 +170,7 @@ public class CommandsGUIController extends AbstractGUIController {
             }
         }
 
-        proceedCardsButton.setDisable(false);
+        proceedButton.setDisable(false);
 
     }
 
@@ -181,11 +182,12 @@ public class CommandsGUIController extends AbstractGUIController {
                 Platform.runLater(() -> cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
             }
         }
-        proceedCardsButton.setDisable(false);
+        proceedButton.setDisable(false);
     }
 
     public void setAvailableMoves(List<MoveDirection> availableMoves) {
         arrowsGridPane.setDisable(false);
+        proceedButton.setDisable(false);
         for (Map.Entry<MoveDirection, Button> moveDirectionButtonEntry : moveDirectionButtonEnumMap.entrySet()) {
             if (availableMoves.contains(moveDirectionButtonEntry.getKey()))
                 moveDirectionButtonEntry.getValue().setDisable(false);
@@ -210,6 +212,8 @@ public class CommandsGUIController extends AbstractGUIController {
             card.getStyleClass().remove(GUI.STYLE_CLASS_HIGHLIGHT);
         });
 
+        playerBoardGUIController.disableEffects();
+        proceedButton.setDisable(true);
     }
 
     public Node generateCardNode(PowerUpCardClient powerUpCard) {
@@ -227,7 +231,7 @@ public class CommandsGUIController extends AbstractGUIController {
                     }
                 } else {
                     disableCards();
-                    proceedCardsButton.setDisable(true);
+                    proceedButton.setDisable(true);
                     selectedPowerUp.set(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
                     semaphore.release();
                 }
@@ -255,7 +259,7 @@ public class CommandsGUIController extends AbstractGUIController {
                     }
                 } else {
                     disableCards();
-                    proceedCardsButton.setDisable(true);
+                    proceedButton.setDisable(true);
                     selectedWeapon.set(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
                     semaphore.release();
                 }
@@ -299,90 +303,6 @@ public class CommandsGUIController extends AbstractGUIController {
         playerBoardGUIController = new PlayerBoardGUIController(view, view.getClient().getPlayerName(), false);
         loadFXML(GUI.FXML_PATH_PLAYER_BOARD, myPlayerBoardAnchorPane, playerBoardGUIController);
 
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        if (!initialized) {
-            super.initialize(location, resources);
-            initialized = true;
-
-            // Vars initialization
-            moveDirectionButtonEnumMap.put(MoveDirection.UP, arrowUP);
-            moveDirectionButtonEnumMap.put(MoveDirection.RIGHT, arrowRIGHT);
-            moveDirectionButtonEnumMap.put(MoveDirection.DOWN, arrowDOWN);
-            moveDirectionButtonEnumMap.put(MoveDirection.LEFT, arrowLEFT);
-            moveDirectionButtonEnumMap.put(MoveDirection.STOP, arrowSTOP);
-
-            // Initialize player actions
-            for (PlayerAction playerAction : PlayerAction.values()) {
-                if (playerAction.isGuiEnabled()) {
-                    Button actionButton = new Button(playerAction.toString());
-                    actionButton.setOnAction(event -> {
-                        chosenAction.set(playerAction);
-                        semaphore.release();
-                    });
-                    actionsFlowPane.getChildren().add(actionButton);
-                }
-            }
-            actionsFlowPane.setDisable(true);
-
-            // Initialize my cards
-            // Weapons
-            for (int i = 0; i < Rules.PLAYER_CARDS_MAX_WEAPONS; i++) {
-                myWeaponCardSlots.getChildren().add(generateCardNode((WeaponCardClient) null));
-            }
-
-            // PowerUps
-            for (int i = 0; i < Rules.PLAYER_CARDS_MAX_POWER_UPS; i++) {
-                myPowerUpCardSlots.getChildren().add(generateCardNode(((PowerUpCardClient) null)));
-            }
-
-            proceedCardsButton.setOnAction(event -> {
-                proceedCardsButton.setDisable(true);
-                if (selectedPowerUp != null) selectedPowerUp.set(null);
-                if (selectedWeapon != null) selectedWeapon.set(null);
-                disableCards();
-                this.semaphore.release();
-            });
-
-            // Arrow panel initialization
-            String initialText;
-            Image arrowIcon;
-            String normalizedName;
-            Button currentButton;
-            for (MoveDirection moveDirection : MoveDirection.values()) {
-                normalizedName = moveDirection.name().toLowerCase();
-                currentButton = moveDirectionButtonEnumMap.get(moveDirection);
-                initialText = currentButton.getText();
-                try {
-                    arrowIcon = new Image(view.getIconAsset(GUI.ASSET_PREFIX_ICONS_ARROWS + normalizedName + GUI.ASSET_FORMAT_ICONS), 50, 50, true, true);
-                    currentButton.setGraphic(new ImageView(arrowIcon));
-                    currentButton.setText(null);
-                } catch (Exception e) {
-                    LOGGER.log(Level.INFO, e.getMessage(), e);
-                    currentButton.setGraphic(null);
-                    currentButton.setText(initialText);
-                } finally {
-                    currentButton.setOnMouseClicked(event -> {
-                        selectedMove.set(moveDirection);
-                        disableArrows();
-                        semaphore.release();
-                    });
-                }
-            }
-            arrowsGridPane.setVisible(false);
-
-            playerBoardGUIController = new PlayerBoardGUIController(view, view.getClient().getPlayerName(), false);
-            try {
-                loadFXML(GUI.FXML_PATH_PLAYER_BOARD, myPlayerBoardAnchorPane, playerBoardGUIController);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
-
-            updatePowerUpCards();
-            updateWeaponCards();
-        }
     }
 
     public void showMessage(Object message) {
@@ -429,7 +349,12 @@ public class CommandsGUIController extends AbstractGUIController {
         playerBoardGUIController.showDetails(weaponCard);
     }
 
-    public void setSelectableEffects(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) throws IOException {
+    public void setSelectableEffects(Semaphore semaphore, AtomicReference<WeaponEffectClient> selectedEffect, WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) throws IOException {
+        proceedButton.setDisable(false);
+
+        playerBoardGUIController.setSemaphore(semaphore);
+        playerBoardGUIController.setSelectedWeaponEffect(selectedEffect);
+
         playerBoardGUIController.setSelectableEffects(weapon, callableEffects);
     }
 
@@ -448,5 +373,90 @@ public class CommandsGUIController extends AbstractGUIController {
         playerBoardGUIController.updateDamages();
         playerBoardGUIController.updateMarks();
         playerBoardGUIController.updateAmmoStack();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        if (!initialized) {
+            super.initialize(location, resources);
+            initialized = true;
+
+            // Vars initialization
+            moveDirectionButtonEnumMap.put(MoveDirection.UP, arrowUP);
+            moveDirectionButtonEnumMap.put(MoveDirection.RIGHT, arrowRIGHT);
+            moveDirectionButtonEnumMap.put(MoveDirection.DOWN, arrowDOWN);
+            moveDirectionButtonEnumMap.put(MoveDirection.LEFT, arrowLEFT);
+            moveDirectionButtonEnumMap.put(MoveDirection.STOP, arrowSTOP);
+
+            // Initialize player actions
+            for (PlayerAction playerAction : PlayerAction.values()) {
+                if (playerAction.isGuiEnabled()) {
+                    Button actionButton = new Button(playerAction.toString());
+                    actionButton.setOnAction(event -> {
+                        chosenAction.set(playerAction);
+                        semaphore.release();
+                    });
+                    actionsFlowPane.getChildren().add(actionButton);
+                }
+            }
+            actionsFlowPane.setDisable(true);
+
+            // Initialize my cards
+            // Weapons
+            for (int i = 0; i < Rules.PLAYER_CARDS_MAX_WEAPONS; i++) {
+                myWeaponCardSlots.getChildren().add(generateCardNode((WeaponCardClient) null));
+            }
+
+            // PowerUps
+            for (int i = 0; i < Rules.PLAYER_CARDS_MAX_POWER_UPS; i++) {
+                myPowerUpCardSlots.getChildren().add(generateCardNode(((PowerUpCardClient) null)));
+            }
+
+            proceedButton.setOnAction(event -> {
+                proceedButton.setDisable(true);
+                if (selectedPowerUp != null) selectedPowerUp.set(null);
+                if (selectedWeapon != null) selectedWeapon.set(null);
+                disableCards();
+                view.releaseCurrentSemaphore();
+            });
+
+            // Arrow panel initialization
+            String initialText;
+            Image arrowIcon;
+            String normalizedName;
+            Button currentButton;
+            for (MoveDirection moveDirection : MoveDirection.values()) {
+                normalizedName = moveDirection.name().toLowerCase();
+                currentButton = moveDirectionButtonEnumMap.get(moveDirection);
+                initialText = currentButton.getText();
+                try {
+                    arrowIcon = new Image(view.getIconAsset(GUI.ASSET_PREFIX_ICONS_ARROWS + normalizedName + GUI.ASSET_FORMAT_ICONS), 50, 50, true, true);
+                    currentButton.setGraphic(new ImageView(arrowIcon));
+                    currentButton.setText(null);
+                } catch (Exception e) {
+                    LOGGER.log(Level.INFO, e.getMessage(), e);
+                    currentButton.setGraphic(null);
+                    currentButton.setText(initialText);
+                } finally {
+                    currentButton.setOnMouseClicked(event -> {
+                        proceedButton.setDisable(true);
+                        selectedMove.set(moveDirection);
+                        disableArrows();
+                        semaphore.release();
+                    });
+                }
+            }
+            arrowsGridPane.setVisible(false);
+
+            playerBoardGUIController = new PlayerBoardGUIController(view, view.getClient().getPlayerName(), false);
+            try {
+                loadFXML(GUI.FXML_PATH_PLAYER_BOARD, myPlayerBoardAnchorPane, playerBoardGUIController);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+
+            updatePowerUpCards();
+            updateWeaponCards();
+        }
     }
 }

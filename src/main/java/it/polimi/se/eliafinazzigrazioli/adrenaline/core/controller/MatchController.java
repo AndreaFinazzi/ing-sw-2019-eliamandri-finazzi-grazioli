@@ -187,8 +187,8 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
     @Override
     public void handleEvent(LoginRequestEvent event) throws HandlerNotImplementedException {
         LoginResponseEvent responseEvent = new LoginResponseEvent(event.getClientID());
-        if (matchBuilder.validateLoginRequestEvent(event, this)) {
-            try {
+        try {
+            if (matchBuilder.validateLoginRequestEvent(event, this)) {
                 Player player = match.addPlayer(event.getClientID(), event.getPlayer(), event.getChosenAvatar());
 
                 responseEvent.setSuccess(true);
@@ -199,34 +199,34 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
                 clientIDToPlayerMap.put(player.getClientID(), player.getPlayerNickname());
                 matchBuilder.playerLogged(player.getPlayerNickname(), this);
-
-            } catch (MaxPlayerException e) {
-                responseEvent.setSuccess(false);
-                responseEvent.setAvailableAvatars(match.getAvailableAvatars());
-                responseEvent.setMessage("MaxPlayerException thrown");
-
-            } catch (PlayerAlreadyPresentException e) {
-                responseEvent.setSuccess(false);
-                responseEvent.setAvailableAvatars(match.getAvailableAvatars());
-                responseEvent.setMessage("Username already in game, try with a different nick!");
-
-            } catch (PlayerReconnectionException e) {
-                Player player = match.getPlayers().get(event.getPlayer());
-                player.setClientID(event.getClientID());
-                clientIDToPlayerMap.put(player.getClientID(), player.getPlayerNickname());
-
-                responseEvent.setSuccess(true);
-                responseEvent.setReconnection(true);
-                responseEvent.setClientModel(match.generateClientModel(player));
-                responseEvent.setPlayer(player.getPlayerNickname());
-                responseEvent.setAssignedAvatar(player.getAvatar());
-
-                matchBuilder.reconnectClient(player.getPlayerNickname(), this);
             }
-            eventController.update(responseEvent);
-            if (responseEvent.isReconnection())
-                eventController.update(new PlayerReconnectedEvent(responseEvent.getPlayer()));
+
+        } catch (MaxPlayerException e) {
+            responseEvent.setSuccess(false);
+            responseEvent.setAvailableAvatars(match.getAvailableAvatars());
+            responseEvent.setMessage("MaxPlayerException thrown");
+
+        } catch (PlayerAlreadyPresentException e) {
+            responseEvent.setSuccess(false);
+            responseEvent.setAvailableAvatars(match.getAvailableAvatars());
+            responseEvent.setMessage("Username already in game, try with a different nick!");
+
+        } catch (PlayerReconnectionException e) {
+            Player player = match.getPlayers().get(event.getPlayer());
+            player.setClientID(event.getClientID());
+            clientIDToPlayerMap.put(player.getClientID(), player.getPlayerNickname());
+
+            responseEvent.setSuccess(true);
+            responseEvent.setReconnection(true);
+            responseEvent.setClientModel(match.generateClientModel(player));
+            responseEvent.setPlayer(player.getPlayerNickname());
+            responseEvent.setAssignedAvatar(player.getAvatar());
+
+            matchBuilder.reconnectClient(player.getPlayerNickname(), this);
         }
+        eventController.update(responseEvent);
+        if (responseEvent.isReconnection())
+            eventController.update(new PlayerReconnectedEvent(responseEvent.getPlayer()));
     }
 
     @Override

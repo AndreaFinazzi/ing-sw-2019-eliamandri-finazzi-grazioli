@@ -5,11 +5,14 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractView
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ViewEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.ListenerNotFoundException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.server.AbstractClientHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +24,8 @@ public class EventController implements Observer {
 
     private static final Logger LOGGER = Logger.getLogger(EventController.class.getName());
 
+    private Timer turnTimer = new Timer();
+    private int timerClientID;
     //Bidirectional Event dispatcher
 
     //TODO is MatchController reference useful?
@@ -32,6 +37,7 @@ public class EventController implements Observer {
     @Override
     public synchronized void update(AbstractViewEvent event) {
         LOGGER.info("Updating eventController");
+        if (event.getClientID() == timerClientID) stopTimer();
 
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(event.getClass());
 
@@ -47,19 +53,39 @@ public class EventController implements Observer {
         );
     }
 
+    private void stopTimer() {
+        turnTimer.cancel();
+        turnTimer = new Timer();
+    }
+
     @Override
     public synchronized void update(AbstractModelEvent event) {
         if (virtualViews == null) return;
 
         if (event.isPrivateEvent()) {
             for (AbstractClientHandler virtualView : virtualViews) {
-                if (virtualView.getClientID() == event.getClientID()) virtualView.send(event);
+                if (virtualView.getClientID() == event.getClientID()) {
+                    virtualView.send(event);
+                    if (event.isRequest()) {
+                        startTimer(virtualView);
+                    }
+                }
             }
         } else {
             for (AbstractClientHandler virtualView : virtualViews) {
                 virtualView.send(event);
             }
         }
+    }
+
+    private void startTimer(AbstractClientHandler virtualView) {
+        timerClientID = virtualView.getClientID();
+        turnTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                virtualView.unregister();
+            }
+        }, (long) Config.CONFIG_MATCH_TURN_TIMEOUT);
     }
 
     public synchronized void addViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) {

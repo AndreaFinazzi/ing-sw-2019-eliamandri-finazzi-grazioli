@@ -11,7 +11,7 @@ public class SelectableEffectsEvent extends AbstractModelEvent {
     private List<String> callableEffects;
 
     public SelectableEffectsEvent(Player player, String weapon, List<String> callableEffects) {
-        super(true, player);
+        super(true, true, player);
         this.weapon = weapon;
         this.callableEffects = callableEffects;
     }

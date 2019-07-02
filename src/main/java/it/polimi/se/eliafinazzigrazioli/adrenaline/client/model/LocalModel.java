@@ -52,6 +52,8 @@ public class LocalModel implements Serializable {
     private final static int WIDTH = 30;
 
     private final static int HEIGHT = 12;
+    private boolean disconnected = false;
+
     public LocalModel() {
         //TODO define a way to receive the size from the server
         KillTrack killTrack = new KillTrack(8);
@@ -459,5 +461,9 @@ public class LocalModel implements Serializable {
 
     public void setServerPlayerPositions(Map<String, Coordinates> serverPlayerPositions) {
         this.serverPlayerPositions = serverPlayerPositions;
+    }
+
+    public void setDisconnected(boolean disconnected) {
+        this.disconnected = disconnected;
     }
 }

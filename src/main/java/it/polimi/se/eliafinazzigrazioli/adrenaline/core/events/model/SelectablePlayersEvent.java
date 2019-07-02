@@ -11,7 +11,7 @@ public class SelectablePlayersEvent extends AbstractModelEvent {
     private int maxSelectableItems;
 
     public SelectablePlayersEvent(Player player, List<String> selectablePlayers, int maxSelectableItems) {
-        super(true, player);
+        super(true, true, player);
         selectablePlayers.remove(player);
 
         this.selectablePlayers = selectablePlayers;

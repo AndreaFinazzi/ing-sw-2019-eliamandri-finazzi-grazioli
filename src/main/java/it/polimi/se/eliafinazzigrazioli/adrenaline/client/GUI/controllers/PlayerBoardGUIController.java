@@ -350,6 +350,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
                     effectLabel.setOnMouseClicked(event -> {
                         selectedWeaponEffect.set(effect);
                         disableEffects();
+                        view.disableAll();
                         semaphore.release();
                     });
                 }
@@ -357,7 +358,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         });
     }
 
-    private void disableEffects() {
+    protected void disableEffects() {
         Platform.runLater(() -> {
             detailsTextVBox.getChildren().forEach(label -> {
                 label.getStyleClass().remove(GUI.STYLE_CLASS_EFFECT_SELECTABLE);

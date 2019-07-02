@@ -249,8 +249,17 @@ public class GameBoard {
         movePlayer(player, spawnBoardSquare);
         if (spawnBoardSquare == null)
             return null;
-        else
-            return new PlayerSpawnedEvent(player, spawnBoardSquare.getCoordinates(), powerUpCard, firstSpawn);
+        else {
+            boolean ownedDIscardedPowerUp = false;
+            for (PowerUpCard discarded: player.getPowerUps()) {
+                if (discarded.getId().equals(powerUpCard.getId()))
+                    ownedDIscardedPowerUp = true;
+            }
+            if (ownedDIscardedPowerUp)
+                return new PlayerSpawnedEvent(player, spawnBoardSquare.getCoordinates(), powerUpCard, firstSpawn, true);
+            else
+                return new PlayerSpawnedEvent(player, spawnBoardSquare.getCoordinates(), powerUpCard, firstSpawn);
+        }
     }
 
     /**

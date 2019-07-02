@@ -8,7 +8,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 public class ReloadWeaponsRequestEvent extends AbstractModelEvent {
 
     public ReloadWeaponsRequestEvent(Player player) {
-        super(true, player.getPlayerNickname(), player.getClientID());
+        super(true, true, player);
     }
 
     @Override

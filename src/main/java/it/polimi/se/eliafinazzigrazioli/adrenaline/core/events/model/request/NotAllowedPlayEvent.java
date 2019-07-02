@@ -11,7 +11,7 @@ public class NotAllowedPlayEvent extends AbstractModelEvent {
     private AbstractViewEvent event;
 
     public NotAllowedPlayEvent(String player) {
-        super(player, true);
+        super(true, player);
     }
 
     public NotAllowedPlayEvent(Player player) {
