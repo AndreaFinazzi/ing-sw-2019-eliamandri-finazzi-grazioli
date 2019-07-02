@@ -113,7 +113,7 @@ public class Match implements Observable {
             boolean trackFull = killTrack.isFull();
             if (!trackFull)
                 deadPlayer.getPlayerBoard().addSkull();
-            killTrack.removeSkull(currentPlayer, deadPlayerBoard.isOverkill());
+            killTrack.removeSkull(currentPlayer.getDamageMarkDelivered(), deadPlayerBoard.isOverkill());
 
             if (deadPlayer.getPlayerBoard().isOverkill() &&
                     currentPlayer.getPlayerBoard().numMarkType(deadPlayer.getDamageMarkDelivered()) < Rules.PLAYER_BOARD_MAX_MARKS_PER_TYPE && deadPlayerBoard.canUseMark()) {

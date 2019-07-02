@@ -24,13 +24,11 @@ public class KillTrack {
     }
 
     private List<Slot> track;
-    private int size;
     private int skullsRemoved;
     private int finalMultipleDeathMarks;
     private DamageMark finalMultipleDeathMarkType;
 
     public KillTrack(int size) {
-        this.size = size;
         track = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             track.add(new Slot());
@@ -40,19 +38,27 @@ public class KillTrack {
         finalMultipleDeathMarkType = null;
     }
 
-    public void removeSkull(Player killer, boolean doubleDamage) {
+    public void removeSkull(DamageMark killerDamage, boolean doubleDamage) {
         if (isFull()) {
             finalMultipleDeathMarks++;
             if (doubleDamage)
                 finalMultipleDeathMarks++;
         }
         else {
-            track.get(skullsRemoved).addDamage(killer.getDamageMarkDelivered(), doubleDamage);
+            track.get(skullsRemoved).addDamage(killerDamage, doubleDamage);
             skullsRemoved++;
         }
     }
 
     public boolean isFull() {
         return track.size() == skullsRemoved;
+    }
+
+    public int getFinalMultipleDeathMarks() {
+        return finalMultipleDeathMarks;
+    }
+
+    public DamageMark getFinalMultipleDeathMarkType() {
+        return finalMultipleDeathMarkType;
     }
 }
