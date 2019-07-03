@@ -488,26 +488,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showMessage("ACTION FAILED!");
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //TODO to implement
     @Override
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {

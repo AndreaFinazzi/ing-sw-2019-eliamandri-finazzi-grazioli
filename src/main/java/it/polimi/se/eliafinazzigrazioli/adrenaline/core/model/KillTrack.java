@@ -1,14 +1,18 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class KillTrack {
 
+    private final static String SKULL = "\u2620";
+
     private class Slot {
-        DamageMark damageMark;
-        boolean skull;
-        boolean doubleDamage;
+        private DamageMark damageMark;
+        private boolean skull;
+        private boolean doubleDamage;
 
         public Slot() {
             damageMark = null;
@@ -16,10 +20,22 @@ public class KillTrack {
             skull = true;
         }
 
-        void addDamage(DamageMark damageMark, boolean doubleDamage) {
+        public void addDamage(DamageMark damageMark, boolean doubleDamage) {
             skull = false;
             this.doubleDamage = doubleDamage;
             this.damageMark = damageMark;
+        }
+
+        public DamageMark getDamageMark() {
+            return damageMark;
+        }
+
+        public boolean isSkull() {
+            return skull;
+        }
+
+        public boolean isDoubleDamage() {
+            return doubleDamage;
         }
     }
 
@@ -47,7 +63,32 @@ public class KillTrack {
         else {
             track.get(skullsRemoved).addDamage(killerDamage, doubleDamage);
             skullsRemoved++;
+
         }
+    }
+
+    @Override
+    public String toString() {
+        String string = "KillTrack: \n";
+        for(Slot slot : track) {
+            if(slot.isSkull()) {
+                string = string + "  " + Color.RED + SKULL + Color.RESET;
+            }
+            else if(!slot.isDoubleDamage()) {
+                string = string + "  " + slot.getDamageMark().toString();
+            }
+            else if(slot.isDoubleDamage()) {
+                string = string + "  " + slot.getDamageMark().toString()+slot.getDamageMark().toString();
+            }
+        }
+        for(int i = 0; i < finalMultipleDeathMarks; i++) {
+            string = string + track.get(track.size()-1).getDamageMark();
+        }
+        return string;
+    }
+
+    public int size() {
+        return track.size();
     }
 
     public boolean isFull() {

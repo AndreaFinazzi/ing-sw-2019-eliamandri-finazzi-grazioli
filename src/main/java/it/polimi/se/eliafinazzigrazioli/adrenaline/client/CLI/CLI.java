@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 public class CLI implements RemoteView, Runnable {
     static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
-    //TODO
     private Scanner input;
 
     private ConnectionManagerRMI connectionManagerRMI;
@@ -203,7 +202,7 @@ public class CLI implements RemoteView, Runnable {
     public void showPowerUpCollectionUpdate(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
         String message = "";
         if (isOpponent)
-            message = message + "Player " + player + "collected a powerup\n";
+            message = message + "Player " + player + " collected a powerup\n";
         else
             message = message + "You collected \n" + CLIUtils.matrixToString(cardCollected.drawCard()) + "!\n";
         showMessage(message);
@@ -295,7 +294,14 @@ public class CLI implements RemoteView, Runnable {
      */
     @Override
     public void showPlayerDisconnection(String player) {
-
+        if(!player.equalsIgnoreCase(getClient().getPlayerName())) {
+            String info = CLIUtils.matrixToString(localModel.getOpponentInfo(player).drawCard());
+            showMessage("Player " + player + " is disconnected\n" + info);
+        }
+        else {
+            showMessage("You are disconnected! ");
+            showOwnedPlayerBoard();
+        }
     }
 
     /**
@@ -305,7 +311,14 @@ public class CLI implements RemoteView, Runnable {
      */
     @Override
     public void showPlayerReconnection(String player) {
-
+        if(!player.equalsIgnoreCase(getClient().getPlayerName())) {
+            String info = CLIUtils.matrixToString(localModel.getOpponentInfo(player).drawCard());
+            showMessage("Player " + player + " is connected\n" + info);
+        }
+        else {
+            showMessage("You are connected! ");
+            showOwnedPlayerBoard();
+        }
     }
 
     /**INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS--------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -331,6 +344,7 @@ public class CLI implements RemoteView, Runnable {
             choice = availableActions.get(nextInt(availableActions.size()));
 
             if (choice.equals(PlayerAction.SHOW_MAP)) {
+                showMessage(localModel.getKillTrack());
                 showMap();
                 showOwnedPlayerBoard();
             }
@@ -521,7 +535,9 @@ public class CLI implements RemoteView, Runnable {
 
     @Override
     public void setDisconnected() {
-
+        showMessage("You: " + getClient().getPlayerName() + "are disconnected");
+        showOwnedPlayerBoard();
+        System.exit(0);
     }
 
     /** End methods remote view **/
