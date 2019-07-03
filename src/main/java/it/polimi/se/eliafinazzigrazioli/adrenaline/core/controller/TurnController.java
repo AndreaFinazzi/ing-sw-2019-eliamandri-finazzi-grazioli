@@ -76,6 +76,7 @@ public class TurnController implements ViewEventsListenerInterface {
                     currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
                     currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
                     currentPlayer.getPlayerBoard().preShootingMaxMoves()));
+            spawnCompleted();
         }
         else {
             Player deadPlayer = match.getPlayer(event.getPlayer());
