@@ -163,10 +163,12 @@ public class CommandsGUIController extends AbstractGUIController {
 
     public void setSelectablePowerUp(List<PowerUpCardClient> cards) {
         for (PowerUpCardClient card : cards) {
-            Node cardNode = GUI.getChildrenByProperty(myPowerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, card.getId());
-            if (cardNode != null) {
-                cardNode.setDisable(false);
-                Platform.runLater(() -> cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
+            List<Node> cardNodes = GUI.getChildrensByProperty(myPowerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, card.getId());
+            if (!cardNodes.isEmpty()) {
+                for (Node cardNode : cardNodes) {
+                    cardNode.setDisable(false);
+                    Platform.runLater(() -> cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
+                }
             }
         }
 
@@ -458,5 +460,13 @@ public class CommandsGUIController extends AbstractGUIController {
             updatePowerUpCards();
             updateWeaponCards();
         }
+    }
+
+    public void showSuddenDeath() {
+        playerBoardGUIController.setDeath(true);
+    }
+
+    public void showRespawn() {
+        playerBoardGUIController.setDeath(false);
     }
 }

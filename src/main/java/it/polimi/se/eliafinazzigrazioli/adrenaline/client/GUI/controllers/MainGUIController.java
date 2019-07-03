@@ -58,6 +58,8 @@ public class MainGUIController extends AbstractGUIController {
     // Main board
     @FXML
     private Pane mainBoardPane;
+    @FXML
+    private VBox killTrackVBox;
 
     @FXML
     private Pane weaponCardSlots_RED;
@@ -347,6 +349,15 @@ public class MainGUIController extends AbstractGUIController {
                 hideOverlay();
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+
+            //initialize death path
+            for (int i = 0; i < Rules.GAME_MAX_KILL_TRACK_SKULLS; i++) {
+                try {
+                    loadFXML(GUI.FXML_PATH_SKULL, (Pane) killTrackVBox.getChildren().get(i), null);
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                }
             }
         }
     }

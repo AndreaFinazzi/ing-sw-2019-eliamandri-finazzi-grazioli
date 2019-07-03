@@ -35,6 +35,8 @@ import java.util.logging.Level;
 public class PlayerBoardGUIController extends AbstractGUIController {
 
     @FXML
+    private HBox deathHBox;
+    @FXML
     private HBox overlayHBox;
     @FXML
     private GridPane playerBoardGridPane;
@@ -394,6 +396,15 @@ public class PlayerBoardGUIController extends AbstractGUIController {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
 
+        }
+    }
+
+    public void setDeath(boolean dead) {
+        if (dead) {
+            deathHBox.setVisible(true);
+            TransitionManager.generateSimpleTransition(TransitionManager.deathTransition, deathHBox).play();
+        } else {
+            deathHBox.setVisible(false);
         }
     }
 }

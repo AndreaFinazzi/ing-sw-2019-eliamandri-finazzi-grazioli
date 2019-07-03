@@ -15,45 +15,45 @@ import java.util.Map;
 public class LocalModel implements Serializable {
 
     //Private information
-    private Map<String, Integer> points;
 
+    private Map<String, Integer> points;
     private KillTrack killTrack;
 
     private List<WeaponCardClient> weaponCards; //user's weapon
+
     private boolean weaponHandFull;
     private List<PowerUpCardClient> powerUpCards;
     private List<Ammo> ammos;
     private List<DamageMark> damages;
-
     private List<DamageMark> marks;
 
     private int skulls;
+
     private List<Integer> deathScores;
     private boolean death;
     private boolean overkill;
     private int movementsAllowed;
     private String playerName;
-
     //Public information
-    private MapType mapType;
 
+    private MapType mapType;
     private GameBoardClient gameBoard;
+
     //private List<String> players;
     private Map<String, PlayerClient> opponentsInfo;
     private Map<String, Avatar> playerToAvatarMap;
     private List<SpawnBoardSquareClient> listSpawn;
 
     // temp field used in reconnection update
-
     private Map<Coordinates, List<WeaponCardClient>> serverWeaponCardsSetup;
+
     private Map<Coordinates, AmmoCardClient> serverAmmoCardsSetup;
     private Map<String, Coordinates> serverPlayerPositions;
-
     private final static int WIDTH = 30;
 
     private final static int HEIGHT = 12;
-    private boolean disconnected = false;
 
+    private boolean disconnected = false;
     public LocalModel() {
         //TODO define a way to receive the size from the server
         KillTrack killTrack = new KillTrack(8);
@@ -226,13 +226,13 @@ public class LocalModel implements Serializable {
         return players;
     }
      */
+
     public Map<String, Avatar> getPlayersAvatarMap() {
         return playerToAvatarMap;
     }
     public List<DamageMark> getDamages() {
         return damages;
     }
-
     public List<DamageMark> getMarks() {
         return marks;
     }
@@ -301,6 +301,7 @@ public class LocalModel implements Serializable {
     }
 
     //In this version it controls that the player can pay the price in any way
+
     public boolean canPay(List<Ammo> price) {
         List<Ammo> priceCopy = new ArrayList<>(price);
 
@@ -317,7 +318,6 @@ public class LocalModel implements Serializable {
         else
             return false;
     }
-
     public boolean canPay(List<Ammo> price, List<PowerUpCardClient> powerUpsToPay) {
         List<Ammo> priceCopy = new ArrayList<>(price);
 
@@ -334,6 +334,10 @@ public class LocalModel implements Serializable {
         else {
             return false;
         }
+    }
+
+    public Map<String, Integer> getPoints() {
+        return points;
     }
 
     public GameBoardClient getGameBoard() {

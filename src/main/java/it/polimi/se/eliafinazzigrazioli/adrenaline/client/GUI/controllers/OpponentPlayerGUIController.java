@@ -8,6 +8,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -28,6 +29,8 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
     private TilePane ammoStack;
     @FXML
     private TextArea playerInfoTextArea;
+    @FXML
+    private Label pointsLabel;
 
     private String player;
 
@@ -107,5 +110,18 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
         playerBoardGUIController.updateDamages();
         playerBoardGUIController.updateMarks();
         playerBoardGUIController.updateAmmoStack();
+    }
+
+    public void updatePoints() {
+        int points = view.getLocalModel().getPoints().get(player);
+        Platform.runLater(() -> pointsLabel.setText("Points: " + points));
+    }
+
+    public void showSuddenDeath() {
+        playerBoardGUIController.setDeath(true);
+    }
+
+    public void showRespawn() {
+        playerBoardGUIController.setDeath(false);
     }
 }

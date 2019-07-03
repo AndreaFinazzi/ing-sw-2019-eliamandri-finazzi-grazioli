@@ -11,6 +11,8 @@ public class TransitionManager {
 
     public static final double TRANSITION_PAYMENT_DELTA_Y = -70;
     public static final double TRANSITION_PAYMENT_DURATION = 2;
+    public static final double TRANSITION_DEATH_DURATION = 1;
+    public static final int TRANSITION_DEATH_CYCLE_COUNT = 5;
     public static final double TRANSITION_PAYMENT_SCALING_FACTOR = 1.1;
     public static final double TRANSITION_PAYMENT_FADE_INITIAL = 1;
     public static final double TRANSITION_PAYMENT_FADE_FINAL = 0;
@@ -44,12 +46,32 @@ public class TransitionManager {
         return new ParallelTransition(translateTransition, scaleTransition, fadeTransition);
     };
 
+    public static Function<Node, Transition> deathTransition = node -> {
+        Duration duration = Duration.seconds(TransitionManager.TRANSITION_DEATH_DURATION);
 
-    public static ParallelTransition generateParallelTransition(Function<Node, Transition> animator, List<Node> payedElements) {
-        ParallelTransition paymentTransition = new ParallelTransition();
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(TransitionManager.TRANSITION_DEATH_DURATION + 1), node);
 
-        payedElements.forEach(element -> paymentTransition.getChildren().add(animator.apply(element)));
+        fadeTransition.setFromValue(TransitionManager.TRANSITION_PAYMENT_FADE_INITIAL);
+        fadeTransition.setToValue(TransitionManager.TRANSITION_PAYMENT_FADE_FINAL);
 
-        return paymentTransition;
+        fadeTransition.setCycleCount(TRANSITION_DEATH_CYCLE_COUNT);
+
+        return new ParallelTransition(fadeTransition);
+    };
+
+    public static ParallelTransition generateParallelTransition(Function<Node, Transition> animator, List<Node> elements) {
+        ParallelTransition parallelTransition = new ParallelTransition();
+
+        elements.forEach(element -> parallelTransition.getChildren().add(animator.apply(element)));
+
+        return parallelTransition;
+    }
+
+    public static ParallelTransition generateSimpleTransition(Function<Node, Transition> animator, Node element) {
+        ParallelTransition simpleTransition = new ParallelTransition();
+
+        simpleTransition.getChildren().add(animator.apply(element));
+
+        return simpleTransition;
     }
 }

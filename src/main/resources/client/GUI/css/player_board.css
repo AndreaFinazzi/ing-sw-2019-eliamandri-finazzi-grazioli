@@ -55,6 +55,12 @@
 
 }
 
+#deathOverlay {
+    -fx-background-color: rgba(255, 101, 0, 0.66);
+    -fx-border-color: red;
+
+}
+
 #overlay {
     -fx-background-color: rgba(0, 0, 0, 0.8);
 }

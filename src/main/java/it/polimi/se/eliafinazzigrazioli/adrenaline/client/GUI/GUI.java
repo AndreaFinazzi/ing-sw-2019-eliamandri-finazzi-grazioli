@@ -80,6 +80,7 @@ public class GUI extends Application implements RemoteView {
     public static final String FXML_PATH_WEAPON = FXML_PATH_ROOT + "weapon_card.fxml";
     public static final String FXML_PATH_AVATAR = FXML_PATH_ROOT + "avatar.fxml";
     public static final String FXML_PATH_MARK = FXML_PATH_ROOT + "mark.fxml";
+    public static final String FXML_PATH_SKULL = FXML_PATH_ROOT + "skull.fxml";
 
     public static final String PROPERTIES_CARD_ID_KEY = "card_id";
     public static final String PROPERTIES_EFFECT_KEY = "effect_name";
@@ -113,6 +114,22 @@ public class GUI extends Application implements RemoteView {
     public GUI() {
         instance = this;
         localModel = new LocalModel();
+    }
+
+    @Override
+    public void showSuddenDeadUpdate(String deadPlayer) {
+        if (deadPlayer.equals(client.getPlayerName()))
+            commandsGUIController.showSuddenDeath();
+        else
+            opponentPlayerToGUIControllerMap.get(deadPlayer).showSuddenDeath();
+    }
+
+    @Override
+    public void showPointsUpdate(Map<String, Integer> pointsMap) {
+        for (Map.Entry<String, Integer> playerPoints : pointsMap.entrySet()) {
+            if (!playerPoints.getKey().equals(client.getPlayerName()))
+                opponentPlayerToGUIControllerMap.get(playerPoints.getKey()).updatePoints();
+        }
     }
 
     public synchronized static GUI getInstance(String[] args) {
@@ -729,6 +746,11 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showSpawnUpdate(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
+        if (player.equals(client.getPlayerName())) {
+            commandsGUIController.showRespawn();
+        } else {
+            opponentPlayerToGUIControllerMap.get(player).showRespawn();
+        }
         try {
             mainGUIController.movePlayer(player, spawnPoint);
         } catch (IOException e) {
@@ -827,6 +849,17 @@ public class GUI extends Application implements RemoteView {
         }
 
         return null;
+    }
+
+    public static List<Node> getChildrensByProperty(List<Node> nodeCollection, Object key, Object value) {
+        List<Node> nodes = new ArrayList<>();
+        for (Node node : nodeCollection) {
+            if (node.hasProperties()) {
+                if (node.getProperties().getOrDefault(key, "").equals(value)) nodes.add(node);
+            }
+        }
+
+        return nodes;
     }
 
     public void applyBackground(Node element, String url) {

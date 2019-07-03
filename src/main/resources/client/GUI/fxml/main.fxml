@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.Font?>
 <StackPane stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <children>
@@ -103,29 +102,35 @@
                                     <children>
                                     </children>
                                 </HBox>
-                                <VBox fx:id="deathPathVBox" alignment="BOTTOM_CENTER" layoutX="126.0" layoutY="610.0"
+                                <VBox fx:id="killTrackVBox" alignment="TOP_CENTER" layoutX="77.0" layoutY="610.0"
                                       nodeOrientation="LEFT_TO_RIGHT" prefHeight="348.0" prefWidth="60.0"
-                                      spacing="23.0">
+                                      spacing="18.0">
                                     <children>
-                                        <Circle fill="RED" radius="10.0" stroke="BLACK" strokeType="INSIDE"
-                                                styleClass="skullCircle"/>
-                                        <Circle fill="RED" radius="10.0" stroke="BLACK" strokeType="INSIDE"
-                                                styleClass="skullCircle"/>
-                                        <Circle fill="RED" radius="10.0" stroke="BLACK" strokeType="INSIDE"
-                                                styleClass="skullCircle"/>
-                                        <Circle fill="RED" radius="10.0" stroke="BLACK" strokeType="INSIDE"/>
-                                        <Circle fill="RED" layoutX="40.0" layoutY="204.0" radius="10.0" stroke="BLACK"
-                                                strokeType="INSIDE" styleClass="skullCircle"/>
-                                        <Circle fill="RED" layoutX="40.0" layoutY="160.0" radius="10.0" stroke="BLACK"
-                                                strokeType="INSIDE" styleClass="skullCircle"/>
-                                        <Circle fill="RED" layoutX="40.0" layoutY="292.0" radius="10.0" stroke="BLACK"
-                                                strokeType="INSIDE" styleClass="skullCircle"/>
-                                        <Circle fill="RED" layoutX="40.0" layoutY="248.0" radius="10.0" stroke="BLACK"
-                                                strokeType="INSIDE" styleClass="skullCircle"/>
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="25.0">
+                                            <children>
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
+                                                  layoutY="20.0" prefHeight="25.0"/>
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
+                                                  layoutY="20.0" prefHeight="25.0"/>
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
+                                                  layoutY="68.0" prefHeight="25.0"/>
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
+                                                  layoutY="20.0" prefHeight="25.0"/>
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
+                                                  layoutY="68.0" prefHeight="25.0"/>
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
+                                                  layoutY="116.0" prefHeight="25.0"/>
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
+                                                  layoutY="164.0" prefHeight="25.0"/>
                                     </children>
                                     <padding>
-                                        <Insets bottom="14.0"/>
+                                        <Insets bottom="10.0" top="10.0"/>
                                     </padding>
+                                    <opaqueInsets>
+                                        <Insets/>
+                                    </opaqueInsets>
                                 </VBox>
                             </children>
                             <padding>
