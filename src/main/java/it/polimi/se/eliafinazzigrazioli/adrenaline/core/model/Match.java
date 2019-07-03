@@ -429,7 +429,9 @@ public class Match implements Observable {
                 opponentsInfo.put(serverPlayer.getPlayerNickname(), opponent);
             }
 
-            playerPositions.put(serverPlayer.getPlayerNickname(), gameBoard.getPlayerPosition(serverPlayer).getCoordinates());
+            BoardSquare playerPosition = gameBoard.getPlayerPosition(serverPlayer);
+            if (playerPosition != null)
+                playerPositions.put(serverPlayer.getPlayerNickname(), playerPosition.getCoordinates());
         });
         clientModel.setServerPlayerPositions(playerPositions);
         clientModel.setOpponentsInfo(opponentsInfo);
