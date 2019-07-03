@@ -36,7 +36,6 @@ public class CardController implements ViewEventsListenerInterface {
         //init to interesting events
         eventController.addViewEventsListener(WeaponToUseSelectedEvent.class, this);
         eventController.addViewEventsListener(EffectSelectedEvent.class, this);
-        eventController.addViewEventsListener(TargetSelectedEvent.class, this);
         eventController.addViewEventsListener(SquareSelectedEvent.class, this);
         eventController.addViewEventsListener(PlayersSelectedEvent.class, this);
         eventController.addViewEventsListener(RoomSelectedEvent.class, this);

@@ -168,6 +168,10 @@ public class PlayerClient implements Serializable, CardInterface {
         this.overkill = overkill;
     }
 
+    public void addSkull() {
+        skulls++;
+    }
+
     @Override
     public String[][] drawCard() {
         String[][] matrix = CLIUtils.drawEmptyBox(WIDTH, HEIGHT, Color.damageMarkToColor(avatar.getDamageMark()));
