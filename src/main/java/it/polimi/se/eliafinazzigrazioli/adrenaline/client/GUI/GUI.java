@@ -266,7 +266,7 @@ public class GUI extends Application implements RemoteView {
         if (!player.equals(client.getPlayerName())) {
             opponentPlayerToGUIControllerMap.get(player).setDisconnected();
         } else {
-            commandsGUIController.setDisconnected();
+            setDisconnected();
         }
     }
 
@@ -783,6 +783,11 @@ public class GUI extends Application implements RemoteView {
     @Override
     public boolean selectYesOrNot() {
         return false;
+    }
+
+    @Override
+    public void setDisconnected() {
+        commandsGUIController.setDisconnected();
     }
 
     public String getMapAsset(MapType mapType) {

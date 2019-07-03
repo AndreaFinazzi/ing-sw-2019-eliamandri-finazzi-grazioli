@@ -519,6 +519,11 @@ public class CLI implements RemoteView, Runnable {
         return true;
     }
 
+    @Override
+    public void setDisconnected() {
+
+    }
+
     /** End methods remote view **/
 
     private int nextInt() {

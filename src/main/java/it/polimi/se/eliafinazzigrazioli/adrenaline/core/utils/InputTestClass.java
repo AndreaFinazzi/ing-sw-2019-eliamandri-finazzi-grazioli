@@ -1,17 +1,15 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class InputTestClass implements RemoteView, Runnable {
 
@@ -174,6 +172,11 @@ public class InputTestClass implements RemoteView, Runnable {
     @Override
     public boolean selectYesOrNot() {
         return false;
+    }
+
+    @Override
+    public void setDisconnected() {
+
     }
 
 
