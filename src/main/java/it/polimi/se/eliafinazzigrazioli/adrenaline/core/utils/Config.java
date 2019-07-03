@@ -26,7 +26,7 @@ public final class Config {
     public static final int CONFIG_SERVER_SOCKET_PORT = Integer.parseInt((String) CONFIG.getOrDefault("server.socket.port", 9999));
 
     public static final int CONFIG_SERVER_NEW_GAME_TIMEOUT = Integer.parseInt((String) CONFIG.getOrDefault("server.new_game_timeout", 30000));
-    public static final int CONFIG_MATCH_TURN_TIMEOUT = Integer.parseInt((String) CONFIG.getOrDefault("server.new_game_timeout", 30000));
+    public static final int CONFIG_MATCH_TURN_TIMEOUT = Integer.parseInt((String) CONFIG.getOrDefault("match.turn_timeout", 30000));
 
     public static final String CONFIG_CLIENT_GUI_ASSETS_MAP_PREFIX = (String) CONFIG.getOrDefault("client.gui.assets.map.prefix", "Map_");
     public static final String CONFIG_CLIENT_GUI_ASSETS_MAP_FORMAT = (String) CONFIG.getOrDefault("client.gui.assets.map.format", ".png");

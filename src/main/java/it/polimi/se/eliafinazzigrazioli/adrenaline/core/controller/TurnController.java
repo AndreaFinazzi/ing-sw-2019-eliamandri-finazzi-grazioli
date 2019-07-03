@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.SkippedTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
@@ -32,7 +33,11 @@ public class TurnController implements ViewEventsListenerInterface {
 
     private int actionsPerformed;
 
+
     private PowerUpCard powerUpForRespawn;
+    private List<PowerUpCard> powerUpsForSpawn;
+
+    private Player spawningPlayer;
 
 
     public TurnController(EventController eventController, Match match) {
@@ -85,18 +90,27 @@ public class TurnController implements ViewEventsListenerInterface {
                 match.getPowerUpsDeck().discardPowerUp(powerUpToDiscard);
                 events.add(deadPlayer.addPowerUp(powerUpForRespawn, match.getPowerUpsDeck()));
             }
-            else
+            else {
                 match.getPowerUpsDeck().discardPowerUp(powerUpForRespawn);
+                spawnCompleted();
+            }
             deadPlayer.resuscitate();
             events.add(new CleanPlayerBoardEvent(deadPlayer));
 
 
             if (!match.getDeadPlayers().isEmpty()) {
-                powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
-                events.add(new SpawnSelectionRequestEvent(match.getDeadPlayers().get(0), Arrays.asList(powerUpForRespawn), false));
+                Player nextDeadPlayer = match.getDeadPlayers().get(0);
+                if (nextDeadPlayer.isConnected()) {
+                    powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
+                    spawningPlayer = match.getDeadPlayers().get(0);
+                    events.add(new SpawnSelectionRequestEvent(nextDeadPlayer, Arrays.asList(powerUpForRespawn), false));
+                }
+                else
+                    events.addAll(deadPlayersRespawnLoop(nextDeadPlayer));
             }
-            else
+            else {
                 events.addAll(nextTurn());
+            }
         }
         match.notifyObservers(events);
     }
@@ -295,7 +309,28 @@ public class TurnController implements ViewEventsListenerInterface {
 
 
 
+
     //SUPPORT METHODS
+
+    public void disconnectionDefault(Player disconnectedPlayer) {
+        if (match.getCurrentPlayer() == disconnectedPlayer) {
+            if (spawningPlayer == disconnectedPlayer && powerUpsForSpawn != null) {
+                match.notifyObservers(match.getGameBoard().spawnPlayer(disconnectedPlayer, powerUpsForSpawn.get(0), true));
+                match.notifyObservers(disconnectedPlayer.addPowerUp(powerUpsForSpawn.get(1), match.getPowerUpsDeck()));
+                match.getPowerUpsDeck().discardPowerUp(powerUpsForSpawn.get(0));
+                spawnCompleted();
+                match.notifyObservers(nextTurn());
+            }
+            else
+                match.notifyObservers(nextTurn());
+        }
+        else if (spawningPlayer == disconnectedPlayer && powerUpForRespawn != null) {
+            match.notifyObservers(match.getGameBoard().spawnPlayer(disconnectedPlayer, powerUpForRespawn, false));
+            match.getPowerUpsDeck().discardPowerUp(powerUpForRespawn);
+            spawnCompleted();
+        }
+
+    }
 
     //doesn't count the double kill bonus point
     private Map<String,Integer> singleDeathPointsAssignment(Player deadPlayer) {
@@ -359,6 +394,21 @@ public class TurnController implements ViewEventsListenerInterface {
 
     private List<AbstractModelEvent> nextTurn() {
         List<AbstractModelEvent> events = new ArrayList<>();
+
+        while (!match.getNextPlayer().isConnected()) {
+            match.nextCurrentPlayer();
+            match.increaseTurn();
+            if (match.getTurn() == 0) {
+                powerUpsForSpawn = new ArrayList<>(Arrays.asList(match.getPowerUpsDeck().drawCard(), match.getPowerUpsDeck().drawCard()));
+                events.add(match.getGameBoard().spawnPlayer(match.getCurrentPlayer(), powerUpsForSpawn.get(0), true));
+                match.getPowerUpsDeck().discardPowerUp(powerUpsForSpawn.get(0));
+                events.add(match.getCurrentPlayer().addPowerUp(powerUpsForSpawn.get(1), match.getPowerUpsDeck()));
+                spawnCompleted();
+            }
+            else
+                events.add(new SkippedTurnEvent(match.getCurrentPlayer()));
+        }
+
         Map<Coordinates, AmmoCardClient> ammoCardsReplaced = match.getGameBoard().ammoCardsSetup(match.getAmmoCardsDeck());
 
         Map<Coordinates, List<WeaponCardClient>> weaponCardsReplaced = match.getGameBoard().weaponCardsSetup(match.getWeaponsDeck());
@@ -372,8 +422,11 @@ public class TurnController implements ViewEventsListenerInterface {
         match.increaseTurn(); //increases turn if nextPlayer is the first player
 
         events.add(new BeginTurnEvent(match.getCurrentPlayer()));
-        if (match.getTurn() == 0)
-            events.add(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), Arrays.asList(match.getPowerUpsDeck().drawCard(), match.getPowerUpsDeck().drawCard()), true));
+        if (match.getTurn() == 0) {
+            powerUpsForSpawn = Arrays.asList(match.getPowerUpsDeck().drawCard(), match.getPowerUpsDeck().drawCard());
+            spawningPlayer = match.getCurrentPlayer();
+            events.add(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), powerUpsForSpawn, true));
+        }
         else {
             PlayerBoard playerBoard = match.getCurrentPlayer().getPlayerBoard();
             events.add(new ActionRequestEvent(
@@ -424,13 +477,60 @@ public class TurnController implements ViewEventsListenerInterface {
 
             //Trigger respawn
             Player firstDeadPlayer = match.getDeadPlayers().get(0);
-            powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
-            events.add(new SpawnSelectionRequestEvent(firstDeadPlayer, new ArrayList<>(Arrays.asList(powerUpForRespawn)), false));
+            if (firstDeadPlayer.isConnected()) {
+                powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
+                spawningPlayer = firstDeadPlayer;
+                events.add(new SpawnSelectionRequestEvent(firstDeadPlayer, new ArrayList<>(Arrays.asList(powerUpForRespawn)), false));
+            }
+            else {
+                Player nextDeadPlayer = firstDeadPlayer;
+                events.addAll(deadPlayersRespawnLoop(nextDeadPlayer));
+            }
 
             return events;
         }
     }
 
+    private List<AbstractModelEvent> deadPlayersRespawnLoop(Player nextDeadPlayer) {
+        List<AbstractModelEvent> events = new ArrayList<>();
+        while (!match.getDeadPlayers().isEmpty() && !nextDeadPlayer.isConnected()) {
+            events.addAll(disconnectedPlayerSpawnHandling(nextDeadPlayer, false));
+            if (!match.getDeadPlayers().isEmpty())
+                nextDeadPlayer = match.getDeadPlayers().get(0);
+        }
+        if (match.getDeadPlayers().isEmpty())
+            events.addAll(nextTurn());
+        else {
+            powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
+            spawningPlayer = nextDeadPlayer;
+            events.add(new SpawnSelectionRequestEvent(nextDeadPlayer, Arrays.asList(powerUpForRespawn), false));
+        }
+        return events;
+    }
+
+    private void spawnCompleted() {
+        spawningPlayer = null;
+        powerUpsForSpawn = null;
+        powerUpForRespawn = null;
+    }
 
 
+    private List<AbstractModelEvent> disconnectedPlayerSpawnHandling(Player deadPlayer, boolean firstSpawn) {
+        List<AbstractModelEvent> events = new ArrayList<>();
+        powerUpForRespawn = match.getPowerUpsDeck().drawCard();
+        match.getPowerUpsDeck().discardPowerUp(powerUpForRespawn);
+        events.add(match.getGameBoard().spawnPlayer(deadPlayer, powerUpForRespawn, false));
+        events.add(new CleanPlayerBoardEvent(deadPlayer));
+        spawnCompleted();
+        deadPlayer.resuscitate();
+        return events;
+    }
+
+    public void setPowerUpsForSpawn(List<PowerUpCard> powerUpsForSpawn) {
+        this.powerUpsForSpawn = powerUpsForSpawn;
+    }
+
+    public void setSpawningPlayer(Player spawningPlayer) {
+        this.spawningPlayer = spawningPlayer;
+    }
 }

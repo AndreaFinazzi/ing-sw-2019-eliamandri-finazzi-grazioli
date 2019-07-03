@@ -90,14 +90,10 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
         match.notifyObservers(new BeginMatchEvent(chosenMap, ammoCardsSetup, weaponCardsSetup, match.getAvatarMap())); //event contains info about match initialization
         match.notifyObservers(new BeginTurnEvent(match.getCurrentPlayer())); //notifies to all players who is beginning the turn
-        match.notifyObservers(new SpawnSelectionRequestEvent(   //notifies to current player info for spawning routine. This event triggers request/response logic
-                match.getCurrentPlayer(),
-                Arrays.asList(
-                        match.getPowerUpsDeck().drawCard(),
-                        match.getPowerUpsDeck().drawCard()),
-                true
-                )
-        );
+        List<PowerUpCard> powerUpCardsForSpawn = Arrays.asList(match.getPowerUpsDeck().drawCard(), match.getPowerUpsDeck().drawCard());
+        turnController.setPowerUpsForSpawn(powerUpCardsForSpawn);
+        turnController.setSpawningPlayer(match.getCurrentPlayer());
+        match.notifyObservers(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), powerUpCardsForSpawn, true));
     }
 
     public EventController getEventController() {
@@ -252,7 +248,7 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         }
         clientIDToPlayerMap.remove(event.getClientID());
         eventController.popVirtualView(event.getClientID());
-
+        turnController.disconnectionDefault(disconnectingPlayer);
     }
 
     @Override

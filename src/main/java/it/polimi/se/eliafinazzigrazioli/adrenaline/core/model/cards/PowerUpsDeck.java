@@ -66,7 +66,8 @@ public class PowerUpsDeck extends Deck<PowerUpCard> {
     }
 
     public void discardPowerUp(PowerUpCard powerUpCard){
-        discardedPowerUps.add(powerUpCard);
+        if (powerUpCard != null)
+            discardedPowerUps.add(powerUpCard);
     }
 
 }

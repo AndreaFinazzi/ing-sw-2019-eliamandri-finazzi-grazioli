@@ -159,10 +159,13 @@ public class Match implements Observable {
     }
 
     public void nextCurrentPlayer() {
-        //TODO Should be debugged
         int index = players.indexOf(currentPlayer);
-
         currentPlayer = players.get((index + 1) % players.size());
+    }
+
+    public Player getNextPlayer() {
+        int index = players.indexOf(currentPlayer);
+        return players.get((index + 1) % players.size());
     }
 
     public Player getFirstPlayer() {
@@ -267,24 +270,6 @@ public class Match implements Observable {
             players.remove(nickname);
         }
     }
-
-    public void weaponToUseSelected(Player player, String weaponSelected) {
-        if (player != currentPlayer) {
-            //TODO throw exception or generate event
-            return;
-        }
-        WeaponCard weaponCard = currentPlayer.getWeaponByName(weaponSelected);
-        if (weaponCard == null) {
-            //TODO throw exception or generate event
-            return;
-        }
-        if (!weaponCard.isLoaded()) {
-            //TODO throw exception or generate event
-            return;
-        }
-
-    }
-
 
     /*
      * GameBoard-related methods
