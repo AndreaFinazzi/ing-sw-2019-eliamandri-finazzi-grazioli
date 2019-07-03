@@ -2,17 +2,16 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.LocalModel;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PlayerClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerShotEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.SkullRemovalEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
@@ -122,6 +121,8 @@ public class Match implements Observable {
             }
             events.add(new SkullRemovalEvent(currentPlayer, currentPlayer.getDamageMarkDelivered(), deadPlayer.getPlayerNickname(), deadPlayer.getPlayerBoard().isOverkill(), trackFull));
         }
+        if (killTrack.isFull())
+            phase = MatchPhase.FINAL_FRENZY;
         return events;
     }
 

@@ -33,7 +33,7 @@ public class MoveActionEffectState extends ActionEffectState {
             destination = gameBoard.getPlayerPosition(currentPlayer);
         if (playerToAffectSource != null) {
             try {
-                toMove = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(destinationSelectionOrder);
+                toMove = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(toAffectPlayerSelectionOrder);
             } catch (IndexOutOfBoundsException e) {
                 toMove = null;
             }

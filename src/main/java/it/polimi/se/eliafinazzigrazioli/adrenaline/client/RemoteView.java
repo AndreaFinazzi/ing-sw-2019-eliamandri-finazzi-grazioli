@@ -479,7 +479,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     @Override
     default void handleEvent(SkullRemovalEvent event) throws HandlerNotImplementedException {
-        //todo build a client version for killTrack
+        if (!getLocalModel().getKillTrack().isFull()) {
+            if (event.getDeadPlayer().equals(getClient().getPlayerName()))
+                getLocalModel().addSkull();
+            else
+                getLocalModel().getOpponentInfo(event.getDeadPlayer()).addSkull();
+        }
+        getLocalModel().getKillTrack().removeSkull(event.getDamageMark(), event.isOverkill());
+        showSkullRemovalUpdate(event.getDeadPlayer());
     }
 
     @Override
@@ -487,26 +494,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showMessage(event.getMessage());
         showMessage("ACTION FAILED!");
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //TODO to implement
     @Override
@@ -636,6 +623,8 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     void showPaymentUpdate(String player, List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos);
 
     void showWeaponCollectionUpdate(String player, WeaponCardClient collectedCard, WeaponCardClient droppedCard, Room roomColor);
+
+    default void showSkullRemovalUpdate(String deadPlayer) {}
 
     default void showPointsUpdate(Map<String, Integer> pointsMap) {
         for (Map.Entry<String, Integer> playerPoints: pointsMap.entrySet())

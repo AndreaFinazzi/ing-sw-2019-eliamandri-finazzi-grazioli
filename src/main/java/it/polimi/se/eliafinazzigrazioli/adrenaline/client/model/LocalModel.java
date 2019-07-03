@@ -56,7 +56,7 @@ public class LocalModel implements Serializable {
     private boolean disconnected = false;
     public LocalModel() {
         //TODO define a way to receive the size from the server
-        KillTrack killTrack = new KillTrack(8);
+        killTrack = new KillTrack(8);
         points = new HashMap<>();
 
         weaponCards = new ArrayList<>();
@@ -185,6 +185,10 @@ public class LocalModel implements Serializable {
         weaponCards.remove(toRemove);
         toRemove.setSlotPosition(null, -1);
         return toRemove;
+    }
+
+    public void addSkull() {
+        skulls++;
     }
 
     public List<WeaponCardClient> getWeaponCards() {
