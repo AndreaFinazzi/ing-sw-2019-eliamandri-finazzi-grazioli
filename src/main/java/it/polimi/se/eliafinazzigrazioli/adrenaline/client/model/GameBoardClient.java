@@ -162,7 +162,8 @@ public class GameBoardClient {
     }
 
     public void setPlayerPosition(String player, Coordinates coordinates) {
-        playerPositions.put(player, squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()]);
+        if (coordinates != null)
+            playerPositions.put(player, squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()]);
     }
 
     public List<BoardSquareClient> getRoomSquares(Room room) {

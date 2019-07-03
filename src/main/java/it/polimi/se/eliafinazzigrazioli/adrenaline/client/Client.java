@@ -22,7 +22,7 @@ public class Client {
     private BlockingQueue<AbstractModelEvent> eventsQueue = new LinkedBlockingQueue<>();
     private AbstractConnectionManager connectionManager = null;
 
-    Thread eventsConsumer = new Thread(() -> {
+    private Thread eventsConsumer = new Thread(() -> {
 
         AbstractModelEvent nextEvent;
         try {
@@ -146,5 +146,9 @@ public class Client {
 
     public BlockingQueue<AbstractModelEvent> getEventsQueue() {
         return eventsQueue;
+    }
+
+    public void setDisconnected() {
+        view.setDisconnected();
     }
 }

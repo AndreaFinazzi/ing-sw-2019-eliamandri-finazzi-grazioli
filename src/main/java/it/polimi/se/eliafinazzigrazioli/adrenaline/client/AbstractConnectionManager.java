@@ -48,7 +48,7 @@ public abstract class AbstractConnectionManager implements Observer {
             turnTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    unregister();
+                    client.setDisconnected();
                 }
             }, Config.CONFIG_MATCH_TURN_TIMEOUT);
         }

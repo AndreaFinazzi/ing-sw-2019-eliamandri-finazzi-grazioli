@@ -1010,4 +1010,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
         return actualPowerUps;
     }
+
+    void setDisconnected();
 }

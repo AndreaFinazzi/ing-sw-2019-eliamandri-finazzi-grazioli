@@ -109,12 +109,14 @@ public class MatchBuilder {
 
     public boolean validateLoginRequestEvent(LoginRequestEvent event, MatchController match) throws PlayerAlreadyPresentException {
         MatchController previousMatch = disconnectedPlayerToMatchMap.get(event.getPlayer());
-        if (previousMatch != null && !previousMatch.equals(match)) {
+        if (previousMatch != null && !match.equals(previousMatch)) {
             AbstractClientHandler clientHandler = match.popClient(event.getClientID());
             clientHandler.setEventsQueue(matchToQueueMap.get(previousMatch));
             previousMatch.getEventController().addVirtualView(clientHandler);
             previousMatch.getEventController().update(event);
             return false;
+        } else if (match.equals(previousMatch)) {
+            return true;
         } else if (loggedPlayers.contains(event.getPlayer())) {
             throw new PlayerAlreadyPresentException();
         }
