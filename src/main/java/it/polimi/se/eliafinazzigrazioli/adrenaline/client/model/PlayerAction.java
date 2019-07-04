@@ -4,7 +4,7 @@ public enum PlayerAction {
     MOVE("Move"),
     SHOOT("Shoot"),
     COLLECT("Collect"),
-    SHOW_MAP("Show map", false),
+    SHOW_INFO("Show info", false),
     SHOW_OWNED_WEAPONS("Show owned weapon", false),
     SHOW_OWNED_POWERUPS("Show owned powerup", false),
     SHOW_PLAYERBOARDS("Show playerboards", false),

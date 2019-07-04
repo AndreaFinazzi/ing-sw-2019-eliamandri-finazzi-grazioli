@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class CLIUtils {
 
-    //dopo questa stringa ci sono 4 spazi
     private static final String ANSI_ESCAPE_COLOR = "\u001B";
 
     public static String[][] drawEmptyBox(int width, int height, Color color){
@@ -147,7 +146,7 @@ public class CLIUtils {
         return result;
     }
 
-    public static String alignSquare(List<String[][]> squares) {
+    public static String[][] composeMatrix(List<String[][]> squares) {
         if(squares == null)
             return null;
         if(squares.size() == 0)
@@ -156,8 +155,8 @@ public class CLIUtils {
         int width = squares.get(0).length;
         int height = squares.get(0)[0].length;
 
-        int newWidth = width*squares.size() + 2*(squares.size()-1);
-        int newHeight = height;
+        int newWidth = width*squares.size() + 2*(squares.size()+2);
+        int newHeight = height+1;
 
         String[][] result = new String[newWidth][newHeight];
         for(int j=0; j<newHeight; j++){
@@ -167,15 +166,34 @@ public class CLIUtils {
         }
 
         int currentX = 0;
+        int oldX = 0;
+        int count = 0;
         int currentY = newHeight - 1;
-        for(String[][] iterator : squares) {
-            for(int j=currentY; j>=0; j--){
-                for(int i=0; i<width; i++){
-                    result[currentX+i][j] = iterator[i][j];
+            for(String[][] iterator : squares) {
+                width = iterator.length;
+                for(int j=iterator[0].length-1; j>=0; j--){
+                    currentX = count*width;
+                    currentX +=2;
+                    for(int i=0; i<width; i++){
+                        try {
+                            result[currentX][j] = iterator[i][j];
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                            System.out.println(currentX);
+                            System.out.println(j);
+                            System.out.println(i);
+                            System.out.println(j);
+                        }
+                        currentX++;
+                    }
                 }
+                count++;
             }
-            currentX = currentX + width +2;
-        }
-        return matrixToString(result);
+        return result;
     }
+
+    public static String alignSquare(List<String[][]> squares) {
+        return matrixToString(composeMatrix(squares));
+    }
+
 }

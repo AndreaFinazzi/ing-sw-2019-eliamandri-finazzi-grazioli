@@ -56,6 +56,7 @@ public class LocalModel implements Serializable {
 
     public LocalModel() {
         //TODO define a way to receive the size from the server
+        playerName = "";
         killTrack = new KillTrack(8);
         points = new HashMap<>();
 
