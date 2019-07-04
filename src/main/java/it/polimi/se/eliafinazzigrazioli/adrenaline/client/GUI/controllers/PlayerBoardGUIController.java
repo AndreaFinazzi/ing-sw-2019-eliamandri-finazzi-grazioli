@@ -35,7 +35,7 @@ import java.util.logging.Level;
 public class PlayerBoardGUIController extends AbstractGUIController {
 
     @FXML
-    private HBox deathHBox;
+    private HBox deathOverlayHBox;
     @FXML
     private HBox overlayHBox;
     @FXML
@@ -51,7 +51,11 @@ public class PlayerBoardGUIController extends AbstractGUIController {
     private HBox damagesHBox;
     @FXML
     private HBox marksHBox;
+    @FXML
+    private HBox skullsTrack;
 
+    @FXML
+    private Label pointsLabel;
     @FXML
     private TilePane ammoStack;
 
@@ -138,7 +142,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         Platform.runLater(() -> {
             Image ammoIcon = new Image(view.getAmmoAsset(ammo.name()), 20, 20, true, true);
             ImageView ammoSlot = new ImageView(ammoIcon);
-            ammoSlot.getProperties().put(GUI.PROPERTIES_AMMO_KEY, ammo.name());
+            ammoSlot.getProperties().put(GUI.PROPERTIES_KEY_AMMO, ammo.name());
 
             ammoStack.getChildren().add(ammoSlot);
         });
@@ -157,7 +161,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
                 for (Ammo ammo : ammos) {
                     Image ammoIcon = new Image(view.getAmmoAsset(ammo.name()), 20, 20, true, true);
                     ImageView ammoSlot = new ImageView(ammoIcon);
-                    ammoSlot.getProperties().put(GUI.PROPERTIES_AMMO_KEY, ammo.name());
+                    ammoSlot.getProperties().put(GUI.PROPERTIES_KEY_AMMO, ammo.name());
 
                     ammoStack.getChildren().add(ammoSlot);
                 }
@@ -175,7 +179,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
 
                 Platform.runLater(() -> {
                     if (!weaponCard.isLoaded()) {
-                        weaponSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
+                        weaponSlot.getProperties().put(GUI.PROPERTIES_KEY_CARD_ID, weaponCard.getId());
                         view.applyBackground(weaponSlot, view.getWeaponAsset(weaponCard.getId()));
                     } else {
                         view.applyBackground(weaponSlot, view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD));
@@ -212,10 +216,12 @@ public class PlayerBoardGUIController extends AbstractGUIController {
 
         if (isOpponent) {
             List<Node> payedPowerUpNodes = new ArrayList<>();
-            for (PowerUpCardClient powerUpCard : powerUpCards) {
-                Node elementNode = powerUpCardSlots.getChildren().get(0);
-                view.applyBackground(elementNode, view.getPowerUpAsset(powerUpCard.getId()));
-                payedPowerUpNodes.add(elementNode);
+            if (!powerUpCardSlots.getChildren().isEmpty()) {
+                for (PowerUpCardClient powerUpCard : powerUpCards) {
+                    Node elementNode = powerUpCardSlots.getChildren().get(0);
+                    view.applyBackground(elementNode, view.getPowerUpAsset(powerUpCard.getId()));
+                    payedPowerUpNodes.add(elementNode);
+                }
             }
             ParallelTransition powerUpTransition = TransitionManager.generateParallelTransition(TransitionManager.powerUpPaymentAnimator, payedPowerUpNodes);
 
@@ -245,8 +251,8 @@ public class PlayerBoardGUIController extends AbstractGUIController {
     }
 
     private Node getAmmoNodeInStack(Ammo ammo) {
-        Node ammoNode = GUI.getChildrenByProperty(ammoStack.getChildren(), GUI.PROPERTIES_AMMO_KEY, ammo.name());
-        if (ammoNode != null) ammoNode.getProperties().remove(GUI.PROPERTIES_AMMO_KEY);
+        Node ammoNode = GUI.getChildrenByProperty(ammoStack.getChildren(), GUI.PROPERTIES_KEY_AMMO, ammo.name());
+        if (ammoNode != null) ammoNode.getProperties().remove(GUI.PROPERTIES_KEY_AMMO);
         return ammoNode;
     }
 
@@ -308,7 +314,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
             Platform.runLater(() -> {
                 for (WeaponEffectClient effect : weaponCard.getEffects()) {
                     Label effectLabel = new Label(effect.getEffectName().toUpperCase() + String.format("%n") + effect.getEffectDescription());
-                    effectLabel.getProperties().put(GUI.PROPERTIES_EFFECT_KEY, effect.getEffectName());
+                    effectLabel.getProperties().put(GUI.PROPERTIES_KEY_EFFECT, effect.getEffectName());
                     effectLabel.getStyleClass().add(GUI.STYLE_CLASS_EFFECT_DEFAULT);
                     detailsTextVBox.getChildren().add(effectLabel);
                 }
@@ -321,8 +327,8 @@ public class PlayerBoardGUIController extends AbstractGUIController {
             Platform.runLater(() -> {
                 detailsImageHBox.getChildren().clear();
                 detailsTextVBox.getChildren().clear();
+                detailsGridPane.setVisible(true);
             });
-            detailsGridPane.setVisible(true);
             Node imageNode = loadFXML(GUI.FXML_PATH_POWER_UP, detailsImageHBox, null);
             view.applyBackground(imageNode, view.getPowerUpAsset(powerUpCard.getId()));
 
@@ -344,7 +350,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
         showDetails(weaponCard);
         Platform.runLater(() -> {
             for (WeaponEffectClient effect : callableEffects) {
-                Label effectLabel = (Label) GUI.getChildrenByProperty(detailsTextVBox.getChildren(), GUI.PROPERTIES_EFFECT_KEY, effect.getEffectName());
+                Label effectLabel = (Label) GUI.getChildrenByProperty(detailsTextVBox.getChildren(), GUI.PROPERTIES_KEY_EFFECT, effect.getEffectName());
                 if (effectLabel != null) {
 
                     effectLabel.setDisable(false);
@@ -367,6 +373,38 @@ public class PlayerBoardGUIController extends AbstractGUIController {
                 label.setDisable(true);
             });
         });
+    }
+
+    public void setDeath(boolean dead) {
+        if (dead) {
+            deathOverlayHBox.setVisible(true);
+            TransitionManager.generateSimpleTransition(TransitionManager.deathTransition, deathOverlayHBox).play();
+        } else {
+            deathOverlayHBox.setVisible(false);
+        }
+    }
+
+    public void updateSkulls() {
+        int skulls;
+        if (isOpponent)
+            skulls = view.getLocalModel().getOpponentInfo(player).getSkulls();
+        else
+            skulls = view.getLocalModel().getSkulls();
+
+        Platform.runLater(() -> {
+            skullsTrack.getChildren().clear();
+            for (int i = 0; i < skulls; i++) {
+                Image skullImage = new Image(view.getAsset(GUI.ASSET_ID_SKULL), 24, 0, true, true);
+                ImageView skullNode = new ImageView(skullImage);
+                skullNode.getStyleClass().add(GUI.STYLE_CLASS_PLAYER_BOARD_SKULL);
+                Platform.runLater(() -> skullsTrack.getChildren().add(skullNode));
+            }
+        });
+    }
+
+    public void updatePoints() {
+        int points = view.getLocalModel().getPoints().get(player);
+        Platform.runLater(() -> pointsLabel.setText("Points: " + points));
     }
 
     @Override
@@ -392,19 +430,12 @@ public class PlayerBoardGUIController extends AbstractGUIController {
                 updateDamages();
                 updatePowerUpCards();
                 updateWeaponCards();
+                updateSkulls();
+                updatePoints();
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
 
-        }
-    }
-
-    public void setDeath(boolean dead) {
-        if (dead) {
-            deathHBox.setVisible(true);
-            TransitionManager.generateSimpleTransition(TransitionManager.deathTransition, deathHBox).play();
-        } else {
-            deathHBox.setVisible(false);
         }
     }
 }

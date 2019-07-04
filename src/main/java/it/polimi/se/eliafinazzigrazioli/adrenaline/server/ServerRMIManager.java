@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 import java.io.IOException;
 import java.rmi.AlreadyBoundException;
@@ -72,10 +73,10 @@ public class ServerRMIManager implements Runnable, ServerRemoteRMI {
                 while (newClientHandler.isReachable()) {
                     Thread.sleep(Server.PING_TIMEOUT);
                 }
-                LOGGER.info("RMI Client unreachable!");
+                LOGGER.info(Messages.MESSAGE_LOGGING_INFO_CLIENT_DISCONNECTED + newClientHandler.getClientID());
                 newClientHandler.unregister();
             } catch (IOException | InterruptedException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
+                LOGGER.info(Messages.MESSAGE_LOGGING_INFO_CLIENT_DISCONNECTED + newClientHandler.getClientID());
                 newClientHandler.unregister();
             }
         });

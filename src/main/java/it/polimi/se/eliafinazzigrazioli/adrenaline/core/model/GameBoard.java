@@ -210,7 +210,7 @@ public class GameBoard {
 
     public void setPlayerPositions(Player player, BoardSquare position) throws OutOfBoundBoardException {
         if (position == null)
-            throw new OutOfBoundBoardException("OutOfBoundException");
+            throw new OutOfBoundBoardException();
         else
             playerPositions.put(player, position);
     }

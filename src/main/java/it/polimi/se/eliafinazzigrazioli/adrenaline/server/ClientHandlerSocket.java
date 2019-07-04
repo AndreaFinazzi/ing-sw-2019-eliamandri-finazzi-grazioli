@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +27,7 @@ public class ClientHandlerSocket extends AbstractClientHandler {
     private static final Logger LOGGER = Logger.getLogger(ClientHandlerSocket.class.getName());
     private List<Observer> observers = new ArrayList<>();
 
+    private ExecutorService serviceExecutor = Executors.newFixedThreadPool(2);
 
     public ClientHandlerSocket(Server server, Socket socket) {
         super(server);
@@ -50,7 +54,8 @@ public class ClientHandlerSocket extends AbstractClientHandler {
 
     @Override
     public void run() {
-        new Thread(() -> {
+        // incoming messages listener
+        serviceExecutor.execute(() -> {
             AbstractViewEvent event;
             try {
                 while (server.isUp()) {
@@ -58,25 +63,28 @@ public class ClientHandlerSocket extends AbstractClientHandler {
                     received(event);
                 }
             } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
+                LOGGER.info(Messages.MESSAGE_LOGGING_INFO_CLIENT_DISCONNECTED + clientID);
                 unregister();
             } catch (ClassNotFoundException e) {
                 LOGGER.log(Level.SEVERE, e.toString(), e);
+                unregister();
             }
-        }).start();
+        });
 
-        new Thread(() -> {
+        // connection check thread
+        serviceExecutor.execute(() -> {
             InetAddress inetSocketAddress = socket.getInetAddress();
             try {
                 while (inetSocketAddress.isReachable(Server.PING_TIMEOUT)) {
                     Thread.sleep(Server.PING_TIMEOUT);
                 }
+                LOGGER.info(Messages.MESSAGE_LOGGING_INFO_CLIENT_DISCONNECTED + clientID);
                 unregister();
             } catch (IOException | InterruptedException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
+                LOGGER.info(Messages.MESSAGE_LOGGING_INFO_CLIENT_DISCONNECTED + clientID);
                 unregister();
             }
-        }).start();
+        });
     }
 
 }

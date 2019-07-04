@@ -23,7 +23,10 @@ import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -82,23 +85,22 @@ public class CommandsGUIController extends AbstractGUIController {
         super(view);
     }
 
-    public void setSpawnPowerUpCards(List<PowerUpCardClient> powerUpCards) {
+    public void setSpawnPowerUpCards(List<PowerUpCardClient> powerUpCards) throws IOException {
         for (PowerUpCardClient powerUpCard : powerUpCards) {
-            try {
-                Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, this);
+            Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, this);
+            Platform.runLater(() -> {
                 button.setDisable(false);
-                button.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
+                button.getProperties().put(GUI.PROPERTIES_KEY_CARD_ID, powerUpCard.getId());
                 view.applyBackground(button, view.getPowerUpAsset(powerUpCard.getId()));
                 button.setOnAction(event -> {
-                    selectedPowerUp.set(view.getPowerUpById(powerUpCards, (String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                    selectedPowerUp.set(view.getPowerUpById(powerUpCards, (String) button.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)));
                     spawnPowerUpSlots.getChildren().clear();
                     spawnPowerUpSlots.setVisible(false);
                     myCardsGridPane.setVisible(true);
                     semaphore.release();
                 });
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
+            });
+
         }
 
         myCardsGridPane.setVisible(false);
@@ -111,37 +113,42 @@ public class CommandsGUIController extends AbstractGUIController {
 
     public void updatePowerUpCards() {
         resetPowerUpSlots();
+
         for (PowerUpCardClient powerUpCard : view.getLocalModel().getPowerUpCards()) {
             Node powerUpSlot = myPowerUpCardSlots.getChildren().get(powerUpCard.getSlotPosition());
-            powerUpSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
+            Platform.runLater(() -> {
+                powerUpSlot.getProperties().put(GUI.PROPERTIES_KEY_CARD_ID, powerUpCard.getId());
+            });
             view.applyBackground(powerUpSlot, view.getPowerUpAsset(powerUpCard.getId()));
-//            powerUpSlot.setDisable(true);
         }
     }
 
     public void updateWeaponCards() {
         resetWeaponSlots();
+
         for (WeaponCardClient weaponCard : view.getLocalModel().getWeaponCards()) {
+            Node weaponSlot = myWeaponCardSlots.getChildren().get(weaponCard.getSlotPosition());
             Platform.runLater(() -> {
-                Node weaponSlot = myWeaponCardSlots.getChildren().get(weaponCard.getSlotPosition());
-                weaponSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
-                view.applyBackground(weaponSlot, view.getWeaponAsset(weaponCard.getId()));
+                weaponSlot.getProperties().put(GUI.PROPERTIES_KEY_CARD_ID, weaponCard.getId());
                 disableCards();
             });
+            view.applyBackground(weaponSlot, view.getWeaponAsset(weaponCard.getId()));
         }
     }
 
     private void resetPowerUpSlots() {
         for (Node slot : myPowerUpCardSlots.getChildren()) {
             view.applyBackground(slot, view.getPowerUpAsset(GUI.ASSET_ID_HIDDEN_CARD));
-            if (slot.hasProperties()) slot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, -1);
+            if (slot.hasProperties())
+                Platform.runLater(() -> slot.getProperties().remove(GUI.PROPERTIES_KEY_CARD_ID));
         }
     }
 
     private void resetWeaponSlots() {
         for (Node slot : myWeaponCardSlots.getChildren()) {
             view.applyBackground(slot, view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD));
-            if (slot.hasProperties()) slot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, -1);
+            if (slot.hasProperties())
+                Platform.runLater(() -> slot.getProperties().remove(GUI.PROPERTIES_KEY_CARD_ID));
         }
     }
 
@@ -162,28 +169,28 @@ public class CommandsGUIController extends AbstractGUIController {
     }
 
     public void setSelectablePowerUp(List<PowerUpCardClient> cards) {
-        for (PowerUpCardClient card : cards) {
-            List<Node> cardNodes = GUI.getChildrensByProperty(myPowerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, card.getId());
-            if (!cardNodes.isEmpty()) {
-                for (Node cardNode : cardNodes) {
+        for (Node cardNode : myPowerUpCardSlots.getChildren()) {
+            if (cardNode.hasProperties() && cards.contains(view.getLocalModel().getPowerUpCardById((String) cardNode.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)))) {
+                Platform.runLater(() -> {
                     cardNode.setDisable(false);
-                    Platform.runLater(() -> cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
-                }
+                    cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT);
+                });
             }
         }
 
         proceedButton.setDisable(false);
-
     }
 
     public void setSelectableWeapon(List<WeaponCardClient> selectableWeapons) {
-        for (WeaponCardClient card : selectableWeapons) {
-            Node cardNode = GUI.getChildrenByProperty(myWeaponCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, card.getId());
-            if (cardNode != null) {
-                cardNode.setDisable(false);
-                Platform.runLater(() -> cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
+        for (Node cardNode : myWeaponCardSlots.getChildren()) {
+            if (cardNode.hasProperties() && selectableWeapons.contains(view.getLocalModel().getWeaponByIdInHand((String) cardNode.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)))) {
+                Platform.runLater(() -> {
+                    cardNode.setDisable(false);
+                    cardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT);
+                });
             }
         }
+
         proceedButton.setDisable(false);
     }
 
@@ -221,20 +228,21 @@ public class CommandsGUIController extends AbstractGUIController {
     public Node generateCardNode(PowerUpCardClient powerUpCard) {
         Button button = null;
         try {
-            button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, this);
+            button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, (AbstractGUIController) null);
             button.setDisable(true);
             Button finalButton = button;
             button.setOnMouseClicked(event -> {
                 if (event.getButton().equals(MouseButton.SECONDARY)) {
                     try {
-                        playerBoardGUIController.showDetails(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                        playerBoardGUIController.showDetails(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)));
                     } catch (IOException e) {
                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
                     }
                 } else {
                     disableCards();
                     proceedButton.setDisable(true);
-                    selectedPowerUp.set(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                    selectedPowerUp.set(view.getLocalModel().getPowerUpCardById((String) finalButton.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)));
+                    finalButton.getProperties().put(GUI.PROPERTIES_KEY_CARD_SPENT, true);
                     semaphore.release();
                 }
             });
@@ -255,14 +263,14 @@ public class CommandsGUIController extends AbstractGUIController {
             button.setOnMouseClicked(event -> {
                 if (event.getButton().equals(MouseButton.SECONDARY)) {
                     try {
-                        playerBoardGUIController.showDetails(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                        playerBoardGUIController.showDetails(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)));
                     } catch (IOException e) {
                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
                     }
                 } else {
                     disableCards();
                     proceedButton.setDisable(true);
-                    selectedWeapon.set(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                    selectedWeapon.set(view.getLocalModel().getWeaponByIdInHand((String) finalButton.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)));
                     semaphore.release();
                 }
             });
@@ -328,10 +336,9 @@ public class CommandsGUIController extends AbstractGUIController {
         // get ammos transition from playerBoard
         ParallelTransition paymentTransition = playerBoardGUIController.getPaymentTransition(powerUpCards, ammos);
 
-        List<Node> payedPowerUpNodes = new ArrayList<>();
-        for (PowerUpCardClient powerUpCard : powerUpCards) {
-            Node elementNode = GUI.getChildrenByProperty(myPowerUpCardSlots.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, powerUpCard.getId());
-            if (elementNode != null) payedPowerUpNodes.add(elementNode);
+        List<Node> payedPowerUpNodes = GUI.getChildrensByProperty(myPowerUpCardSlots.getChildren(), GUI.PROPERTIES_KEY_CARD_SPENT, true);
+        for (Node payedPowerUpNode : payedPowerUpNodes) {
+            payedPowerUpNode.getProperties().remove(GUI.PROPERTIES_KEY_CARD_SPENT);
         }
 
         // get powerups transition from TransitionManager and combine it with the previous one
@@ -468,5 +475,9 @@ public class CommandsGUIController extends AbstractGUIController {
 
     public void showRespawn() {
         playerBoardGUIController.setDeath(false);
+    }
+
+    public void showSkullUpdate() {
+        playerBoardGUIController.updateSkulls();
     }
 }

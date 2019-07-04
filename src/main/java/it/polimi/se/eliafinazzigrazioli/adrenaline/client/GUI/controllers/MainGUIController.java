@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.KillTrack;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Selectable;
@@ -148,10 +149,13 @@ public class MainGUIController extends AbstractGUIController {
     public void setSelectableWeaponCards(List<WeaponCardClient> selectableWeapons) {
         for (WeaponCardClient weaponCard : selectableWeapons) {
             Pane weaponCardSlotsPane = roomWeaponCardSlotsEnumMap.get(weaponCard.getSpawnBoardSquare());
-            Node weaponCardNode = GUI.getChildrenByProperty(weaponCardSlotsPane.getChildren(), GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
+            Node weaponCardNode = GUI.getChildrenByProperty(weaponCardSlotsPane.getChildren(), GUI.PROPERTIES_KEY_CARD_ID, weaponCard.getId());
+
             if (weaponCardNode != null) {
-                weaponCardNode.setDisable(false);
-                Platform.runLater(() -> weaponCardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT));
+                Platform.runLater(() -> {
+                    weaponCardNode.setDisable(false);
+                    weaponCardNode.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT);
+                });
             }
         }
     }
@@ -177,24 +181,8 @@ public class MainGUIController extends AbstractGUIController {
         if (weaponCardSlot == null) {
             throw new NullPointerException(String.format("WeaponCardSlot not found for:\t%s%n\tin:\t%s", weaponCard, weaponCard.getSpawnBoardSquare()));
         } else {
-            weaponCardSlot.getProperties().put(GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
+            weaponCardSlot.getProperties().put(GUI.PROPERTIES_KEY_CARD_ID, weaponCard.getId());
             String uri = rotatedAssetsRooms.contains(weaponCard.getSpawnBoardSquare()) ? view.getWeaponRotatedAsset(weaponCard.getId()) : view.getWeaponAsset(weaponCard.getId());
-            view.applyBackground(weaponCardSlot, uri);
-        }
-    }
-
-    public void updateWeaponCardOnMap(WeaponCardClient weaponCard, Room room, int position) {
-        String uri;
-        Node weaponCardSlot = roomWeaponCardSlotsEnumMap.get(room).getChildren().get(position);
-
-        if (weaponCardSlot == null) {
-            throw new NullPointerException(String.format("WeaponCardSlot not found for:\t%s\n\tin:\t%s", weaponCard, room));
-        } else {
-            if (weaponCard != null) {
-                uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(weaponCard.getId()) : view.getWeaponAsset(weaponCard.getId());
-            } else {
-                uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(GUI.ASSET_ID_HIDDEN_CARD) : view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD);
-            }
             view.applyBackground(weaponCardSlot, uri);
         }
     }
@@ -204,13 +192,13 @@ public class MainGUIController extends AbstractGUIController {
         if (boardSquareGUIController == null) {
             throw new NullPointerException(String.format("BoardSquare controller not found in:\t%s", coordinates));
         } else {
-            boardSquareGUIController.setAmmo(ammoCard);
+            boardSquareGUIController.setAmmoCard(ammoCard);
         }
     }
 
     public void removeWeaponCardFromMap(Room room, WeaponCardClient weaponCard, WeaponCardClient droppedCard) {
         String uri;
-        Node weaponCardNode = GUI.getChildrenByProperty(roomWeaponCardSlotsEnumMap.get(room).getChildren(), GUI.PROPERTIES_CARD_ID_KEY, weaponCard.getId());
+        Node weaponCardNode = GUI.getChildrenByProperty(roomWeaponCardSlotsEnumMap.get(room).getChildren(), GUI.PROPERTIES_KEY_CARD_ID, weaponCard.getId());
         if (weaponCardNode != null) {
             if (droppedCard == null)
                 uri = rotatedAssetsRooms.contains(room) ? view.getWeaponRotatedAsset(GUI.ASSET_ID_HIDDEN_CARD) : view.getWeaponAsset(GUI.ASSET_ID_HIDDEN_CARD);
@@ -261,6 +249,29 @@ public class MainGUIController extends AbstractGUIController {
         });
     }
 
+    public void updateKillTrack() {
+        List<KillTrack.Slot> killTrack = view.getLocalModel().getKillTrack().getTrack();
+        for (KillTrack.Slot slot : killTrack) {
+            if (slot.getDamageMark() != null) {
+                Platform.runLater(() -> {
+                    Pane slotPane = ((Pane) killTrackVBox.getChildren().get(killTrack.size() - 1 - killTrack.indexOf(slot)));
+                    slotPane.getChildren().clear();
+
+                    try {
+                        ImageView damageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, slotPane, this);
+                        Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()))));
+                        if (slot.isDoubleDamage()) {
+                            ImageView secondDamageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, slotPane, this);
+                            Platform.runLater(() -> secondDamageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()))));
+                        }
+                    } catch (IOException e) {
+                        LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    }
+                });
+            }
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (!initialized) {
@@ -285,10 +296,10 @@ public class MainGUIController extends AbstractGUIController {
                         button.setDisable(true);
                         button.setOnMouseClicked(event -> {
                             if (event.getButton().equals(MouseButton.SECONDARY)) {
-                                view.showCardDetails(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                                view.showCardDetails(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)));
                             } else {
                                 disableWeaponCards();
-                                selectedWeapon.set(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_CARD_ID_KEY)));
+                                selectedWeapon.set(view.getLocalModel().getWeaponCardByIdOnMap((String) button.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)));
                                 semaphore.release();
                             }
                         });
@@ -351,8 +362,8 @@ public class MainGUIController extends AbstractGUIController {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
 
-            //initialize death path
-            for (int i = 0; i < Rules.GAME_MAX_KILL_TRACK_SKULLS; i++) {
+            //initialize killTrack
+            for (int i = 0; i < view.getLocalModel().getKillTrack().getTrack().size(); i++) {
                 try {
                     loadFXML(GUI.FXML_PATH_SKULL, (Pane) killTrackVBox.getChildren().get(i), null);
                 } catch (IOException e) {
@@ -361,5 +372,4 @@ public class MainGUIController extends AbstractGUIController {
             }
         }
     }
-
 }

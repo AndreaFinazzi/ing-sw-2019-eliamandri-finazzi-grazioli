@@ -2,9 +2,9 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 import java.rmi.RemoteException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -37,7 +37,7 @@ public class ClientHandlerRMI extends AbstractClientHandler {
         try {
             clientRemoteRMI.receive(event);
         } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            LOGGER.info(Messages.MESSAGE_LOGGING_INFO_CLIENT_DISCONNECTED + clientID);
             unregister();
         }
     }

@@ -32,9 +32,8 @@ public class ServerEventsConsumer implements Runnable {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             Thread.currentThread().interrupt();
         } finally {
-
+            matchController.closeMatch();
+            Thread.currentThread().interrupt();
         }
-
-        LOGGER.severe("EVENTS QUEUE INTERRUPTED FOREVER!!!");
     }
 }

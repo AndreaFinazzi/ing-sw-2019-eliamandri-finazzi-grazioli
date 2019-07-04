@@ -85,6 +85,10 @@
     -fx-opacity: 1.0
 }
 
+.playerBoardSkull {
+    -fx-fit-to-width: 25;
+}
+
 .selectableEffectLabel:hover {
     -fx-border-style: solid;
     -fx-border-color: linear-gradient(to top, #ffe1da 0%, #edd6c8 50%, #ffdcf6 75%, #b6d1ed 100%);

@@ -11,4 +11,8 @@ public interface EventListenerInterface {
     default void handleEvent(GenericEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
+
+    default void handleEvent(SkippedTurnEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
 }

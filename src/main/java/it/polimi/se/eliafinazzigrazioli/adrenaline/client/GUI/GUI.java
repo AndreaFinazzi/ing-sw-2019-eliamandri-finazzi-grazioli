@@ -45,6 +45,7 @@ public class GUI extends Application implements RemoteView {
     public static final String STYLE_CLASS_EFFECT_DEFAULT = "effectLabel";
     public static final String STYLE_CLASS_PLAYER_BOARD_DEFAULT = "playerBoard_NONE";
     public static final String STYLE_CLASS_PLAYER_BOARD_PREFIX = "playerBoard_";
+    public static final String STYLE_CLASS_PLAYER_BOARD_SKULL = "playerBoardSkull";
 
     public static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
     public static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
@@ -69,6 +70,7 @@ public class GUI extends Application implements RemoteView {
 
     public static final String ASSET_ID_HIDDEN_CARD = "02";
     public static final String ASSET_ID_HIDDEN_AMMO = "04";
+    public static final String ASSET_ID_SKULL = "skull";
 
     public static final String FXML_PATH_LOGIN = FXML_PATH_ROOT + "login.fxml";
     public static final String FXML_PATH_COMMANDS = FXML_PATH_ROOT + "commands.fxml";
@@ -82,10 +84,11 @@ public class GUI extends Application implements RemoteView {
     public static final String FXML_PATH_MARK = FXML_PATH_ROOT + "mark.fxml";
     public static final String FXML_PATH_SKULL = FXML_PATH_ROOT + "skull.fxml";
 
-    public static final String PROPERTIES_CARD_ID_KEY = "card_id";
-    public static final String PROPERTIES_EFFECT_KEY = "effect_name";
-    public static final String PROPERTIES_AVATAR_KEY = "avatar";
-    public static final String PROPERTIES_AMMO_KEY = "ammo_name";
+    public static final String PROPERTIES_KEY_CARD_ID = "card_id";
+    public static final String PROPERTIES_KEY_CARD_SPENT = "card_spent";
+    public static final String PROPERTIES_KEY_EFFECT = "effect_name";
+    public static final String PROPERTIES_KEY_AVATAR = "avatar";
+    public static final String PROPERTIES_KEY_AMMO = "ammo_name";
 
     private static GUI instance;
     static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
@@ -118,17 +121,19 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showSuddenDeadUpdate(String deadPlayer) {
-        if (deadPlayer.equals(client.getPlayerName()))
-            commandsGUIController.showSuddenDeath();
-        else
+        if (isOpponent(deadPlayer))
             opponentPlayerToGUIControllerMap.get(deadPlayer).showSuddenDeath();
+        else
+            commandsGUIController.showSuddenDeath();
     }
 
     @Override
     public void showPointsUpdate(Map<String, Integer> pointsMap) {
         for (Map.Entry<String, Integer> playerPoints : pointsMap.entrySet()) {
-            if (!playerPoints.getKey().equals(client.getPlayerName()))
+            if (isOpponent(playerPoints.getKey()))
                 opponentPlayerToGUIControllerMap.get(playerPoints.getKey()).updatePoints();
+            else
+                commandsGUIController.getPlayerBoardGUIController().updatePoints();
         }
     }
 
@@ -185,7 +190,7 @@ public class GUI extends Application implements RemoteView {
     @Override
     public void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected, boolean lastOfCard) {
         if (lastOfCard) {
-            if (!player.equals(client.getPlayerName()))
+            if (isOpponent(player))
                 opponentPlayerToGUIControllerMap.get(player).showAmmoCollected(ammo, actuallyCollected);
             else
                 commandsGUIController.showAmmoCollected(ammo, actuallyCollected);
@@ -202,7 +207,7 @@ public class GUI extends Application implements RemoteView {
     public void showPlayerMovementUpdate(String player, List<Coordinates> path) {
         if (!path.isEmpty()) {
             try {
-                if (!player.equals(client.getPlayerName())) {
+                if (isOpponent(player)) {
                     Coordinates nextDestination = path.get(0);
                     mainGUIController.movePlayer(player, nextDestination);
                     PauseTransition delay = new PauseTransition(Duration.seconds(1));
@@ -233,7 +238,7 @@ public class GUI extends Application implements RemoteView {
     @Override
     public void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks, List<DamageMark> removedMarks) {
         try {
-            if (!damagedPlayer.equals(client.getPlayerName())) {
+            if (isOpponent(damagedPlayer)) {
                 opponentPlayerToGUIControllerMap.get(damagedPlayer).showDamageReceived(damages, marks);
             } else {
                 commandsGUIController.showDamageReceived(damages, marks);
@@ -268,7 +273,7 @@ public class GUI extends Application implements RemoteView {
     @Override
     public void showPlayerReconnection(String player) {
         try {
-            if (!player.equals(client.getPlayerName())) {
+            if (isOpponent(player)) {
                 opponentPlayerToGUIControllerMap.get(player).setReconnected();
             } else {
                 commandsGUIController.setReconnected();
@@ -280,7 +285,7 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showPlayerDisconnection(String player) {
-        if (!player.equals(client.getPlayerName())) {
+        if (isOpponent(player)) {
             opponentPlayerToGUIControllerMap.get(player).setDisconnected();
         } else {
             setDisconnected();
@@ -560,7 +565,7 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showWeaponCollectionUpdate(String player, WeaponCardClient collectedCard, WeaponCardClient droppedCard, Room roomColor) {
-        if (!player.equals(getClient().getPlayerName())) {
+        if (isOpponent(player)) {
             try {
                 opponentPlayerToGUIControllerMap.get(player).setCardCollected(collectedCard);
             } catch (IOException e) {
@@ -584,7 +589,7 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showPaymentUpdate(String player, List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos) {
-        if (!player.equals(client.getPlayerName())) {
+        if (isOpponent(player)) {
             opponentPlayerToGUIControllerMap.get(player).showPaymentUpdate(powerUpCardClients, ammos);
         } else {
             commandsGUIController.showPaymentUpdate(powerUpCardClients, ammos);
@@ -593,9 +598,8 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showAmmoCardCollectedUpdate(String player, AmmoCardClient ammoCard, Coordinates coordinates) {
-        if (!player.equals(getClient().getPlayerName())) {
+        if (isOpponent(player)) {
             try {
-
                 opponentPlayerToGUIControllerMap.get(player).setCardCollected(ammoCard);
             } catch (IOException e) {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
@@ -613,7 +617,11 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
-        commandsGUIController.setSpawnPowerUpCards(cards);
+        try {
+            commandsGUIController.setSpawnPowerUpCards(cards);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
 
         AtomicReference<PowerUpCardClient> selectedPowerUp = new AtomicReference<>();
         Semaphore semaphore = new Semaphore(0);
@@ -746,10 +754,10 @@ public class GUI extends Application implements RemoteView {
 
     @Override
     public void showSpawnUpdate(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
-        if (player.equals(client.getPlayerName())) {
-            commandsGUIController.showRespawn();
-        } else {
+        if (isOpponent(player)) {
             opponentPlayerToGUIControllerMap.get(player).showRespawn();
+        } else {
+            commandsGUIController.showRespawn();
         }
         try {
             mainGUIController.movePlayer(player, spawnPoint);
@@ -765,6 +773,22 @@ public class GUI extends Application implements RemoteView {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
+
+    @Override
+    public void showSkullRemovalUpdate(String deadPlayer) {
+        mainGUIController.updateKillTrack();
+
+        if (isOpponent(deadPlayer)) {
+            opponentPlayerToGUIControllerMap.get(deadPlayer).showSkullUpdate();
+        } else {
+            commandsGUIController.showSkullUpdate();
+        }
+    }
+
+    private boolean isOpponent(String player) {
+        return !player.equals(client.getPlayerName());
+    }
+
 
     public String getPowerUpAsset(String id) {
         String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_POWER_UP + id + ASSET_FORMAT_CARDS;
@@ -810,6 +834,11 @@ public class GUI extends Application implements RemoteView {
     @Override
     public void setDisconnected() {
         commandsGUIController.setDisconnected();
+    }
+
+    public String getAsset(String id) {
+        String uri = ASSET_PATH_ROOT + id + ASSET_FORMAT_ICONS;
+        return this.getClass().getResource(uri).toExternalForm();
     }
 
     public String getMapAsset(MapType mapType) {

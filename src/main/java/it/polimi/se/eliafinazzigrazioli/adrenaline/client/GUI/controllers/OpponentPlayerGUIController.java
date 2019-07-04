@@ -9,7 +9,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -28,9 +27,7 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
     @FXML
     private TilePane ammoStack;
     @FXML
-    private TextArea playerInfoTextArea;
-    @FXML
-    private Label pointsLabel;
+    private Label playerInfoLabel;
 
     private String player;
 
@@ -52,7 +49,7 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
-        playerInfoTextArea.setText(String.format("%s%n%n%s", player, playerBoardGUIController.getAvatar()));
+        playerInfoLabel.setText(String.format("%s%n%n%s", player, playerBoardGUIController.getAvatar()));
     }
 
     public void loadPlayerBoard(String player) throws IOException {
@@ -60,7 +57,7 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
         playerBoardGUIController = new PlayerBoardGUIController(view, player, true);
         loadFXML(GUI.FXML_PATH_PLAYER_BOARD, mainAnchorPane, playerBoardGUIController);
 
-        playerInfoTextArea.setText(String.format("%s%n%n%s", player, playerBoardGUIController.getAvatar()));
+        playerInfoLabel.setText(String.format("%s%n%n%s", player, playerBoardGUIController.getAvatar()));
     }
 
     public void setCardCollected(PowerUpCardClient cardCollected) throws IOException {
@@ -97,13 +94,17 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
     }
 
     public void setDisconnected() {
-        rootStackPane.setDisable(true);
-        rootStackPane.getStyleClass().add(GUI.STYLE_CLASS_DISABLE);
+        Platform.runLater(() -> {
+            rootStackPane.setDisable(true);
+            rootStackPane.getStyleClass().add(GUI.STYLE_CLASS_DISABLE);
+        });
     }
 
     public void setReconnected() throws IOException {
-        rootStackPane.setDisable(false);
-        rootStackPane.getStyleClass().remove(GUI.STYLE_CLASS_DISABLE);
+        Platform.runLater(() -> {
+            rootStackPane.setDisable(false);
+            rootStackPane.getStyleClass().remove(GUI.STYLE_CLASS_DISABLE);
+        });
 
         playerBoardGUIController.updateWeaponCards();
         playerBoardGUIController.updatePowerUpCards();
@@ -113,8 +114,7 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
     }
 
     public void updatePoints() {
-        int points = view.getLocalModel().getPoints().get(player);
-        Platform.runLater(() -> pointsLabel.setText("Points: " + points));
+        playerBoardGUIController.updatePoints();
     }
 
     public void showSuddenDeath() {
@@ -123,5 +123,9 @@ public class OpponentPlayerGUIController extends AbstractGUIController {
 
     public void showRespawn() {
         playerBoardGUIController.setDeath(false);
+    }
+
+    public void showSkullUpdate() {
+        playerBoardGUIController.updateSkulls();
     }
 }

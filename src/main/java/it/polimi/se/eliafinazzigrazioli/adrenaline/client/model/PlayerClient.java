@@ -23,19 +23,19 @@ public class PlayerClient implements Serializable, CardInterface {
     private Avatar avatar;
 
     //INFO PlayerBoard
+
     private int skulls;
     private boolean death;
     private boolean overkill;
-
     private ArrayList<DamageMark> damages;
 
     private ArrayList<DamageMark> marks;
+
     private ArrayList<Integer> deathScores;
     private final static int WIDTH = 30;
-
     private final static int HEIGHT = 13;
-    private boolean disconnected;
 
+    private boolean disconnected;
     public PlayerClient(Avatar avatar) {
         powerUps = 0;
         weapons = new ArrayList<>();
@@ -83,6 +83,10 @@ public class PlayerClient implements Serializable, CardInterface {
 
     public List<Ammo> getAmmos() {
         return new ArrayList<>(ammos);
+    }
+
+    public int getSkulls() {
+        return skulls;
     }
 
     public void addWeapon(WeaponCardClient weapon) {

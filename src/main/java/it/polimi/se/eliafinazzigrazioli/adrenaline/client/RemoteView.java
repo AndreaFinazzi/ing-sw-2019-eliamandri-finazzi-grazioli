@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.SkippedTurnEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.ActionRequestEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.NotAllowedPlayEvent;
@@ -335,6 +336,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default void handleEvent(PaymentExecutedEvent event) throws HandlerNotImplementedException {
         executePayment(event.getPlayer(), event.getPowerUpsSpent(), event.getAmmosSpent());
         showPaymentUpdate(event.getPlayer(), event.getPowerUpsSpent(), event.getAmmosSpent());
+    }
+
+    @Override
+    default void handleEvent(SkippedTurnEvent event) throws HandlerNotImplementedException {
+        showMessage(event.getPlayer() + " skipped his turn!");
     }
 
     @Override

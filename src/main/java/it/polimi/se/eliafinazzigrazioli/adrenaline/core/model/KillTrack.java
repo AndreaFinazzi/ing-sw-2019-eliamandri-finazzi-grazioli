@@ -9,12 +9,12 @@ public class KillTrack {
 
     private final static String SKULL = "\u2620";
 
-    private class Slot {
+    public class Slot {
         private DamageMark damageMark;
         private boolean skull;
         private boolean doubleDamage;
 
-        public Slot() {
+        private Slot() {
             damageMark = null;
             doubleDamage = false;
             skull = true;
@@ -40,6 +40,7 @@ public class KillTrack {
     }
 
     private List<Slot> track;
+
     private int skullsRemoved;
     private int finalMultipleDeathMarks;
     private DamageMark finalMultipleDeathMarkType;
@@ -101,5 +102,9 @@ public class KillTrack {
 
     public DamageMark getFinalMultipleDeathMarkType() {
         return finalMultipleDeathMarkType;
+    }
+
+    public List<Slot> getTrack() {
+        return track;
     }
 }

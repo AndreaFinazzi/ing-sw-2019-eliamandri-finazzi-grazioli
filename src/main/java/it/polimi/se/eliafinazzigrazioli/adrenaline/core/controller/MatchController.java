@@ -241,14 +241,14 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
     @Override
     public void handleEvent(ClientDisconnectionEvent event) throws HandlerNotImplementedException {
         Player disconnectingPlayer = match.getPlayers().get(clientIDToPlayerMap.get(event.getClientID()));
+        clientIDToPlayerMap.remove(event.getClientID());
+        eventController.popVirtualView(event.getClientID());
         if (disconnectingPlayer != null) {
             disconnectingPlayer.setConnected(false);
             matchBuilder.disconnectClient(disconnectingPlayer.getPlayerNickname(), this);
             eventController.update(new PlayerDisconnectedEvent(disconnectingPlayer.getPlayerNickname()));
+            turnController.disconnectionDefault(disconnectingPlayer);
         }
-        clientIDToPlayerMap.remove(event.getClientID());
-        eventController.popVirtualView(event.getClientID());
-        turnController.disconnectionDefault(disconnectingPlayer);
     }
 
     @Override
@@ -261,5 +261,9 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         mapVotesCounter = new EnumMap<>(MapType.class);
 
         match.notifyObservers(new MatchStartedEvent(playerToAvatarMap, new ArrayList<>(Arrays.asList(MapType.values()))));
+    }
+
+    public void closeMatch() {
+        matchBuilder.matchEnded(this);
     }
 }

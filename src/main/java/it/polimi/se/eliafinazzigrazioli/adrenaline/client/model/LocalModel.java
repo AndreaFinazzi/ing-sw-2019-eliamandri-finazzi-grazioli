@@ -30,33 +30,34 @@ public class LocalModel implements Serializable {
     private int skulls;
 
     private List<Integer> deathScores;
+
     private boolean death;
     private boolean overkill;
     private int movementsAllowed;
     private String playerName;
     //Public information
-
     private MapType mapType;
-    private GameBoardClient gameBoard;
 
+    private GameBoardClient gameBoard;
     //private List<String> players;
+
     private Map<String, PlayerClient> opponentsInfo;
     private Map<String, Avatar> playerToAvatarMap;
     private List<SpawnBoardSquareClient> listSpawn;
-
     // temp field used in reconnection update
-    private Map<Coordinates, List<WeaponCardClient>> serverWeaponCardsSetup;
 
+    private Map<Coordinates, List<WeaponCardClient>> serverWeaponCardsSetup;
     private Map<Coordinates, AmmoCardClient> serverAmmoCardsSetup;
+
     private Map<String, Coordinates> serverPlayerPositions;
     private final static int WIDTH = 30;
-
     private final static int HEIGHT = 12;
 
     private boolean disconnected = false;
+
     public LocalModel() {
         //TODO define a way to receive the size from the server
-        killTrack = new KillTrack(8);
+        killTrack = new KillTrack(Rules.GAME_MAX_KILL_TRACK_SKULLS);
         points = new HashMap<>();
 
         weaponCards = new ArrayList<>();
@@ -74,7 +75,6 @@ public class LocalModel implements Serializable {
         //todo
         deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
     }
-
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
         points.put(playerName, 0);
@@ -130,6 +130,10 @@ public class LocalModel implements Serializable {
 
     public KillTrack getKillTrack() {
         return killTrack;
+    }
+
+    public int getSkulls() {
+        return skulls;
     }
 
     public void updatePoints(Map<String, Integer> newPoints) {

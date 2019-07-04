@@ -34,7 +34,7 @@ public class BoardSquareGUIController extends AbstractGUIController {
     }
 
 
-    public void setAmmo(AmmoCardClient ammoCard) {
+    public void setAmmoCard(AmmoCardClient ammoCard) {
 
         if (ammoCard != null) {
             String uri = view.getAmmoAsset(ammoCard.getId());
@@ -47,7 +47,7 @@ public class BoardSquareGUIController extends AbstractGUIController {
         if (!hasPlayer(player)) {
             players.add(player);
             ImageView avatarNode = (ImageView) loadFXML(GUI.FXML_PATH_AVATAR, boardSquare, this);
-            avatarNode.getProperties().put(GUI.PROPERTIES_AVATAR_KEY, player);
+            avatarNode.getProperties().put(GUI.PROPERTIES_KEY_AVATAR, player);
 
             String uri = view.getAvatarAsset(view.getLocalModel().getPlayersAvatarMap().get(player).getDamageMark().name());
             Platform.runLater(() -> avatarNode.setImage(new Image(uri)));
@@ -63,7 +63,7 @@ public class BoardSquareGUIController extends AbstractGUIController {
 
         while (childrenIterator.hasNext()) {
             Node child = childrenIterator.next();
-            if (child.hasProperties() && child.getProperties().get(GUI.PROPERTIES_AVATAR_KEY).equals(player)) {
+            if (child.hasProperties() && child.getProperties().get(GUI.PROPERTIES_KEY_AVATAR).equals(player)) {
                 Platform.runLater(childrenIterator::remove);
                 players.remove(player);
                 return true;
@@ -78,24 +78,27 @@ public class BoardSquareGUIController extends AbstractGUIController {
     }
 
     public Node makeSelectable(EventHandler<MouseEvent> onMouseClicked) {
-        boardSquare.getStyleClass().add(GUI.STYLE_CLASS_BOARD_SQUARE_SELECTABLE);
-        boardSquare.setOnMouseClicked(onMouseClicked);
+        Platform.runLater(() -> {
+            boardSquare.getStyleClass().add(GUI.STYLE_CLASS_BOARD_SQUARE_SELECTABLE);
+            boardSquare.setOnMouseClicked(onMouseClicked);
+        });
 
         return boardSquare;
     }
 
     public void makeAvatarSelectable(Avatar avatar) {
         boardSquare.getChildren().forEach(item -> {
-            if (item.hasProperties() && item.getProperties().get(GUI.PROPERTIES_AVATAR_KEY).equals(avatar)) {
+            if (item.hasProperties() && item.getProperties().get(GUI.PROPERTIES_KEY_AVATAR).equals(avatar)) {
 
             }
         });
     }
 
     public void makeUnselectable() {
-        boardSquare.getStyleClass().remove(GUI.STYLE_CLASS_BOARD_SQUARE_SELECTABLE);
-        boardSquare.setOnMouseClicked(null);
-
+        Platform.runLater(() -> {
+            boardSquare.getStyleClass().remove(GUI.STYLE_CLASS_BOARD_SQUARE_SELECTABLE);
+            boardSquare.setOnMouseClicked(null);
+        });
     }
 
     @Override

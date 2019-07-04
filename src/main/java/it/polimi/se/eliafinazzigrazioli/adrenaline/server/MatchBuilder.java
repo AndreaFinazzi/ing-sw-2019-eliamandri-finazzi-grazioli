@@ -138,4 +138,13 @@ public class MatchBuilder {
 
         for (AbstractClientHandler clientHandler : notLoggedClients) signClient(clientHandler);
     }
+
+    public synchronized void matchEnded(MatchController match) {
+        List<String> leavingPlayers = match.getMatch().getPlayersNickname();
+
+        loggedPlayers.removeAll(leavingPlayers);
+        disconnectedPlayerToMatchMap.keySet().removeAll(leavingPlayers);
+
+        matchToQueueMap.remove(match);
+    }
 }

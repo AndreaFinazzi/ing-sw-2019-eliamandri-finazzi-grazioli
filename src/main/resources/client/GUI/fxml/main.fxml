@@ -103,27 +103,28 @@
                                     </children>
                                 </HBox>
                                 <VBox fx:id="killTrackVBox" alignment="TOP_CENTER" layoutX="77.0" layoutY="610.0"
-                                      nodeOrientation="LEFT_TO_RIGHT" prefHeight="348.0" prefWidth="60.0"
-                                      spacing="18.0">
+                                      maxHeight="350.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="348.0"
+                                      prefWidth="60.0" spacing="18.0">
                                     <children>
-                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="25.0">
+                                        <FlowPane alignment="CENTER" columnHalignment="CENTER" maxHeight="25.0"
+                                                  prefHeight="25.0">
                                             <children>
                                             </children>
                                         </FlowPane>
                                         <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
-                                                  layoutY="20.0" prefHeight="25.0"/>
+                                                  layoutY="20.0" maxHeight="25.0" prefHeight="25.0"/>
                                         <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
-                                                  layoutY="20.0" prefHeight="25.0"/>
+                                                  layoutY="20.0" maxHeight="25.0" prefHeight="25.0"/>
                                         <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
-                                                  layoutY="68.0" prefHeight="25.0"/>
+                                                  layoutY="68.0" maxHeight="25.0" prefHeight="25.0"/>
                                         <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
-                                                  layoutY="20.0" prefHeight="25.0"/>
+                                                  layoutY="20.0" maxHeight="25.0" prefHeight="25.0"/>
                                         <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
-                                                  layoutY="68.0" prefHeight="25.0"/>
+                                                  layoutY="68.0" maxHeight="25.0" prefHeight="25.0"/>
                                         <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
-                                                  layoutY="116.0" prefHeight="25.0"/>
+                                                  layoutY="116.0" maxHeight="25.0" prefHeight="25.0"/>
                                         <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="10.0"
-                                                  layoutY="164.0" prefHeight="25.0"/>
+                                                  layoutY="164.0" maxHeight="25.0" prefHeight="25.0"/>
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" top="10.0"/>

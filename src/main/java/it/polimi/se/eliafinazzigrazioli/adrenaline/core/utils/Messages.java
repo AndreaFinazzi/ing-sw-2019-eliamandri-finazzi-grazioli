@@ -25,6 +25,7 @@ public final class Messages {
     }
 
     public static final String MESSAGE_LOGGING_INFO_SERVER_STARTED = MESSAGES.getProperty("app.server.log.info.server_started", "DEFAULT: Server started!");
+    public static final String MESSAGE_LOGGING_INFO_CLIENT_DISCONNECTED = MESSAGES.getProperty("app.server.log.info.client_disconnected", "DEFAULT: Client disconnected!");
     public static final String MESSAGE_EXCEPTIONS_SERVER_HANDLER_NOT_IMPLEMENTED = MESSAGES.getProperty("app.exceptions.server.handler_not_implemented", "DEFAULT: Handler not implemented");
     public static final String MESSAGE_EXCEPTIONS_SERVER_LISTENER_NOT_FOUND = MESSAGES.getProperty("app.exceptions.server.listener_not_found", "DEFAULT: Listener not found");
     public static final String MESSAGE_EXCEPTIONS_SERVER_CONFIG_FILE_NOT_FOUND = MESSAGES.getProperty("app.exceptions.server.config_file_not_found", "DEFAULT: Config file not found");
@@ -45,6 +46,7 @@ public final class Messages {
     //Match
     public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_PLAYER_ALREADY_PRESENT = MESSAGES.getProperty("app.exceptions.game.match.player_already_present", "DEFAULT: Player is already connected");
     public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_PLAYERS_OUT_OF_BOUND = MESSAGES.getProperty("app.exceptions.game.match.players_out_of_bounds", "DEFAULT: Players out of bound");
+    public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_BOARD_OUT_OF_BOUND = MESSAGES.getProperty("app.exceptions.game.match.board_out_of_bounds", "DEFAULT: OutOfBoundException");
     public static final String MESSAGE_EXCEPTIONS_GAME_MATCH_AVATAR_NOT_AVAILABLE = MESSAGES.getProperty("app.exceptions.game.match.avatar_not_available", "DEFAULT: Avatar not available");
 
     //WeaponCard

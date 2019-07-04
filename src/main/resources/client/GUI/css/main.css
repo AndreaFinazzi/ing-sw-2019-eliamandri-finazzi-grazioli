@@ -6,7 +6,6 @@
     -fx-background-repeat: no-repeat;
 }
 
-
 /*DON'T CHANGE THIS! */
 #mainBoardPane {
     -fx-background-insets: 0, 0;
@@ -91,8 +90,6 @@
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
 
-    -fx-fill: none;
-
     /*-fx-pref-width: 97;*/
     /*-fx-pref-height: 170;*/
     -fx-min-width: 60;
@@ -132,10 +129,6 @@
 
 .cardSlots {
     -fx-background-color: rgba(0, 0, 0, 0.8);
-}
-
-.cardSlots:focused {
-    -fx-effect: dropshadow(three-pass-box, rgb(97, 93, 230), 5, 0.5, 0, 0);
 }
 
 .arrowButton {

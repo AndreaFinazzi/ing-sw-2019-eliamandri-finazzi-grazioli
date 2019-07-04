@@ -2,16 +2,16 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.LocalModel;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PlayerClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerShotEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.SkullRemovalEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
@@ -187,15 +187,6 @@ public class Match implements Observable {
 
     public Player getPlayer(String nickname) {
         return players.get(nickname);
-    }
-
-    public ArrayList<String> getPlayersNicknames() {
-        ArrayList<String> tempList = new ArrayList<>();
-        for (Player player : players) {
-            tempList.add(player.getPlayerNickname());
-        }
-
-        return tempList;
     }
 
     public void addPlayer(Player player) throws MaxPlayerException, PlayerAlreadyPresentException {
