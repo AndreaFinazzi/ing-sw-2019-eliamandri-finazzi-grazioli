@@ -9,7 +9,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponF
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.AmmoCardsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
@@ -309,15 +309,6 @@ public class GameBoard {
             }
         }
         return coordinatesList;
-    }
-
-    public AmmoCard collectAmmoCard(Player player, PowerUpsDeck deck) {
-        BoardSquare position = getPlayerPosition(player);
-        if (position.isSpawnPoint())
-            return null;
-        else
-            return ((GenericBoardSquare) position).gatherCollectables();
-
     }
 
     private List<BoardSquare> coordinatesToBoardSquares(List<Coordinates> coordinatesList) {

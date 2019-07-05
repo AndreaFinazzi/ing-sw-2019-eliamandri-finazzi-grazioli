@@ -112,7 +112,7 @@ public class InputTestClass implements RemoteView, Runnable {
 
     @Override
     public PlayerAction selectAction() {
-        return PlayerAction.values()[new Random().nextInt(3)];
+        return PlayerAction.values()[new Random().nextInt(4)];
     }
 
     @Override

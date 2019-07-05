@@ -16,9 +16,11 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PowerUpsDeck extends Deck<PowerUpCard> {
+public class PowerUpsDeck {
 
     static final Logger LOGGER = Logger.getLogger(PowerUpsDeck.class.getName());
+
+    List<PowerUpCard> cards;
 
     private List<PowerUpCard> discardedPowerUps = new ArrayList<>();
 

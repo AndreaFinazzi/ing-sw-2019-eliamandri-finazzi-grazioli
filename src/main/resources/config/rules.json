@@ -38,7 +38,7 @@
       },
       "first_blood_points": 1,
       "double_kill_points": 1,
-      "max_kill_track_skulls": 3
+      "max_kill_track_skulls": 8
     },
     "turn" : {
       "max_moves_simple" : 3,

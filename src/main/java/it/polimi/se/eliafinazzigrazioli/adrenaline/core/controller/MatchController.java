@@ -39,7 +39,6 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
     private Match match;
 
-    private PlayerController playerController;
     private CardController cardController;
     private TurnController turnController;
     private EventController eventController;
@@ -56,7 +55,6 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         match.setPhase(MatchPhase.RECRUITING);
 
         eventController = new EventController(this);
-        playerController = new PlayerController(eventController, this);
         cardController = new CardController(eventController, match);
         turnController = new TurnController(eventController, match);
 

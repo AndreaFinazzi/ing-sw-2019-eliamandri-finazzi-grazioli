@@ -613,7 +613,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         "Tagback Grenade"
                 ));
             }
+            else
+                notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
         }
+    }
+
+    @Override
+    default void handleEvent(MatchEndedEvent event) throws HandlerNotImplementedException {
+        showMatchEnded(event.getWinner());
     }
 
     @Override
@@ -731,6 +738,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
      */
 
     void showMessage(Object message);
+
+    default void showMatchEnded(String winner) {
+        showMessage("AND THE WINNER IS " + winner + "!!!!!!!!!!!!!");
+    }
 
     void showMap();
 
@@ -1124,7 +1135,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         if (powerUpSelected != null) {
             List<Ammo> selectableAmmos = new ArrayList<>();
             for (PowerUpCardClient powerUpCardClient: getLocalModel().getPowerUpCards()) {
-                if (!selectableAmmos.contains(powerUpCardClient.getEquivalentAmmo()))
+                if (!selectableAmmos.contains(powerUpCardClient.getEquivalentAmmo()) && powerUpCardClient != powerUpSelected)
                     selectableAmmos.add(powerUpCardClient.getEquivalentAmmo());
             }
             for (Ammo ammo: getLocalModel().getAmmos()) {
@@ -1155,7 +1166,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                             powerUpToSpend == null ? null : powerUpToSpend.getId(),
                             "Targeting Scope"
                     ));
+                else notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
             }
+            else notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
         }
+        else notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
     }
 }

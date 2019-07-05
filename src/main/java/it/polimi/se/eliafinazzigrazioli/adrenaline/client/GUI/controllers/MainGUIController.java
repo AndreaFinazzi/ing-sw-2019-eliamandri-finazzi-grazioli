@@ -6,7 +6,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.KillTrack;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Selectable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import javafx.application.Platform;
@@ -75,8 +74,6 @@ public class MainGUIController extends GUIController {
     private Map<Coordinates, BoardSquareGUIController> coordinatesBoardSquareGUIControllerMap = new HashMap<>();
 
     private Map<String, Node> playersNodeMap;
-
-    private Class<? extends Selectable> selectionTargetType;
 
     public MainGUIController(GUI view) {
         super(view);

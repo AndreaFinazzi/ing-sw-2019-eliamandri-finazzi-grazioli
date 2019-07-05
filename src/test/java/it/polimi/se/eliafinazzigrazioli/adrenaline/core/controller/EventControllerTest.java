@@ -1,5 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.AbstractConnectionManager;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.AbstractConnectionManagerTest;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLI;
@@ -89,6 +91,5 @@ public class EventControllerTest {
 
 
 
-        System.out.println("ended");
     }
 }

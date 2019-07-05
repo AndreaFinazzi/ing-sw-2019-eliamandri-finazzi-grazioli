@@ -2,14 +2,20 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
-public class WeaponCollectSelectionRequestEvent extends AbstractModelEvent {
+public class MatchEndedEvent extends AbstractModelEvent {
 
-    public WeaponCollectSelectionRequestEvent(String player) {
-        super(player);
+    String winner;
+
+    public MatchEndedEvent(String winner) {
+        this.winner = winner;
     }
 
     @Override
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);
+    }
+
+    public String getWinner() {
+        return winner;
     }
 }

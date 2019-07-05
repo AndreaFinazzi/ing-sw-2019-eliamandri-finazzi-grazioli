@@ -4,14 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class WeaponsDeck extends Deck<String> {
+public class WeaponsDeck {
 
     static final Logger LOGGER = Logger.getLogger(WeaponsDeck.class.getName());
 
+
+    List<String> cards;
     /**
      * WeaponDeck's constructor automatically reads all weapon files' names and saves them in an ArrayList. Cards will be drawn
      * fallowing a deck logic (implemented in the super class) and the strings will be fed to the static method jsonParser()
@@ -37,6 +41,12 @@ public class WeaponsDeck extends Deck<String> {
                 }
             }
         }
+    }
+
+    public String drawCard() {
+        String card = cards.get(new Random().nextInt(cards.size()));
+        cards.remove(card);
+        return card;
     }
 
     public boolean isEmpty() {

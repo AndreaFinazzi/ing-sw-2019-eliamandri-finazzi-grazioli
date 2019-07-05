@@ -317,30 +317,44 @@ public class TurnController implements ViewEventsListenerInterface {
         match.notifyObservers(concludeTurn());
     }
 
-
-
-
-    //SUPPORT METHODS
+    @Override
+    public void handleEvent(PowerUpRefusedEvent event) throws HandlerNotImplementedException {}
 
     public void disconnectionDefault(Player disconnectedPlayer) {
-        if (match.getCurrentPlayer() == disconnectedPlayer) {
-            if (spawningPlayer == disconnectedPlayer && powerUpsForSpawn != null) {
-                match.notifyObservers(match.getGameBoard().spawnPlayer(disconnectedPlayer, powerUpsForSpawn.get(0), true));
-                match.notifyObservers(disconnectedPlayer.addPowerUp(powerUpsForSpawn.get(1), match.getPowerUpsDeck()));
-                match.getPowerUpsDeck().discardPowerUp(powerUpsForSpawn.get(0));
-                spawnCompleted();
-                match.notifyObservers(match.getPhase() != MatchPhase.FINAL_FRENZY ? nextTurn() : finalFrenzyNextTurn());
-            }
-            else
-                match.notifyObservers(match.getPhase() != MatchPhase.FINAL_FRENZY ? nextTurn() : finalFrenzyNextTurn());
+        int connectedPlayers = 0;
+        for (Player player: match.getPlayers()) {
+            if (player.isConnected())
+                connectedPlayers++;
         }
-        else if (spawningPlayer == disconnectedPlayer && powerUpForRespawn != null) {
-            match.notifyObservers(match.getGameBoard().spawnPlayer(disconnectedPlayer, powerUpForRespawn, false));
-            match.getPowerUpsDeck().discardPowerUp(powerUpForRespawn);
-            spawnCompleted();
+        if (connectedPlayers < Rules.GAME_MIN_PLAYERS) {
+            Map<String, Integer> points = match.finalPointsCalculation();
+            match.updatePoints(points);
+            match.notifyObservers(new PointsAssignmentEvent(points));
+            match.notifyObservers(new MatchEndedEvent(match.getWinner()));
+            match.setPhase(MatchPhase.ENDED);
+        } else {
+            if (match.getCurrentPlayer() == disconnectedPlayer) {
+                if (spawningPlayer == disconnectedPlayer && powerUpsForSpawn != null) {
+                    match.notifyObservers(match.getGameBoard().spawnPlayer(disconnectedPlayer, powerUpsForSpawn.get(0), true));
+                    match.notifyObservers(disconnectedPlayer.addPowerUp(powerUpsForSpawn.get(1), match.getPowerUpsDeck()));
+                    match.getPowerUpsDeck().discardPowerUp(powerUpsForSpawn.get(0));
+                    spawnCompleted();
+                    match.notifyObservers(match.getPhase() != MatchPhase.FINAL_FRENZY ? nextTurn() : finalFrenzyNextTurn());
+                }
+                else
+                    match.notifyObservers(match.getPhase() != MatchPhase.FINAL_FRENZY ? nextTurn() : finalFrenzyNextTurn());
+            }
+            else if (spawningPlayer == disconnectedPlayer && powerUpForRespawn != null) {
+                match.notifyObservers(match.getGameBoard().spawnPlayer(disconnectedPlayer, powerUpForRespawn, false));
+                match.getPowerUpsDeck().discardPowerUp(powerUpForRespawn);
+                spawnCompleted();
+            }
         }
 
+
     }
+
+    //SUPPORT METHODS
 
     //doesn't count the double kill bonus point
     private Map<String,Integer> singleDeathPointsAssignment(Player deadPlayer) {
@@ -479,7 +493,10 @@ public class TurnController implements ViewEventsListenerInterface {
 
             return events;
         } else {
-            //todo end game
+            Map<String, Integer> points = match.finalPointsCalculation();
+            match.updatePoints(points);
+            match.notifyObservers(new PointsAssignmentEvent(points));
+            match.notifyObservers(new MatchEndedEvent(match.getWinner()));
             match.setPhase(MatchPhase.ENDED);
             return new ArrayList<>();
         }

@@ -42,6 +42,7 @@ public class KillTrack {
     private List<Slot> track;
 
     private int skullsRemoved;
+    private List<DamageMark> marksAfterLastSkull;
     private int finalMultipleDeathMarks;
     private DamageMark finalMultipleDeathMarkType;
 
@@ -51,15 +52,20 @@ public class KillTrack {
             track.add(new Slot());
         }
         skullsRemoved = 0;
+        marksAfterLastSkull = new ArrayList<>();
         finalMultipleDeathMarks = 0;
         finalMultipleDeathMarkType = null;
     }
 
+    public List<DamageMark> getMarksAfterLastSkull() {
+        return marksAfterLastSkull;
+    }
+
     public void removeSkull(DamageMark killerDamage, boolean doubleDamage) {
         if (isFull()) {
-            finalMultipleDeathMarks++;
+            marksAfterLastSkull.add(killerDamage);
             if (doubleDamage)
-                finalMultipleDeathMarks++;
+                marksAfterLastSkull.add(killerDamage);
         }
         else {
             track.get(skullsRemoved).addDamage(killerDamage, doubleDamage);

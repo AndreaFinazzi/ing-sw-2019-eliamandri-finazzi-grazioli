@@ -62,19 +62,11 @@ public interface ViewEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(TargetSelectedEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
     default void handleEvent(WeaponToUseSelectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 
     default void handleEvent(ClientDisconnectionEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
-    default void handleEvent(RequestMovePlayEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
 
@@ -97,4 +89,9 @@ public interface ViewEventsListenerInterface extends EventListenerInterface {
     default void handleEvent(DirectionSelectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
+
+    default void handleEvent(PowerUpRefusedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
 }
