@@ -33,8 +33,8 @@ public class PlayerClient implements Serializable, CardInterface {
 
     private ArrayList<Integer> deathScores;
     private final static int WIDTH = 30;
-    private final static int HEIGHT = 13;
 
+    private final static int HEIGHT = 12;
     private boolean disconnected;
     public PlayerClient(Avatar avatar) {
         powerUps = 0;
@@ -226,7 +226,6 @@ public class PlayerClient implements Serializable, CardInterface {
         for(int i=0; i<string.length(); i++) {
             matrix[i+2][10] = String.valueOf(string.charAt(i));
         }
-
         return  matrix;
     }
 
@@ -240,7 +239,7 @@ public class PlayerClient implements Serializable, CardInterface {
 
     @Override
     public String[][] drawCard(boolean light) {
-        return new String[0][];
+        return drawCard();
     }
 
     public void setDisconnected(boolean disconnected) {

@@ -1,5 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -263,7 +264,6 @@ public class GameBoardClient {
             if (boardSquare.isSpawnBoard()) {
                 squareText[1][DIM_Y - 2] = color + "S";
             }
-            //else squareText[1][DIM_Y-2] = color + "G";
 
             if (boardSquare.getNorth().equals(InterSquareLink.WALL)) {
                 if (boardSquare.getWest().equals(InterSquareLink.WALL) || boardSquare.getWest().equals(InterSquareLink.DOOR))
@@ -413,7 +413,7 @@ public class GameBoardClient {
         }
     }
 
-    public String getMapText(Map<String, Avatar> avatarMap) {
+    public String[][] getMapMatrix(Map<String, Avatar> avatarMap) {
         List<String[][]> squares = new ArrayList<>();
 
         String[][] square;
@@ -452,9 +452,12 @@ public class GameBoardClient {
                 }
             }
         }
+        return mapText;
+    }
 
+    public String getMapText(Map<String, Avatar> avatarMap) {
+        String[][] mapText = getMapMatrix(avatarMap);
         String map = "";
-
         for (int j = mapText[0].length - 1; j >= 0; j--) {
             for (int i = 0; i < mapText.length; i++) {
                 map = map + mapText[i][j];
@@ -463,6 +466,8 @@ public class GameBoardClient {
         }
         return map;
     }
+
+
 
     public Map<Coordinates, AmmoCardClient> getCoordinatesAmmoCardMap() {
         Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap = new HashMap<>();
