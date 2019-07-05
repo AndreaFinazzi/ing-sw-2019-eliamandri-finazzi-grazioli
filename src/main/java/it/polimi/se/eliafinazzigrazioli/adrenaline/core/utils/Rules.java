@@ -95,19 +95,19 @@ public final class Rules {
     public static final int COLLECTING_ADRENALINIC_ACTION_MIN_DAMAGE = asInt(COLLECTING_ADRENALINIC_ACTION.get("min_damages"), 3);
 
     // FINAL FRENZY PARAMETERS
-    private static final JsonNode FINAL_FRENZY = RULES.get("final_frenzy");
-    public static final ArrayList<Integer> FINAL_FRENZY_DEATH_SCORES = asArray(FINAL_FRENZY .get("death_scores"));
+    private static final JsonObject FINAL_FRENZY = RULES.getAsJsonObject("final_frenzy");
+    public static final ArrayList<Integer> FINAL_FRENZY_DEATH_SCORES = asIntegerArrayList(FINAL_FRENZY .getAsJsonArray("death_scores"), new ArrayList<>(Arrays.asList(2,1,1,1)));
 
     // DOUBLE ACTION CASE
-    private static final JsonNode DOUBLE_ACTION = FINAL_FRENZY.get("single_action");
-    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES = DOUBLE_ACTION.get("max_movements").asInt(4);
-    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_COLLECTION = DOUBLE_ACTION.get("max_moves_collecting").asInt(2);
-    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_SHOOTING = DOUBLE_ACTION.get("max_moves_shooting").asInt(1);
+    private static final JsonObject DOUBLE_ACTION = FINAL_FRENZY.getAsJsonObject("single_action");
+    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES = asInt(DOUBLE_ACTION.get("max_movements"),4);
+    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_COLLECTION = asInt(DOUBLE_ACTION.get("max_moves_collecting"), 2);
+    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_SHOOTING = asInt(DOUBLE_ACTION.get("max_moves_shooting"), 1);
 
     // SINGLE ACTION CASE
-    private static final JsonNode SINGLE_ACTION = FINAL_FRENZY.get("single_action");
-    public static final int FINAL_FRENZY_SINGLE_ACTION_MAX_MOVES_BEFORE_COLLECTION = SINGLE_ACTION.get("max_moves_collecting").asInt(3);
-    public static final int FINAL_FRENZY_SINGLE_ACTION_MAX_MOVES_BEFORE_SHOOTING = SINGLE_ACTION.get("max_moves_shooting").asInt(2);
+    private static final JsonObject SINGLE_ACTION = FINAL_FRENZY.getAsJsonObject("single_action");
+    public static final int FINAL_FRENZY_SINGLE_ACTION_MAX_MOVES_BEFORE_COLLECTION = asInt(SINGLE_ACTION.get("max_moves_collecting"), 3);
+    public static final int FINAL_FRENZY_SINGLE_ACTION_MAX_MOVES_BEFORE_SHOOTING = asInt(SINGLE_ACTION.get("max_moves_shooting"), 2);
 
     // POWER UPS
     private static final JsonObject POWER_UPS = RULES.getAsJsonObject("power_ups");
