@@ -105,8 +105,6 @@ public class CLIUtils {
                 //for windows matrix[poseX+1][poseY] = "";
             }
         }
-
-
         return matrix;
     }
 
@@ -196,7 +194,6 @@ public class CLIUtils {
     public static String alignSquare(List<String[][]> squares) {
         return matrixToString(composeMatrix(squares));
     }
-
 
     public static int nextInt(Scanner scanner, int size) {
 
