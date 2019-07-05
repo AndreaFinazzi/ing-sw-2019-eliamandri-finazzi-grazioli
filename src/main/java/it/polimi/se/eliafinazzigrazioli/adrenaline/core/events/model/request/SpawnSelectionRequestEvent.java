@@ -10,11 +10,27 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Spawn selection request event.
+ */
 public class SpawnSelectionRequestEvent extends AbstractModelEvent {
 
+    /**
+     * The Selectable cards.
+     */
     List<PowerUpCardClient> selectableCards;
+    /**
+     * The First spawn.
+     */
     boolean firstSpawn;
 
+    /**
+     * Instantiates a new Spawn selection request event.
+     *
+     * @param player the player
+     * @param selectableCards the selectable cards
+     * @param firstSpawn the first spawn
+     */
     public SpawnSelectionRequestEvent(Player player, List<PowerUpCard> selectableCards, boolean firstSpawn) {
         super(true, true, player);
         this.selectableCards = new ArrayList<>();
@@ -28,10 +44,20 @@ public class SpawnSelectionRequestEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
+    /**
+     * Gets selectable cards.
+     *
+     * @return the selectable cards
+     */
     public List<PowerUpCardClient> getSelectableCards() {
         return selectableCards;
     }
 
+    /**
+     * Is first spawn boolean.
+     *
+     * @return the boolean
+     */
     public boolean isFirstSpawn() {
         return firstSpawn;
     }

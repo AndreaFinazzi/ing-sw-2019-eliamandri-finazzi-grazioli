@@ -9,6 +9,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Selection reset effect state.
+ */
 public class SelectionResetEffectState extends EffectState {
 
     private String effectToClean;

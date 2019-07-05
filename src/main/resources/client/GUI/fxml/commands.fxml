@@ -60,7 +60,9 @@
         </AnchorPane>
         <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
             <children>
-                <GridPane fx:id="arrowsGridPane" alignment="CENTER" disable="true" nodeOrientation="LEFT_TO_RIGHT">
+                <GridPane fx:id="arrowsGridPane" alignment="CENTER" disable="true" maxHeight="145.0" maxWidth="145.0"
+                          nodeOrientation="LEFT_TO_RIGHT" prefHeight="145.0" prefWidth="145.0"
+                          StackPane.alignment="CENTER">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -72,8 +74,8 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
                     <children>
-                        <AnchorPane GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2"
-                                    GridPane.valignment="CENTER">
+                        <AnchorPane styleClass="arrowButtonContainer" GridPane.columnIndex="1"
+                                    GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                             <children>
                                 <Button fx:id="arrowLEFT" alignment="CENTER" mnemonicParsing="false"
                                         styleClass="arrowButton" text="LEFT" AnchorPane.bottomAnchor="0.0"
@@ -89,22 +91,24 @@
                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                        <AnchorPane GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1"
-                                    GridPane.valignment="CENTER">
+                        <AnchorPane styleClass="arrowButtonContainer" GridPane.columnIndex="2"
+                                    GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                             <children>
                                 <Button fx:id="arrowDOWN" mnemonicParsing="false" styleClass="arrowButton" text="DOWN"
                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                        <AnchorPane GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <AnchorPane styleClass="arrowButtonContainer" GridPane.halignment="CENTER" GridPane.rowIndex="1"
+                                    GridPane.valignment="CENTER">
                             <children>
                                 <Button fx:id="arrowUP" mnemonicParsing="false" styleClass="arrowButton" text="UP"
                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                        <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <AnchorPane styleClass="arrowButtonContainer" GridPane.columnIndex="1"
+                                    GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                             <children>
                                 <Button fx:id="arrowSTOP" mnemonicParsing="false" styleClass="arrowButton" text="STOP"
                                         AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="12.0"

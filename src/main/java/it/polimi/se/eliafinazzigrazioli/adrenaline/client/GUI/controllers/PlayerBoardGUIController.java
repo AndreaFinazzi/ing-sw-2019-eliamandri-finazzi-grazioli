@@ -407,6 +407,14 @@ public class PlayerBoardGUIController extends GUIController {
         Platform.runLater(() -> pointsLabel.setText("Points: " + points));
     }
 
+
+    public void setFinalFrenzy() throws IOException {
+        view.applyBackground(playerBoardGridPane, view.getPlayerBoardFFAsset(avatar));
+        updateDamages();
+        updateSkulls();
+        updateMarks();
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (!initialized) {

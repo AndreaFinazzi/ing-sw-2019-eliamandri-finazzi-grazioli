@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WeaponEffectClient implements Serializable {
+    private static final long serialVersionUID = 9010L;
 
     private String effectName;
     private String effectDescription;

@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import java.lang.String?>
-<Button xmlns:fx="http://javafx.com/fxml/1"
+<Button xmlns:fx="http://javafx.com/fxml"
         alignment="CENTER" mnemonicParsing="false" disable="true">
     <styleClass>
         <String fx:value="card"/>

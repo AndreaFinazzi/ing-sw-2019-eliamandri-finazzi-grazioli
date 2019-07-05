@@ -102,6 +102,9 @@
                                     <children>
                                     </children>
                                 </HBox>
+                                <TilePane fx:id="finalFrenzyAmmosTilePane" layoutX="59.0" layoutY="511.0"
+                                          prefColumns="3" prefHeight="100.0" prefRows="3" prefTileHeight="0.0"
+                                          prefTileWidth="0.0" prefWidth="100.0"/>
                                 <VBox fx:id="killTrackVBox" alignment="TOP_CENTER" layoutX="77.0" layoutY="610.0"
                                       maxHeight="350.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="348.0"
                                       prefWidth="60.0" spacing="18.0">

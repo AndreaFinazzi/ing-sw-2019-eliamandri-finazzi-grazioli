@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * The type Input test class.
+ */
 public class InputTestClass implements RemoteView, Runnable {
 
     private LocalModel localModel;
@@ -19,6 +22,11 @@ public class InputTestClass implements RemoteView, Runnable {
 
     private List<Observer> observers = new ArrayList<>();
 
+    /**
+     * Instantiates a new Input test class.
+     *
+     * @param client the client
+     */
     public InputTestClass(Client client) {
         this.client = client;
         localModel = new LocalModel();
@@ -67,40 +75,58 @@ public class InputTestClass implements RemoteView, Runnable {
 
     @Override
     public void showMessage(Object message) {}
+
     @Override
     public void showMap() {}
+
     @Override
     public void showLoginSuccessful() {}
+
     @Override
     public void showBeginMatch() {}
+
     @Override
     public void showPaymentUpdate(String player, List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos) {}
+
     @Override
     public void showWeaponCollectionUpdate(String player, WeaponCardClient collectedCard, WeaponCardClient droppedCard, Room roomColor) {}
+
     @Override
     public void showSuddenDeadUpdate(String deadPlayer) {}
+
     @Override
     public void showPlayerMovedByWeaponUpdate(String attackingPlayer, String playerMoved, String weaponUsed, Coordinates finalPosition) {}
+
     @Override
     public void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks, List<DamageMark> removedMarks) {}
+
     @Override
     public void showPlayerMovementUpdate(String player, List<Coordinates> path) {}
+
     @Override
     public void showSpawnUpdate(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {}
+
     @Override
     public void showPowerUpCollectionUpdate(String player, PowerUpCardClient cardCollected, boolean isOpponent) {}
+
     @Override
     public void showBeginTurnUpdate(String player) {}
+
     @Override
     public void showEndTurnUpdate(String player) {}
+
     @Override
     public void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected, boolean lastOfCard) {}
+
     @Override
     public void showAmmoCardCollectedUpdate(String player, AmmoCardClient ammoCard, Coordinates coordinates) {}
+
     @Override
     public void showAmmoCardResettingUpdate(Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap) {}
+
     @Override
     public void showWeaponCardResettingUpdate(Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap) {}
+
     @Override
     public void showWeaponReloadedUpdate(String player, WeaponCardClient weaponCard) {}
 
@@ -152,11 +178,6 @@ public class InputTestClass implements RemoteView, Runnable {
             return selectableWeapons.get(new Random().nextInt(selectableWeapons.size()));
         else
             return null;
-    }
-
-    @Override
-    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
-        return reloadableWeapons.get(new Random().nextInt(reloadableWeapons.size()));
     }
 
     @Override

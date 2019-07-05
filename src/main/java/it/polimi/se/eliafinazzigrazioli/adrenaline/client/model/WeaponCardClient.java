@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class WeaponCardClient implements Serializable, CardInterface {
 
-    private static final long serialVersionUID = 9000;
+    private static final long serialVersionUID = 9000L;
 
     private String weaponName;
     private String id;

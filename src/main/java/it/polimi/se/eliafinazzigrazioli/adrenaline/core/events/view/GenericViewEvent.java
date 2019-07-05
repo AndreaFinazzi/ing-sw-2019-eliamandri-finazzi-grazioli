@@ -2,8 +2,18 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
+/**
+ * The type Generic view event.
+ */
 public class GenericViewEvent extends AbstractViewEvent {
 
+    /**
+     * Instantiates a new Generic view event.
+     *
+     * @param clientID the client id
+     * @param player the player
+     * @param message the message
+     */
     public GenericViewEvent(int clientID, String player, String message) {
         super(clientID, player);
         super.setMessage(message);

@@ -128,4 +128,8 @@ public class OpponentPlayerGUIController extends GUIController {
     public void showSkullUpdate() {
         playerBoardGUIController.updateSkulls();
     }
+
+    public void setFinalFrenzy() throws IOException {
+        playerBoardGUIController.setFinalFrenzy();
+    }
 }

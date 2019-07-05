@@ -9,11 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Preselection based selector effect state.
+ */
 public class PreselectionBasedSelectorEffectState extends SelectorEffectState {
 
     private Map<String, List<Integer>> previousSelected;
     private boolean alreadySelected;
 
+    /**
+     * Instantiates a new Preselection based selector effect state.
+     *
+     * @param previousSelectionSource the previous selection source
+     * @param sourceSelectionOrder the source selection order
+     * @param previousSelected the previous selected
+     * @param alreadySelected the already selected
+     */
     public PreselectionBasedSelectorEffectState(String previousSelectionSource, int sourceSelectionOrder, Map<String, List<Integer>> previousSelected, boolean alreadySelected) {
         super(previousSelectionSource, sourceSelectionOrder);
         //this.previousSelected = previousSelected;

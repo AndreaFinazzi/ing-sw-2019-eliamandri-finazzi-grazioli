@@ -1,12 +1,11 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.BoardSquareClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 public class GenericBoardSquareClient extends BoardSquareClient {
+    private static final long serialVersionUID = 9004L;
 
     private AmmoCardClient ammoCard;
 
@@ -25,13 +24,6 @@ public class GenericBoardSquareClient extends BoardSquareClient {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public AmmoCardClient collectAmmoCard() {
-        AmmoCardClient ammoCardClient = ammoCard;
-        ammoCard = null;
-        return ammoCardClient;
     }
 
     @Override

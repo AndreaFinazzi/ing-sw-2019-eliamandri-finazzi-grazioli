@@ -12,12 +12,22 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Selection request effect state.
+ */
 public class SelectionRequestEffectState extends EffectState {
 
     private boolean userSelectionRequired;
     private SelectableType selectionType;
     private int maxSelectableItems;
 
+    /**
+     * Instantiates a new Selection request effect state.
+     *
+     * @param userSelectionRequired the user selection required
+     * @param selectionType the selection type
+     * @param maxSelectableItems the max selectable items
+     */
     public SelectionRequestEffectState(boolean userSelectionRequired, SelectableType selectionType, int maxSelectableItems) {
         this.userSelectionRequired = userSelectionRequired;
         this.selectionType = selectionType;

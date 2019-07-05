@@ -11,6 +11,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Weapon collected event.
+ */
 public class WeaponCollectedEvent extends AbstractModelEvent {
 
     private String collectedWeapon;
@@ -20,6 +23,17 @@ public class WeaponCollectedEvent extends AbstractModelEvent {
     private List<Ammo> ammosSpent;
     private boolean handFull;
 
+    /**
+     * Instantiates a new Weapon collected event.
+     *
+     * @param player the player
+     * @param collectedWeapon the collected weapon
+     * @param dropOffWeapon the drop off weapon
+     * @param collectionSpawnPoint the collection spawn point
+     * @param powerUpsSpent the power ups spent
+     * @param ammosSpent the ammos spent
+     * @param handFull the hand full
+     */
     public WeaponCollectedEvent(Player player, WeaponCard collectedWeapon, WeaponCard dropOffWeapon, Coordinates collectionSpawnPoint, List<PowerUpCard> powerUpsSpent, List<Ammo> ammosSpent, boolean handFull) {
         super(player);
         this.collectedWeapon = collectedWeapon.getWeaponName();
@@ -40,26 +54,56 @@ public class WeaponCollectedEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
+    /**
+     * Gets collected weapon.
+     *
+     * @return the collected weapon
+     */
     public String getCollectedWeapon() {
         return collectedWeapon;
     }
 
+    /**
+     * Gets drop off weapon.
+     *
+     * @return the drop off weapon
+     */
     public String getDropOffWeapon() {
         return dropOffWeapon;
     }
 
+    /**
+     * Gets collection spawn point.
+     *
+     * @return the collection spawn point
+     */
     public Coordinates getCollectionSpawnPoint() {
         return collectionSpawnPoint;
     }
 
+    /**
+     * Gets power ups spent.
+     *
+     * @return the power ups spent
+     */
     public List<PowerUpCardClient> getPowerUpsSpent() {
         return powerUpsSpent;
     }
 
+    /**
+     * Gets ammos spent.
+     *
+     * @return the ammos spent
+     */
     public List<Ammo> getAmmosSpent() {
         return ammosSpent;
     }
 
+    /**
+     * Is hand full boolean.
+     *
+     * @return the boolean
+     */
     public boolean isHandFull() {
         return handFull;
     }

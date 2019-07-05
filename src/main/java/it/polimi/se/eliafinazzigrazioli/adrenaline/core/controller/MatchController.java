@@ -28,6 +28,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.server.MatchBuilder;
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * The type Match controller.
+ */
 public class MatchController implements ViewEventsListenerInterface, Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(MatchController.class.getName());
@@ -48,6 +51,11 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
 
     private int mapVotes = 0;
 
+    /**
+     * Instantiates a new Match controller.
+     *
+     * @param matchBuilder the match builder
+     */
     public MatchController(MatchBuilder matchBuilder) {
         this.matchBuilder = matchBuilder;
 
@@ -65,18 +73,38 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         match.addObserver(eventController);
     }
 
+    /**
+     * Sets match id.
+     *
+     * @param matchID the match id
+     */
     public void setMatchID(int matchID) {
         match.setMatchID(matchID);
     }
 
+    /**
+     * Is started boolean.
+     *
+     * @return the boolean
+     */
     public boolean isStarted() {
         return started;
     }
 
+    /**
+     * Sets started.
+     *
+     * @param started the started
+     */
     public void setStarted(boolean started) {
         this.started = started;
     }
 
+    /**
+     * Init match.
+     *
+     * @param chosenMap the chosen map
+     */
     public void initMatch(MapType chosenMap) {
         //TODO: to implement
         match.setPhase(MatchPhase.PLAYING);
@@ -93,51 +121,111 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         match.notifyObservers(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), powerUpCardsForSpawn, true));
     }
 
+    /**
+     * Gets event controller.
+     *
+     * @return the event controller
+     */
     public EventController getEventController() {
         return eventController;
     }
 
+    /**
+     * Add player.
+     *
+     * @param player the player
+     * @param avatar the avatar
+     * @throws MaxPlayerException            the max player exception
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws AvatarNotAvailableException   the avatar not available exception
+     */
     public void addPlayer(String player, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException, AvatarNotAvailableException {
         match.addPlayer(player, avatar);
     }
 
+    /**
+     * Sign new client.
+     *
+     * @param clientHandler the client handler
+     */
     public void signNewClient(AbstractClientHandler clientHandler) {
         eventController.addVirtualView(clientHandler);
         clientIDToPlayerMap.put(clientHandler.getClientID(), NOT_LOGGED_CLIENT_NICKNAME);
         eventController.update(new ConnectionResponseEvent(clientHandler.getClientID(), "Username and Avatar required.", match.getAvailableAvatars()));
     }
 
+    /**
+     * Sign client.
+     *
+     * @param clientHandler the client handler
+     */
     public void signClient(AbstractClientHandler clientHandler) {
         eventController.addVirtualView(clientHandler);
         clientIDToPlayerMap.put(clientHandler.getClientID(), NOT_LOGGED_CLIENT_NICKNAME);
     }
 
+    /**
+     * Remove player.
+     *
+     * @param nickname the nickname
+     */
     public void removePlayer(String nickname) {
         match.removePlayer(nickname);
     }
 
+    /**
+     * Is ready boolean.
+     *
+     * @return the boolean
+     */
     public boolean isReady() {
         return match.getPlayers().size() >= Rules.GAME_MIN_PLAYERS;
     }
 
+    /**
+     * Is full boolean.
+     *
+     * @return the boolean
+     */
     public boolean isFull() {
         return match.getPlayers().size() == Rules.GAME_MAX_PLAYERS;
     }
 
-    //Getter
+    /**
+     * Gets players.
+     *
+     * @return the players
+     */
+//Getter
     public Player.AbstractPlayerList getPlayers() {
         return match.getPlayers();
     }
 
+    /**
+     * Gets match.
+     *
+     * @return the match
+     */
     public Match getMatch() {
         return match;
     }
 
+    /**
+     * Pop client abstract client handler.
+     *
+     * @param clientID the client id
+     * @return the abstract client handler
+     */
     public AbstractClientHandler popClient(int clientID) {
         clientIDToPlayerMap.remove(clientID);
         return eventController.popVirtualView(clientID);
     }
 
+    /**
+     * Pop not logged clients list.
+     *
+     * @return the list
+     */
     public List<AbstractClientHandler> popNotLoggedClients() {
         ArrayList<AbstractClientHandler> notLoggedClients = new ArrayList<>();
         Iterator<Integer> clientIDs = clientIDToPlayerMap.keySet().iterator();
@@ -260,6 +348,9 @@ public class MatchController implements ViewEventsListenerInterface, Runnable {
         match.notifyObservers(new MatchStartedEvent(playerToAvatarMap, new ArrayList<>(Arrays.asList(MapType.values()))));
     }
 
+    /**
+     * Close match.
+     */
     public void closeMatch() {
         matchBuilder.matchEnded(this);
     }

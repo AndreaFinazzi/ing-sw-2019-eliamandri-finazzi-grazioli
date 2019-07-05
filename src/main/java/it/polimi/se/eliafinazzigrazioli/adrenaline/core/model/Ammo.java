@@ -4,13 +4,30 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 
 import java.io.Serializable;
 
+/**
+ * The enum Ammo.
+ */
 public enum Ammo implements Serializable {
+    /**
+     * Red ammo.
+     */
     RED,
+    /**
+     * Blue ammo.
+     */
     BLUE,
+    /**
+     * Yellow ammo.
+     */
     YELLOW;
 
 
-    //Todo
+    /**
+     * To string to map string.
+     *
+     * @return the string
+     */
+//Todo
     public String toStringToMap() {
         switch(this) {
             case YELLOW:

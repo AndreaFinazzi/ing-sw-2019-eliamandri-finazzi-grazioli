@@ -8,7 +8,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import java.io.Serializable;
 
 public class PowerUpCardClient implements Serializable, CardInterface {
-
+    private static final long serialVersionUID = 9006L;
 
     private String id;
     private String powerUpType;

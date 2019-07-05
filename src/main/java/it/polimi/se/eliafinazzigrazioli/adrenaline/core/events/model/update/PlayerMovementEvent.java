@@ -8,15 +8,30 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.util.List;
 
+/**
+ * The type Player movement event.
+ */
 public class PlayerMovementEvent extends AbstractModelEvent {
 
     private List<Coordinates> path;
 
+    /**
+     * Instantiates a new Player movement event.
+     *
+     * @param player the player
+     * @param path the path
+     */
     public PlayerMovementEvent(String player, List<Coordinates> path) {
         super(player);
         this.path = path;
     }
 
+    /**
+     * Instantiates a new Player movement event.
+     *
+     * @param player the player
+     * @param path the path
+     */
     public PlayerMovementEvent(Player player, List<Coordinates> path) {
         super(player.getPlayerNickname(), player.getClientID());
         this.path = path;
@@ -27,6 +42,11 @@ public class PlayerMovementEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
+    /**
+     * Gets path.
+     *
+     * @return the path
+     */
     public List<Coordinates> getPath() {
         return path;
     }

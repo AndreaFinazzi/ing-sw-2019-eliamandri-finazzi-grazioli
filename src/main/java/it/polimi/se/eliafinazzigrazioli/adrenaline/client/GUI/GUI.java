@@ -391,6 +391,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     //todo implement
+
     @Override
     public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> selectablePowerUps) {
         if (!selectablePowerUps.isEmpty()) {
@@ -419,7 +420,6 @@ public class GUI extends Application implements RemoteView {
 
         return null;
     }
-
     @Override
     public String selectPlayer(List<String> players) {
         if (!players.isEmpty()) {
@@ -448,13 +448,32 @@ public class GUI extends Application implements RemoteView {
         return null;
     }
 
-    //todo implement
     @Override
-    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
-        if (!reloadableWeapons.isEmpty()) {
-
+    public Ammo selectAmmoType(List<Ammo> selectableAmmos) {
+        try {
+            commandsGUIController.setSelectableAmmo(selectableAmmos);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
-        return null;
+
+        AtomicReference<Ammo> selectedAmmo = new AtomicReference<>();
+        Semaphore semaphore = new Semaphore(0);
+
+        currentSemaphore = semaphore;
+        commandsGUIController.setSemaphore(semaphore);
+
+        commandsGUIController.setSelectedAmmo(selectedAmmo);
+
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+
+        synchronized (semaphore) {
+            return selectedAmmo.get();
+        }
     }
 
     @Override
@@ -619,6 +638,21 @@ public class GUI extends Application implements RemoteView {
     public void showAmmoCardResettingUpdate(Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap) {
         for (Map.Entry<Coordinates, AmmoCardClient> coordinatesAmmoCardEntry : coordinatesAmmoCardMap.entrySet()) {
             mainGUIController.updateAmmoCardOnMap(coordinatesAmmoCardEntry.getKey(), coordinatesAmmoCardEntry.getValue());
+        }
+    }
+
+    @Override
+    public void showFinalFrenzyBegin(List<String> playerBoardsToSwitch) {
+        for (String player : playerBoardsToSwitch) {
+            try {
+                if (isOpponent(player)) {
+                    opponentPlayerToGUIControllerMap.get(player).setFinalFrenzy();
+                } else {
+                    commandsGUIController.setFinalFrenzy();
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.KillTrack;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
@@ -60,6 +61,8 @@ public class MainGUIController extends GUIController {
     private Pane mainBoardPane;
     @FXML
     private VBox killTrackVBox;
+    @FXML
+    private TilePane finalFrenzyAmmosTilePane;
 
     @FXML
     private Pane weaponCardSlots_RED;
@@ -256,15 +259,23 @@ public class MainGUIController extends GUIController {
 
                     try {
                         ImageView damageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, slotPane, this);
-                        Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()))));
+                        Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()), 0, 25, true, true)));
                         if (slot.isDoubleDamage()) {
                             ImageView secondDamageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, slotPane, this);
-                            Platform.runLater(() -> secondDamageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()))));
+                            Platform.runLater(() -> secondDamageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()), 0, 25, true, true)));
                         }
                     } catch (IOException e) {
                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
                     }
                 });
+            }
+        }
+        for (DamageMark damageMark : view.getLocalModel().getKillTrack().getMarksAfterLastSkull()) {
+            try {
+                ImageView damageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, finalFrenzyAmmosTilePane, null);
+                Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(damageMark), 0, 24, true, true)));
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }
@@ -368,6 +379,8 @@ public class MainGUIController extends GUIController {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 }
             }
+
+            updateKillTrack();
         }
     }
 }

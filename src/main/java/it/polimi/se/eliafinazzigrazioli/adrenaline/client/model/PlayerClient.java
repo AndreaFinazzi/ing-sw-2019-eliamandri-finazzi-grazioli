@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerClient implements Serializable, CardInterface {
+    private static final long serialVersionUID = 9005L;
 
     private int powerUps;
 

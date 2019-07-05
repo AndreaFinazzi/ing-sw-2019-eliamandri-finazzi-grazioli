@@ -8,6 +8,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
 import java.util.ArrayList;
 
+/**
+ * The type Spawn board square.
+ */
 public class SpawnBoardSquare extends BoardSquare {
 
     private ArrayList<WeaponCard> weaponSlots;
@@ -17,6 +20,16 @@ public class SpawnBoardSquare extends BoardSquare {
 
      */
 
+    /**
+     * Instantiates a new Spawn board square.
+     *
+     * @param room the room
+     * @param coordinates the coordinates
+     * @param north the north
+     * @param south the south
+     * @param east the east
+     * @param west the west
+     */
     public SpawnBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
         super(room, coordinates, north, south, east, west);
         weaponSlots = new ArrayList<>();
@@ -45,12 +58,23 @@ public class SpawnBoardSquare extends BoardSquare {
         return false;
     }
 
+    /**
+     * Gets weapons.
+     *
+     * @return the weapons
+     */
     public ArrayList<WeaponCard> getWeapons() {
         return weaponSlots;
     }
 
 
-    //TODO define type excpetion
+    /**
+     * Collect weapon weapon card.
+     *
+     * @param weapon the weapon
+     * @return the weapon card
+     */
+//TODO define type excpetion
     public WeaponCard collectWeapon(String weapon) {
         WeaponCard tmpWeapon = null;
         for (WeaponCard weaponCard: weaponSlots)
@@ -63,7 +87,13 @@ public class SpawnBoardSquare extends BoardSquare {
         return tmpWeapon;
     }
 
-    //TODO define type excpetion
+    /**
+     * Add weapon.
+     *
+     * @param weapon the weapon
+     * @throws Exception the exception
+     */
+//TODO define type excpetion
     public void addWeapon(WeaponCard weapon) throws Exception {
         if (weaponSlots.size() == Rules.GAME_BOARD_MAX_WEAPONS_ON_SPAWN)
             throw new Exception();
@@ -72,6 +102,11 @@ public class SpawnBoardSquare extends BoardSquare {
         weaponSlots.add(weapon);
     }
 
+    /**
+     * Weapons slot is full boolean.
+     *
+     * @return the boolean
+     */
     public boolean weaponsSlotIsFull() {
         return weaponSlots.size() >= Rules.GAME_BOARD_MAX_WEAPONS_ON_SPAWN;
     }

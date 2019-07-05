@@ -586,6 +586,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(FinalFrenzyBeginEvent event) throws HandlerNotImplementedException {
         showMessage("LAST SKULL REMOVED! FINAL FRENZY BEGINS!!!!!!!");
+        showFinalFrenzyBegin(event.getPlayerBoardsToSwitch());
     }
 
     @Override
@@ -628,34 +629,34 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showMessage(event.getMessage());
         showMessage("ACTION FAILED!");
     }
-    //TODO to implement
 
+    //TODO to implement
     @Override
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-    //TODO to implement
 
+    //TODO to implement
     @Override
     default void handleEvent(ConnectionTimeoutEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-    //TODO to implement
 
     //TODO to implement
+    //TODO to implement
+
     @Override
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
         buildLocalMap(event.getMapType());
         showMap();
     }
 
-
     //TODO to implement
+
     @Override
     default void handleEvent(PlayerUpdateEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
 
     @Override
     default void handleEvent(PlayerDisconnectedEvent event) throws HandlerNotImplementedException {
@@ -850,13 +851,18 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     //Implemented on CLI
+
     default void showWeaponReloadedUpdate(String player, WeaponCardClient weaponCard) {
         showMessage(player + " reloaded " + weaponCard.getWeaponName() + "!");
     }
-
     void showPlayerDisconnection(String player);
 
     void showPlayerReconnection(String player);
+
+    default void showFinalFrenzyBegin(List<String> playerBoardsToSwitch) {
+    }
+
+    ;
 
     /**
      * INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -933,8 +939,6 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     default Ammo selectAmmoType(List<Ammo> selectableAmmos) {
         return selectableAmmos.get(new Random().nextInt(selectableAmmos.size()));
     }
-
-    WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons);
 
     WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons);
 

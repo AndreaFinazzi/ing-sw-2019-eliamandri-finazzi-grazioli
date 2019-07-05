@@ -4,8 +4,17 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractMod
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 
+/**
+ * The type Generic event.
+ */
 public class GenericEvent extends AbstractModelEvent {
 
+    /**
+     * Instantiates a new Generic event.
+     *
+     * @param player the player
+     * @param message the message
+     */
     public GenericEvent(String player, String message) {
         super(player, message);
         setMessage(message);

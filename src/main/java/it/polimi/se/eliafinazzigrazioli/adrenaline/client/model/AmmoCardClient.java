@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AmmoCardClient implements Serializable, CardInterface {
 
-    private static final long serialVersionUID = 9001;
+    private static final long serialVersionUID = 9001L;
 
     private String id;
     private List<Ammo> ammos;

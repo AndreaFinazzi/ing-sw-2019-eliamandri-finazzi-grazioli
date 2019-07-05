@@ -4,11 +4,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.InterSquareLink;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class BoardSquareClient {
+    private static final long serialVersionUID = 9003L;
 
     protected Coordinates coordinates;
     protected Room room;
@@ -46,10 +45,6 @@ public abstract class BoardSquareClient {
         return west;
     }
 
-    public ArrayList<InterSquareLink> getBounds() {
-        return new ArrayList<>(Arrays.asList(north, east, south, west));
-    }
-
     public boolean isSpawnBoard(){
         return false;
     }
@@ -79,11 +74,6 @@ public abstract class BoardSquareClient {
 
     public Coordinates getCoordinates() {
         return coordinates;
-    }
-
-    //if return value is null, play is not valid
-    public AmmoCardClient collectAmmoCard() {
-        return null;
     }
 
     @Override

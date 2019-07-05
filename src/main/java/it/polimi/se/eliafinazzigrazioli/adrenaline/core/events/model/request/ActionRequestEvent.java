@@ -5,17 +5,25 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEvents
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
+/**
+ * The type Action request event.
+ */
 public class ActionRequestEvent extends AbstractModelEvent {
 
     private int simpleMovesMax;
     private int collectingMovesMax;
     private int shootingMovesMax;
 
-    private int actionsRemained;
-
-    public ActionRequestEvent(Player player, int actionsRemained, int simpleMovesMax, int collectingMovesMax, int shootingMovesMax) {
+    /**
+     * Instantiates a new Action request event.
+     *
+     * @param player the player
+     * @param simpleMovesMax the simple moves max
+     * @param collectingMovesMax the collecting moves max
+     * @param shootingMovesMax the shooting moves max
+     */
+    public ActionRequestEvent(Player player, int simpleMovesMax, int collectingMovesMax, int shootingMovesMax) {
         super(true, true, player);
-        this.actionsRemained = actionsRemained;
         this.simpleMovesMax = simpleMovesMax;
         this.collectingMovesMax = collectingMovesMax;
         this.shootingMovesMax = shootingMovesMax;
@@ -26,18 +34,29 @@ public class ActionRequestEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
-    public int getActionsRemained() {
-        return actionsRemained;
-    }
-
+    /**
+     * Gets simple moves max.
+     *
+     * @return the simple moves max
+     */
     public int getSimpleMovesMax() {
         return simpleMovesMax;
     }
 
+    /**
+     * Gets collecting moves max.
+     *
+     * @return the collecting moves max
+     */
     public int getCollectingMovesMax() {
         return collectingMovesMax;
     }
 
+    /**
+     * Gets shooting moves max.
+     *
+     * @return the shooting moves max
+     */
     public int getShootingMovesMax() {
         return shootingMovesMax;
     }

@@ -17,46 +17,44 @@ public class LocalModel implements Serializable {
     //Private information
 
     private Map<String, Integer> points;
+
     private KillTrack killTrack;
 
     private List<WeaponCardClient> weaponCards; //user's weapon
 
     private boolean weaponHandFull;
+
     private List<PowerUpCardClient> powerUpCards;
     private List<Ammo> ammos;
     private List<DamageMark> damages;
     private List<DamageMark> marks;
-
     private int skulls;
 
     private List<Integer> deathScores;
 
     private boolean death;
-    private boolean overkill;
-    private int movementsAllowed;
+
     private String playerName;
     //Public information
     private MapType mapType;
-
     private GameBoardClient gameBoard;
-    //private List<String> players;
 
+    //private List<String> players;
     private Map<String, PlayerClient> opponentsInfo;
+
     private Map<String, Avatar> playerToAvatarMap;
     private List<SpawnBoardSquareClient> listSpawn;
     // temp field used in reconnection update
-
     private Map<Coordinates, List<WeaponCardClient>> serverWeaponCardsSetup;
-    private Map<Coordinates, AmmoCardClient> serverAmmoCardsSetup;
 
+    private Map<Coordinates, AmmoCardClient> serverAmmoCardsSetup;
     private Map<String, Coordinates> serverPlayerPositions;
+
     private final static int WIDTH = 30;
     private final static int HEIGHT = 12;
-
     private boolean disconnected = false;
 
     public LocalModel() {
-        //TODO define a way to receive the size from the server
         killTrack = new KillTrack(Rules.GAME_MAX_KILL_TRACK_SKULLS);
         points = new HashMap<>();
 
@@ -75,9 +73,14 @@ public class LocalModel implements Serializable {
         //todo
         deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
     }
+
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
         points.put(playerName, 0);
+    }
+
+    public void setKillTrack(KillTrack killTrack) {
+        this.killTrack = killTrack;
     }
 
     public void setWeaponCards(List<WeaponCardClient> weaponCards) {
@@ -445,10 +448,6 @@ public class LocalModel implements Serializable {
         }
 
         return  matrix;
-    }
-
-    public void setOverkill(boolean overkill) {
-        this.overkill = overkill;
     }
 
     public MapType getMapType() {

@@ -37,6 +37,8 @@ public class CommandsGUIController extends GUIController {
 
     private AtomicReference<PowerUpCardClient> selectedPowerUp;
 
+    private AtomicReference<Ammo> selectedAmmo;
+
     private AtomicReference<WeaponCardClient> selectedWeapon;
 
     private AtomicReference<MoveDirection> selectedMove;
@@ -87,7 +89,7 @@ public class CommandsGUIController extends GUIController {
 
     public void setSpawnPowerUpCards(List<PowerUpCardClient> powerUpCards) throws IOException {
         for (PowerUpCardClient powerUpCard : powerUpCards) {
-            Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, this);
+            Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, null);
             Platform.runLater(() -> {
                 button.setDisable(false);
                 button.getProperties().put(GUI.PROPERTIES_KEY_CARD_ID, powerUpCard.getId());
@@ -106,6 +108,29 @@ public class CommandsGUIController extends GUIController {
         myCardsGridPane.setVisible(false);
         spawnPowerUpSlots.setVisible(true);
     }
+
+    public void setSelectableAmmo(List<Ammo> selectableAmmo) throws IOException {
+        for (Ammo ammo : selectableAmmo) {
+            Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, null);
+            Platform.runLater(() -> {
+                button.setDisable(false);
+                button.getProperties().put(GUI.PROPERTIES_KEY_AMMO, ammo);
+                view.applyBackground(button, view.getAmmoAsset(ammo.name()));
+                button.setOnAction(event -> {
+                    selectedAmmo.set((Ammo) button.getProperties().get(GUI.PROPERTIES_KEY_AMMO));
+                    spawnPowerUpSlots.getChildren().clear();
+                    spawnPowerUpSlots.setVisible(false);
+                    myCardsGridPane.setVisible(true);
+                    semaphore.release();
+                });
+            });
+
+        }
+
+        myCardsGridPane.setVisible(false);
+        spawnPowerUpSlots.setVisible(true);
+    }
+
 
     public PlayerBoardGUIController getPlayerBoardGUIController() {
         return playerBoardGUIController;
@@ -162,6 +187,10 @@ public class CommandsGUIController extends GUIController {
 
     public void setSelectedMove(AtomicReference<MoveDirection> selectedMove) {
         this.selectedMove = selectedMove;
+    }
+
+    public void setSelectedAmmo(AtomicReference<Ammo> selectedAmmo) {
+        this.selectedAmmo = selectedAmmo;
     }
 
     public void setChosenAction(AtomicReference<PlayerAction> chosenAction) {
@@ -479,5 +508,9 @@ public class CommandsGUIController extends GUIController {
 
     public void showSkullUpdate() {
         playerBoardGUIController.updateSkulls();
+    }
+
+    public void setFinalFrenzy() throws IOException {
+        playerBoardGUIController.setFinalFrenzy();
     }
 }

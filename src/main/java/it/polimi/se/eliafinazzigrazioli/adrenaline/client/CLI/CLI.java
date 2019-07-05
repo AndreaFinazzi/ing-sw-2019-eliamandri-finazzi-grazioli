@@ -1,15 +1,9 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerRMI;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ConnectionManagerSocket;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.RemoteView;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
@@ -504,26 +498,26 @@ public class CLI implements RemoteView, Runnable {
         return selectableWeapons.get(nextInt(selectableWeapons.size()));
     }
 
-    @Override
-    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
-        int choice;
-        showMessage("Do you want to reload a weapon? [Y/n]");
-        String temp = input.nextLine();
-        if (temp.equalsIgnoreCase("n") || temp.equalsIgnoreCase("no") || temp.equalsIgnoreCase("not"))
-            return null;
-        if(reloadableWeapons == null) {
-            showMessage("ops, something didn't work");
-            return null;
-        }
-        if(reloadableWeapons.size() == 0) {
-            showMessage("No weapons can be reloaded.");
-            return null;
-        }
-        showMessage("Insert your choice: ");
-        showMessage(CLIUtils.serializeList(reloadableWeapons));
-        choice = nextInt(reloadableWeapons.size());
-        return reloadableWeapons.get(choice);
-    }
+//    @Override
+//    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
+//        int choice;
+//        showMessage("Do you want to reload a weapon? [Y/n]");
+//        String temp = input.nextLine();
+//        if (temp.equalsIgnoreCase("n") || temp.equalsIgnoreCase("no") || temp.equalsIgnoreCase("not"))
+//            return null;
+//        if(reloadableWeapons == null) {
+//            showMessage("ops, something didn't work");
+//            return null;
+//        }
+//        if(reloadableWeapons.size() == 0) {
+//            showMessage("No weapons can be reloaded.");
+//            return null;
+//        }
+//        showMessage("Insert your choice: ");
+//        showMessage(CLIUtils.serializeList(reloadableWeapons));
+//        choice = nextInt(reloadableWeapons.size());
+//        return reloadableWeapons.get(choice);
+//    }
 
     @Override
     public WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons) {
