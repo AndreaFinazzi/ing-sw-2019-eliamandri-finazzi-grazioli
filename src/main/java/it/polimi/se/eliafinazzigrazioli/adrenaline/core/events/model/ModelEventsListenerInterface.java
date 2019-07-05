@@ -174,4 +174,9 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
     default void handleEvent(SelectDirectionEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
+
+    default void handleEvent(MatchEndedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
 }
