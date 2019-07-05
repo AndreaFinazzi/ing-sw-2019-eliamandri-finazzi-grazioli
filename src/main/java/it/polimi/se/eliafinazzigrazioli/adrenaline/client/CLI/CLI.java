@@ -12,6 +12,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The type Cli.
+ */
 public class CLI implements RemoteView, Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
@@ -52,6 +55,11 @@ public class CLI implements RemoteView, Runnable {
 
     private final static int WEAPON_Y = 25;
 
+    /**
+     * Instantiates a new Cli.
+     *
+     * @param client the client
+     */
     public CLI(Client client) {
         input = new Scanner(System.in);
         this.client = client;
@@ -140,8 +148,7 @@ public class CLI implements RemoteView, Runnable {
             for(Ammo ammo : ammos) {
                 message = message.concat(ammo.toString()).concat(" ");
             }
-        }
-        else {
+        } else {
             message = "You don't pay!!!";
         }
         showMessage(message);
@@ -219,8 +226,7 @@ public class CLI implements RemoteView, Runnable {
         String message = "";
         if(isOpponent) {
             message = message + "Player " + player;
-        }
-        else
+        } else
             message = message + "You collected \n";
         message = message + " spawned on " + spawnPoint.toString() + CLIUtils.matrixToString(spawnCard.drawCard(true));
         showMessage(message);
@@ -245,8 +251,7 @@ public class CLI implements RemoteView, Runnable {
         }
         if(player.equals(getClient().getPlayerName())) {
             showMessage("Your turn began!\nYou are : " + avatar);
-        }
-        else
+        } else
             showMessage(player + "'s turn began!\n" + player + " avatar is: " + avatar);
     }
 
@@ -259,8 +264,7 @@ public class CLI implements RemoteView, Runnable {
         }
         if(player.equals(getClient().getPlayerName())) {
             showMessage("YEAH!!! You concluded your turn\nYou are : " + avatar);
-        }
-        else
+        } else
             showMessage(player + "'s turn began!!!\n" + player + " avatar is: " + avatar);
     }
 
@@ -325,8 +329,7 @@ public class CLI implements RemoteView, Runnable {
         if(!player.equalsIgnoreCase(getClient().getPlayerName())) {
             String info = CLIUtils.matrixToString(localModel.getOpponentInfo(player).drawCard());
             showMessage("Player " + player + " is disconnected\n" + info);
-        }
-        else {
+        } else {
             showMessage("You are disconnected! ");
             showOwnedPlayerBoard();
         }
@@ -342,8 +345,7 @@ public class CLI implements RemoteView, Runnable {
         if(!player.equalsIgnoreCase(getClient().getPlayerName())) {
             String info = CLIUtils.matrixToString(localModel.getOpponentInfo(player).drawCard());
             showMessage("Player " + player + " is connected\n" + info);
-        }
-        else {
+        } else {
             showMessage("You are connected! ");
             showOwnedPlayerBoard();
         }
@@ -563,7 +565,7 @@ public class CLI implements RemoteView, Runnable {
         showMessage("Yes or not?");
         String nextLine = input.nextLine();
         if(nextLine.equalsIgnoreCase("no") ||
-            nextLine.equalsIgnoreCase("not") ||
+                nextLine.equalsIgnoreCase("not") ||
                 nextLine.equalsIgnoreCase("n")) {
             return false;
         }
@@ -616,6 +618,9 @@ public class CLI implements RemoteView, Runnable {
         return nextLine;
     }
 
+    /**
+     * Show weapon on spawn.
+     */
     public void showWeaponOnSpawn() {
         List<WeaponCardClient> weaponCardClients;
         for (SpawnBoardSquareClient spawn : localModel.getListSpawn()) {
@@ -632,6 +637,9 @@ public class CLI implements RemoteView, Runnable {
         }
     }
 
+    /**
+     * Collect play.
+     */
     public void collectPlay() {
         List<Coordinates> path = getPathFromUser(Rules.MAX_MOVEMENTS_BEFORE_COLLECTION);
         Coordinates finalCoordinates = path.get(path.size()-1); // Last element
@@ -643,12 +651,14 @@ public class CLI implements RemoteView, Runnable {
         }
     }
 
+    /**
+     * Show owned weapon.
+     */
     public void showOwnedWeapon() {
         List<WeaponCardClient> weaponCardClients = localModel.getWeaponCards();
         if(weaponCardClients.isEmpty()) {
             showMessage("No weapon to show");
-        }
-        else {
+        } else {
             List<String[][]> weaponCardsMatrix = new ArrayList<>();
             for(WeaponCardClient iterator : weaponCardClients) {
                 weaponCardsMatrix.add(iterator.drawCard(true));
@@ -657,6 +667,9 @@ public class CLI implements RemoteView, Runnable {
         }
     }
 
+    /**
+     * Show player boards.
+     */
     public void showPlayerBoards() {
         List<String[][]> playerClients = new ArrayList<>();
         for(PlayerClient playerClient : localModel.getOpponentsList()) {
@@ -666,10 +679,16 @@ public class CLI implements RemoteView, Runnable {
         showOwnedPlayerBoard();
     }
 
+    /**
+     * Show owned player board.
+     */
     public void showOwnedPlayerBoard() {
         showMessage(CLIUtils.matrixToString(localModel.drawCard()));
     }
 
+    /**
+     * Show opponent weapon.
+     */
     public void showOpponentWeapon() {
         for(PlayerClient playerClient : localModel.getOpponentsList()) {
             List<String[][]> opponentWeapon = new ArrayList<>();
@@ -681,6 +700,9 @@ public class CLI implements RemoteView, Runnable {
         }
     }
 
+    /**
+     * Show owned power ups.
+     */
     public void showOwnedPowerUps() {
         List<PowerUpCardClient> powerUpCardClients = localModel.getPowerUpCards();
         List<String[][]> powerUpsMatrix = new ArrayList<>();
@@ -690,12 +712,15 @@ public class CLI implements RemoteView, Runnable {
         showMessage(CLIUtils.alignSquare(powerUpsMatrix));
     }
 
+    /**
+     * Show info.
+     */
     public void showInfo() {
         int currentX; int currentY;
 
         String[][] infoMatrix = new String[DIM_X][DIM_Y];
-        for(int i=0; i<infoMatrix.length; i++) {
-            for(int j=0; j<infoMatrix[i].length; j++) {
+        for(int i = 0; i<infoMatrix.length; i++) {
+            for(int j = 0; j<infoMatrix[i].length; j++) {
                 infoMatrix[i][j] = " ";
             }
         }

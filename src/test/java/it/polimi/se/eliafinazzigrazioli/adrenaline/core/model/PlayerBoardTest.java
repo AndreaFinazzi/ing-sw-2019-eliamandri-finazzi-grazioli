@@ -1,7 +1,6 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AmmoNotAvailableException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import org.junit.Test;
 
@@ -11,9 +10,15 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 
+/**
+ * The type Player board test.
+ */
 public class PlayerBoardTest {
     private static final Logger LOGGER = Logger.getLogger(PlayerBoardTest.class.getName());
 
+    /**
+     * Test add one damage.
+     */
     @Test
     public void testAddOneDamage() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -24,6 +29,9 @@ public class PlayerBoardTest {
         assertFalse("not Overkilled", playerBoard.isOverkill());
     }
 
+    /**
+     * Test add all damage.
+     */
     @Test
     public void testAddAllDamage() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -56,6 +64,9 @@ public class PlayerBoardTest {
         assertTrue("is overkill", playerBoard.isOverkill());
     }
 
+    /**
+     * Test add one skull.
+     */
     @Test
     public void testAddOneSkull() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -63,6 +74,9 @@ public class PlayerBoardTest {
         assertTrue(playerBoard.getSkulls() == 1);
     }
 
+    /**
+     * Test add all skulls.
+     */
     @Test
     public void testAddAllSkulls() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -73,6 +87,9 @@ public class PlayerBoardTest {
         assertEquals(6, playerBoard.getSkulls());
     }
 
+    /**
+     * Test decrease death score.
+     */
     @Test
     public void testDecreaseDeathScore() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -91,6 +108,9 @@ public class PlayerBoardTest {
         assertEquals(playerBoard.getDeathScore(), new Integer(1));
     }
 
+    /**
+     * Test add one mark.
+     */
     @Test
     public void testAddOneMark() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -104,6 +124,9 @@ public class PlayerBoardTest {
 
     }
 
+    /**
+     * Test add all marks.
+     */
     @Test
     public void testAddAllMarks() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -117,6 +140,9 @@ public class PlayerBoardTest {
         }
     }
 
+    /**
+     * Test add ammos.
+     */
     @Test
     public void testAddAmmos() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -136,6 +162,9 @@ public class PlayerBoardTest {
         assertEquals(9, playerBoard.getAmmos().size());
     }
 
+    /**
+     * Test spend ammo.
+     */
     @Test
     public void testSpendAmmo() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -170,6 +199,9 @@ public class PlayerBoardTest {
         assertEquals(1, playerBoard.numAmmoType(Ammo.YELLOW));
     }
 
+    /**
+     * Test spend all ammo.
+     */
     @Test
     public void testSpendAllAmmo() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -201,6 +233,9 @@ public class PlayerBoardTest {
         assertEquals(0, playerBoard.numAmmoType(Ammo.RED));
     }
 
+    /**
+     * Test clean board.
+     */
     @Test
     public void testCleanBoard() {
         PlayerBoard playerBoard = new PlayerBoard();
@@ -232,6 +267,9 @@ public class PlayerBoardTest {
 
     }
 
+    /**
+     * Test clean board marks.
+     */
     @Test
     public void testCleanBoardMarks() {
         PlayerBoard playerBoard = new PlayerBoard();

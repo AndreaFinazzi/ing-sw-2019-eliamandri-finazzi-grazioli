@@ -10,6 +10,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Visibility selector effect state test.
+ */
 public class VisibilitySelectorEffectStateTest {
 
     private GameBoard gameBoard;
@@ -17,11 +20,19 @@ public class VisibilitySelectorEffectStateTest {
     private WeaponEffect weaponEffect;
     private WeaponCard weaponCard;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         gameBoard = new GameBoard(MapType.ONE);
     }
 
+    /**
+     * Execute test.
+     */
     @Test
     public void executeTest() {
         List<Player> visiblePlayers = new ArrayList<>();

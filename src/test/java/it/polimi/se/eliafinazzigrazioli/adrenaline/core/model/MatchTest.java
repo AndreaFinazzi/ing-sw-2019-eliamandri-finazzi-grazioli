@@ -10,14 +10,25 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * The type Match test.
+ */
 public class MatchTest {
     private Match match;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         match = new Match();
     }
 
+    /**
+     * Constructor test.
+     */
     @Test
     public void constructorTest() {
         assertTrue(match.getPhase() == MatchPhase.INITIALIZATION);
@@ -28,6 +39,9 @@ public class MatchTest {
         //assertTrue (match.getGameBoard () == null);
     }
 
+    /**
+     * Add players test.
+     */
     @Test
     public void addPlayersTest() {
         Player firstPlayer = new Player("one");
@@ -69,6 +83,11 @@ public class MatchTest {
         assertTrue(match.getPlayers().get(4) == fifthPlayer);
     }
 
+    /**
+     * Add max player excepion test.
+     *
+     * @throws MaxPlayerException the max player exception
+     */
     @Test(expected = MaxPlayerException.class)
     public void addMaxPlayerExcepionTest() throws MaxPlayerException {
         Player firstPlayer = new Player("one");
@@ -104,6 +123,11 @@ public class MatchTest {
     }
 
 
+    /**
+     * Add present player exception test.
+     *
+     * @throws PlayerAlreadyPresentException the player already present exception
+     */
     @Test(expected = PlayerAlreadyPresentException.class)
     public void addPresentPlayerExceptionTest() throws PlayerAlreadyPresentException {
         Player firstPlayer = new Player("one");
@@ -134,6 +158,9 @@ public class MatchTest {
         }
     }
 
+    /**
+     * Next current player test.
+     */
     @Test
     public void nextCurrentPlayerTest() {
         Player firstPlayer = new Player("one");
@@ -176,12 +203,18 @@ public class MatchTest {
         assertTrue(match.getCurrentPlayer() == fifthPlayer);
     }
 
+    /**
+     * Sets phase test.
+     */
     @Test
     public void setPhaseTest() {
         match.setPhase(MatchPhase.RECRUITING);
         assertTrue(match.getPhase() == MatchPhase.RECRUITING);
     }
 
+    /**
+     * Increase turn test.
+     */
     @Test
     public void increaseTurnTest() {
         Player firstPlayer = new Player("one");
@@ -211,7 +244,7 @@ public class MatchTest {
     }
 
     /**
-     *
+     * Match instantiation test.
      */
     @Test
     public void matchInstantiationTest() {
@@ -231,6 +264,9 @@ public class MatchTest {
         assertEquals(new Coordinates(3, 0), gameBoard.getPlayerPosition(match.getPlayer("FinazIlDuro-X(")).getCoordinates());
     }
 
+    /**
+     * Generate client model test.
+     */
     @Test
     public void generateClientModelTest() {
         match.setGameBoard(MapType.FOUR);

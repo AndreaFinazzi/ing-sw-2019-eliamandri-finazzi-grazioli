@@ -7,8 +7,14 @@ import org.junit.Test;
 import java.lang.reflect.Type;
 import java.util.*;
 
+/**
+ * The type Selectable type test.
+ */
 public class SelectableTypeTest {
 
+    /**
+     * Selectable type serialization test.
+     */
     @Test
     public void selectableTypeSerializationTest() {
         List<SelectableType> selectableTypes = new ArrayList<>(Arrays.asList(
@@ -22,6 +28,9 @@ public class SelectableTypeTest {
         System.out.println(json);
     }
 
+    /**
+     * Selectable type deserialization test.
+     */
     @Test
     public void selectableTypeDeserializationTest() {
         String selectableTypesJson = "['BOARDSQUARE', 'PLAYER', 'ROOM', null]";
@@ -32,6 +41,9 @@ public class SelectableTypeTest {
         System.out.println(selectableTypes.get(2).getClass());
     }
 
+    /**
+     * Map serialization test.
+     */
     @Test
     public void mapSerializationTest() {
         Map<Ammo, String> ammoStringMap = new HashMap<>();

@@ -3,20 +3,32 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.util.concurrent.BlockingQueue;
 
 
-
+/**
+ * The type Abstract client handler test.
+ */
 public class AbstractClientHandlerTest extends AbstractClientHandler {
 
     private AbstractClientHandler abstractClientHandler;
+
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         AbstractClientHandler abstractClientHandler = new AbstractClientHandlerTest(null);
     }
 
+    /**
+     * Instantiates a new Abstract client handler test.
+     *
+     * @param server the server
+     */
     public AbstractClientHandlerTest(Server server) {
         super(server);
     }

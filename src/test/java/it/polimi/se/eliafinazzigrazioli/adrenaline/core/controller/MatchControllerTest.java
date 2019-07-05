@@ -14,17 +14,32 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * The type Match controller test.
+ */
 public class MatchControllerTest {
     private MatchController matchController;
     private Match match;
 
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         matchController = new MatchController(new MatchBuilder());
         match = matchController.getMatch();
     }
 
+    /**
+     * Add player test.
+     *
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws MaxPlayerException            the max player exception
+     * @throws AvatarNotAvailableException   the avatar not available exception
+     */
     @Test(expected = AvatarNotAvailableException.class)
     public void addPlayerTest() throws PlayerAlreadyPresentException, MaxPlayerException, AvatarNotAvailableException {
         matchController.addPlayer("playerOne", null);
@@ -32,6 +47,13 @@ public class MatchControllerTest {
         assertTrue(playerList.contains(new Player("playerOne")));
     }
 
+    /**
+     * Remove player test.
+     *
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws MaxPlayerException            the max player exception
+     * @throws AvatarNotAvailableException   the avatar not available exception
+     */
     @Test(expected = AvatarNotAvailableException.class)
     public void removePlayerTest() throws PlayerAlreadyPresentException, MaxPlayerException, AvatarNotAvailableException {
         matchController.addPlayer("playerOne", null);
@@ -49,6 +71,13 @@ public class MatchControllerTest {
 
     }
 
+    /**
+     * Is ready test.
+     *
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws MaxPlayerException            the max player exception
+     * @throws AvatarNotAvailableException   the avatar not available exception
+     */
     @Test(expected = AvatarNotAvailableException.class)
     public void isReadyTest() throws PlayerAlreadyPresentException, MaxPlayerException, AvatarNotAvailableException {
         matchController.addPlayer("playerOne", null);
@@ -63,6 +92,13 @@ public class MatchControllerTest {
         assertTrue(matchController.isReady());
     }
 
+    /**
+     * Is full test.
+     *
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws MaxPlayerException            the max player exception
+     * @throws AvatarNotAvailableException   the avatar not available exception
+     */
     @Test(expected = AvatarNotAvailableException.class)
     public void isFullTest() throws PlayerAlreadyPresentException, MaxPlayerException, AvatarNotAvailableException {
         matchController.addPlayer("playerOne", null);
@@ -77,6 +113,13 @@ public class MatchControllerTest {
         assertTrue(matchController.isFull());
     }
 
+    /**
+     * Add player max test.
+     *
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws MaxPlayerException            the max player exception
+     * @throws AvatarNotAvailableException   the avatar not available exception
+     */
     @Test(expected = MaxPlayerException.class)
     public void addPlayerMaxTest() throws PlayerAlreadyPresentException, MaxPlayerException, AvatarNotAvailableException {
 
@@ -99,6 +142,13 @@ public class MatchControllerTest {
         assertFalse(playerList.contains(new Player("playerSix")));
     }
 
+    /**
+     * Add player already present test.
+     *
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws MaxPlayerException            the max player exception
+     * @throws AvatarNotAvailableException   the avatar not available exception
+     */
     @Test(expected = PlayerAlreadyPresentException.class)
     public void addPlayerAlreadyPresentTest() throws PlayerAlreadyPresentException, MaxPlayerException, AvatarNotAvailableException {
         matchController.addPlayer("playerOne", Avatar.VIOLET);

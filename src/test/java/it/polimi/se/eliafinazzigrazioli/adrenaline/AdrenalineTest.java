@@ -1,15 +1,16 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.server.Server;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * The type Adrenaline test.
+ */
 public class AdrenalineTest {
 
 
+    /**
+     * Match consistency test.
+     */
     @Test
     public void MatchConsistencyTest(){
 /*

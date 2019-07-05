@@ -4,16 +4,24 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchControll
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+/**
+ * The type Match builder test.
+ */
 public class MatchBuilderTest {
 
-        private MatchBuilder matchBuilder;
+    private MatchBuilder matchBuilder;
 
-        private AbstractClientHandlerTest abstractClientHandlerTest;
+    private AbstractClientHandlerTest abstractClientHandlerTest;
 
-        private MatchController matchController;
+    private MatchController matchController;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         matchBuilder = new MatchBuilder();
@@ -21,24 +29,36 @@ public class MatchBuilderTest {
         matchController = new MatchController(matchBuilder);
     }
 
+    /**
+     * Gets current match id.
+     */
     @Test
     public void getCurrentMatchID() {
         assertEquals(2, matchBuilder.getCurrentMatchID());
-        for(int i=0; i<5; i++) {
+        for(int i = 0; i<5; i++) {
             assertEquals(i+3,matchBuilder.getCurrentMatchID());
         }
     }
 
+    /**
+     * Start timer.
+     */
     @Test
     public void startTimer() {
         matchBuilder.startTimer(matchController);
     }
 
+    /**
+     * Stop timer.
+     */
     @Test
     public void stopTimer() {
         matchBuilder.stopTimer();
     }
 
+    /**
+     * Sign new client.
+     */
     @Test
     public void signNewClient() {
         matchBuilder.signNewClient(abstractClientHandlerTest);
@@ -53,6 +73,9 @@ public class MatchBuilderTest {
         matchBuilder.startTimer(matchController);
     }
 
+    /**
+     * Player logged.
+     */
     @Test
     public void playerLogged() {
         matchBuilder.playerLogged("tony", matchController);

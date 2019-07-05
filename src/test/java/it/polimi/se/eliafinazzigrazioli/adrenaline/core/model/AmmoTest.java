@@ -3,16 +3,23 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
+
+/**
+ * The type Ammo test.
+ */
 public class AmmoTest {
 
 
+    /**
+     * Ammo serialization test.
+     */
     @Test
     public void ammoSerializationTest() {
         List<Ammo> ammos = new ArrayList<>(Arrays.asList(Ammo.YELLOW, Ammo.BLUE, Ammo.RED, Ammo.BLUE));
@@ -21,6 +28,9 @@ public class AmmoTest {
         System.out.println(ammoJson);
     }
 
+    /**
+     * Ammo test.
+     */
     @Test
     public void ammoTest() {
         List<Ammo> ammoList = new ArrayList<>();
@@ -33,6 +43,9 @@ public class AmmoTest {
 
     }
 
+    /**
+     * Ammo deserialization test.
+     */
     @Test
     public void ammoDeserializationTest() {
         String jsonAmmos = "['RED', 'RED', 'YELLOW', 'BLUE']";

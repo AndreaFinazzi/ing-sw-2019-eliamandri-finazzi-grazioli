@@ -12,6 +12,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Cardinal direction selector effect state test.
+ */
 public class CardinalDirectionSelectorEffectStateTest {
 
     private GameBoard gameBoard;
@@ -19,12 +22,20 @@ public class CardinalDirectionSelectorEffectStateTest {
     private WeaponEffect weaponEffect;
     private WeaponCard weaponCard;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         gameBoard = new GameBoard(MapType.ONE);
         effectState = new CardinalDirectionSelectorEffectState(null, 1,SelectableType.PLAYER ,null, null, 0);
     }
 
+    /**
+     * Execute test.
+     */
     @Test
     public void executeTest() {
 

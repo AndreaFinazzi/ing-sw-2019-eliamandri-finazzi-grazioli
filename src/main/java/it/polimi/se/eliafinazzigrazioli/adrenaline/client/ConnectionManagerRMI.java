@@ -12,16 +12,34 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 
+/**
+ * The type Connection manager rmi.
+ */
 public class ConnectionManagerRMI extends AbstractConnectionManager implements ClientRemoteRMI {
 
     private Registry registry;
 
     private ServerRemoteRMI serverRemoteRMI;
 
+    /**
+     * Instantiates a new Connection manager rmi.
+     *
+     * @param client the client
+     * @throws RemoteException   the remote exception
+     * @throws NotBoundException the not bound exception
+     */
     public ConnectionManagerRMI(Client client) throws RemoteException, NotBoundException {
         this(client, Config.CONFIG_SERVER_RMI_PORT);
     }
 
+    /**
+     * Instantiates a new Connection manager rmi.
+     *
+     * @param client the client
+     * @param port the port
+     * @throws RemoteException   the remote exception
+     * @throws NotBoundException the not bound exception
+     */
     public ConnectionManagerRMI(Client client, int port) throws RemoteException, NotBoundException {
         super(client);
         this.port = port;

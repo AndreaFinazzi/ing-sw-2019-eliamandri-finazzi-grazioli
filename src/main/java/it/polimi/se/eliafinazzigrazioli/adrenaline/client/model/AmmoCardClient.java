@@ -8,6 +8,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.AmmoCard;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * The type Ammo card client.
+ */
 public class AmmoCardClient implements Serializable, CardInterface {
 
     private static final long serialVersionUID = 9001L;
@@ -19,20 +22,40 @@ public class AmmoCardClient implements Serializable, CardInterface {
     private final static int WIDTH = 17;
     private final static int HEIGTH = 8;
 
+    /**
+     * Instantiates a new Ammo card client.
+     *
+     * @param ammoCard the ammo card
+     */
     public AmmoCardClient(AmmoCard ammoCard) {
         this.id = ammoCard.getId();
         this.ammos = ammoCard.getAmmos();
         this.powerUp = ammoCard.containsPowerUpCard();
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets ammos.
+     *
+     * @return the ammos
+     */
     public List<Ammo> getAmmos() {
         return ammos;
     }
 
+    /**
+     * Contains power up boolean.
+     *
+     * @return the boolean
+     */
     public boolean containsPowerUp() {
         return powerUp;
     }

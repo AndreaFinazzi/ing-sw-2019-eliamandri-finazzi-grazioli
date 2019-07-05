@@ -7,6 +7,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 
 import java.io.Serializable;
 
+/**
+ * The type Power up card client.
+ */
 public class PowerUpCardClient implements Serializable, CardInterface {
     private static final long serialVersionUID = 9006L;
 
@@ -26,10 +29,18 @@ public class PowerUpCardClient implements Serializable, CardInterface {
     private final static int DRAW_WIDTH = 24;
     private final static int DRAW_HEIGHT = 24;
 
+    /**
+     * Instantiates a new Power up card client.
+     */
     public PowerUpCardClient() {
 
     }
 
+    /**
+     * Instantiates a new Power up card client.
+     *
+     * @param powerUpCard the power up card
+     */
     public PowerUpCardClient(PowerUpCard powerUpCard) {
         this.id = powerUpCard.getId();
         this.powerUpType = powerUpCard.getType();
@@ -38,22 +49,41 @@ public class PowerUpCardClient implements Serializable, CardInterface {
         slotPosition = -1;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets power up type.
+     *
+     * @return the power up type
+     */
     public String getPowerUpType() {
         return powerUpType;
     }
 
+    /**
+     * Gets equivalent ammo.
+     *
+     * @return the equivalent ammo
+     */
     public Ammo getEquivalentAmmo() {
         return equivalentAmmo;
     }
 
+    /**
+     * Gets description.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }
-
 
 
     public String[][] drawCard() {
@@ -74,10 +104,20 @@ public class PowerUpCardClient implements Serializable, CardInterface {
         }
     }
 
+    /**
+     * Gets slot position.
+     *
+     * @return the slot position
+     */
     public int getSlotPosition() {
         return slotPosition;
     }
 
+    /**
+     * Sets slot position.
+     *
+     * @param slotPosition the slot position
+     */
     public void setSlotPosition(int slotPosition) {
         this.slotPosition = slotPosition;
     }
@@ -93,6 +133,11 @@ public class PowerUpCardClient implements Serializable, CardInterface {
 
     }
 
+    /**
+     * To string light string.
+     *
+     * @return the string
+     */
     public String toStringLight() {
         return Color.ammoToColor(equivalentAmmo).toString() + powerUpType;
     }

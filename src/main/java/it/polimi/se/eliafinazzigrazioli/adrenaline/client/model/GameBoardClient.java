@@ -1,6 +1,5 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.client.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLIUtils;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -10,7 +9,13 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The type Game board client.
+ */
 public class GameBoardClient {
+    /**
+     * The Logger.
+     */
     static final Logger LOGGER = Logger.getLogger(GameBoardClient.class.getName());
 
     private MapType mapType;
@@ -23,14 +28,40 @@ public class GameBoardClient {
     private final int DIM_X = 12;
     private final int DIM_Y = 6;
 
+    /**
+     * The constant ANSI_RESET.
+     */
     public static final String ANSI_RESET = "\u001B[0m";
+    /**
+     * The constant ANSI_RED.
+     */
     public static final String ANSI_RED = "\u001B[31m";
+    /**
+     * The constant ANSI_GREEN.
+     */
     public static final String ANSI_GREEN = "\u001B[32m";
+    /**
+     * The constant ANSI_YELLOW.
+     */
     public static final String ANSI_YELLOW = "\u001B[33m";
+    /**
+     * The constant ANSI_BLUE.
+     */
     public static final String ANSI_BLUE = "\u001B[34m";
+    /**
+     * The constant ANSI_PURPLE.
+     */
     public static final String ANSI_PURPLE = "\u001B[35m";
+    /**
+     * The constant ANSI_WHITE.
+     */
     public static final String ANSI_WHITE = "\u001B[37m";
 
+    /**
+     * Instantiates a new Game board client.
+     *
+     * @param mapType the map type
+     */
     public GameBoardClient(MapType mapType) {
         this.mapType = mapType;
 
@@ -144,16 +175,31 @@ public class GameBoardClient {
         }
     }
 
+    /**
+     * Gets map type.
+     *
+     * @return the map type
+     */
     public MapType getMapType() {
         return mapType;
     }
 
+    /**
+     * Reset ammo cards.
+     *
+     * @param ammoCardsReset the ammo cards reset
+     */
     public void resetAmmoCards(Map<Coordinates, AmmoCardClient> ammoCardsReset) {
         for (Map.Entry<Coordinates, AmmoCardClient> squareToAmmoCardEntry : ammoCardsReset.entrySet()) {
             getBoardSquareByCoordinates(squareToAmmoCardEntry.getKey()).addAmmoCard(squareToAmmoCardEntry.getValue());
         }
     }
 
+    /**
+     * Reset weapons.
+     *
+     * @param weaponsPlaced the weapons placed
+     */
     public void resetWeapons(Map<Coordinates, List<WeaponCardClient>> weaponsPlaced) {
         for (Map.Entry<Coordinates, List<WeaponCardClient>> coordinatesToWeapons : weaponsPlaced.entrySet()) {
             BoardSquareClient boardSquare = getBoardSquareByCoordinates(coordinatesToWeapons.getKey());
@@ -162,11 +208,23 @@ public class GameBoardClient {
         }
     }
 
+    /**
+     * Sets player position.
+     *
+     * @param player the player
+     * @param coordinates the coordinates
+     */
     public void setPlayerPosition(String player, Coordinates coordinates) {
         if (coordinates != null)
             playerPositions.put(player, squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()]);
     }
 
+    /**
+     * Gets room squares.
+     *
+     * @param room the room
+     * @return the room squares
+     */
     public List<BoardSquareClient> getRoomSquares(Room room) {
         List<BoardSquareClient> roomSquares = new ArrayList<>();
         for (int i = 0; i < x_max; i++) {
@@ -180,20 +238,42 @@ public class GameBoardClient {
         return roomSquares;
     }
 
+    /**
+     * Gets player position by name.
+     *
+     * @param playerName the player name
+     * @return the player position by name
+     */
     public BoardSquareClient getPlayerPositionByName(String playerName) {
         if (!playerPositions.containsKey(playerName))
             return null;
         return playerPositions.get(playerName);
     }
 
+    /**
+     * Remove player.
+     *
+     * @param player the player
+     */
     public void removePlayer(String player) {
         playerPositions.remove(player);
     }
 
+    /**
+     * Gets players position.
+     *
+     * @return the players position
+     */
     public Map<String, BoardSquareClient> getPlayersPosition() {
         return playerPositions;
     }
 
+    /**
+     * Gets coordinates.
+     *
+     * @param boardSquare the board square
+     * @return the coordinates
+     */
     public Coordinates getCoordinates(BoardSquareClient boardSquare) {
         for (int i = 0; i < x_max; i++) {
             for (int j = 0; j < y_max; j++)
@@ -203,10 +283,21 @@ public class GameBoardClient {
         return null;
     }
 
+    /**
+     * Gets board square by coordinates.
+     *
+     * @param coordinates the coordinates
+     * @return the board square by coordinates
+     */
     public BoardSquareClient getBoardSquareByCoordinates(Coordinates coordinates) {
         return squaresMatrix[coordinates.getXCoordinate()][coordinates.getYCoordinate()];
     }
 
+    /**
+     * Gets spawn board square client.
+     *
+     * @return the spawn board square client
+     */
     public List<SpawnBoardSquareClient> getSpawnBoardSquareClient() {
         List<SpawnBoardSquareClient> listSpawn = new ArrayList<>();
         for (int i = 0; i < x_max; i++) {
@@ -222,6 +313,12 @@ public class GameBoardClient {
         return listSpawn;
     }
 
+    /**
+     * Gets spawn board square client by room.
+     *
+     * @param room the room
+     * @return the spawn board square client by room
+     */
     public SpawnBoardSquareClient getSpawnBoardSquareClientByRoom(Room room) {
         for (SpawnBoardSquareClient spawnBoardSquare : getSpawnBoardSquareClient()) {
             if (spawnBoardSquare.room == room) return spawnBoardSquare;
@@ -231,6 +328,13 @@ public class GameBoardClient {
     }
 
 
+    /**
+     * Get square text string [ ] [ ].
+     *
+     * @param boardSquare the board square
+     * @param avatars the avatars
+     * @return the string [ ] [ ]
+     */
     public String[][] getSquareText(BoardSquareClient boardSquare, List<Avatar> avatars) {
         int width = DIM_X;
         int height = DIM_Y;
@@ -383,6 +487,12 @@ public class GameBoardClient {
         return squareText;
     }
 
+    /**
+     * Add players.
+     *
+     * @param squareText the square text
+     * @param avatars the avatars
+     */
     public void addPlayers(String[][] squareText, List<Avatar> avatars) {
         Random random = new Random();
         int x = 0;
@@ -413,6 +523,12 @@ public class GameBoardClient {
         }
     }
 
+    /**
+     * Get map matrix string [ ] [ ].
+     *
+     * @param avatarMap the avatar map
+     * @return the string [ ] [ ]
+     */
     public String[][] getMapMatrix(Map<String, Avatar> avatarMap) {
         List<String[][]> squares = new ArrayList<>();
 
@@ -455,6 +571,12 @@ public class GameBoardClient {
         return mapText;
     }
 
+    /**
+     * Gets map text.
+     *
+     * @param avatarMap the avatar map
+     * @return the map text
+     */
     public String getMapText(Map<String, Avatar> avatarMap) {
         String[][] mapText = getMapMatrix(avatarMap);
         String map = "";
@@ -468,7 +590,11 @@ public class GameBoardClient {
     }
 
 
-
+    /**
+     * Gets coordinates ammo card map.
+     *
+     * @return the coordinates ammo card map
+     */
     public Map<Coordinates, AmmoCardClient> getCoordinatesAmmoCardMap() {
         Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap = new HashMap<>();
 
@@ -487,10 +613,20 @@ public class GameBoardClient {
     }
 
 
+    /**
+     * Gets x max.
+     *
+     * @return the x max
+     */
     public int getX_max() {
         return x_max;
     }
 
+    /**
+     * Gets y max.
+     *
+     * @return the y max
+     */
     public int getY_max() {
         return y_max;
     }
