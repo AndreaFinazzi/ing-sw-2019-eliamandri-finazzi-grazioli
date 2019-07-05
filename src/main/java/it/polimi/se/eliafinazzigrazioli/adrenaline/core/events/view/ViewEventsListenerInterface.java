@@ -70,10 +70,6 @@ public interface ViewEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
-    default void handleEvent(RequestMovePlayEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
-
     default void handleEvent(SpawnPowerUpSelectedEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }

@@ -1,4 +1,4 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,7 +24,7 @@ public class AmmoCardsDeck {
 
     private List<AmmoCard> deck;
 
-    public AmmoCardsDeck() throws WeaponFileNotFoundException {
+    public AmmoCardsDeck() {
 
         List<String> cardCodes = new ArrayList<>();
         BufferedReader ammoCardsListReader = null;

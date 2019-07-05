@@ -11,7 +11,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.Spa
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.AmmoCardsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.AmmoCardsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
@@ -108,11 +108,7 @@ public class Match implements Observable {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         weaponsDeck = new WeaponsDeck();
-        try {
-            ammoCardsDeck = new AmmoCardsDeck();
-        } catch (WeaponFileNotFoundException e) {
-            ammoCardsDeck = null;
-        }
+        ammoCardsDeck = new AmmoCardsDeck();
     }
 
     public List<AbstractModelEvent> skullsAssignment() {

@@ -12,7 +12,6 @@ import java.util.List;
 
 public class PlayerControllerTest {
 
-    private PlayerController playerController;
     private MatchController matchController;
     private EventController eventController;
     private GameBoard gameBoard;
@@ -22,7 +21,6 @@ public class PlayerControllerTest {
     public void setUp() throws Exception {
         matchController = new MatchController(new MatchBuilder());
         eventController = new EventController(matchController);
-        playerController = new PlayerController(eventController, matchController);
         matchController.addPlayer("playerOne", Avatar.BANSHEE);
         matchController.initMatch(MapType.ONE);
         gameBoard = matchController.getMatch().getGameBoard();
@@ -46,7 +44,6 @@ public class PlayerControllerTest {
         coordinatesList.add(new Coordinates(1, 0));
         coordinatesList.add(new Coordinates(1, 1));
         MovePlayEvent movePlayEvent = new MovePlayEvent(0, "playerOne", coordinatesList);
-        playerController.handleEvent(movePlayEvent);
         Player playerOne = matchController.getPlayers().get("playerOne");
         BoardSquare playerPos = matchController.getMatch().getGameBoard().getPlayerPosition(playerOne);
         BoardSquare boardSquare = gameBoard.getBoardSquareByCoordinates(new Coordinates(1, 1));
