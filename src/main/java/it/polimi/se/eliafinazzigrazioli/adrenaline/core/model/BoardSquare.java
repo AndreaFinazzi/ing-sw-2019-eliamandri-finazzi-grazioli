@@ -8,7 +8,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.RuntimeTypeAdapter
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BoardSquare implements Selectable {
+public abstract class BoardSquare {
     private Room room;
     private Coordinates coordinates;
     private InterSquareLink north;
@@ -45,65 +45,6 @@ public abstract class BoardSquare implements Selectable {
     abstract public boolean isSpawnPoint();
 
     abstract public boolean ammoCollectionIsValid();
-
-
-
-    @Override
-    public List<Selectable> getVisible(SelectableType selType, boolean notVisible, GameBoard gameBoard) {
-        switch (selType){
-            case PLAYER:
-                return new ArrayList<>(gameBoard.getVisiblePlayers(this, notVisible));
-            case BOARDSQUARE:
-                return new ArrayList<>(gameBoard.getVisibleSquares(this, notVisible));
-            default:
-                return null; //TODO define exception raise for default case
-        }
-    }
-
-    @Override
-    public List<Selectable> getByDistance(SelectableType selType, int maxDistance, int minDistance, GameBoard gameBoard){
-        switch (selType){
-            case PLAYER:
-                try {
-                    return new ArrayList<>(gameBoard.getPlayersByDistance(this, maxDistance, minDistance));
-                }
-                catch (Exception e){
-                    return null;
-                }
-            case BOARDSQUARE:
-                try {
-                    return new ArrayList<>(gameBoard.getSquaresByDistance(this, maxDistance, minDistance));
-                }
-                catch (Exception e){
-                    return null;
-                }
-            default:
-                return null; //TODO define exception raise for default case
-        }
-    }
-
-    @Override
-    public List<Selectable> getByRoom(SelectableType selType, GameBoard gameBoard, List<Player> players) {
-        switch (selType){
-            case PLAYER:
-                List<Selectable> toSelect = new ArrayList<>();
-                for (Player player:players){
-                    if (player.getPosition().getRoom() == room){
-                        toSelect.add(player);
-                    }
-                }
-                return toSelect;
-            case BOARDSQUARE:
-                return new ArrayList<>(gameBoard.getRoomSquares(room));
-            default:
-                return null;
-        }
-    }
-
-    @Override
-    public List<Selectable> getOnCardinal(SelectableType selType, GameBoard gameBoard) {
-        return null;
-    }
 
     public Coordinates getCoordinates() {
         return coordinates;

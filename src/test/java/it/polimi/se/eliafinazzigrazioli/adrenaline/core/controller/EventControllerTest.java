@@ -2,7 +2,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.TargetSelectedEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.server.MatchBuilder;
 import org.junit.Test;
 
@@ -17,7 +16,6 @@ public class EventControllerTest {
     private EventController eventController;
 
     private CollectPlayEvent collectPlayEvent;
-    private TargetSelectedEvent targetSelectedEvent;
     private MovePlayEvent movePlayEvent;
 
     @Test
@@ -28,12 +26,7 @@ public class EventControllerTest {
         eventController = matchController.getEventController();
 
         collectPlayEvent = new CollectPlayEvent(0, "UserA!", new ArrayList<>());
-        targetSelectedEvent = new TargetSelectedEvent(1, "Mariooooo!", new ArrayList<>());
-        //movePlayEvent = new MovePlayEvent("UserA!", new ArrayList<>());
 
-        //eventController.update(collectPlayEvent);
-        eventController.update(targetSelectedEvent);
-        //eventController.update(movePlayEvent);
 
         System.out.println("ended");
     }

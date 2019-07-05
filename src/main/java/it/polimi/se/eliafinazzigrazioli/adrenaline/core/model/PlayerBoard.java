@@ -42,6 +42,8 @@ public class PlayerBoard {
 
     public void switchToFinalFrenzy() {
         finalFrenzyMode = true;
+        skulls = 0;
+        deathScores = Rules.FINAL_FRENZY_DEATH_SCORES;
     }
 
     public boolean isFinalFrenzyMode() {

@@ -13,7 +13,7 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player implements Selectable {
+public class Player {
     private int clientID;
 
 
@@ -110,26 +110,6 @@ public class Player implements Selectable {
 
     public Avatar getAvatar() {
         return avatar;
-    }
-
-    @Override
-    public List<Selectable> getVisible(SelectableType selType, boolean notVisible, GameBoard gameBoard) {
-        return position.getVisible(selType, notVisible, gameBoard);
-    }
-
-    @Override
-    public List<Selectable> getByDistance(SelectableType selType, int maxDistance, int minDistance, GameBoard gameBoard) {
-        return position.getByDistance(selType, maxDistance, minDistance, gameBoard);
-    }
-
-    @Override
-    public List<Selectable> getByRoom(SelectableType selType, GameBoard gameBoard, List<Player> p) {
-        return position.getByRoom(selType, new GameBoard(MapType.ONE), p);
-    }
-
-    @Override
-    public List<Selectable> getOnCardinal(SelectableType selType, GameBoard gameBoard) {
-        return position.getOnCardinal(selType, gameBoard);
     }
 
     public DamageMark getDamageMarkDelivered() {
