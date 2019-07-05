@@ -3,7 +3,6 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerShotEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.UsablePowerUpsEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 
@@ -12,6 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * The type Damage action effect state.
+ */
 public class DamageActionEffectState extends ActionEffectState {
 
     private static final Logger LOGGER = Logger.getLogger(DamageActionEffectState.class.getName());
@@ -19,6 +21,14 @@ public class DamageActionEffectState extends ActionEffectState {
     private int damageAmount;
     private int markAmount;
 
+    /**
+     * Instantiates a new Damage action effect state.
+     *
+     * @param damageAmount the damage amount
+     * @param markAmount the mark amount
+     * @param playerToAffectSource the player to affect source
+     * @param toAffectPlayerSelectionOrder the to affect player selection order
+     */
     public DamageActionEffectState(int damageAmount, int markAmount, String playerToAffectSource, int toAffectPlayerSelectionOrder) {
         super(playerToAffectSource, toAffectPlayerSelectionOrder);
         this.damageAmount = damageAmount;

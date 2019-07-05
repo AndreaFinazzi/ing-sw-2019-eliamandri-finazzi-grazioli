@@ -7,8 +7,19 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type In room selector effect state.
+ */
 public class InRoomSelectorEffectState extends SelectorEffectState {
 
+    /**
+     * Instantiates a new In room selector effect state.
+     *
+     * @param referenceSource the reference source
+     * @param sourceSelectionOrder the source selection order
+     * @param referenceType the reference type
+     * @param selectionType the selection type
+     */
     public InRoomSelectorEffectState(String referenceSource, int sourceSelectionOrder, SelectableType referenceType, SelectableType selectionType) {
         super(referenceSource, sourceSelectionOrder, selectionType, referenceType);
     }

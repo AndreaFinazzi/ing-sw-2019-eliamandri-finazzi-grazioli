@@ -33,74 +33,248 @@ import java.util.logging.Logger;
 import static java.lang.Thread.sleep;
 
 
+/**
+ * The type Gui.
+ */
 public class GUI extends Application implements RemoteView {
 
-    // static constants
+    /**
+     * The constant STYLE_CLASS_MAP_DEFAULT.
+     */
+// static constants
     public static final String STYLE_CLASS_MAP_DEFAULT = "map_NONE";
+    /**
+     * The constant STYLE_CLASS_MAP_PREFIX.
+     */
     public static final String STYLE_CLASS_MAP_PREFIX = "map_";
+    /**
+     * The constant STYLE_CLASS_HIGHLIGHT.
+     */
     public static final String STYLE_CLASS_HIGHLIGHT = "highlight";
+    /**
+     * The constant STYLE_CLASS_DISABLE.
+     */
     public static final String STYLE_CLASS_DISABLE = "disable";
+    /**
+     * The constant STYLE_CLASS_WEAPON_ROTATED.
+     */
     public static final String STYLE_CLASS_WEAPON_ROTATED = "rotatedWeaponCard";
+    /**
+     * The constant STYLE_CLASS_WEAPON_ON_MAP.
+     */
     public static final String STYLE_CLASS_WEAPON_ON_MAP = "onMapWeaponCard";
+    /**
+     * The constant STYLE_CLASS_WEAPON_MY.
+     */
     public static final String STYLE_CLASS_WEAPON_MY = "myWeaponCard";
+    /**
+     * The constant STYLE_CLASS_BOARD_SQUARE_SELECTABLE.
+     */
     public static final String STYLE_CLASS_BOARD_SQUARE_SELECTABLE = "selectableBoardSquare";
+    /**
+     * The constant STYLE_CLASS_AVATAR_SELECTABLE.
+     */
     public static final String STYLE_CLASS_AVATAR_SELECTABLE = "selectableAvatar";
+    /**
+     * The constant STYLE_CLASS_EFFECT_SELECTABLE.
+     */
     public static final String STYLE_CLASS_EFFECT_SELECTABLE = "selectableEffectLabel";
+    /**
+     * The constant STYLE_CLASS_EFFECT_DEFAULT.
+     */
     public static final String STYLE_CLASS_EFFECT_DEFAULT = "effectLabel";
+    /**
+     * The constant STYLE_CLASS_PLAYER_BOARD_DEFAULT.
+     */
     public static final String STYLE_CLASS_PLAYER_BOARD_DEFAULT = "playerBoard_NONE";
+    /**
+     * The constant STYLE_CLASS_PLAYER_BOARD_PREFIX.
+     */
     public static final String STYLE_CLASS_PLAYER_BOARD_PREFIX = "playerBoard_";
+    /**
+     * The constant STYLE_CLASS_PLAYER_BOARD_SKULL.
+     */
     public static final String STYLE_CLASS_PLAYER_BOARD_SKULL = "playerBoardSkull";
 
+    /**
+     * The constant ASSET_PATH_ROOT.
+     */
     public static final String ASSET_PATH_ROOT = Config.CONFIG_CLIENT_GUI_PATH_ASSETS_ROOT;
+    /**
+     * The constant ASSET_PATH_CARDS_ROOT.
+     */
     public static final String ASSET_PATH_CARDS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_CARDS;
+    /**
+     * The constant ASSET_PATH_CARDS_ROTATED_ROOT.
+     */
     public static final String ASSET_PATH_CARDS_ROTATED_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_CARDS_ROTATED;
+    /**
+     * The constant ASSET_PATH_MAPS_ROOT.
+     */
     public static final String ASSET_PATH_MAPS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_MAPS;
+    /**
+     * The constant ASSET_PATH_AMMO_ROOT.
+     */
     public static final String ASSET_PATH_AMMO_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_AMMO;
+    /**
+     * The constant ASSET_PATH_PLAYER_BOARDS_ROOT.
+     */
     public static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_PLAYER_BOARDS;
+    /**
+     * The constant ASSET_PATH_AVATAR_ROOT.
+     */
     public static final String ASSET_PATH_AVATAR_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_AVATARS;
+    /**
+     * The constant ASSET_PATH_ICONS_ROOT.
+     */
     public static final String ASSET_PATH_ICONS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_ICONS;
+    /**
+     * The constant ASSET_PATH_MARKS_ROOT.
+     */
     public static final String ASSET_PATH_MARKS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_MARKS;
 
+    /**
+     * The constant ASSET_FORMAT.
+     */
     public static final String ASSET_FORMAT = Config.CONFIG_CLIENT_GUI_ASSETS_DEFAULT_FORMAT;
+    /**
+     * The constant ASSET_PREFIX_MAP.
+     */
     public static final String ASSET_PREFIX_MAP = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_MAP;
+    /**
+     * The constant ASSET_PREFIX_POWER_UP.
+     */
     public static final String ASSET_PREFIX_POWER_UP = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_POWER_UP;
+    /**
+     * The constant ASSET_PREFIX_WEAPON.
+     */
     public static final String ASSET_PREFIX_WEAPON = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_WEAPON;
+    /**
+     * The constant ASSET_PREFIX_AMMO.
+     */
     public static final String ASSET_PREFIX_AMMO = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_AMMO;
+    /**
+     * The constant ASSET_PREFIX_PLAYERBOARD.
+     */
     public static final String ASSET_PREFIX_PLAYERBOARD = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_PLAYERBOARD;
+    /**
+     * The constant ASSET_PREFIX_AVATAR.
+     */
     public static final String ASSET_PREFIX_AVATAR = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_AVATAR;
+    /**
+     * The constant ASSET_PREFIX_ICONS_ARROWS.
+     */
     public static final String ASSET_PREFIX_ICONS_ARROWS = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_ICONS_ARROW;
+    /**
+     * The constant ASSET_PREFIX_MARKS.
+     */
     public static final String ASSET_PREFIX_MARKS = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_MARK;
 
+    /**
+     * The constant ASSET_SUFFIX_PLAYERBOARD.
+     */
     public static final String ASSET_SUFFIX_PLAYERBOARD = Config.CONFIG_CLIENT_GUI_ASSETS_SUFFIX_PLAYERBOARD;
 
+    /**
+     * The constant ASSET_ID_HIDDEN_CARD.
+     */
     public static final String ASSET_ID_HIDDEN_CARD = Config.CONFIG_CLIENT_GUI_ASSETS_ID_HIDDEN_CARD;
+    /**
+     * The constant ASSET_ID_HIDDEN_AMMO.
+     */
     public static final String ASSET_ID_HIDDEN_AMMO = Config.CONFIG_CLIENT_GUI_ASSETS_ID_HIDDEN_AMMO;
+    /**
+     * The constant ASSET_ID_SKULL.
+     */
     public static final String ASSET_ID_SKULL = Config.CONFIG_CLIENT_GUI_ASSETS_ID_SKULL;
+    /**
+     * The constant ASSET_ID_SKULL_ROTATED.
+     */
     public static final String ASSET_ID_SKULL_ROTATED = Config.CONFIG_CLIENT_GUI_ASSETS_ID_SKULL_ROTATED;
 
+    /**
+     * The constant FXML_PATH_ROOT.
+     */
     public static final String FXML_PATH_ROOT = Config.CONFIG_CLIENT_GUI_PATH_FXML_ROOT;
+    /**
+     * The constant FXML_PATH_LOGIN.
+     */
     public static final String FXML_PATH_LOGIN = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_LOGIN;
+    /**
+     * The constant FXML_PATH_COMMANDS.
+     */
     public static final String FXML_PATH_COMMANDS = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_COMMANDS;
+    /**
+     * The constant FXML_PATH_OPPONENT_PLAYER_INFO.
+     */
     public static final String FXML_PATH_OPPONENT_PLAYER_INFO = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_OPPONENT_PLAYER_INFO;
+    /**
+     * The constant FXML_PATH_PLAYER_BOARD.
+     */
     public static final String FXML_PATH_PLAYER_BOARD = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_PLAYER_BOARD;
+    /**
+     * The constant FXML_PATH_BOARD_SQUARE.
+     */
     public static final String FXML_PATH_BOARD_SQUARE = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_BOARD_SQUARE;
+    /**
+     * The constant FXML_PATH_MAIN.
+     */
     public static final String FXML_PATH_MAIN = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_MAIN;
+    /**
+     * The constant FXML_PATH_POWER_UP.
+     */
     public static final String FXML_PATH_POWER_UP = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_POWER_UP_CARD;
+    /**
+     * The constant FXML_PATH_WEAPON.
+     */
     public static final String FXML_PATH_WEAPON = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_WEAPON_CARD;
+    /**
+     * The constant FXML_PATH_AVATAR.
+     */
     public static final String FXML_PATH_AVATAR = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_AVATAR;
+    /**
+     * The constant FXML_PATH_MARK.
+     */
     public static final String FXML_PATH_MARK = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_MARK;
+    /**
+     * The constant FXML_PATH_SKULL.
+     */
     public static final String FXML_PATH_SKULL = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_SKULL;
 
+    /**
+     * The constant PROPERTIES_KEY_CARD_ID.
+     */
     public static final String PROPERTIES_KEY_CARD_ID = "card_id";
+    /**
+     * The constant PROPERTIES_KEY_CARD_SPENT.
+     */
     public static final String PROPERTIES_KEY_CARD_SPENT = "card_spent";
+    /**
+     * The constant PROPERTIES_KEY_EFFECT.
+     */
     public static final String PROPERTIES_KEY_EFFECT = "effect_name";
+    /**
+     * The constant PROPERTIES_KEY_AVATAR.
+     */
     public static final String PROPERTIES_KEY_AVATAR = "avatar";
+    /**
+     * The constant PROPERTIES_KEY_AMMO.
+     */
     public static final String PROPERTIES_KEY_AMMO = "ammo_name";
 
     private static GUI instance;
+    /**
+     * The Logger.
+     */
     static final Logger LOGGER = Logger.getLogger(GUI.class.getName());
 
+    /**
+     * The Args.
+     */
     String[] args;
+    /**
+     * The Primary stage.
+     */
     Stage primaryStage;
 
     private Client client;
@@ -121,6 +295,9 @@ public class GUI extends Application implements RemoteView {
 
     private boolean initialized = false;
 
+    /**
+     * Instantiates a new Gui.
+     */
     public GUI() {
         instance = this;
         localModel = new LocalModel();
@@ -144,6 +321,11 @@ public class GUI extends Application implements RemoteView {
         }
     }
 
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
     public synchronized static GUI getInstance() {
         if (instance == null) {
             new Thread(() -> {
@@ -164,18 +346,34 @@ public class GUI extends Application implements RemoteView {
         return instance;
     }
 
+    /**
+     * Gets opponent player to gui controller map.
+     *
+     * @return the opponent player to gui controller map
+     */
     public Map<String, OpponentPlayerGUIController> getOpponentPlayerToGUIControllerMap() {
         return opponentPlayerToGUIControllerMap;
     }
 
+    /**
+     * Show overlay.
+     */
     public void showOverlay() {
         mainGUIController.showOverlay();
     }
 
+    /**
+     * Hide overlay.
+     */
     public void hideOverlay() {
         mainGUIController.hideOverlay();
     }
 
+    /**
+     * Sets client.
+     *
+     * @param client the client
+     */
     public void setClient(Client client) {
         this.client = client;
     }
@@ -190,6 +388,11 @@ public class GUI extends Application implements RemoteView {
         return client;
     }
 
+    /**
+     * Sets commands gui controller.
+     *
+     * @param commandsGUIController the commands gui controller
+     */
     public void setCommandsGUIController(CommandsGUIController commandsGUIController) {
         this.commandsGUIController = commandsGUIController;
     }
@@ -391,6 +594,7 @@ public class GUI extends Application implements RemoteView {
     }
 
     //todo implement
+
     @Override
     public PowerUpCardClient selectPowerUp(List<PowerUpCardClient> selectablePowerUps) {
         if (!selectablePowerUps.isEmpty()) {
@@ -448,13 +652,32 @@ public class GUI extends Application implements RemoteView {
         return null;
     }
 
-    //todo implement
     @Override
-    public WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons) {
-        if (!reloadableWeapons.isEmpty()) {
-
+    public Ammo selectAmmoType(List<Ammo> selectableAmmos) {
+        try {
+            commandsGUIController.setSelectableAmmo(selectableAmmos);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
-        return null;
+
+        AtomicReference<Ammo> selectedAmmo = new AtomicReference<>();
+        Semaphore semaphore = new Semaphore(0);
+
+        currentSemaphore = semaphore;
+        commandsGUIController.setSemaphore(semaphore);
+
+        commandsGUIController.setSelectedAmmo(selectedAmmo);
+
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+
+        synchronized (semaphore) {
+            return selectedAmmo.get();
+        }
     }
 
     @Override
@@ -623,6 +846,21 @@ public class GUI extends Application implements RemoteView {
     }
 
     @Override
+    public void showFinalFrenzyBegin(List<String> playerBoardsToSwitch) {
+        for (String player : playerBoardsToSwitch) {
+            try {
+                if (isOpponent(player)) {
+                    opponentPlayerToGUIControllerMap.get(player).setFinalFrenzy();
+                } else {
+                    commandsGUIController.setFinalFrenzy();
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
     public PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards) {
         try {
             commandsGUIController.setSpawnPowerUpCards(cards);
@@ -773,6 +1011,11 @@ public class GUI extends Application implements RemoteView {
         }
     }
 
+    /**
+     * Show card details.
+     *
+     * @param weaponCard the weapon card
+     */
     public void showCardDetails(WeaponCardClient weaponCard) {
         try {
             commandsGUIController.showDetails(weaponCard);
@@ -797,36 +1040,72 @@ public class GUI extends Application implements RemoteView {
     }
 
 
+    /**
+     * Gets power up asset.
+     *
+     * @param id the id
+     * @return the power up asset
+     */
     public String getPowerUpAsset(String id) {
         String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_POWER_UP + id + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
 
     }
 
+    /**
+     * Gets weapon asset.
+     *
+     * @param id the id
+     * @return the weapon asset
+     */
     public String getWeaponAsset(String id) {
         String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
 
     }
 
+    /**
+     * Gets ammo asset.
+     *
+     * @param id the id
+     * @return the ammo asset
+     */
     public String getAmmoAsset(String id) {
         String uri = ASSET_PATH_AMMO_ROOT + ASSET_PREFIX_AMMO + id + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
 
     }
 
+    /**
+     * Gets weapon rotated asset.
+     *
+     * @param id the id
+     * @return the weapon rotated asset
+     */
     public String getWeaponRotatedAsset(String id) {
         String uri = ASSET_PATH_CARDS_ROTATED_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
 
     }
 
+    /**
+     * Gets avatar asset.
+     *
+     * @param id the id
+     * @return the avatar asset
+     */
     public String getAvatarAsset(String id) {
         String uri = ASSET_PATH_AVATAR_ROOT + ASSET_PREFIX_AVATAR + id + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
 
     }
 
+    /**
+     * Gets icon asset.
+     *
+     * @param id the id
+     * @return the icon asset
+     */
     public String getIconAsset(String id) {
         String uri = ASSET_PATH_ICONS_ROOT + id;
         return getResource(uri).toExternalForm();
@@ -843,35 +1122,77 @@ public class GUI extends Application implements RemoteView {
         commandsGUIController.setDisconnected();
     }
 
+    /**
+     * Gets asset.
+     *
+     * @param id the id
+     * @return the asset
+     */
     public String getAsset(String id) {
         String uri = ASSET_PATH_ROOT + id + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
     }
 
+    /**
+     * Gets map asset.
+     *
+     * @param mapType the map type
+     * @return the map asset
+     */
     public String getMapAsset(MapType mapType) {
         String uri = ASSET_PATH_MAPS_ROOT + ASSET_PREFIX_MAP + mapType.name() + Config.CONFIG_CLIENT_GUI_ASSETS_DEFAULT_FORMAT;
         return getResource(uri).toExternalForm();
     }
 
+    /**
+     * Gets mark asset.
+     *
+     * @param damageMark the damage mark
+     * @return the mark asset
+     */
     public String getMarkAsset(DamageMark damageMark) {
         String uri = ASSET_PATH_MARKS_ROOT + ASSET_PREFIX_MARKS + damageMark.name() + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
     }
 
+    /**
+     * Gets player board asset.
+     *
+     * @param avatar the avatar
+     * @return the player board asset
+     */
     public String getPlayerBoardAsset(Avatar avatar) {
         String uri = ASSET_PATH_PLAYER_BOARDS_ROOT + ASSET_PREFIX_PLAYERBOARD + avatar.getDamageMark().name() + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
     }
 
+    /**
+     * Gets player board ff asset.
+     *
+     * @param avatar the avatar
+     * @return the player board ff asset
+     */
     public String getPlayerBoardFFAsset(Avatar avatar) {
         String uri = ASSET_PATH_PLAYER_BOARDS_ROOT + ASSET_PREFIX_PLAYERBOARD + avatar.getDamageMark().name() + ASSET_SUFFIX_PLAYERBOARD + ASSET_FORMAT;
         return getResource(uri).toExternalForm();
     }
 
+    /**
+     * Sets opponent player to gui controller map.
+     *
+     * @param opponentPlayerToGUIControllerMap the opponent player to gui controller map
+     */
     public void setOpponentPlayerToGUIControllerMap(Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap) {
         this.opponentPlayerToGUIControllerMap = opponentPlayerToGUIControllerMap;
     }
 
+    /**
+     * Gets power up by id.
+     *
+     * @param powerUpCards the power up cards
+     * @param id the id
+     * @return the power up by id
+     */
     public PowerUpCardClient getPowerUpById(List<PowerUpCardClient> powerUpCards, String id) {
         for (PowerUpCardClient powerUpCard : powerUpCards) {
             if (powerUpCard.getId().equals(id)) return powerUpCard;
@@ -887,6 +1208,14 @@ public class GUI extends Application implements RemoteView {
         initialize();
     }
 
+    /**
+     * Gets children by property.
+     *
+     * @param nodeCollection the node collection
+     * @param key the key
+     * @param value the value
+     * @return the children by property
+     */
     public static Node getChildrenByProperty(List<Node> nodeCollection, Object key, Object value) {
         for (Node node : nodeCollection) {
             if (node.hasProperties()) {
@@ -897,6 +1226,14 @@ public class GUI extends Application implements RemoteView {
         return null;
     }
 
+    /**
+     * Gets childrens by property.
+     *
+     * @param nodeCollection the node collection
+     * @param key the key
+     * @param value the value
+     * @return the childrens by property
+     */
     public static List<Node> getChildrensByProperty(List<Node> nodeCollection, Object key, Object value) {
         List<Node> nodes = new ArrayList<>();
         for (Node node : nodeCollection) {
@@ -908,18 +1245,36 @@ public class GUI extends Application implements RemoteView {
         return nodes;
     }
 
+    /**
+     * Apply background.
+     *
+     * @param element the element
+     * @param url the url
+     */
     public void applyBackground(Node element, String url) {
         Platform.runLater(() -> element.setStyle("-fx-background-image: url('" + url + "'); "));
     }
 
+    /**
+     * Release current semaphore.
+     */
     public void releaseCurrentSemaphore() {
         currentSemaphore.release();
     }
 
+    /**
+     * Disable all.
+     */
     public void disableAll() {
         commandsGUIController.disableCards();
     }
 
+    /**
+     * Gets resource.
+     *
+     * @param path the path
+     * @return the resource
+     */
     public URL getResource(String path) {
         URL url = null;
 

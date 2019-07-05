@@ -14,32 +14,71 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+/**
+ * The type Abstract connection manager.
+ */
 public abstract class AbstractConnectionManager implements Observer {
 
+    /**
+     * The constant LOGGER.
+     */
     protected static final Logger LOGGER = Logger.getLogger(AbstractConnectionManager.class.getName());
 
+    /**
+     * The Connection attempts.
+     */
     protected int connection_attempts = 0;
     private Timer turnTimer = new Timer();
+    /**
+     * The Client.
+     */
     protected Client client;
 
+    /**
+     * The Port.
+     */
     protected int port;
 
     private ExecutorService handlersExecutor = Executors.newCachedThreadPool();
 
+    /**
+     * Instantiates a new Abstract connection manager.
+     *
+     * @param client the client
+     */
     public AbstractConnectionManager(Client client) {
         this.client = client;
         //this.playerName = playerName; Useless assignment TODO check necessity of name in the constructor
         client.getView().addObserver(this);
     }
 
+    /**
+     * Send.
+     *
+     * @param event the event
+     */
     public abstract void send(AbstractViewEvent event);
 
+    /**
+     * Init.
+     */
     public abstract void init();
 
+    /**
+     * Perform registration.
+     */
     public abstract void performRegistration();
 
+    /**
+     * Disconnect.
+     */
     public abstract void disconnect();
 
+    /**
+     * Received.
+     *
+     * @param event the event
+     */
     public void received(AbstractModelEvent event) {
         if (event.isRequest()) {
             turnTimer = new Timer();
@@ -60,10 +99,18 @@ public abstract class AbstractConnectionManager implements Observer {
         }
     }
 
+    /**
+     * Unregister.
+     */
     protected void unregister() {
         send(new ClientDisconnectionEvent(client.getClientID(), client.getPlayerName()));
     }
 
+    /**
+     * Gets player name.
+     *
+     * @return the player name
+     */
     public String getPlayerName() {
         return client.getPlayerName();
     }
@@ -82,11 +129,11 @@ public abstract class AbstractConnectionManager implements Observer {
     public void update(AbstractModelEvent event) {
         //Visitor pattern
         //handlersExecutor.execute(() -> {
-            try {
-                event.handle(client.getView());
-            } catch (HandlerNotImplementedException e) {
-                e.printStackTrace();
-            }
+        try {
+            event.handle(client.getView());
+        } catch (HandlerNotImplementedException e) {
+            e.printStackTrace();
+        }
         //});
     }
 

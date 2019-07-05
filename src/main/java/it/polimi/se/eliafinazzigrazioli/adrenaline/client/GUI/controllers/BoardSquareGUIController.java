@@ -19,6 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * The type Board square gui controller.
+ */
 public class BoardSquareGUIController extends GUIController {
 
     @FXML
@@ -28,12 +31,22 @@ public class BoardSquareGUIController extends GUIController {
     private ImageView ammoCardSlot;
     private List<String> players;
 
+    /**
+     * Instantiates a new Board square gui controller.
+     *
+     * @param view the view
+     */
     public BoardSquareGUIController(GUI view) {
         super(view);
         players = new ArrayList<>();
     }
 
 
+    /**
+     * Sets ammo card.
+     *
+     * @param ammoCard the ammo card
+     */
     public void setAmmoCard(AmmoCardClient ammoCard) {
 
         if (ammoCard != null) {
@@ -43,6 +56,13 @@ public class BoardSquareGUIController extends GUIController {
             Platform.runLater(() -> ammoCardSlot.setImage(null));
     }
 
+    /**
+     * Add player node.
+     *
+     * @param player the player
+     * @return the node
+     * @throws IOException the io exception
+     */
     public synchronized Node addPlayer(String player) throws IOException {
         if (!hasPlayer(player)) {
             players.add(player);
@@ -57,6 +77,12 @@ public class BoardSquareGUIController extends GUIController {
         return null;
     }
 
+    /**
+     * Remove player boolean.
+     *
+     * @param player the player
+     * @return the boolean
+     */
     public synchronized boolean removePlayer(String player) {
 
         Iterator<Node> childrenIterator = boardSquare.getChildren().iterator();
@@ -72,11 +98,23 @@ public class BoardSquareGUIController extends GUIController {
         return false;
     }
 
+    /**
+     * Has player boolean.
+     *
+     * @param player the player
+     * @return the boolean
+     */
     public boolean hasPlayer(String player) {
         if (players.contains(player)) return true;
         return false;
     }
 
+    /**
+     * Make selectable node.
+     *
+     * @param onMouseClicked the on mouse clicked
+     * @return the node
+     */
     public Node makeSelectable(EventHandler<MouseEvent> onMouseClicked) {
         Platform.runLater(() -> {
             boardSquare.getStyleClass().add(GUI.STYLE_CLASS_BOARD_SQUARE_SELECTABLE);
@@ -86,6 +124,11 @@ public class BoardSquareGUIController extends GUIController {
         return boardSquare;
     }
 
+    /**
+     * Make avatar selectable.
+     *
+     * @param avatar the avatar
+     */
     public void makeAvatarSelectable(Avatar avatar) {
         boardSquare.getChildren().forEach(item -> {
             if (item.hasProperties() && item.getProperties().get(GUI.PROPERTIES_KEY_AVATAR).equals(avatar)) {
@@ -94,6 +137,9 @@ public class BoardSquareGUIController extends GUIController {
         });
     }
 
+    /**
+     * Make unselectable.
+     */
     public void makeUnselectable() {
         Platform.runLater(() -> {
             boardSquare.getStyleClass().remove(GUI.STYLE_CLASS_BOARD_SQUARE_SELECTABLE);

@@ -10,6 +10,11 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * The type Runtime type adapter factory.
+ *
+ * @param <T> the type parameter
+ */
 public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
     private final Class<?> baseType;
     private final String typeFieldName;
@@ -28,8 +33,14 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
 
     /**
      * Creates a new runtime type adapter using for {@code baseType} using {@code
-     * typeFieldName} as the type field name. Type field names are case sensitive.
+     * typeFieldName}* as the type field name. Type field names are case sensitive.
      * {@code maintainType} flag decide if the type will be stored in pojo or not.
+     *
+     * @param <T> the type parameter
+     * @param baseType the base type
+     * @param typeFieldName the type field name
+     * @param maintainType the maintain type
+     * @return the runtime type adapter factory
      */
     public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType, String typeFieldName, boolean maintainType) {
         return new RuntimeTypeAdapterFactory<T>(baseType, typeFieldName, maintainType);
@@ -37,7 +48,12 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
 
     /**
      * Creates a new runtime type adapter using for {@code baseType} using {@code
-     * typeFieldName} as the type field name. Type field names are case sensitive.
+     * typeFieldName}* as the type field name. Type field names are case sensitive.
+     *
+     * @param <T> the type parameter
+     * @param baseType the base type
+     * @param typeFieldName the type field name
+     * @return the runtime type adapter factory
      */
     public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType, String typeFieldName) {
         return new RuntimeTypeAdapterFactory<T>(baseType, typeFieldName, false);
@@ -46,6 +62,10 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
     /**
      * Creates a new runtime type adapter for {@code baseType} using {@code "type"} as
      * the type field name.
+     *
+     * @param <T> the type parameter
+     * @param baseType the base type
+     * @return the runtime type adapter factory
      */
     public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType) {
         return new RuntimeTypeAdapterFactory<T>(baseType, "type", false);
@@ -55,8 +75,10 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * Registers {@code type} identified by {@code label}. Labels are case
      * sensitive.
      *
-     * @throws IllegalArgumentException if either {@code type} or {@code label}
-     *                                  have already been registered on this type adapter.
+     * @param type the type
+     * @param label the label
+     * @return the runtime type adapter factory
+     * @throws IllegalArgumentException if either {@code type} or {@code label}                                  have already been registered on this type adapter.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type, String label) {
         if (type == null || label == null) {
@@ -72,10 +94,11 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
 
     /**
      * Registers {@code type} identified by its {@link Class#getSimpleName simple
-     * name}. Labels are case sensitive.
+     * name}*. Labels are case sensitive.
      *
-     * @throws IllegalArgumentException if either {@code type} or its simple name
-     *                                  have already been registered on this type adapter.
+     * @param type the type
+     * @return the runtime type adapter factory
+     * @throws IllegalArgumentException if either {@code type} or its simple name                                  have already been registered on this type adapter.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type) {
         return registerSubtype(type, type.getSimpleName());

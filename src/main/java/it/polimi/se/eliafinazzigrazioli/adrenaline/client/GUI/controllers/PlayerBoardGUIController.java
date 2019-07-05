@@ -32,6 +32,9 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
+/**
+ * The type Player board gui controller.
+ */
 public class PlayerBoardGUIController extends GUIController {
 
     @FXML
@@ -72,6 +75,13 @@ public class PlayerBoardGUIController extends GUIController {
 
     private AtomicReference<WeaponEffectClient> selectedWeaponEffect;
 
+    /**
+     * Instantiates a new Player board gui controller.
+     *
+     * @param view the view
+     * @param player the player
+     * @param isOpponent the is opponent
+     */
     public PlayerBoardGUIController(GUI view, String player, boolean isOpponent) {
         super(view);
         this.player = player;
@@ -80,18 +90,39 @@ public class PlayerBoardGUIController extends GUIController {
 
     }
 
+    /**
+     * Gets avatar.
+     *
+     * @return the avatar
+     */
     public Avatar getAvatar() {
         return avatar;
     }
 
+    /**
+     * Sets avatar.
+     *
+     * @param avatar the avatar
+     */
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
     }
 
+    /**
+     * Sets selected weapon effect.
+     *
+     * @param selectedWeaponEffect the selected weapon effect
+     */
     public void setSelectedWeaponEffect(AtomicReference<WeaponEffectClient> selectedWeaponEffect) {
         this.selectedWeaponEffect = selectedWeaponEffect;
     }
 
+    /**
+     * Sets card collected.
+     *
+     * @param cardCollected the card collected
+     * @throws IOException the io exception
+     */
     public void setCardCollected(PowerUpCardClient cardCollected) throws IOException {
         overlayHBox.setVisible(true);
         Node loadedCardSlot = loadFXML(GUI.FXML_PATH_POWER_UP, overlayHBox, this);
@@ -107,6 +138,12 @@ public class PlayerBoardGUIController extends GUIController {
         updatePowerUpCards();
     }
 
+    /**
+     * Sets card collected.
+     *
+     * @param cardCollected the card collected
+     * @throws IOException the io exception
+     */
     public void setCardCollected(WeaponCardClient cardCollected) throws IOException {
         overlayHBox.setVisible(true);
         Node loadedCardSlot = loadFXML(GUI.FXML_PATH_WEAPON, overlayHBox, this);
@@ -123,6 +160,12 @@ public class PlayerBoardGUIController extends GUIController {
     }
 
 
+    /**
+     * Sets card collected.
+     *
+     * @param cardCollected the card collected
+     * @throws IOException the io exception
+     */
     public void setCardCollected(AmmoCardClient cardCollected) throws IOException {
         overlayHBox.setVisible(true);
         //TODO should define a specific fxml?
@@ -138,6 +181,11 @@ public class PlayerBoardGUIController extends GUIController {
         delay.play();
     }
 
+    /**
+     * Add ammo to stack.
+     *
+     * @param ammo the ammo
+     */
     public void addAmmoToStack(Ammo ammo) {
         Platform.runLater(() -> {
             Image ammoIcon = new Image(view.getAmmoAsset(ammo.name()), 20, 20, true, true);
@@ -148,6 +196,9 @@ public class PlayerBoardGUIController extends GUIController {
         });
     }
 
+    /**
+     * Update ammo stack.
+     */
     public synchronized void updateAmmoStack() {
         List<Ammo> ammos;
         if (isOpponent)
@@ -169,6 +220,11 @@ public class PlayerBoardGUIController extends GUIController {
         });
     }
 
+    /**
+     * Update weapon cards.
+     *
+     * @throws IOException the io exception
+     */
     public void updateWeaponCards() throws IOException {
         if (!player.equals(view.getClient().getPlayerName())) {
             Platform.runLater(() -> weaponCardSlots.getChildren().clear());
@@ -190,6 +246,11 @@ public class PlayerBoardGUIController extends GUIController {
         }
     }
 
+    /**
+     * Update power up cards.
+     *
+     * @throws IOException the io exception
+     */
     public void updatePowerUpCards() throws IOException {
         if (!player.equals(view.getClient().getPlayerName())) {
             Platform.runLater(() -> powerUpCardSlots.getChildren().clear());
@@ -205,6 +266,13 @@ public class PlayerBoardGUIController extends GUIController {
         }
     }
 
+    /**
+     * Gets payment transition.
+     *
+     * @param powerUpCards the power up cards
+     * @param ammos the ammos
+     * @return the payment transition
+     */
     public ParallelTransition getPaymentTransition(List<PowerUpCardClient> powerUpCards, List<Ammo> ammos) {
         List<Node> payedAmmoNodes = new ArrayList<>();
         for (Ammo ammo : ammos) {
@@ -266,11 +334,21 @@ public class PlayerBoardGUIController extends GUIController {
         detailsGridPane.setVisible(!detailsGridPane.visibleProperty().get());
     }
 
+    /**
+     * Highlight.
+     *
+     * @param setHighlight the set highlight
+     */
     public void highlight(boolean setHighlight) {
         if (setHighlight) playerBoardGridPane.getStyleClass().add(GUI.STYLE_CLASS_HIGHLIGHT);
         else playerBoardGridPane.getStyleClass().remove(GUI.STYLE_CLASS_HIGHLIGHT);
     }
 
+    /**
+     * Update damages.
+     *
+     * @throws IOException the io exception
+     */
     public void updateDamages() throws IOException {
         List<DamageMark> damages;
         if (isOpponent) {
@@ -286,6 +364,11 @@ public class PlayerBoardGUIController extends GUIController {
         }
     }
 
+    /**
+     * Update marks.
+     *
+     * @throws IOException the io exception
+     */
     public void updateMarks() throws IOException {
         Platform.runLater(() -> marksHBox.getChildren().clear());
         List<DamageMark> marks;
@@ -301,6 +384,12 @@ public class PlayerBoardGUIController extends GUIController {
         }
     }
 
+    /**
+     * Show details.
+     *
+     * @param weaponCard the weapon card
+     * @throws IOException the io exception
+     */
     public void showDetails(WeaponCardClient weaponCard) throws IOException {
         if (!isOpponent && weaponCard != null) {
             Platform.runLater(() -> {
@@ -322,6 +411,12 @@ public class PlayerBoardGUIController extends GUIController {
         }
     }
 
+    /**
+     * Show details.
+     *
+     * @param powerUpCard the power up card
+     * @throws IOException the io exception
+     */
     public void showDetails(PowerUpCardClient powerUpCard) throws IOException {
         if (!isOpponent && powerUpCard != null) {
             Platform.runLater(() -> {
@@ -340,12 +435,22 @@ public class PlayerBoardGUIController extends GUIController {
         }
     }
 
+    /**
+     * Hide details.
+     */
     public void hideDetails() {
         if (!isOpponent) {
             detailsGridPane.setVisible(false);
         }
     }
 
+    /**
+     * Sets selectable effects.
+     *
+     * @param weaponCard the weapon card
+     * @param callableEffects the callable effects
+     * @throws IOException the io exception
+     */
     public void setSelectableEffects(WeaponCardClient weaponCard, List<WeaponEffectClient> callableEffects) throws IOException {
         showDetails(weaponCard);
         Platform.runLater(() -> {
@@ -366,6 +471,9 @@ public class PlayerBoardGUIController extends GUIController {
         });
     }
 
+    /**
+     * Disable effects.
+     */
     protected void disableEffects() {
         Platform.runLater(() -> {
             detailsTextVBox.getChildren().forEach(label -> {
@@ -375,6 +483,11 @@ public class PlayerBoardGUIController extends GUIController {
         });
     }
 
+    /**
+     * Sets death.
+     *
+     * @param dead the dead
+     */
     public void setDeath(boolean dead) {
         if (dead) {
             deathOverlayHBox.setVisible(true);
@@ -384,6 +497,9 @@ public class PlayerBoardGUIController extends GUIController {
         }
     }
 
+    /**
+     * Update skulls.
+     */
     public void updateSkulls() {
         int skulls;
         if (isOpponent)
@@ -402,9 +518,25 @@ public class PlayerBoardGUIController extends GUIController {
         });
     }
 
+    /**
+     * Update points.
+     */
     public void updatePoints() {
         int points = view.getLocalModel().getPoints().get(player);
         Platform.runLater(() -> pointsLabel.setText("Points: " + points));
+    }
+
+
+    /**
+     * Sets final frenzy.
+     *
+     * @throws IOException the io exception
+     */
+    public void setFinalFrenzy() throws IOException {
+        view.applyBackground(playerBoardGridPane, view.getPlayerBoardFFAsset(avatar));
+        updateDamages();
+        updateSkulls();
+        updateMarks();
     }
 
     @Override

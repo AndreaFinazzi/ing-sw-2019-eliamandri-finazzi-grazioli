@@ -8,10 +8,13 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractMod
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerShotEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.SkullRemovalEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request.SpawnSelectionRequestEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.AvatarNotAvailableException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerReconnectionException;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.AmmoCardsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.AmmoCardsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
@@ -22,6 +25,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The type Match.
+ */
 public class Match implements Observable {
 
     // Players list extra-methods implementations
@@ -79,6 +85,9 @@ public class Match implements Observable {
 
     };
 
+    /**
+     * The Logger.
+     */
     static final Logger LOGGER = Logger.getLogger(Match.class.getName());
 
     private int matchID;
@@ -87,6 +96,9 @@ public class Match implements Observable {
 
     private GameBoard gameBoard;
 
+    /**
+     * The Kill track.
+     */
     KillTrack killTrack;
     private MatchPhase phase;
     private Player currentPlayer;
@@ -99,6 +111,9 @@ public class Match implements Observable {
 
     private int turn = 0;
 
+    /**
+     * Instantiates a new Match.
+     */
     public Match() {
         phase = MatchPhase.INITIALIZATION;
         killTrack = new KillTrack(Rules.GAME_MAX_KILL_TRACK_SKULLS);
@@ -111,9 +126,14 @@ public class Match implements Observable {
         ammoCardsDeck = new AmmoCardsDeck();
     }
 
+    /**
+     * Skulls assignment list.
+     *
+     * @return the list
+     */
     public List<AbstractModelEvent> skullsAssignment() {
         List<AbstractModelEvent> events = new ArrayList<>();
-        for (Player deadPlayer: getDeadPlayers()) {
+        for (Player deadPlayer : getDeadPlayers()) {
             PlayerBoard deadPlayerBoard = deadPlayer.getPlayerBoard();
             boolean trackFull = killTrack.isFull();
             if (!trackFull)
@@ -134,13 +154,23 @@ public class Match implements Observable {
         return events;
     }
 
+    /**
+     * Gets last turn player.
+     *
+     * @return the last turn player
+     */
     public Player getLastTurnPlayer() {
         return lastTurnPlayer;
     }
 
+    /**
+     * Final frenzy player board switch list.
+     *
+     * @return the list
+     */
     public List<Player> finalFrenzyPlayerBoardSwitch() {
         List<Player> playersToSwitch = new ArrayList<>();
-        for (Player player: players) {
+        for (Player player : players) {
             if (!player.hasDamages()) {
                 player.getPlayerBoard().switchToFinalFrenzy();
                 playersToSwitch.add(player);
@@ -155,7 +185,7 @@ public class Match implements Observable {
     public Map<String, Integer> finalPointsCalculation() {
         List<DamageMark> markOrder = new ArrayList<>();
         Map<DamageMark, Integer> marksCount = new HashMap<>();
-        for (KillTrack.Slot slot: killTrack.getTrack()) {
+        for (KillTrack.Slot slot : killTrack.getTrack()) {
             if (!slot.isSkull()) {
                 DamageMark damageMark = slot.getDamageMark();
                 if (!markOrder.contains(damageMark))
@@ -168,7 +198,7 @@ public class Match implements Observable {
                     marksCount.put(damageMark, marksCount.get(damageMark) + 1);
             }
         }
-        for (DamageMark damageMark: killTrack.getMarksAfterLastSkull()) {
+        for (DamageMark damageMark : killTrack.getMarksAfterLastSkull()) {
             if (!markOrder.contains(damageMark))
                 markOrder.add(damageMark);
             if (!marksCount.keySet().contains(damageMark))
@@ -182,7 +212,7 @@ public class Match implements Observable {
         while (!markOrder.isEmpty()) {
             Player bestPlayer = null;
             int max = 0;
-            for (DamageMark damageMark: markOrder) {
+            for (DamageMark damageMark : markOrder) {
                 if (marksCount.get(damageMark) > max) {
                     bestPlayer = getPlayerByMark(damageMark);
                     max = marksCount.get(damageMark);
@@ -200,7 +230,7 @@ public class Match implements Observable {
     public String getWinner() {
         int max = 0;
         Player winner = null;
-        for (Player player: players) {
+        for (Player player : players) {
             if (player.getPoints() > max) {
                 winner = player;
                 max = player.getPoints();
@@ -209,53 +239,111 @@ public class Match implements Observable {
         return winner.getPlayerNickname();
     }
 
+    /**
+     * Update points.
+     *
+     * @param playerPoints the player points
+     */
     public void updatePoints(Map<String, Integer> playerPoints) {
-        for (Map.Entry<String, Integer> points: playerPoints.entrySet())
+        for (Map.Entry<String, Integer> points : playerPoints.entrySet())
             players.get(points.getKey()).addPoints(points.getValue());
     }
 
+    /**
+     * Gets match id.
+     *
+     * @return the match id
+     */
     public int getMatchID() {
         return matchID;
     }
 
+    /**
+     * Sets match id.
+     *
+     * @param matchID the match id
+     */
     public void setMatchID(int matchID) {
         this.matchID = matchID;
     }
 
+    /**
+     * Gets current player.
+     *
+     * @return the current player
+     */
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
+    /**
+     * Gets power ups deck.
+     *
+     * @return the power ups deck
+     */
     public PowerUpsDeck getPowerUpsDeck() {
         return powerUpsDeck;
     }
 
+    /**
+     * Gets weapons deck.
+     *
+     * @return the weapons deck
+     */
     public WeaponsDeck getWeaponsDeck() {
         return weaponsDeck;
     }
 
+    /**
+     * Gets ammo cards deck.
+     *
+     * @return the ammo cards deck
+     */
     public AmmoCardsDeck getAmmoCardsDeck() {
         return ammoCardsDeck;
     }
 
+    /**
+     * Next current player.
+     */
     public void nextCurrentPlayer() {
         int index = players.indexOf(currentPlayer);
         currentPlayer = players.get((index + 1) % players.size());
     }
 
+    /**
+     * Gets next player.
+     *
+     * @return the next player
+     */
     public Player getNextPlayer() {
         int index = players.indexOf(currentPlayer);
         return players.get((index + 1) % players.size());
     }
 
+    /**
+     * Gets first player.
+     *
+     * @return the first player
+     */
     public Player getFirstPlayer() {
         return firstPlayer;
     }
 
+    /**
+     * Gets players.
+     *
+     * @return the players
+     */
     public Player.AbstractPlayerList getPlayers() {
         return players;
     }
 
+    /**
+     * Gets players nickname.
+     *
+     * @return the players nickname
+     */
     public List<String> getPlayersNickname() {
         ArrayList<String> playersNickname = new ArrayList<>();
         for (Player player : players) {
@@ -264,10 +352,23 @@ public class Match implements Observable {
         return playersNickname;
     }
 
+    /**
+     * Gets player.
+     *
+     * @param nickname the nickname
+     * @return the player
+     */
     public Player getPlayer(String nickname) {
         return players.get(nickname);
     }
 
+    /**
+     * Add player.
+     *
+     * @param player the player
+     * @throws MaxPlayerException            the max player exception
+     * @throws PlayerAlreadyPresentException the player already present exception
+     */
     public void addPlayer(Player player) throws MaxPlayerException, PlayerAlreadyPresentException {
         if (players.size() >= Rules.GAME_MAX_PLAYERS)
             throw new MaxPlayerException();
@@ -280,7 +381,17 @@ public class Match implements Observable {
         }
     }
 
-    //TODO should be removed
+    /**
+     * Add player player.
+     *
+     * @param nickname the nickname
+     * @param avatar the avatar
+     * @return the player
+     * @throws MaxPlayerException            the max player exception
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws AvatarNotAvailableException   the avatar not available exception
+     */
+//TODO should be removed
     public synchronized Player addPlayer(String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException, AvatarNotAvailableException {
         Player tempPlayer = players.get(nickname);
 
@@ -307,6 +418,17 @@ public class Match implements Observable {
         return tempPlayer;
     }
 
+    /**
+     * Add player player.
+     *
+     * @param clientID the client id
+     * @param nickname the nickname
+     * @param avatar the avatar
+     * @return the player
+     * @throws MaxPlayerException            the max player exception
+     * @throws PlayerAlreadyPresentException the player already present exception
+     * @throws PlayerReconnectionException   the player reconnection exception
+     */
     public synchronized Player addPlayer(int clientID, String nickname, Avatar avatar) throws MaxPlayerException, PlayerAlreadyPresentException, PlayerReconnectionException {
         Player tempPlayer = players.get(nickname);
 
@@ -335,6 +457,11 @@ public class Match implements Observable {
         return tempPlayer;
     }
 
+    /**
+     * Remove player.
+     *
+     * @param nickname the nickname
+     */
     public void removePlayer(String nickname) {
         Player tempPlayer = players.get(nickname);
         if (tempPlayer != null) {
@@ -342,6 +469,11 @@ public class Match implements Observable {
         }
     }
 
+    /**
+     * Gets game board.
+     *
+     * @return the game board
+     */
     /*
      * GameBoard-related methods
      */
@@ -349,21 +481,37 @@ public class Match implements Observable {
         return gameBoard;
     }
 
+    /**
+     * Sets game board.
+     *
+     * @param mapType the map type
+     */
     public void setGameBoard(MapType mapType) {
         gameBoard = new GameBoard(mapType);
     }
 
+    /**
+     * Gets dead players.
+     *
+     * @return the dead players
+     */
     public List<Player> getDeadPlayers() {
         List<Player> deadPlayers = new ArrayList<>();
-        for (Player player: players) {
+        for (Player player : players) {
             if (player.isDead())
                 deadPlayers.add(player);
         }
         return deadPlayers;
     }
 
+    /**
+     * Gets player by mark.
+     *
+     * @param damageMark the damage mark
+     * @return the player by mark
+     */
     public Player getPlayerByMark(DamageMark damageMark) {
-        for (Player player: players){
+        for (Player player : players) {
             if (player.getDamageMarkDelivered() == damageMark)
                 return player;
         }
@@ -375,27 +523,53 @@ public class Match implements Observable {
      * Match flow related methods
      */
 
+    /**
+     * Gets phase.
+     *
+     * @return the phase
+     */
     public MatchPhase getPhase() {
         return phase;
     }
 
+    /**
+     * Sets phase.
+     *
+     * @param phase the phase
+     */
     public void setPhase(MatchPhase phase) {
         this.phase = phase;
     }
 
+    /**
+     * Is ended boolean.
+     *
+     * @return the boolean
+     */
     public boolean isEnded() {
         return phase == MatchPhase.ENDED;
     }
 
+    /**
+     * Gets turn.
+     *
+     * @return the turn
+     */
     public int getTurn() {
         return turn;
     }
 
+    /**
+     * Next turn.
+     */
     public void nextTurn() {
         nextCurrentPlayer();
         turn++;
     }
 
+    /**
+     * Increase turn.
+     */
     public void increaseTurn() {
         if (currentPlayer == firstPlayer)
             turn++;
@@ -405,6 +579,8 @@ public class Match implements Observable {
     /**
      * This method initializes the match and notifies the BeginMatchEvent which contains all the information to
      * instantiate the client copy of the match.
+     *
+     * @param mapType the map type
      */
     public void beginMatch(MapType mapType) {
         //todo preparation of the setup of the model, (weapons, power ups, deadPath....)
@@ -412,6 +588,11 @@ public class Match implements Observable {
         gameBoard = new GameBoard(mapType);
     }
 
+    /**
+     * Gets avatar map.
+     *
+     * @return the avatar map
+     */
     public Map<String, Avatar> getAvatarMap() {
         Map<String, Avatar> playerToAvatarMap = new HashMap<>();
         for (Player player : players) {
@@ -421,11 +602,19 @@ public class Match implements Observable {
         return playerToAvatarMap;
     }
 
-    //TODO who should create the event?
+    /**
+     * Begin turn.
+     */
+//TODO who should create the event?
     public void beginTurn() {
         notifyObservers(new SpawnSelectionRequestEvent(currentPlayer, Arrays.asList(powerUpsDeck.drawCard(), powerUpsDeck.drawCard()), true));
     }
 
+    /**
+     * Gets available avatars.
+     *
+     * @return the available avatars
+     */
     public ArrayList<Avatar> getAvailableAvatars() {
         return availableAvatars;
     }
@@ -456,12 +645,21 @@ public class Match implements Observable {
         }
     }
 
+    /**
+     * Generate client model local model.
+     *
+     * @param player the player
+     * @return the local model
+     */
     public LocalModel generateClientModel(Player player) {
         LocalModel clientModel = new LocalModel();
 
         clientModel.setPlayerName(player.getPlayerNickname());
 
         clientModel.setPlayerToAvatarMap(getAvatarMap());
+
+        //kill track
+        clientModel.setKillTrack(killTrack);
 
         // cards on map setup
         clientModel.setWeaponCardsSetup(gameBoard.getWeaponCardsOnMap());
@@ -488,12 +686,12 @@ public class Match implements Observable {
         clientModel.setDeathScores(player.getPlayerBoard().getDeathScores());
 
         clientModel.setDeath(player.getPlayerBoard().isDeath());
-        clientModel.setOverkill(player.getPlayerBoard().isOverkill());
 
         clientModel.setMapType(gameBoard.getMapType());
 
         Map<String, PlayerClient> opponentsInfo = new HashMap<>();
         Map<String, Coordinates> playerPositions = new HashMap<>();
+        Map<String, Integer> points = new HashMap<>();
         players.forEach(serverPlayer -> {
             if (!serverPlayer.getPlayerNickname().equals(player.getPlayerNickname())) {
                 PlayerClient opponent = new PlayerClient(serverPlayer);
@@ -503,6 +701,8 @@ public class Match implements Observable {
             BoardSquare playerPosition = gameBoard.getPlayerPosition(serverPlayer);
             if (playerPosition != null)
                 playerPositions.put(serverPlayer.getPlayerNickname(), playerPosition.getCoordinates());
+
+            points.put(serverPlayer.getPlayerNickname(), serverPlayer.getPoints());
         });
         clientModel.setServerPlayerPositions(playerPositions);
         clientModel.setOpponentsInfo(opponentsInfo);

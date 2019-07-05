@@ -4,10 +4,23 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.MoveDirection;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.CardinalDirection;
 
+/**
+ * The type Direction selected event.
+ */
 public class DirectionSelectedEvent extends AbstractViewEvent {
 
+    /**
+     * The Direction.
+     */
     CardinalDirection direction;
 
+    /**
+     * Instantiates a new Direction selected event.
+     *
+     * @param clientID the client id
+     * @param player the player
+     * @param direction the direction
+     */
     public DirectionSelectedEvent(int clientID, String player, MoveDirection direction) {
         super(clientID, player);
         switch (direction) {
@@ -31,6 +44,11 @@ public class DirectionSelectedEvent extends AbstractViewEvent {
         listener.handleEvent(this);
     }
 
+    /**
+     * Gets direction.
+     *
+     * @return the direction
+     */
     public CardinalDirection getDirection() {
         return direction;
     }

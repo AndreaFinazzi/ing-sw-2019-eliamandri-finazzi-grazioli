@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The type Card controller.
+ */
 // TODO implement controller
 public class CardController implements ViewEventsListenerInterface {
 
@@ -34,6 +37,12 @@ public class CardController implements ViewEventsListenerInterface {
     private Player playerForNewton;
 
 
+    /**
+     * Instantiates a new Card controller.
+     *
+     * @param eventController the event controller
+     * @param match the match
+     */
     public CardController(EventController eventController, Match match) {
         this.match = match;
         currentPlayingWeapon = null;
@@ -113,8 +122,7 @@ public class CardController implements ViewEventsListenerInterface {
             currentExecutingEffect.addSelectedBoardSquares(selectedBoardSquares);
 
             effectExecutionLoop(match.getCurrentPlayer());
-        }
-        else {
+        } else {
             if (powerUpUsed.getType().equals("Teleporter")) {
                 match.getCurrentPlayer().removePowerUp(powerUpUsed);
                 match.getGameBoard().movePlayer(match.getCurrentPlayer(), match.getGameBoard().getBoardSquareByCoordinates(event.getSquares().get(0)));
@@ -148,7 +156,6 @@ public class CardController implements ViewEventsListenerInterface {
             } else {
                 match.notifyObservers(new ActionRequestEvent(
                         match.getCurrentPlayer(),
-                        Rules.MAX_ACTIONS_AVAILABLE,
                         match.getCurrentPlayer().getPlayerBoard().simpleMovementMaxMoves(),
                         match.getCurrentPlayer().getPlayerBoard().preCollectionMaxMoves(),
                         match.getCurrentPlayer().getPlayerBoard().preShootingMaxMoves()));
@@ -255,8 +262,7 @@ public class CardController implements ViewEventsListenerInterface {
                 events.add(new SelectablePlayersEvent(currentPLayer, players, 1));
             }
 
-        }
-        else {
+        } else {
             if (match.getPhase() == MatchPhase.FINAL_FRENZY) {
                 if (match.getCurrentPlayer().isFinalFrenzyDoubleActionEnabled()) {
                     events.add(new FinalFrenzyActionRequestEvent(
@@ -278,7 +284,6 @@ public class CardController implements ViewEventsListenerInterface {
             } else {
                 events.add(new ActionRequestEvent(
                         match.getCurrentPlayer(),
-                        Rules.MAX_ACTIONS_AVAILABLE,
                         currentPLayer.getPlayerBoard().simpleMovementMaxMoves(),
                         currentPLayer.getPlayerBoard().preCollectionMaxMoves(),
                         currentPLayer.getPlayerBoard().preShootingMaxMoves()));

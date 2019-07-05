@@ -7,12 +7,26 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Spawn board square client.
+ */
 public class SpawnBoardSquareClient extends BoardSquareClient {
+    private static final long serialVersionUID = 9007L;
 
 
     private List<WeaponCardClient> weaponCards;
     private boolean ammoCard;
 
+    /**
+     * Instantiates a new Spawn board square client.
+     *
+     * @param room the room
+     * @param coordinates the coordinates
+     * @param north the north
+     * @param south the south
+     * @param east the east
+     * @param west the west
+     */
     public SpawnBoardSquareClient(Room room, Coordinates coordinates, InterSquareLink north,
                                   InterSquareLink south, InterSquareLink east, InterSquareLink west) {
 
@@ -20,6 +34,11 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         weaponCards = new ArrayList<>();
     }
 
+    /**
+     * Add weapon.
+     *
+     * @param weaponCard the weapon card
+     */
     public void addWeapon(WeaponCardClient weaponCard) {
         List<Integer> weaponPositions = new ArrayList<>();
         int index = 0;
@@ -34,6 +53,12 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         }
     }
 
+    /**
+     * Remove weapon card client.
+     *
+     * @param weaponCard the weapon card
+     * @return the weapon card client
+     */
     public WeaponCardClient remove(String weaponCard) {
         WeaponCardClient toRemove = null;
         for (WeaponCardClient weaponCardClient: weaponCards)
@@ -54,6 +79,12 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         return weaponCards;
     }
 
+    /**
+     * Gets weapon cards by slot position.
+     *
+     * @param slotPosition the slot position
+     * @return the weapon cards by slot position
+     */
     public WeaponCardClient getWeaponCardsBySlotPosition(int slotPosition) {
         for (WeaponCardClient weaponCard : weaponCards) {
             if (weaponCard.getSlotPosition() == slotPosition) return weaponCard;
@@ -67,15 +98,24 @@ public class SpawnBoardSquareClient extends BoardSquareClient {
         if(!weaponCards.contains(weapon)){
             weaponCards.add(weapon);
             return true;
-        }
-        else
+        } else
             return false;
     }
 
+    /**
+     * Is ammo card boolean.
+     *
+     * @return the boolean
+     */
     public boolean isAmmoCard() {
         return ammoCard;
     }
 
+    /**
+     * Sets ammo card.
+     *
+     * @param ammoCard the ammo card
+     */
     public void setAmmoCard(boolean ammoCard) {
         this.ammoCard = ammoCard;
     }

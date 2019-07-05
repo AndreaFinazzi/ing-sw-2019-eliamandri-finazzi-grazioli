@@ -19,9 +19,13 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 
+/**
+ * The type Weapon card test.
+ */
 public class WeaponCardTest {
 
     private WeaponsDeck weaponsDeck;
@@ -34,6 +38,11 @@ public class WeaponCardTest {
     private Player first;
 
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         weaponsDeck = new WeaponsDeck();
@@ -62,6 +71,9 @@ public class WeaponCardTest {
         match.getGameBoard().setPlayerPositions(third, boardSquare);
     }
 
+    /**
+     * Shoot test.
+     */
     @Test
     public void shootTest() {
         try {
@@ -77,7 +89,7 @@ public class WeaponCardTest {
             weaponCard.setActiveEffect(weaponCard.getCallableEffects().get(0));
             WeaponToUseSelectedEvent event = new WeaponToUseSelectedEvent(0, "tony", weaponCard.getWeaponName(), new ArrayList<>());
             EffectSelectedEvent selectedEvent = new EffectSelectedEvent(0, "tony", weaponCard.getCallableEffects().get(0), new ArrayList<>());
-                try {
+            try {
                 cardController.handleEvent(event);
                 cardController.handleEvent(selectedEvent);
 
@@ -91,6 +103,9 @@ public class WeaponCardTest {
         }
     }
 
+    /**
+     * Gets description test.
+     */
     @Test
     public void getDescriptionTest() {
         try {

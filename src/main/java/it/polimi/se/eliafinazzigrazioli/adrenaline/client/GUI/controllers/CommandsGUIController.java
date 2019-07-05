@@ -31,11 +31,16 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
+/**
+ * The type Commands gui controller.
+ */
 public class CommandsGUIController extends GUIController {
 
     private List<PowerUpCardClient> myPowerUps;
 
     private AtomicReference<PowerUpCardClient> selectedPowerUp;
+
+    private AtomicReference<Ammo> selectedAmmo;
 
     private AtomicReference<WeaponCardClient> selectedWeapon;
 
@@ -81,13 +86,24 @@ public class CommandsGUIController extends GUIController {
     private Button arrowSTOP;
     private Map<MoveDirection, Button> moveDirectionButtonEnumMap = new EnumMap<>(MoveDirection.class);
 
+    /**
+     * Instantiates a new Commands gui controller.
+     *
+     * @param view the view
+     */
     public CommandsGUIController(GUI view) {
         super(view);
     }
 
+    /**
+     * Sets spawn power up cards.
+     *
+     * @param powerUpCards the power up cards
+     * @throws IOException the io exception
+     */
     public void setSpawnPowerUpCards(List<PowerUpCardClient> powerUpCards) throws IOException {
         for (PowerUpCardClient powerUpCard : powerUpCards) {
-            Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, this);
+            Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, null);
             Platform.runLater(() -> {
                 button.setDisable(false);
                 button.getProperties().put(GUI.PROPERTIES_KEY_CARD_ID, powerUpCard.getId());
@@ -107,10 +123,47 @@ public class CommandsGUIController extends GUIController {
         spawnPowerUpSlots.setVisible(true);
     }
 
+    /**
+     * Sets selectable ammo.
+     *
+     * @param selectableAmmo the selectable ammo
+     * @throws IOException the io exception
+     */
+    public void setSelectableAmmo(List<Ammo> selectableAmmo) throws IOException {
+        for (Ammo ammo : selectableAmmo) {
+            Button button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, spawnPowerUpSlots, null);
+            Platform.runLater(() -> {
+                button.setDisable(false);
+                button.getProperties().put(GUI.PROPERTIES_KEY_AMMO, ammo);
+                view.applyBackground(button, view.getAmmoAsset(ammo.name()));
+                button.setOnAction(event -> {
+                    selectedAmmo.set((Ammo) button.getProperties().get(GUI.PROPERTIES_KEY_AMMO));
+                    spawnPowerUpSlots.getChildren().clear();
+                    spawnPowerUpSlots.setVisible(false);
+                    myCardsGridPane.setVisible(true);
+                    semaphore.release();
+                });
+            });
+
+        }
+
+        myCardsGridPane.setVisible(false);
+        spawnPowerUpSlots.setVisible(true);
+    }
+
+
+    /**
+     * Gets player board gui controller.
+     *
+     * @return the player board gui controller
+     */
     public PlayerBoardGUIController getPlayerBoardGUIController() {
         return playerBoardGUIController;
     }
 
+    /**
+     * Update power up cards.
+     */
     public void updatePowerUpCards() {
         resetPowerUpSlots();
 
@@ -123,6 +176,9 @@ public class CommandsGUIController extends GUIController {
         }
     }
 
+    /**
+     * Update weapon cards.
+     */
     public void updateWeaponCards() {
         resetWeaponSlots();
 
@@ -152,22 +208,56 @@ public class CommandsGUIController extends GUIController {
         }
     }
 
+    /**
+     * Sets selected weapon.
+     *
+     * @param selectedWeapon the selected weapon
+     */
     public void setSelectedWeapon(AtomicReference<WeaponCardClient> selectedWeapon) {
         this.selectedWeapon = selectedWeapon;
     }
 
+    /**
+     * Sets selected power up.
+     *
+     * @param selectedPowerUp the selected power up
+     */
     public void setSelectedPowerUp(AtomicReference<PowerUpCardClient> selectedPowerUp) {
         this.selectedPowerUp = selectedPowerUp;
     }
 
+    /**
+     * Sets selected move.
+     *
+     * @param selectedMove the selected move
+     */
     public void setSelectedMove(AtomicReference<MoveDirection> selectedMove) {
         this.selectedMove = selectedMove;
     }
 
+    /**
+     * Sets selected ammo.
+     *
+     * @param selectedAmmo the selected ammo
+     */
+    public void setSelectedAmmo(AtomicReference<Ammo> selectedAmmo) {
+        this.selectedAmmo = selectedAmmo;
+    }
+
+    /**
+     * Sets chosen action.
+     *
+     * @param chosenAction the chosen action
+     */
     public void setChosenAction(AtomicReference<PlayerAction> chosenAction) {
         this.chosenAction = chosenAction;
     }
 
+    /**
+     * Sets selectable power up.
+     *
+     * @param cards the cards
+     */
     public void setSelectablePowerUp(List<PowerUpCardClient> cards) {
         for (Node cardNode : myPowerUpCardSlots.getChildren()) {
             if (cardNode.hasProperties() && cards.contains(view.getLocalModel().getPowerUpCardById((String) cardNode.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)))) {
@@ -181,6 +271,11 @@ public class CommandsGUIController extends GUIController {
         proceedButton.setDisable(false);
     }
 
+    /**
+     * Sets selectable weapon.
+     *
+     * @param selectableWeapons the selectable weapons
+     */
     public void setSelectableWeapon(List<WeaponCardClient> selectableWeapons) {
         for (Node cardNode : myWeaponCardSlots.getChildren()) {
             if (cardNode.hasProperties() && selectableWeapons.contains(view.getLocalModel().getWeaponByIdInHand((String) cardNode.getProperties().get(GUI.PROPERTIES_KEY_CARD_ID)))) {
@@ -194,6 +289,11 @@ public class CommandsGUIController extends GUIController {
         proceedButton.setDisable(false);
     }
 
+    /**
+     * Sets available moves.
+     *
+     * @param availableMoves the available moves
+     */
     public void setAvailableMoves(List<MoveDirection> availableMoves) {
         arrowsGridPane.setDisable(false);
         proceedButton.setDisable(false);
@@ -207,10 +307,16 @@ public class CommandsGUIController extends GUIController {
         arrowSTOP.setDisable(false);
     }
 
+    /**
+     * Disable arrows.
+     */
     public void disableArrows() {
         moveDirectionButtonEnumMap.values().forEach(arrow -> arrow.setDisable(true));
     }
 
+    /**
+     * Disable cards.
+     */
     public void disableCards() {
         myPowerUpCardSlots.getChildren().forEach(card -> {
             card.setDisable(true);
@@ -225,6 +331,12 @@ public class CommandsGUIController extends GUIController {
         proceedButton.setDisable(true);
     }
 
+    /**
+     * Generate card node node.
+     *
+     * @param powerUpCard the power up card
+     * @return the node
+     */
     public Node generateCardNode(PowerUpCardClient powerUpCard) {
         Button button = null;
         try {
@@ -253,6 +365,12 @@ public class CommandsGUIController extends GUIController {
         return button;
     }
 
+    /**
+     * Generate card node node.
+     *
+     * @param weaponCardClient the weapon card client
+     * @return the node
+     */
     public Node generateCardNode(WeaponCardClient weaponCardClient) {
         Button button = null;
         try {
@@ -281,40 +399,69 @@ public class CommandsGUIController extends GUIController {
         return button;
     }
 
+    /**
+     * My power up selected.
+     *
+     * @param actionEvent the action event
+     */
     public void myPowerUpSelected(ActionEvent actionEvent) {
         selectedPowerUp.set(myPowerUps.get(((Button) actionEvent.getSource()).getParent().getChildrenUnmodifiable().indexOf(actionEvent.getSource())));
         semaphore.release();
     }
 
+    /**
+     * Action selected.
+     *
+     * @param actionEvent the action event
+     */
     public void actionSelected(ActionEvent actionEvent) {
         selectedPowerUp.set(myPowerUps.get(((Button) actionEvent.getSource()).getParent().getChildrenUnmodifiable().indexOf(actionEvent.getSource())));
         semaphore.release();
     }
 
 
+    /**
+     * Sets locked commands.
+     */
     public void setLockedCommands() {
         actionsFlowPane.setVisible(true);
         actionsFlowPane.setDisable(true);
         arrowsGridPane.setVisible(false);
     }
 
+    /**
+     * Sets chose action.
+     */
     public void setChoseAction() {
         actionsFlowPane.setVisible(true);
         actionsFlowPane.setDisable(false);
         arrowsGridPane.setVisible(false);
     }
 
+    /**
+     * Sets get move.
+     */
     public void setGetMove() {
         arrowsGridPane.setVisible(true);
         actionsFlowPane.setVisible(false);
     }
 
+    /**
+     * Load my player board.
+     *
+     * @throws IOException the io exception
+     */
     public void loadMyPlayerBoard() throws IOException {
         playerBoardGUIController = new PlayerBoardGUIController(view, view.getClient().getPlayerName(), false);
         loadFXML(GUI.FXML_PATH_PLAYER_BOARD, myPlayerBoardAnchorPane, playerBoardGUIController);
 
     }
 
+    /**
+     * Show message.
+     *
+     * @param message the message
+     */
     public void showMessage(Object message) {
         Platform.runLater(() -> {
 
@@ -324,14 +471,29 @@ public class CommandsGUIController extends GUIController {
     }
 
 
+    /**
+     * Show ammo collected.
+     *
+     * @param ammo the ammo
+     * @param actuallyCollected the actually collected
+     */
     public void showAmmoCollected(Ammo ammo, boolean actuallyCollected) {
         playerBoardGUIController.updateAmmoStack();
     }
 
+    /**
+     * Update my ammo.
+     */
     public void updateMyAmmo() {
         playerBoardGUIController.updateAmmoStack();
     }
 
+    /**
+     * Show payment update.
+     *
+     * @param powerUpCards the power up cards
+     * @param ammos the ammos
+     */
     public void showPaymentUpdate(List<PowerUpCardClient> powerUpCards, List<Ammo> ammos) {
         // get ammos transition from playerBoard
         ParallelTransition paymentTransition = playerBoardGUIController.getPaymentTransition(powerUpCards, ammos);
@@ -349,15 +511,37 @@ public class CommandsGUIController extends GUIController {
         Platform.runLater(paymentTransition::play);
     }
 
+    /**
+     * Show damage received.
+     *
+     * @param damages the damages
+     * @param marks the marks
+     * @throws IOException the io exception
+     */
     public void showDamageReceived(List<DamageMark> damages, List<DamageMark> marks) throws IOException {
         playerBoardGUIController.updateDamages();
         playerBoardGUIController.updateMarks();
     }
 
+    /**
+     * Show details.
+     *
+     * @param weaponCard the weapon card
+     * @throws IOException the io exception
+     */
     public void showDetails(WeaponCardClient weaponCard) throws IOException {
         playerBoardGUIController.showDetails(weaponCard);
     }
 
+    /**
+     * Sets selectable effects.
+     *
+     * @param semaphore the semaphore
+     * @param selectedEffect the selected effect
+     * @param weapon the weapon
+     * @param callableEffects the callable effects
+     * @throws IOException the io exception
+     */
     public void setSelectableEffects(Semaphore semaphore, AtomicReference<WeaponEffectClient> selectedEffect, WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) throws IOException {
         proceedButton.setDisable(false);
 
@@ -367,12 +551,20 @@ public class CommandsGUIController extends GUIController {
         playerBoardGUIController.setSelectableEffects(weapon, callableEffects);
     }
 
+    /**
+     * Sets disconnected.
+     */
     public void setDisconnected() {
         rootGridPane.setDisable(true);
         rootGridPane.getStyleClass().add(GUI.STYLE_CLASS_DISABLE);
     }
 
 
+    /**
+     * Sets reconnected.
+     *
+     * @throws IOException the io exception
+     */
     public void setReconnected() throws IOException {
         rootGridPane.setDisable(false);
         rootGridPane.getStyleClass().remove(GUI.STYLE_CLASS_DISABLE);
@@ -469,15 +661,33 @@ public class CommandsGUIController extends GUIController {
         }
     }
 
+    /**
+     * Show sudden death.
+     */
     public void showSuddenDeath() {
         playerBoardGUIController.setDeath(true);
     }
 
+    /**
+     * Show respawn.
+     */
     public void showRespawn() {
         playerBoardGUIController.setDeath(false);
     }
 
+    /**
+     * Show skull update.
+     */
     public void showSkullUpdate() {
         playerBoardGUIController.updateSkulls();
+    }
+
+    /**
+     * Sets final frenzy.
+     *
+     * @throws IOException the io exception
+     */
+    public void setFinalFrenzy() throws IOException {
+        playerBoardGUIController.setFinalFrenzy();
     }
 }

@@ -11,8 +11,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The type Test support classes.
+ */
 public class TestSupportClasses {
 
+    /**
+     * The constant match.
+     */
     public static Match match = new Match();
     private static final List<String> defaultNames = Arrays.asList(
             "SGrez",
@@ -23,6 +29,12 @@ public class TestSupportClasses {
     );
     private static List<Avatar> avatarList = new ArrayList<>(Arrays.asList(Avatar.values()));
 
+    /**
+     * Instance match.
+     *
+     * @param mapType the map type
+     * @param numOfPlayers the num of players
+     */
     public static void instanceMatch(MapType mapType, int numOfPlayers) {
         match.setGameBoard(mapType);
         for (int i = 0; i < numOfPlayers; i++) {

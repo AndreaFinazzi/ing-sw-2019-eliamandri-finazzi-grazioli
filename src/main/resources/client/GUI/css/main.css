@@ -90,8 +90,8 @@
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
 
-    /*-fx-pref-width: 97;*/
-    /*-fx-pref-height: 170;*/
+    -fx-fill: none;
+
     -fx-min-width: 60;
     -fx-pref-width: 90;
     -fx-pref-height: 141;

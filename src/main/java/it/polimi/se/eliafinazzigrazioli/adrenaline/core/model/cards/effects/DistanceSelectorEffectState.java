@@ -10,11 +10,24 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Distance selector effect state.
+ */
 public class DistanceSelectorEffectState extends SelectorEffectState {
 
     final private int maxDistance;
     final private int minDistance;
 
+    /**
+     * Instantiates a new Distance selector effect state.
+     *
+     * @param maxDistance the max distance
+     * @param minDistance the min distance
+     * @param referenceSource the reference source
+     * @param sourceSelectionOrder the source selection order
+     * @param selectionType the selection type
+     * @param referenceType the reference type
+     */
     public DistanceSelectorEffectState(int maxDistance, int minDistance, String referenceSource, int sourceSelectionOrder, SelectableType selectionType, SelectableType referenceType) {
         super(referenceSource, sourceSelectionOrder, referenceType, selectionType);
         this.maxDistance = maxDistance;
@@ -54,8 +67,7 @@ public class DistanceSelectorEffectState extends SelectorEffectState {
                     //TODO define and throw exception
                     break;
             }
-        }
-        else {
+        } else {
             invoker.getActiveEffect().updateToSelectPlayers(new ArrayList<>());
         }
         return new ArrayList<>();

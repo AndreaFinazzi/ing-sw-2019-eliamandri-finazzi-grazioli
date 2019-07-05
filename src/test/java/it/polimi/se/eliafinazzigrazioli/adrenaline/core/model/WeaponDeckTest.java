@@ -7,8 +7,14 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * The type Weapon deck test.
+ */
 public class WeaponDeckTest {
 
+    /**
+     * Deck instantiation test.
+     */
     @Test
     public void deckInstantiationTest() {
         int count = 0;

@@ -10,13 +10,35 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * The type Game board test.
+ */
 public class GameBoardTest {
     private GameBoard gameBoard;
+    /**
+     * The First player.
+     */
     Player firstPlayer;
+    /**
+     * The Second player.
+     */
     Player secondPlayer;
+    /**
+     * The Third player.
+     */
     Player thirdPlayer;
+    /**
+     * The Fourth player.
+     */
     Player fourthPlayer;
+    /**
+     * The Fifth player.
+     */
     Player fifthPlayer;
+
+    /**
+     * Sets up.
+     */
     @Before
     public void setUp() {
         gameBoard = new GameBoard(MapType.TWO);
@@ -30,6 +52,9 @@ public class GameBoardTest {
         fifthPlayer = new Player("Fifth");
     }
 
+    /**
+     * Gets room squares test.
+     */
     @Test
     public void getRoomSquaresTest() {
         List<BoardSquare> boardSquares = gameBoard.getRoomSquares(Room.RED);
@@ -60,6 +85,9 @@ public class GameBoardTest {
         }
     }
 
+    /**
+     * Gets visible squares test.
+     */
     @Test
     public void getVisibleSquaresTest() {
         BoardSquare reference = gameBoard.getBoardSquareByCoordinates(new Coordinates(2, 2));
@@ -85,6 +113,9 @@ public class GameBoardTest {
 
     }
 
+    /**
+     * Path is valid test.
+     */
     @Test
     public void pathIsValidTest() {
         firstPlayer.setPosition(gameBoard.getBoardSquareByCoordinates(new Coordinates(1,1)));
@@ -100,6 +131,9 @@ public class GameBoardTest {
         assertFalse(gameBoard.pathIsValid(firstPlayer, coordinatesList));
     }
 
+    /**
+     * Gets room players test.
+     */
     @Test
     public void getRoomPlayersTest() {
         List<Player> playerList = new ArrayList<>();
@@ -115,6 +149,9 @@ public class GameBoardTest {
         assertEquals(firstPlayer, gameBoard.getRoomPlayers(Room.PURPLE).get(0));
     }
 
+    /**
+     * Gets visible rooms test.
+     */
     @Test
     public void getVisibleRoomsTest() {
         BoardSquare boardSquare = gameBoard.getBoardSquareByCoordinates(new Coordinates(1,1));
@@ -126,6 +163,9 @@ public class GameBoardTest {
         assertTrue(expectedList.containsAll(roomList));
     }
 
+    /**
+     * Gets visible players test.
+     */
     @Test
     public void getVisiblePlayersTest() {
         List<Player> playerList = new ArrayList<>();
@@ -147,6 +187,9 @@ public class GameBoardTest {
         assertTrue(playerList.containsAll(gameBoard.getVisiblePlayers(boardSquare, false)));
     }
 
+    /**
+     * Gets square by distance.
+     */
     @Test
     public void getSquareByDistance() {
         BoardSquare boardSquare = gameBoard.getBoardSquareByCoordinates(new Coordinates(1,1));
@@ -163,6 +206,9 @@ public class GameBoardTest {
         }
     }
 
+    /**
+     * Gets board square by cardinal direction test.
+     */
     @Test
     public void getBoardSquareByCardinalDirectionTest() {
         BoardSquare boardSquare = gameBoard.getBoardSquareByCoordinates(new Coordinates(0,0));
@@ -195,6 +241,9 @@ public class GameBoardTest {
 
     }
 
+    /**
+     * Gets coordinates test.
+     */
     @Test
     public void getCoordinatesTest() {
         Coordinates expected = new Coordinates(1,1);
@@ -204,6 +253,9 @@ public class GameBoardTest {
         assertNotEquals(expected, gameBoard.getCoordinates(null));
     }
 
+    /**
+     * Gets player position tets.
+     */
     @Test
     public void getPlayerPositionTets() {
         List<Player> players = new ArrayList<>();

@@ -11,6 +11,9 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The type Connection manager socket.
+ */
 public class ConnectionManagerSocket extends AbstractConnectionManager {
 
     private static final Logger LOGGER = Logger.getLogger(ConnectionManagerSocket.class.getName());
@@ -19,10 +22,21 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
     private ObjectOutputStream sender;
     private ObjectInputStream receiver;
 
+    /**
+     * Instantiates a new Connection manager socket.
+     *
+     * @param client the client
+     */
     public ConnectionManagerSocket(Client client) {
         this(client, Config.CONFIG_SERVER_SOCKET_PORT);
     }
 
+    /**
+     * Instantiates a new Connection manager socket.
+     *
+     * @param client the client
+     * @param port the port
+     */
     public ConnectionManagerSocket(Client client, int port) {
         super(client);
         this.port = port;

@@ -25,6 +25,9 @@ import java.util.logging.Logger;
 
 //TODO DEFINE AND INSERT MESSAGES, IN PARTICULAR FOR NOT ALLOWED PLAY EVENT BECAUSE IT IS THROWN IN A VARIETY OF SITUATIONS
 
+/**
+ * The type Turn controller.
+ */
 public class TurnController implements ViewEventsListenerInterface {
 
     private static final Logger LOGGER = Logger.getLogger(MatchController.class.getName());
@@ -42,6 +45,12 @@ public class TurnController implements ViewEventsListenerInterface {
     private boolean finalFrenzyFirstTurn = true;
 
 
+    /**
+     * Instantiates a new Turn controller.
+     *
+     * @param eventController the event controller
+     * @param match the match
+     */
     public TurnController(EventController eventController, Match match) {
         this.match = match;
         this.actionsPerformed = 0;
@@ -77,13 +86,11 @@ public class TurnController implements ViewEventsListenerInterface {
             match.getPowerUpsDeck().discardPowerUp(event.getSpawnCard());
             events.add(new ActionRequestEvent(
                     currentPlayer,
-                    maxActions(currentPlayer),
                     currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
                     currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
                     currentPlayer.getPlayerBoard().preShootingMaxMoves()));
             spawnCompleted();
-        }
-        else {
+        } else {
             Player deadPlayer = match.getPlayer(event.getPlayer());
             events.add(gameBoard.spawnPlayer(deadPlayer, event.getSpawnCard(), false));
             PowerUpCard powerUpToDiscard = null;
@@ -95,8 +102,7 @@ public class TurnController implements ViewEventsListenerInterface {
                 deadPlayer.removePowerUp(powerUpToDiscard);
                 match.getPowerUpsDeck().discardPowerUp(powerUpToDiscard);
                 events.add(deadPlayer.addPowerUp(powerUpForRespawn, match.getPowerUpsDeck()));
-            }
-            else {
+            } else {
                 match.getPowerUpsDeck().discardPowerUp(powerUpForRespawn);
                 spawnCompleted();
             }
@@ -110,11 +116,9 @@ public class TurnController implements ViewEventsListenerInterface {
                     powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
                     spawningPlayer = match.getDeadPlayers().get(0);
                     events.add(new SpawnSelectionRequestEvent(nextDeadPlayer, Arrays.asList(powerUpForRespawn), false));
-                }
-                else
+                } else
                     events.addAll(deadPlayersRespawnLoop(nextDeadPlayer));
-            }
-            else {
+            } else {
                 events.addAll(match.getPhase() != MatchPhase.FINAL_FRENZY ? nextTurn() : finalFrenzyNextTurn());
             }
         }
@@ -177,11 +181,9 @@ public class TurnController implements ViewEventsListenerInterface {
             if (path.size() > 0) {
                 finalPosition = gameBoard.getBoardSquareByCoordinates(path.get(path.size()-1));
                 movementActuated = true;
-            }
-            else
+            } else
                 finalPosition = gameBoard.getPlayerPosition(currentPlayer);
-            if (movementActuated)
-            {
+            if (movementActuated) {
                 gameBoard.movePlayer(currentPlayer, finalPosition);
                 events.add(new PlayerMovementEvent(currentPlayer, path));
             }
@@ -202,11 +204,9 @@ public class TurnController implements ViewEventsListenerInterface {
                 }
                 events.addAll(concludeAction(currentPlayer));
                 match.notifyObservers(events);
-            }
-            else
+            } else
                 match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
-        }
-        else {
+        } else {
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
         }
     }
@@ -223,12 +223,10 @@ public class TurnController implements ViewEventsListenerInterface {
             if (path.size() > 0) {
                 finalPosition = gameBoard.getBoardSquareByCoordinates(path.get(path.size()-1));
                 movementActuated = true;
-            }
-            else
+            } else
                 finalPosition = gameBoard.getPlayerPosition(currentPlayer);
 
-            if (movementActuated)
-            {
+            if (movementActuated) {
                 gameBoard.movePlayer(currentPlayer, finalPosition);
                 events.add(new PlayerMovementEvent(currentPlayer, path));
             }
@@ -264,11 +262,9 @@ public class TurnController implements ViewEventsListenerInterface {
 
                 events.addAll(concludeAction(currentPlayer));
                 match.notifyObservers(events);
-            }
-            else
+            } else
                 match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
-        }
-        else {
+        } else {
             match.notifyObservers(new NotAllowedPlayEvent(currentPlayer));
         }
 
@@ -289,8 +285,7 @@ public class TurnController implements ViewEventsListenerInterface {
         if (event.getWeapon() == null) {
             if (match.getPhase() != MatchPhase.FINAL_FRENZY)
                 match.notifyObservers(concludeTurn());
-        }
-        else {
+        } else {
             Player currentPlayer = match.getCurrentPlayer();
             WeaponCard weaponReloaded = match.getCurrentPlayer().getWeaponByName(event.getWeapon());
             List<Ammo> price = new ArrayList<>(weaponReloaded.getLoader());
@@ -304,8 +299,7 @@ public class TurnController implements ViewEventsListenerInterface {
                 match.notifyObservers(new WeaponReloadedEvent(currentPlayer, weaponReloaded.getWeaponName()));
                 if (match.getPhase() != MatchPhase.FINAL_FRENZY)
                     match.notifyObservers(new ReloadWeaponsRequestEvent(currentPlayer));
-            }
-            else {
+            } else {
                 if (match.getPhase() != MatchPhase.FINAL_FRENZY)
                     match.notifyObservers(concludeTurn());
             }
@@ -320,6 +314,11 @@ public class TurnController implements ViewEventsListenerInterface {
     @Override
     public void handleEvent(PowerUpRefusedEvent event) throws HandlerNotImplementedException {}
 
+    /**
+     * Disconnection default.
+     *
+     * @param disconnectedPlayer the disconnected player
+     */
     public void disconnectionDefault(Player disconnectedPlayer) {
         int connectedPlayers = 0;
         for (Player player: match.getPlayers()) {
@@ -340,11 +339,9 @@ public class TurnController implements ViewEventsListenerInterface {
                     match.getPowerUpsDeck().discardPowerUp(powerUpsForSpawn.get(0));
                     spawnCompleted();
                     match.notifyObservers(match.getPhase() != MatchPhase.FINAL_FRENZY ? nextTurn() : finalFrenzyNextTurn());
-                }
-                else
+                } else
                     match.notifyObservers(match.getPhase() != MatchPhase.FINAL_FRENZY ? nextTurn() : finalFrenzyNextTurn());
-            }
-            else if (spawningPlayer == disconnectedPlayer && powerUpForRespawn != null) {
+            } else if (spawningPlayer == disconnectedPlayer && powerUpForRespawn != null) {
                 match.notifyObservers(match.getGameBoard().spawnPlayer(disconnectedPlayer, powerUpForRespawn, false));
                 match.getPowerUpsDeck().discardPowerUp(powerUpForRespawn);
                 spawnCompleted();
@@ -428,8 +425,7 @@ public class TurnController implements ViewEventsListenerInterface {
                 match.getPowerUpsDeck().discardPowerUp(powerUpsForSpawn.get(0));
                 events.add(match.getCurrentPlayer().addPowerUp(powerUpsForSpawn.get(1), match.getPowerUpsDeck()));
                 spawnCompleted();
-            }
-            else
+            } else
                 events.add(new SkippedTurnEvent(match.getCurrentPlayer()));
         }
 
@@ -438,19 +434,22 @@ public class TurnController implements ViewEventsListenerInterface {
             powerUpsForSpawn = Arrays.asList(match.getPowerUpsDeck().drawCard(), match.getPowerUpsDeck().drawCard());
             spawningPlayer = match.getCurrentPlayer();
             events.add(new SpawnSelectionRequestEvent(match.getCurrentPlayer(), powerUpsForSpawn, true));
-        }
-        else {
+        } else {
             PlayerBoard playerBoard = match.getCurrentPlayer().getPlayerBoard();
             events.add(new ActionRequestEvent(
                     match.getCurrentPlayer(),
-                    maxActions(match.getCurrentPlayer()),
                     playerBoard.simpleMovementMaxMoves(),
                     playerBoard.preCollectionMaxMoves(),
                     playerBoard.preShootingMaxMoves()));
-            }
+        }
         return events;
     }
 
+    /**
+     * Final frenzy next turn list.
+     *
+     * @return the list
+     */
     List<AbstractModelEvent> finalFrenzyNextTurn() {
 
         if (match.getNextPlayer() != match.getLastTurnPlayer()) {
@@ -458,7 +457,6 @@ public class TurnController implements ViewEventsListenerInterface {
                 match.notifyObservers(new FinalFrenzyBeginEvent(match.finalFrenzyPlayerBoardSwitch()));
                 finalFrenzyFirstTurn = false;
             }
-
 
 
             List<AbstractModelEvent> events = new ArrayList<>();
@@ -480,8 +478,7 @@ public class TurnController implements ViewEventsListenerInterface {
                         Rules.FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_COLLECTION,
                         Rules.FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_SHOOTING,
                         false));
-            }
-            else {
+            } else {
                 events.add(new FinalFrenzyActionRequestEvent(
                         match.getCurrentPlayer(),
                         maxActions(match.getCurrentPlayer()),
@@ -520,7 +517,6 @@ public class TurnController implements ViewEventsListenerInterface {
     }
 
 
-
     private List<AbstractModelEvent> concludeAction(Player currentPlayer) {
         actionsPerformed++;
         if (match.getPhase() == MatchPhase.FINAL_FRENZY) {
@@ -533,19 +529,17 @@ public class TurnController implements ViewEventsListenerInterface {
                                 Rules.FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_COLLECTION,
                                 Rules.FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_SHOOTING,
                                 false)));
-            }
-            else
+            } else
                 return finalFrenzyNextTurn();
         } else {
             if (actionsPerformed < maxActions(match.getCurrentPlayer()))
                 return new ArrayList<>(Arrays.asList(
                         new ActionRequestEvent(
-                        currentPlayer,
-                        maxActions(match.getCurrentPlayer()) - actionsPerformed,
-                        currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
-                        currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
-                        currentPlayer.getPlayerBoard().preShootingMaxMoves()
-                )));
+                                currentPlayer,
+                                currentPlayer.getPlayerBoard().simpleMovementMaxMoves(),
+                                currentPlayer.getPlayerBoard().preCollectionMaxMoves(),
+                                currentPlayer.getPlayerBoard().preShootingMaxMoves()
+                        )));
             else
                 return new ArrayList<>(Arrays.asList(new ReloadWeaponsRequestEvent(currentPlayer)));
         }
@@ -574,8 +568,7 @@ public class TurnController implements ViewEventsListenerInterface {
                 powerUpForRespawn  = match.getPowerUpsDeck().drawCard();
                 spawningPlayer = firstDeadPlayer;
                 events.add(new SpawnSelectionRequestEvent(firstDeadPlayer, new ArrayList<>(Arrays.asList(powerUpForRespawn)), false));
-            }
-            else {
+            } else {
                 Player nextDeadPlayer = firstDeadPlayer;
                 events.addAll(deadPlayersRespawnLoop(nextDeadPlayer));
             }
@@ -663,10 +656,20 @@ public class TurnController implements ViewEventsListenerInterface {
         }
     }
 
+    /**
+     * Sets power ups for spawn.
+     *
+     * @param powerUpsForSpawn the power ups for spawn
+     */
     public void setPowerUpsForSpawn(List<PowerUpCard> powerUpsForSpawn) {
         this.powerUpsForSpawn = powerUpsForSpawn;
     }
 
+    /**
+     * Sets spawning player.
+     *
+     * @param spawningPlayer the spawning player
+     */
     public void setSpawningPlayer(Player spawningPlayer) {
         this.spawningPlayer = spawningPlayer;
     }

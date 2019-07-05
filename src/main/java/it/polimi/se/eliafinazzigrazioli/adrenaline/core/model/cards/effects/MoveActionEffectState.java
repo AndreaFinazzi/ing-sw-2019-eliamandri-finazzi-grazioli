@@ -10,12 +10,23 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Move action effect state.
+ */
 public class MoveActionEffectState extends ActionEffectState {
 
 
     private String movementDestinationSource;
     private int destinationSelectionOrder;
 
+    /**
+     * Instantiates a new Move action effect state.
+     *
+     * @param movementDestinationSource the movement destination source
+     * @param destinationSelectionOrder the destination selection order
+     * @param playerToAffectSource the player to affect source
+     * @param toAffectPlayerSelectionOrder the to affect player selection order
+     */
     public MoveActionEffectState(String movementDestinationSource, int destinationSelectionOrder, String playerToAffectSource, int toAffectPlayerSelectionOrder) {
         super(playerToAffectSource, toAffectPlayerSelectionOrder);
         this.movementDestinationSource = movementDestinationSource;
@@ -33,8 +44,7 @@ public class MoveActionEffectState extends ActionEffectState {
             } catch (IndexOutOfBoundsException e) {
                 destination = null;
             }
-        }
-        else
+        } else
             destination = gameBoard.getPlayerPosition(currentPlayer);
         if (destination != null) {
             if (playerToAffectSource != null) {

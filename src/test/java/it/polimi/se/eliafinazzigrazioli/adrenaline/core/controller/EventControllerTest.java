@@ -1,14 +1,14 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.AbstractConnectionManager;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.AbstractConnectionManagerTest;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.CLI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.ClientTest;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.CollectPlayEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.LoginRequestEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.MovePlayEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Avatar;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.server.AbstractClientHandlerTest;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.server.MatchBuilder;
 import org.junit.Before;
@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 
-
+/**
+ * The type Event controller test.
+ */
 public class EventControllerTest {
 
     private static final Logger LOGGER = Logger.getLogger(EventControllerTest.class.getName());
@@ -41,6 +43,9 @@ public class EventControllerTest {
 
     private CLI cliTest;
 
+    /**
+     * Sets up.
+     */
     @Before
     public void setUp() {
         matchBuilder = new MatchBuilder();
@@ -54,6 +59,10 @@ public class EventControllerTest {
 
 
     }
+
+    /**
+     * Visitor test.
+     */
     @Test
     public void visitorTest() {
 
@@ -85,10 +94,9 @@ public class EventControllerTest {
         movePlayEvent = new MovePlayEvent(0,"UserA!", new ArrayList<>());
 
 
-       // eventController.update(collectPlayEvent);
+        // eventController.update(collectPlayEvent);
         eventController.update(targetSelectedEvent);
         //eventController.update(movePlayEvent);
-
 
 
     }

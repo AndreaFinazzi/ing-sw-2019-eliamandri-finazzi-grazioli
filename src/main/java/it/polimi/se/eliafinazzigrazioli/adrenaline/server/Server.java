@@ -5,65 +5,76 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-//TODO CHECK CONCURRENCY ISSUES OF THE WHOLE LOGIC!!!
-
+/**
+ * Singleton class which initializes server-side application.
+ */
 public class Server implements Runnable {
 
-    protected static final int PING_TIMEOUT = 1000;
 
+    /**
+     * Reference to static object.
+     */
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
-    private ServerSocketManager serverSocketManager;
-
-    // Network threads pool
+    /**
+     * Network managers threads pool.
+     */
     private ExecutorService networkExecutor = Executors.newFixedThreadPool(2);
 
-    // Player.username to ClientHandler
-    // TODO change it to support RMI. Player.username to Client.ID
+
+    /**
+     * MatchBuilder is the effective delegated to handle match generation, players registry and disconnection events.
+     */
     private MatchBuilder matchBuilder;
-    private Registry registry;
+
+    /**
+     * Keeps track of online state of Server.
+     */
     private boolean online;
+
+    /**
+     * Client identification number, assigned to each client at connection time.
+     */
     private int currentClientID = 0;
 
-    private boolean initialied = false;
+    /**
+     * Tracks the effective singleness of the instance.
+     */
+    private static boolean instantiated = false;
 
+    /**
+     * Instantiates a new Server.
+     */
     public Server() {
-        if (!initialied) {
-            initialied = true;
-            LOGGER.info("Creating Server"); //TODO move to messages
+        if (!instantiated) {
 
+            instantiated = true;
             matchBuilder = new MatchBuilder();
-
-            try {
-                System.setProperty("java.rmi.server.hostname", InetAddress.getLocalHost().getHostName());
-
-                registry = LocateRegistry.createRegistry(Config.CONFIG_SERVER_RMI_PORT);
-            } catch (RemoteException | UnknownHostException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-            }
-
             online = true;
+
         }
     }
 
+    /**
+     * Launches server socket manager in the networkExecutor pool.
+     */
     public void startServerSocket() {
-        LOGGER.info("Starting socket manager");
+        LOGGER.info(Messages.MESSAGE_LOGGING_INFO_SOCKET_STARTING);
         networkExecutor.execute(new ServerSocketManager(this, Config.CONFIG_SERVER_SOCKET_PORT));
     }
 
+    /**
+     * Launches server rmi manager in the networkExecutor pool.
+     */
     public void startServerRMI() {
-        LOGGER.info("Starting RMI manager");
+        LOGGER.info(Messages.MESSAGE_LOGGING_INFO_RMI_STARTING);
         try {
             networkExecutor.execute(new ServerRMIManager(this));
         } catch (RemoteException e) {
@@ -71,15 +82,21 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Synchronized method which signs new clients on the first available match on matchBuilder.
+     *
+     * @param clientHandler the last connected client handler
+     */
     public synchronized void signIn(AbstractClientHandler clientHandler) {
         matchBuilder.signNewClient(clientHandler);
     }
 
-    // ####################### RMI #######################
-    public synchronized Registry getRegistry() {
-        return registry;
-    }
 
+    /**
+     * Gets next client id.
+     *
+     * @return the current client id
+     */
     public synchronized int getCurrentClientID() {
         currentClientID++;
         return currentClientID;
@@ -90,12 +107,13 @@ public class Server implements Runnable {
         Thread.currentThread().interrupt();
     }
 
-    public boolean isUp() {
+    /**
+     * online status getter.
+     *
+     * @return boolean boolean
+     */
+    public boolean isOnline() {
         return online;
-    }
-
-    public void setUp(boolean online) {
-        this.online = online;
     }
 
     @Override

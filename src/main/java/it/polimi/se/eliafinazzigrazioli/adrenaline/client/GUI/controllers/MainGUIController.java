@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.controllers;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.GUI.GUI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.AmmoCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.KillTrack;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Room;
@@ -27,6 +28,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
+/**
+ * The type Main gui controller.
+ */
 public class MainGUIController extends GUIController {
 
     private AtomicReference<WeaponCardClient> selectedWeapon;
@@ -60,6 +64,8 @@ public class MainGUIController extends GUIController {
     private Pane mainBoardPane;
     @FXML
     private VBox killTrackVBox;
+    @FXML
+    private TilePane finalFrenzyAmmosTilePane;
 
     @FXML
     private Pane weaponCardSlots_RED;
@@ -75,23 +81,48 @@ public class MainGUIController extends GUIController {
 
     private Map<String, Node> playersNodeMap;
 
+    /**
+     * Instantiates a new Main gui controller.
+     *
+     * @param view the view
+     */
     public MainGUIController(GUI view) {
         super(view);
         playersNodeMap = new HashMap<>();
     }
 
+    /**
+     * Sets selected weapon.
+     *
+     * @param selectedWeapon the selected weapon
+     */
     public void setSelectedWeapon(AtomicReference<WeaponCardClient> selectedWeapon) {
         this.selectedWeapon = selectedWeapon;
     }
 
+    /**
+     * Sets selected coordinates.
+     *
+     * @param selectedCoordinates the selected coordinates
+     */
     public void setSelectedCoordinates(AtomicReference<Coordinates> selectedCoordinates) {
         this.selectedCoordinates = selectedCoordinates;
     }
 
+    /**
+     * Sets selected player.
+     *
+     * @param selectedPlayer the selected player
+     */
     public void setSelectedPlayer(AtomicReference<String> selectedPlayer) {
         this.selectedPlayer = selectedPlayer;
     }
 
+    /**
+     * Sets vote map.
+     *
+     * @param availableMaps the available maps
+     */
     public void setVoteMap(List<MapType> availableMaps) {
         mapVoteOverlayStackPane.setVisible(true);
 
@@ -112,20 +143,34 @@ public class MainGUIController extends GUIController {
         });
     }
 
+    /**
+     * Vote map.
+     *
+     * @param actionEvent the action event
+     */
     public void voteMap(ActionEvent actionEvent) {
         showOverlay();
         mapVoteOverlayStackPane.setVisible(false);
         view.notifyMapVoteEvent(availableMapsChoiceBox.getValue());
     }
 
+    /**
+     * Show overlay.
+     */
     public void showOverlay() {
         overlay.setVisible(true);
     }
 
+    /**
+     * Hide overlay.
+     */
     public void hideOverlay() {
         overlay.setVisible(false);
     }
 
+    /**
+     * Load map.
+     */
     public void loadMap() {
         // Load chosen map
         String mapClass = GUI.STYLE_CLASS_MAP_PREFIX + view.getLocalModel().getGameBoard().getMapType().name();
@@ -143,6 +188,11 @@ public class MainGUIController extends GUIController {
         }
     }
 
+    /**
+     * Sets selectable weapon cards.
+     *
+     * @param selectableWeapons the selectable weapons
+     */
     public void setSelectableWeaponCards(List<WeaponCardClient> selectableWeapons) {
         for (WeaponCardClient weaponCard : selectableWeapons) {
             Pane weaponCardSlotsPane = roomWeaponCardSlotsEnumMap.get(weaponCard.getSpawnBoardSquare());
@@ -157,6 +207,11 @@ public class MainGUIController extends GUIController {
         }
     }
 
+    /**
+     * Sets selectable coordinates.
+     *
+     * @param selectableCoordinates the selectable coordinates
+     */
     public void setSelectableCoordinates(List<Coordinates> selectableCoordinates) {
         for (Coordinates coordinates : selectableCoordinates) {
             coordinatesBoardSquareGUIControllerMap.get(coordinates).makeSelectable(event -> {
@@ -173,6 +228,11 @@ public class MainGUIController extends GUIController {
         });
     }
 
+    /**
+     * Update weapon card on map.
+     *
+     * @param weaponCard the weapon card
+     */
     public void updateWeaponCardOnMap(WeaponCardClient weaponCard) {
         Node weaponCardSlot = roomWeaponCardSlotsEnumMap.get(weaponCard.getSpawnBoardSquare()).getChildren().get(weaponCard.getSlotPosition());
         if (weaponCardSlot == null) {
@@ -184,6 +244,12 @@ public class MainGUIController extends GUIController {
         }
     }
 
+    /**
+     * Update ammo card on map.
+     *
+     * @param coordinates the coordinates
+     * @param ammoCard the ammo card
+     */
     public void updateAmmoCardOnMap(Coordinates coordinates, AmmoCardClient ammoCard) {
         BoardSquareGUIController boardSquareGUIController = coordinatesBoardSquareGUIControllerMap.get(coordinates);
         if (boardSquareGUIController == null) {
@@ -193,6 +259,13 @@ public class MainGUIController extends GUIController {
         }
     }
 
+    /**
+     * Remove weapon card from map.
+     *
+     * @param room the room
+     * @param weaponCard the weapon card
+     * @param droppedCard the dropped card
+     */
     public void removeWeaponCardFromMap(Room room, WeaponCardClient weaponCard, WeaponCardClient droppedCard) {
         String uri;
         Node weaponCardNode = GUI.getChildrenByProperty(roomWeaponCardSlotsEnumMap.get(room).getChildren(), GUI.PROPERTIES_KEY_CARD_ID, weaponCard.getId());
@@ -205,6 +278,13 @@ public class MainGUIController extends GUIController {
         }
     }
 
+    /**
+     * Move player.
+     *
+     * @param player the player
+     * @param destination the destination
+     * @throws IOException the io exception
+     */
     public synchronized void movePlayer(String player, Coordinates destination) throws IOException {
         for (BoardSquareGUIController boardSquare : coordinatesBoardSquareGUIControllerMap.values()) {
             if (boardSquare.removePlayer(player)) break;
@@ -214,6 +294,11 @@ public class MainGUIController extends GUIController {
         if (playerNode != null) playersNodeMap.put(player, playerNode);
     }
 
+    /**
+     * Sets selectable players.
+     *
+     * @param players the players
+     */
     public void setSelectablePlayers(List<String> players) {
         players.forEach(player -> {
             Node playerNode = playersNodeMap.get(player);
@@ -246,6 +331,9 @@ public class MainGUIController extends GUIController {
         });
     }
 
+    /**
+     * Update kill track.
+     */
     public void updateKillTrack() {
         List<KillTrack.Slot> killTrack = view.getLocalModel().getKillTrack().getTrack();
         for (KillTrack.Slot slot : killTrack) {
@@ -256,15 +344,23 @@ public class MainGUIController extends GUIController {
 
                     try {
                         ImageView damageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, slotPane, this);
-                        Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()))));
+                        Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()), 0, 25, true, true)));
                         if (slot.isDoubleDamage()) {
                             ImageView secondDamageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, slotPane, this);
-                            Platform.runLater(() -> secondDamageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()))));
+                            Platform.runLater(() -> secondDamageNode.setImage(new Image(view.getMarkAsset(slot.getDamageMark()), 0, 25, true, true)));
                         }
                     } catch (IOException e) {
                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
                     }
                 });
+            }
+        }
+        for (DamageMark damageMark : view.getLocalModel().getKillTrack().getMarksAfterLastSkull()) {
+            try {
+                ImageView damageNode = (ImageView) loadFXML(GUI.FXML_PATH_MARK, finalFrenzyAmmosTilePane, null);
+                Platform.runLater(() -> damageNode.setImage(new Image(view.getMarkAsset(damageMark), 0, 24, true, true)));
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }
@@ -368,6 +464,8 @@ public class MainGUIController extends GUIController {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 }
             }
+
+            updateKillTrack();
         }
     }
 }

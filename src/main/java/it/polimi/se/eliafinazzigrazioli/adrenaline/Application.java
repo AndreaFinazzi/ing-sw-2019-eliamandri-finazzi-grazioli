@@ -9,6 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+
+/**
+ * Main class. Loads, according to the specified parameters, the specific Client/Server classes.
+ */
+
 public class Application {
     public static final String CONFIG_FILE_PATH = "/config/app.properties";
 

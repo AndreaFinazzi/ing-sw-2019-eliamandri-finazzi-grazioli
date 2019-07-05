@@ -6,10 +6,18 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.Handle
 
 import java.util.Map;
 
+/**
+ * The type Points assignment event.
+ */
 public class PointsAssignmentEvent extends AbstractModelEvent {
 
     private Map<String, Integer> playerPointsMap;
 
+    /**
+     * Instantiates a new Points assignment event.
+     *
+     * @param playerPointsMap the player points map
+     */
     public PointsAssignmentEvent(Map<String, Integer> playerPointsMap) {
         this.playerPointsMap = playerPointsMap;
     }
@@ -19,6 +27,11 @@ public class PointsAssignmentEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
+    /**
+     * Gets player points map.
+     *
+     * @return the player points map
+     */
     public Map<String, Integer> getPlayerPointsMap() {
         return playerPointsMap;
     }

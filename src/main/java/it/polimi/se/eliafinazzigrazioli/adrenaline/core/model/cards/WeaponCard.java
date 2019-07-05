@@ -16,6 +16,9 @@ import java.util.*;
 //todo check room selection logic for furnace and complete json
 //todo study the last thing wrote in the notes, that's how to potentially split the moves. at the moment it's split into to single move identical effects
 
+/**
+ * The type Weapon card.
+ */
 public class WeaponCard extends Card {
 
     /*
@@ -37,7 +40,14 @@ public class WeaponCard extends Card {
     private boolean loaded = true;
 
 
-    //TODO factory method for cards
+    /**
+     * Json parser weapon card.
+     *
+     * @param cardName the card name
+     * @return the weapon card
+     * @throws WeaponFileNotFoundException the weapon file not found exception
+     */
+//TODO factory method for cards
     public static WeaponCard jsonParser(String cardName) throws WeaponFileNotFoundException {
         String filePath = "/jsonFiles/weaponCardJsons/" + cardName;
         String jsonString;
@@ -49,10 +59,18 @@ public class WeaponCard extends Card {
         return gson.fromJson(fileInputStreamReader, weaponCardType);
     }
 
+    /**
+     * Instantiates a new Weapon card.
+     *
+     * @param activeEffect the active effect
+     */
     public WeaponCard(WeaponEffect activeEffect) {
         this.activeEffect = activeEffect;
     }
 
+    /**
+     * Instantiates a new Weapon card.
+     */
     public WeaponCard(){
         weaponName = "Lock Refile";
         cardColor = Ammo.BLUE;
@@ -60,34 +78,76 @@ public class WeaponCard extends Card {
         effects = null;
     }
 
+    /**
+     * Gets weapon name.
+     *
+     * @return the weapon name
+     */
     public String getWeaponName() {
         return weaponName;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets active effect.
+     *
+     * @return the active effect
+     */
     public WeaponEffect getActiveEffect() {
         return activeEffect;
     }
 
+    /**
+     * Gets loader.
+     *
+     * @return the loader
+     */
     public List<Ammo> getLoader() {
         return loader;
     }
 
+    /**
+     * Gets effects.
+     *
+     * @return the effects
+     */
     public List<WeaponEffect> getEffects() {
         return effects;
     }
 
+    /**
+     * Gets notes.
+     *
+     * @return the notes
+     */
     public String getNotes() {
         return notes;
     }
 
+    /**
+     * Set active effect.
+     *
+     * @param effectName the effect name
+     */
     public void setActiveEffect(String effectName){
         activeEffect = getEffectByName(effectName);
     }
 
+    /**
+     * Execute step list.
+     *
+     * @param gameBoard the game board
+     * @param currentPlayer the current player
+     * @return the list
+     */
     public List<AbstractModelEvent> executeStep(GameBoard gameBoard, Player currentPlayer) {
         return activeEffect.execute(this, gameBoard, currentPlayer);
     }
@@ -96,6 +156,9 @@ public class WeaponCard extends Card {
         //TODO
     }
 
+    /**
+     * Reload.
+     */
     public void reload() {
         //TODO
     }
@@ -104,14 +167,30 @@ public class WeaponCard extends Card {
         //TODO
     }
 
+    /**
+     * Is loaded boolean.
+     *
+     * @return the boolean
+     */
     public boolean isLoaded(){
         return loaded;
     }
 
+    /**
+     * Sets loaded.
+     *
+     * @param loaded the loaded
+     */
     public void setLoaded(boolean loaded) {
         this.loaded = loaded;
     }
 
+    /**
+     * Get effect by name weapon effect.
+     *
+     * @param effectName the effect name
+     * @return the weapon effect
+     */
     public WeaponEffect getEffectByName(String effectName){
         for (WeaponEffect effect: effects){
             if (effect.getEffectName().equals(effectName))
@@ -120,6 +199,9 @@ public class WeaponCard extends Card {
         return null;
     }
 
+    /**
+     * Initialize.
+     */
     public void initialize(){
         activeEffect = null;
         for (WeaponEffect effect: effects){
@@ -127,6 +209,11 @@ public class WeaponCard extends Card {
         }
     }
 
+    /**
+     * Get effects description map.
+     *
+     * @return the map
+     */
     public Map<String, String> getEffectsDescription(){
         Map<String, String> effectsDescription = new HashMap<>();
         for(WeaponEffect weaponEffect : effects){
@@ -135,10 +222,20 @@ public class WeaponCard extends Card {
         return effectsDescription;
     }
 
+    /**
+     * Get callable effects list.
+     *
+     * @return the list
+     */
     public List<String> getCallableEffects(){
         return callableEffects;
     }
 
+    /**
+     * Gets card color.
+     *
+     * @return the card color
+     */
     public Ammo getCardColor() {
         return cardColor;
     }

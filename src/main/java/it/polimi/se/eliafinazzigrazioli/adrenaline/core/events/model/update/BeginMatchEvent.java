@@ -12,6 +12,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Begin match event.
+ */
 public class BeginMatchEvent extends AbstractModelEvent {
 
     private MapType mapType;
@@ -20,10 +23,23 @@ public class BeginMatchEvent extends AbstractModelEvent {
 
     private Map<String, Avatar> playerToAvatarMap;
 
+    /**
+     * Instantiates a new Begin match event.
+     *
+     * @param mapType the map type
+     */
     public BeginMatchEvent(MapType mapType) {
         this.mapType = mapType;
     }
 
+    /**
+     * Instantiates a new Begin match event.
+     *
+     * @param mapType the map type
+     * @param ammoCardsSetup the ammo cards setup
+     * @param weaponCardsSetup the weapon cards setup
+     * @param avatarMap the avatar map
+     */
     public BeginMatchEvent(MapType mapType, Map<Coordinates, AmmoCardClient> ammoCardsSetup, Map<Coordinates, List<WeaponCardClient>> weaponCardsSetup, Map<String, Avatar> avatarMap) {
         this(mapType);
         this.ammoCardsSetup = ammoCardsSetup;
@@ -36,19 +52,31 @@ public class BeginMatchEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
+    /**
+     * Gets map type.
+     *
+     * @return the map type
+     */
     public MapType getMapType() {
         return mapType;
     }
 
+    /**
+     * Gets ammo cards setup.
+     *
+     * @return the ammo cards setup
+     */
     public Map<Coordinates, AmmoCardClient> getAmmoCardsSetup() {
         return ammoCardsSetup;
     }
 
+    /**
+     * Gets weapon cards setup.
+     *
+     * @return the weapon cards setup
+     */
     public Map<Coordinates, List<WeaponCardClient>> getWeaponCardsSetup() {
         return weaponCardsSetup;
     }
 
-    public Map<String, Avatar> getPlayerToAvatar() {
-        return playerToAvatarMap;
-    }
 }

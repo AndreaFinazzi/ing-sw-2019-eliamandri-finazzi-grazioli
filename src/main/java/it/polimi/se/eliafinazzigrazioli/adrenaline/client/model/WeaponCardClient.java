@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Weapon card client.
+ */
 public class WeaponCardClient implements Serializable, CardInterface {
 
-    private static final long serialVersionUID = 9000;
+    private static final long serialVersionUID = 9000L;
 
     private String weaponName;
     private String id;
@@ -43,6 +46,11 @@ public class WeaponCardClient implements Serializable, CardInterface {
 
     private final static int height = 24;
 
+    /**
+     * Instantiates a new Weapon card client.
+     *
+     * @param weaponCard the weapon card
+     */
     public WeaponCardClient(WeaponCard weaponCard) {
         weaponName = weaponCard.getWeaponName();
         id = weaponCard.getId();
@@ -54,7 +62,7 @@ public class WeaponCardClient implements Serializable, CardInterface {
                     weaponEffect.getEffectName(),
                     weaponEffect.getEffectDescription(),
                     weaponEffect.getPrice()
-                    ));
+            ));
         }
         loaded = true;
 
@@ -63,55 +71,118 @@ public class WeaponCardClient implements Serializable, CardInterface {
         slotPosition = -1;
     }
 
+    /**
+     * Instantiates a new Weapon card client.
+     *
+     * @param weaponName the weapon name
+     * @param effectsDescription the effects description
+     * @param loader the loader
+     */
     public WeaponCardClient(String weaponName, Map<String, String> effectsDescription, List<Ammo> loader) {
         this.weaponName = weaponName;
         this.effectsDescription = effectsDescription;
         this.loader = loader;
     }
 
+    /**
+     * Gets weapon name.
+     *
+     * @return the weapon name
+     */
     public String getWeaponName() {
         return weaponName;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets weapon color.
+     *
+     * @return the weapon color
+     */
     public Ammo getWeaponColor() {
         return weaponColor;
     }
 
+    /**
+     * Gets loader.
+     *
+     * @return the loader
+     */
     public List<Ammo> getLoader() {
         return new ArrayList<>(loader);
     }
 
+    /**
+     * Gets effects.
+     *
+     * @return the effects
+     */
     public List<WeaponEffectClient> getEffects() {
         return new ArrayList<>(effects);
     }
 
+    /**
+     * Is loaded boolean.
+     *
+     * @return the boolean
+     */
     public boolean isLoaded() {
         return loaded;
     }
 
+    /**
+     * Gets price.
+     *
+     * @return the price
+     */
     public List<Ammo> getPrice() {
         List<Ammo> price = new ArrayList<>(loader);
         price.add(weaponColor);
         return price;
     }
 
+    /**
+     * Gets slot position.
+     *
+     * @return the slot position
+     */
     public int getSlotPosition() {
         return slotPosition;
     }
 
+    /**
+     * Sets slot position.
+     *
+     * @param spawnBoardSquare the spawn board square
+     * @param slotPosition the slot position
+     */
     public void setSlotPosition(Room spawnBoardSquare, int slotPosition) {
         this.spawnBoardSquare = spawnBoardSquare;
         this.slotPosition = slotPosition;
     }
 
+    /**
+     * Gets spawn board square.
+     *
+     * @return the spawn board square
+     */
     public Room getSpawnBoardSquare() {
         return spawnBoardSquare;
     }
 
+    /**
+     * Sets spawn board square.
+     *
+     * @param spawnBoardSquare the spawn board square
+     */
     public void setSpawnBoardSquare(Room spawnBoardSquare) {
         this.spawnBoardSquare = spawnBoardSquare;
     }
@@ -130,6 +201,11 @@ public class WeaponCardClient implements Serializable, CardInterface {
         return false;
     }
 
+    /**
+     * Sets loaded.
+     *
+     * @param loaded the loaded
+     */
     public void setLoaded(boolean loaded) {
         this.loaded = loaded;
     }
@@ -146,6 +222,11 @@ public class WeaponCardClient implements Serializable, CardInterface {
         return string;
     }
 
+    /**
+     * To string light string.
+     *
+     * @return the string
+     */
     public String toStringLight() {
         String string = weaponName + " :\n\n";
         int count = 1;
@@ -157,16 +238,15 @@ public class WeaponCardClient implements Serializable, CardInterface {
     }
 
     public String[][] drawCard() {
-       String[][] weapon = CLIUtils.drawEmptyBox(FULL_WIDTH, FULL_HEIGHT, Color.ammoToColor(weaponColor));
-       weapon = CLIUtils.insertStringToMatrix(weapon, this.toString());
-       return weapon;
+        String[][] weapon = CLIUtils.drawEmptyBox(FULL_WIDTH, FULL_HEIGHT, Color.ammoToColor(weaponColor));
+        weapon = CLIUtils.insertStringToMatrix(weapon, this.toString());
+        return weapon;
     }
 
     public String[][] drawCard(boolean light) {
         if(!light) {
             return drawCard();
-        }
-        else {
+        } else {
             String[][] weapon = CLIUtils.drawEmptyBox(LIGTH_WIDTH, LIGHT_HEIGHT, Color.ammoToColor(weaponColor));
             weapon = CLIUtils.insertStringToMatrix(weapon, this.toStringLight());
             return weapon;

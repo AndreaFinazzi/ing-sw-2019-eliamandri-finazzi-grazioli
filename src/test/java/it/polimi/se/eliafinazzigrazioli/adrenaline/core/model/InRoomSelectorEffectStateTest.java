@@ -10,6 +10,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type In room selector effect state test.
+ */
 public class InRoomSelectorEffectStateTest {
 
     private GameBoard gameBoard;
@@ -17,6 +20,11 @@ public class InRoomSelectorEffectStateTest {
     private WeaponEffect weaponEffect;
     private WeaponCard weaponCard;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         gameBoard = new GameBoard(MapType.ONE);
@@ -26,6 +34,9 @@ public class InRoomSelectorEffectStateTest {
         weaponCard = new WeaponCard(weaponEffect);*/
     }
 
+    /**
+     * Execute test.
+     */
     @Test
     public void executeTest() {
         List<Player> visiblePlayers = new ArrayList<>();

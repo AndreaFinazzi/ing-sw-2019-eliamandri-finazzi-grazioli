@@ -16,10 +16,23 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 
 import java.util.*;
 
+/**
+ * The interface Remote view.
+ */
 public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
+    /**
+     * Gets local model.
+     *
+     * @return the local model
+     */
     LocalModel getLocalModel();
 
+    /**
+     * Gets client.
+     *
+     * @return the client
+     */
     Client getClient();
 
     @Override
@@ -96,8 +109,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             cards.remove(toKeep);
             PowerUpCardClient spawnCard = cards.get(0);
             notifyObservers(new SpawnPowerUpSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), toKeep, spawnCard, true));
-        }
-        else {
+        } else {
             showMessage("Select the power up to discard:");
             List<PowerUpCardClient> powerUps = new ArrayList<>();
             powerUps.addAll(getLocalModel().getPowerUpCards());
@@ -122,8 +134,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                 else
                     getLocalModel().removePowerUp(powerUpToDiscard);
                 showPowerUpDiscardedUpdate(player, powerUpToDiscard);
-            }
-            else {
+            } else {
                 if (event.ownedDiscardedPowerUp())
                     getLocalModel().getOpponentInfo(event.getPlayer()).removePowerUp();
                 showPowerUpDiscardedUpdate(player, event.getDiscardedPowerUp());
@@ -184,9 +195,17 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                     showMessage("This action can't be performed... choose again.");
             }
             notifyObservers(generatedEvent);
-            }
+        }
     }
 
+    /**
+     * Collection handling abstract view event.
+     *
+     * @param generatedEvent the generated event
+     * @param path the path
+     * @param finalPosition the final position
+     * @return the abstract view event
+     */
     default AbstractViewEvent collectionHandling(AbstractViewEvent generatedEvent, List<Coordinates> path, BoardSquareClient finalPosition) {
         if (finalPosition.isSpawnBoard()) {
             List<WeaponCardClient> collectibleWeapons = calculatePayableWeapons(finalPosition.getWeaponCards(), getLocalModel(), false);
@@ -210,8 +229,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                                     selectedWeapon,
                                     weaponCardToDiscard,
                                     powerUpsSelected);
-                    }
-                    else
+                    } else
                         generatedEvent = new WeaponCollectionEvent(
                                 getClient().getClientID(),
                                 getClient().getPlayerName(),
@@ -220,14 +238,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                                 null,
                                 powerUpsSelected);
                 }
-            }
-            else
+            } else
                 showMessage("Looks like you changed your mind... or maybe you're just too poor.");
-        }
-        else if (finalPosition.hasAmmoCard()) {
+        } else if (finalPosition.hasAmmoCard()) {
             generatedEvent = new CollectPlayEvent(getClient().getClientID(), getClient().getPlayerName(), path == null ? new ArrayList<>() : path);
-        }
-        else {
+        } else {
             generatedEvent = null;
         }
         return generatedEvent;
@@ -267,8 +282,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                                 if (getLocalModel().canPay(shootingWeapon.getPrice(), powerUpsSelected)) {
                                     notifyObservers(new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), shootingWeapon, powerUpsSelected));
                                     generatedEvent = new WeaponToUseSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), shootingWeapon.getWeaponName(), path);
-                                }
-                                else
+                                } else
                                     showMessage("You didn't select enough power ups. Select another weapon and pay your debts >:(");
                             }
 
@@ -310,8 +324,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             localModel.addWeapon(weaponCard);
             if (event.isHandFull())
                 localModel.setWeaponHandFull();
-        }
-        else {
+        } else {
             String player = event.getPlayer();
 
             executePayment(player, event.getPowerUpsSpent(), event.getAmmosSpent());
@@ -353,19 +366,16 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                     if (selectedEffect == null) {
                         repeatSelection = false;
                         usageConfirmation = false;
-                    }
-                    else {
+                    } else {
                         powerUpCardsToPay = getPowerUpsToPay(selectedEffect.getPrice());
                         if (!getLocalModel().canPay(selectedEffect.getPrice(), powerUpCardsToPay)) {
                             showMessage("The power ups you selected are not enough to pay, are you sure you want to play this effect?[Y=1/n=0]");
                             usageConfirmation = selectYesOrNot();
                             repeatSelection = usageConfirmation;
-                        }
-                        else
+                        } else
                             repeatSelection = false;
                     }
-                }
-                else {
+                } else {
                     repeatSelection = false;
                     usageConfirmation = false;
                     showMessage("No more selectable effects :(");
@@ -374,12 +384,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             if (usageConfirmation) {
                 weaponCard.setLoaded(false);
                 notifyObservers(new EffectSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), selectedEffect.getEffectName(), powerUpCardsToPay));
-            }
-            else
+            } else
                 notifyObservers(new EffectSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), null, null));
 
-        }
-        else
+        } else
             notifyObservers(new EffectSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), null, null));
     }
 
@@ -399,8 +407,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             if (event.getPlayer().equals(getClient().getPlayerName())) {
                 localModel.addPowerUp(event.getCollectedCard());
                 showPowerUpCollectionUpdate(event.getPlayer(), event.getCollectedCard(), false);
-            }
-            else {
+            } else {
                 localModel.getOpponentInfo(event.getPlayer()).addPowerUp();
                 showPowerUpCollectionUpdate(event.getPlayer(), event.getCollectedCard(), true);
             }
@@ -448,12 +455,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), selectedWeapon, powerUpsSelected);
                     else
                         showMessage("You didn't select enough power ups. Select another weapon and pay your debts >:(");
-                }
-                else
+                } else
                     generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), null, null);
             }
-        }
-        else {
+        } else {
             showMessage("You can't reload any weapon.");
             generatedEvent = new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), null, null);
         }
@@ -467,8 +472,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         WeaponCardClient weaponReloaded;
         if (event.getPlayer().equals(getClient().getPlayerName())) {
             weaponReloaded = localModel.getWeaponByName(event.getWeaponReloaded());
-        }
-        else {
+        } else {
             PlayerClient player = localModel.getOpponentInfo(event.getPlayer());
             weaponReloaded = player.getWeaponByName(event.getWeaponReloaded());
         }
@@ -586,6 +590,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(FinalFrenzyBeginEvent event) throws HandlerNotImplementedException {
         showMessage("LAST SKULL REMOVED! FINAL FRENZY BEGINS!!!!!!!");
+        showFinalFrenzyBegin(event.getPlayerBoardsToSwitch());
     }
 
     @Override
@@ -612,8 +617,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         null,
                         "Tagback Grenade"
                 ));
-            }
-            else
+            } else
                 notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
         }
     }
@@ -628,34 +632,34 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showMessage(event.getMessage());
         showMessage("ACTION FAILED!");
     }
-    //TODO to implement
 
+    //TODO to implement
     @Override
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-    //TODO to implement
 
+    //TODO to implement
     @Override
     default void handleEvent(ConnectionTimeoutEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-    //TODO to implement
 
     //TODO to implement
+    //TODO to implement
+
     @Override
     default void handleEvent(SelectedMapEvent event) throws HandlerNotImplementedException {
         buildLocalMap(event.getMapType());
         showMap();
     }
 
-
     //TODO to implement
+
     @Override
     default void handleEvent(PlayerUpdateEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
 
     @Override
     default void handleEvent(PlayerDisconnectedEvent event) throws HandlerNotImplementedException {
@@ -672,20 +676,37 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showPlayerReconnection(event.getPlayer());
     }
 
+    /**
+     * Error.
+     *
+     * @param e the e
+     */
     void error(Exception e);
 
 
+    /**
+     * Sets local model.
+     *
+     * @param clientModel the client model
+     */
     void setLocalModel(LocalModel clientModel);
 
 
     /**
      * OUTGOING communications
+     *
+     * @param nickname the nickname
+     * @param avatar the avatar
      */
-
     default void notifyLoginRequestEvent(String nickname, Avatar avatar) {
         notifyObservers(new LoginRequestEvent(getClient().getClientID(), nickname, avatar));
     }
 
+    /**
+     * Notify map vote event.
+     *
+     * @param mapType the map type
+     */
     default void notifyMapVoteEvent(MapType mapType) {
         notifyObservers(new MapVoteEvent(getClient().getClientID(), getClient().getPlayerName(), mapType));
     }
@@ -693,16 +714,27 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     /**
      * LOCAL MODEL MODIFIERS--------------------------------------------------------------------------------------------------------------------------------------------------------
+     *
+     * @param player the player
      */
-
     default void updatePlayerInfo(String player) {
         getClient().setPlayerName(player);
     }
 
+    /**
+     * Update match players.
+     *
+     * @param playerToAvatarMap the player to avatar map
+     */
     default void updateMatchPlayers(HashMap<String, Avatar> playerToAvatarMap) {
         getLocalModel().setPlayerToAvatarMap(playerToAvatarMap);
     }
 
+    /**
+     * Init players board.
+     *
+     * @param players the players
+     */
     default void initPlayersBoard(List<String> players) {
         getLocalModel().setPlayerName(getClient().getPlayerName());
         players.remove(getClient().getPlayerName());
@@ -712,10 +744,22 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
+    /**
+     * Build local map.
+     *
+     * @param mapType the map type
+     */
     default void buildLocalMap(MapType mapType) {
         getLocalModel().generatesGameBoard(mapType);
     }
 
+    /**
+     * Execute payment.
+     *
+     * @param player the player
+     * @param powerUpsToPay the power ups to pay
+     * @param ammosToPay the ammos to pay
+     */
     default void executePayment(String player, List<PowerUpCardClient> powerUpsToPay, List<Ammo> ammosToPay) {
         if (player.equals(getClient().getPlayerName())) {
             List<PowerUpCardClient> actualPowerUpsToPay = extractActualPowerUps(powerUpsToPay);
@@ -735,40 +779,103 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     /**
      * UPDATES SHOW METHODS--------------------------------------------------------------------------------------------------------------------------------------------------------
+     *
+     * @param message the message
      */
-
     void showMessage(Object message);
 
+    /**
+     * Show match ended.
+     *
+     * @param winner the winner
+     */
     default void showMatchEnded(String winner) {
         showMessage("AND THE WINNER IS " + winner + "!!!!!!!!!!!!!");
     }
 
+    /**
+     * Show map.
+     */
     void showMap();
 
+    /**
+     * Show login.
+     *
+     * @param availableAvatars the available avatars
+     */
     void showLogin(List<Avatar> availableAvatars);
 
+    /**
+     * Show login successful.
+     */
     void showLoginSuccessful();
 
+    /**
+     * Show map vote.
+     *
+     * @param availableMaps the available maps
+     */
     void showMapVote(List<MapType> availableMaps);
 
+    /**
+     * Show begin match.
+     */
     void showBeginMatch();
 
+    /**
+     * Show payment update.
+     *
+     * @param player the player
+     * @param powerUpCardClients the power up card clients
+     * @param ammos the ammos
+     */
     void showPaymentUpdate(String player, List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos);
 
+    /**
+     * Show weapon collection update.
+     *
+     * @param player the player
+     * @param collectedCard the collected card
+     * @param droppedCard the dropped card
+     * @param roomColor the room color
+     */
     void showWeaponCollectionUpdate(String player, WeaponCardClient collectedCard, WeaponCardClient droppedCard, Room roomColor);
 
+    /**
+     * Show skull removal update.
+     *
+     * @param deadPlayer the dead player
+     */
     default void showSkullRemovalUpdate(String deadPlayer) {}
 
+    /**
+     * Show points update.
+     *
+     * @param pointsMap the points map
+     */
     default void showPointsUpdate(Map<String, Integer> pointsMap) {
         for (Map.Entry<String, Integer> playerPoints: pointsMap.entrySet())
             showMessage("-" + playerPoints.getKey() + " received " + playerPoints.getValue() + " points.");
     }
 
+    /**
+     * Show sudden dead update.
+     *
+     * @param deadPlayer the dead player
+     */
     default void showSuddenDeadUpdate(String deadPlayer) {
         showMessage(deadPlayer.equals(getClient().getPlayerName()) ? "You " : deadPlayer +
                 " died... poor fool.");
     }
 
+    /**
+     * Show player moved by weapon update.
+     *
+     * @param attackingPlayer the attacking player
+     * @param playerMoved the player moved
+     * @param weaponUsed the weapon used
+     * @param finalPosition the final position
+     */
     default void showPlayerMovedByWeaponUpdate(String attackingPlayer, String playerMoved, String weaponUsed, Coordinates finalPosition) {
         String message;
         if (attackingPlayer.equals(getClient().getPlayerName()))
@@ -784,10 +891,24 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         showMessage(message);
     }
 
+    /**
+     * Show shot player update.
+     *
+     * @param damagedPlayer the damaged player
+     * @param damages the damages
+     * @param marks the marks
+     * @param removedMarks the removed marks
+     */
     default void showShotPlayerUpdate(String damagedPlayer, List<DamageMark> damages, List<DamageMark> marks, List<DamageMark> removedMarks) {
         showMessage(damagedPlayer + " received damages " + damages + " and marks " + marks);
     }
 
+    /**
+     * Show player movement update.
+     *
+     * @param player the player
+     * @param path the path
+     */
     default void showPlayerMovementUpdate(String player, List<Coordinates> path) {
         if (path != null && path.size() > 0) {
             if (player.equals(getClient().getPlayerName()))
@@ -799,10 +920,24 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
+    /**
+     * Show power up discarded update.
+     *
+     * @param player the player
+     * @param powerUpCardClient the power up card client
+     */
     default void showPowerUpDiscardedUpdate(String player, PowerUpCardClient powerUpCardClient) {
         showPaymentUpdate(player, new ArrayList<>(Arrays.asList(powerUpCardClient)), new ArrayList<>());
     }
 
+    /**
+     * Show spawn update.
+     *
+     * @param player the player
+     * @param spawnPoint the spawn point
+     * @param spawnCard the spawn card
+     * @param isOpponent the is opponent
+     */
     default void showSpawnUpdate(String player, Coordinates spawnPoint, PowerUpCardClient spawnCard, boolean isOpponent) {
         if (isOpponent)
             showMessage("Player " + player + " spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
@@ -810,8 +945,20 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             showMessage("You spawned on " + spawnPoint.toString() + " square using power up " + spawnCard.toString() + "!\n");
     }
 
+    /**
+     * Show power up collection update.
+     *
+     * @param player the player
+     * @param cardCollected the card collected
+     * @param isOpponent the is opponent
+     */
     void showPowerUpCollectionUpdate(String player, PowerUpCardClient cardCollected, boolean isOpponent);
 
+    /**
+     * Show begin turn update.
+     *
+     * @param player the player
+     */
     default void showBeginTurnUpdate(String player) {
         if (player.equals(getClient().getPlayerName())) {
             showMessage("Your turn began!!!");
@@ -819,6 +966,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             showMessage(player + "'s turn began!");
     }
 
+    /**
+     * Show end turn update.
+     *
+     * @param player the player
+     */
     default void showEndTurnUpdate(String player) {
         if (player.equals(getClient().getPlayerName()))
             showMessage("YEAH!! You concluded your turn!");
@@ -826,6 +978,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             showMessage(player + " concluded his turn!");
     }
 
+    /**
+     * Show ammo collected update.
+     *
+     * @param player the player
+     * @param ammo the ammo
+     * @param actuallyCollected the actually collected
+     * @param lastOfCard the last of card
+     */
     default void showAmmoCollectedUpdate(String player, Ammo ammo, boolean actuallyCollected, boolean lastOfCard) {
         if (player.equals(getClient().getPlayerName()))
             showMessage("You collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but your playerBoard was full!"));
@@ -833,6 +993,13 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             showMessage(player + " collected a " + ammo.toString() + " munition " + (actuallyCollected ? "!" : " but his playerBoard was full!"));
     }
 
+    /**
+     * Show ammo card collected update.
+     *
+     * @param player the player
+     * @param ammoCard the ammo card
+     * @param coordinates the coordinates
+     */
     default void showAmmoCardCollectedUpdate(String player, AmmoCardClient ammoCard, Coordinates coordinates) {
         String message = " gathered the ammo card " + ammoCard.toString() + " from square " + coordinates + "!";
         if (player.equals(getClient().getPlayerName()))
@@ -841,37 +1008,106 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             showMessage(player + message);
     }
 
+    /**
+     * Show ammo card resetting update.
+     *
+     * @param coordinatesAmmoCardMap the coordinates ammo card map
+     */
     default void showAmmoCardResettingUpdate(Map<Coordinates, AmmoCardClient> coordinatesAmmoCardMap) {
         showMessage("Gathered ammo cards are being replaced...");
     }
 
+    /**
+     * Show weapon card resetting update.
+     *
+     * @param coordinatesWeaponsMap the coordinates weapons map
+     */
     default void showWeaponCardResettingUpdate(Map<Coordinates, List<WeaponCardClient>> coordinatesWeaponsMap) {
         showMessage("Weapons are being placed on the spawn points...");
     }
 
     //Implemented on CLI
+
+    /**
+     * Show weapon reloaded update.
+     *
+     * @param player the player
+     * @param weaponCard the weapon card
+     */
     default void showWeaponReloadedUpdate(String player, WeaponCardClient weaponCard) {
         showMessage(player + " reloaded " + weaponCard.getWeaponName() + "!");
     }
 
+    /**
+     * Show player disconnection.
+     *
+     * @param player the player
+     */
     void showPlayerDisconnection(String player);
 
+    /**
+     * Show player reconnection.
+     *
+     * @param player the player
+     */
     void showPlayerReconnection(String player);
 
     /**
-     * INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS --------------------------------------------------------------------------------------------------------------------------------------------------------
+     * Show final frenzy begin.
+     *
+     * @param playerBoardsToSwitch the player boards to switch
      */
+    default void showFinalFrenzyBegin(List<String> playerBoardsToSwitch) {
+    }
 
+    ;
+
+    /**
+     * INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS --------------------------------------------------------------------------------------------------------------------------------------------------------
+     *
+     * @param currentPose the current pose
+     * @param availableMoves the available moves
+     * @return the move direction
+     */
     MoveDirection selectDirection(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves);
 
+    /**
+     * Select action player action.
+     *
+     * @return the player action
+     */
     PlayerAction selectAction();
 
+    /**
+     * Select power up to keep power up card client.
+     *
+     * @param cards the cards
+     * @return the power up card client
+     */
     PowerUpCardClient selectPowerUpToKeep(List<PowerUpCardClient> cards);
 
+    /**
+     * Select power up power up card client.
+     *
+     * @param cards the cards
+     * @return the power up card client
+     */
     PowerUpCardClient selectPowerUp(List<PowerUpCardClient> cards);
 
+    /**
+     * Select coordinates coordinates.
+     *
+     * @param coordinates the coordinates
+     * @return the coordinates
+     */
     Coordinates selectCoordinates(List<Coordinates> coordinates);
 
+    /**
+     * Select player string.
+     *
+     * @param players the players
+     * @return the string
+     */
     default String selectPlayer(List<String> players) {
         if (players.isEmpty())
             return null;
@@ -890,7 +1126,13 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         return players.get(choice - 1);
     }
 
-    //Implemented on CLI
+    /**
+     * Select room room.
+     *
+     * @param rooms the rooms
+     * @return the room
+     */
+//Implemented on CLI
     default Room selectRoom(List<Room> rooms) {
         if (rooms.isEmpty())
             return null;
@@ -909,6 +1151,13 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         return rooms.get(choice - 1);
     }
 
+    /**
+     * Select weapon card from spawn square weapon card client.
+     *
+     * @param coordinates the coordinates
+     * @param selectableWeapons the selectable weapons
+     * @return the weapon card client
+     */
     default WeaponCardClient selectWeaponCardFromSpawnSquare(Coordinates coordinates, List<WeaponCardClient> selectableWeapons) {
         if (selectableWeapons.isEmpty()) {
             showMessage("No weapons to select.");
@@ -930,14 +1179,31 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
+    /**
+     * Select ammo type ammo.
+     *
+     * @param selectableAmmos the selectable ammos
+     * @return the ammo
+     */
     default Ammo selectAmmoType(List<Ammo> selectableAmmos) {
         return selectableAmmos.get(new Random().nextInt(selectableAmmos.size()));
     }
 
-    WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons);
-
+    /**
+     * Select weapon card from hand weapon card client.
+     *
+     * @param selectableWeapons the selectable weapons
+     * @return the weapon card client
+     */
     WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons);
 
+    /**
+     * Select weapon effect weapon effect client.
+     *
+     * @param weapon the weapon
+     * @param callableEffects the callable effects
+     * @return the weapon effect client
+     */
     default WeaponEffectClient selectWeaponEffect(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) {
         int count = 0;
         showMessage("Select an effect to activate: ");
@@ -960,6 +1226,11 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
             return callableEffects.get(choice - 1);
     }
 
+    /**
+     * Select yes or not boolean.
+     *
+     * @return the boolean
+     */
     default boolean selectYesOrNot() {
         int choice;
         Scanner scanner = new Scanner(System.in);
@@ -969,8 +1240,10 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     /**
      * COMPOSITE SELECTION METHODS--------------------------------------------------------------------------------------------------------------------------------------------------------
+     *
+     * @param maxSteps the max steps
+     * @return the path from user
      */
-
     default List<Coordinates> getPathFromUser(int maxSteps) {
         if (maxSteps == 0)
             return new ArrayList<>();
@@ -1015,6 +1288,12 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         return path;
     }
 
+    /**
+     * Gets power ups to pay.
+     *
+     * @param price the price
+     * @return the power ups to pay
+     */
     default List<PowerUpCardClient> getPowerUpsToPay(List<Ammo> price) {
         List<PowerUpCardClient> powerUpsSelected = new ArrayList<>();
         PowerUpCardClient powerUpCardUsedToPay;
@@ -1041,6 +1320,13 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         return powerUpsSelected;
     }
 
+    /**
+     * Gets target coordinates.
+     *
+     * @param coordinates the coordinates
+     * @param maxSelections the max selections
+     * @return the target coordinates
+     */
     default List<Coordinates> getTargetCoordinates(List<Coordinates> coordinates, int maxSelections) {
         showMessage("select a target square!");
         List<Coordinates> selectedCoordinates = new ArrayList<>();
@@ -1056,6 +1342,13 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         return selectedCoordinates;
     }
 
+    /**
+     * Gets target players.
+     *
+     * @param players the players
+     * @param maxSelections the max selections
+     * @return the target players
+     */
     default List<String> getTargetPlayers(List<String> players, int maxSelections) {
         if (!players.isEmpty()) {
             showMessage("select a target player!");
@@ -1078,12 +1371,22 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     /**
      * SUPPORT EVALUATION AND DATA EXTRACTION METHODS--------------------------------------------------------------------------------------------------------------------------------------------------------
+     *
+     * @param initialCoordinates the initial coordinates
+     * @param moveDirection the move direction
+     * @return the coordinates
      */
-
     static Coordinates calculateCoordinates(Coordinates initialCoordinates, MoveDirection moveDirection) {
         return new Coordinates(initialCoordinates.getXCoordinate() + moveDirection.getDeltaX(), initialCoordinates.getYCoordinate() + moveDirection.getDeltaY());
     }
 
+    /**
+     * Calculate spendable power ups list.
+     *
+     * @param price the price
+     * @param powerUpCards the power up cards
+     * @return the list
+     */
     static List<PowerUpCardClient> calculateSpendablePowerUps(List<Ammo> price, List<PowerUpCardClient> powerUpCards) {
         List<PowerUpCardClient> spendablePowerUps = new ArrayList<>();
         for (PowerUpCardClient powerUpCardClient : powerUpCards) {
@@ -1093,6 +1396,14 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         return spendablePowerUps;
     }
 
+    /**
+     * Calculate payable weapons list.
+     *
+     * @param weaponsList the weapons list
+     * @param localModel the local model
+     * @param toReload the to reload
+     * @return the list
+     */
     static List<WeaponCardClient> calculatePayableWeapons(List<WeaponCardClient> weaponsList, LocalModel localModel, boolean toReload) {
         List<WeaponCardClient> payableWeapons = new ArrayList<>();
         Iterator<WeaponCardClient> iterator = weaponsList.iterator();
@@ -1106,6 +1417,12 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         return payableWeapons;
     }
 
+    /**
+     * Extract actual power ups list.
+     *
+     * @param powerUpCopies the power up copies
+     * @return the list
+     */
     default List<PowerUpCardClient> extractActualPowerUps(List<PowerUpCardClient> powerUpCopies) {
         List<String> powerUpIds = new ArrayList<>();
         List<PowerUpCardClient> actualPowerUps = new ArrayList<>();
@@ -1120,8 +1437,16 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         return actualPowerUps;
     }
 
+    /**
+     * Sets disconnected.
+     */
     void setDisconnected();
 
+    /**
+     * Targeting handle.
+     *
+     * @param event the event
+     */
     default void targetingHandle(UsablePowerUpsEvent event) {
         showMessage("You can use Targeting Scope on " + event.getTarget() + ", select the power up you want to use or proceed");
         List<PowerUpCardClient> usablePowerUps = new ArrayList<>();
@@ -1167,9 +1492,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                             "Targeting Scope"
                     ));
                 else notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
-            }
-            else notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
-        }
-        else notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
+            } else notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
+        } else notifyObservers(new PowerUpRefusedEvent(getClient().getClientID(), getClient().getPlayerName()));
     }
 }

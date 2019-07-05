@@ -8,12 +8,20 @@ import org.junit.Test;
 import static it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType.ONE;
 import static org.junit.Assert.*;
 
+/**
+ * The type Player test.
+ */
 public class PlayerTest {
     private Player player;
     private PlayerBoard playerBoard;
     private Match match;
     private GameBoard gameBoard;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         player = new Player("nickname");
@@ -26,6 +34,9 @@ public class PlayerTest {
         match.addPlayer(new Player("fifth"));
     }
 
+    /**
+     * Constructor test.
+     */
     @Test
     public void constructorTest() {
         assertTrue(player.getPlayerNickname().equals("nickname"));
@@ -38,6 +49,9 @@ public class PlayerTest {
         assertFalse(player.isSuspended());
     }
 
+    /**
+     * Sets position test.
+     */
     @Test
     public void setPositionTest() {
         BoardSquare position = gameBoard.
@@ -47,6 +61,9 @@ public class PlayerTest {
 
     }
 
+    /**
+     * Sets player board test.
+     */
     @Test
     public void setPlayerBoardTest() {
         PlayerBoard playerBoard1 = new PlayerBoard();

@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
+/**
+ * The type Opponent player gui controller.
+ */
 public class OpponentPlayerGUIController extends GUIController {
     @FXML
     private StackPane rootStackPane;
@@ -33,6 +36,12 @@ public class OpponentPlayerGUIController extends GUIController {
 
     private PlayerBoardGUIController playerBoardGUIController;
 
+    /**
+     * Instantiates a new Opponent player gui controller.
+     *
+     * @param view the view
+     * @param player the player
+     */
     public OpponentPlayerGUIController(GUI view, String player) {
         super(view);
         this.player = player;
@@ -52,6 +61,12 @@ public class OpponentPlayerGUIController extends GUIController {
         playerInfoLabel.setText(String.format("%s%n%n%s", player, playerBoardGUIController.getAvatar()));
     }
 
+    /**
+     * Load player board.
+     *
+     * @param player the player
+     * @throws IOException the io exception
+     */
     public void loadPlayerBoard(String player) throws IOException {
         this.player = player;
         playerBoardGUIController = new PlayerBoardGUIController(view, player, true);
@@ -60,39 +75,87 @@ public class OpponentPlayerGUIController extends GUIController {
         playerInfoLabel.setText(String.format("%s%n%n%s", player, playerBoardGUIController.getAvatar()));
     }
 
+    /**
+     * Sets card collected.
+     *
+     * @param cardCollected the card collected
+     * @throws IOException the io exception
+     */
     public void setCardCollected(PowerUpCardClient cardCollected) throws IOException {
         playerBoardGUIController.setCardCollected(cardCollected);
     }
 
+    /**
+     * Sets card collected.
+     *
+     * @param cardCollected the card collected
+     * @throws IOException the io exception
+     */
     public void setCardCollected(WeaponCardClient cardCollected) throws IOException {
         playerBoardGUIController.setCardCollected(cardCollected);
     }
 
+    /**
+     * Sets card collected.
+     *
+     * @param cardCollected the card collected
+     * @throws IOException the io exception
+     */
     public void setCardCollected(AmmoCardClient cardCollected) throws IOException {
         playerBoardGUIController.setCardCollected(cardCollected);
     }
 
+    /**
+     * Show ammo collected.
+     *
+     * @param ammo the ammo
+     * @param actuallyCollected the actually collected
+     */
     public void showAmmoCollected(Ammo ammo, boolean actuallyCollected) {
         playerBoardGUIController.updateAmmoStack();
     }
 
+    /**
+     * Update player ammo.
+     */
     public void updatePlayerAmmo() {
         playerBoardGUIController.updateAmmoStack();
     }
 
+    /**
+     * Show payment update.
+     *
+     * @param powerUpCardClients the power up card clients
+     * @param ammos the ammos
+     */
     public void showPaymentUpdate(List<PowerUpCardClient> powerUpCardClients, List<Ammo> ammos) {
         Platform.runLater(() -> playerBoardGUIController.getPaymentTransition(powerUpCardClients, ammos).play());
     }
 
+    /**
+     * Highlight.
+     *
+     * @param setHighlight the set highlight
+     */
     public void highlight(boolean setHighlight) {
         playerBoardGUIController.highlight(setHighlight);
     }
 
+    /**
+     * Show damage received.
+     *
+     * @param damages the damages
+     * @param marks the marks
+     * @throws IOException the io exception
+     */
     public void showDamageReceived(List<DamageMark> damages, List<DamageMark> marks) throws IOException {
         playerBoardGUIController.updateDamages();
         playerBoardGUIController.updateMarks();
     }
 
+    /**
+     * Sets disconnected.
+     */
     public void setDisconnected() {
         Platform.runLater(() -> {
             rootStackPane.setDisable(true);
@@ -100,6 +163,11 @@ public class OpponentPlayerGUIController extends GUIController {
         });
     }
 
+    /**
+     * Sets reconnected.
+     *
+     * @throws IOException the io exception
+     */
     public void setReconnected() throws IOException {
         Platform.runLater(() -> {
             rootStackPane.setDisable(false);
@@ -113,19 +181,40 @@ public class OpponentPlayerGUIController extends GUIController {
         playerBoardGUIController.updateAmmoStack();
     }
 
+    /**
+     * Update points.
+     */
     public void updatePoints() {
         playerBoardGUIController.updatePoints();
     }
 
+    /**
+     * Show sudden death.
+     */
     public void showSuddenDeath() {
         playerBoardGUIController.setDeath(true);
     }
 
+    /**
+     * Show respawn.
+     */
     public void showRespawn() {
         playerBoardGUIController.setDeath(false);
     }
 
+    /**
+     * Show skull update.
+     */
     public void showSkullUpdate() {
         playerBoardGUIController.updateSkulls();
+    }
+
+    /**
+     * Sets final frenzy.
+     *
+     * @throws IOException the io exception
+     */
+    public void setFinalFrenzy() throws IOException {
+        playerBoardGUIController.setFinalFrenzy();
     }
 }

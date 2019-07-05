@@ -15,6 +15,13 @@ public class AmmoCardCollectedEvent extends AbstractModelEvent {
     private AmmoCardClient ammoCardCollected;
     private Coordinates boardSquare;
 
+    /**
+     * Instantiates a new Ammo card collected event.
+     *
+     * @param player the player
+     * @param ammoCardCollected the ammo card collected
+     * @param boardSquare the board square
+     */
     public AmmoCardCollectedEvent(Player player, AmmoCard ammoCardCollected, Coordinates boardSquare) {
         super(player);
         this.ammoCardCollected = new AmmoCardClient(ammoCardCollected);
@@ -26,10 +33,20 @@ public class AmmoCardCollectedEvent extends AbstractModelEvent {
         listener.handleEvent(this);
     }
 
+    /**
+     * Gets ammo card collected.
+     *
+     * @return the ammo card collected
+     */
     public AmmoCardClient getAmmoCardCollected() {
         return ammoCardCollected;
     }
 
+    /**
+     * Gets board square.
+     *
+     * @return the board square
+     */
     public Coordinates getBoardSquare() {
         return boardSquare;
     }

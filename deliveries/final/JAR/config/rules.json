@@ -1,0 +1,79 @@
+{
+  "default": {
+    "player": {
+      "board": {
+        "max_marks_delivered": 3,
+        "max_marks_per_type": 3,
+        "max_skulls": 6,
+        "max_damage": 12,
+        "max_marks": 12,
+        "dead_shoot": 11,
+        "max_ammo": 3,
+        "death_scores": [
+          8,
+          6,
+          4,
+          2,
+          1,
+          1
+        ]
+      },
+      "cards": {
+        "max_weapons": 3,
+        "max_power_ups": 3
+      }
+    },
+    "power_ups": {
+      "cards_per_color": 2
+    },
+    "game": {
+      "min_players": 3,
+      "max_players": 5,
+      "max_maps": 4,
+      "ammo_cards_duplicates": 3,
+      "board": {
+        "x_max": 4,
+        "y_max": 3,
+        "max_weapons_on_spawn": 3
+      },
+      "first_blood_points": 1,
+      "double_kill_points": 1,
+      "max_kill_track_skulls": 8
+    },
+    "turn": {
+      "max_moves_simple": 3,
+      "max_moves_collecting": 1,
+      "max_moves_shooting": 0,
+      "max_actions_available": 2
+    },
+    "movement_adrenalinic_action": {
+      "moves_surplus": 0,
+      "min_damages": 1000
+    },
+    "shooting_adrenalinic_action": {
+      "moves_surplus": 1,
+      "min_damages": 6
+    },
+    "collection_adrenalinic_action": {
+      "moves_surplus": 1,
+      "min_damages": 3
+    },
+    "final_frenzy": {
+      "death_scores": [
+        2,
+        1,
+        1,
+        1
+      ],
+      "single_action": {
+        "max_movements": 4,
+        "max_moves_collecting": 2,
+        "max_moves_shooting": 1
+      },
+      "double_action": {
+        "max_moves_collecting": 3,
+        "max_moves_shooting": 2
+      }
+    }
+  }
+}

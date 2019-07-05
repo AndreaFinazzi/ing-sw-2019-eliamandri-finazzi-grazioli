@@ -4,11 +4,29 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI.Color;
 
 import java.io.Serializable;
 
+/**
+ * The enum Avatar.
+ */
 public enum Avatar implements Serializable {
+    /**
+     * Destructor avatar.
+     */
     DESTRUCTOR(":D-STRUCT-OR", DamageMark.YELLOW),
+    /**
+     * Banshee avatar.
+     */
     BANSHEE("BANSHEE", DamageMark.BLUE),
+    /**
+     * Dozer avatar.
+     */
     DOZER("DOZER", DamageMark.GREY),
+    /**
+     * Violet avatar.
+     */
     VIOLET("VIOLET", DamageMark.PURPLE),
+    /**
+     * Sprog avatar.
+     */
     SPROG("SPROG", DamageMark.GREEN);
 
     private String name;
@@ -19,10 +37,20 @@ public enum Avatar implements Serializable {
         this.damageMark = damageMark;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets damage mark.
+     *
+     * @return the damage mark
+     */
     public DamageMark getDamageMark() {
         return damageMark;
     }

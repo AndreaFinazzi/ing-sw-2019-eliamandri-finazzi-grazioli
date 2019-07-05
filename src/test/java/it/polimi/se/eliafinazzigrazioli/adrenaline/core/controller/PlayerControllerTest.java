@@ -12,6 +12,9 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 
+/**
+ * The type Player controller test.
+ */
 public class PlayerControllerTest {
 
     private MatchController matchController;
@@ -19,6 +22,11 @@ public class PlayerControllerTest {
     private GameBoard gameBoard;
     private PlayerBoard playerBoard;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         matchController = new MatchController(new MatchBuilder());
@@ -40,6 +48,9 @@ public class PlayerControllerTest {
         matchController.getPlayers().get("playerOne").setPlayerBoard(playerBoard);
     }
 
+    /**
+     * Handle event test.
+     */
     @Test
     public void handleEventTest() {
         List<Coordinates> coordinatesList = new ArrayList<>();

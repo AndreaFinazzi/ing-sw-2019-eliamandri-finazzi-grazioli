@@ -5,8 +5,16 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.Client;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
 
+/**
+ * The type Abstract connection manager test.
+ */
 public class AbstractConnectionManagerTest extends AbstractConnectionManager {
 
+    /**
+     * Instantiates a new Abstract connection manager test.
+     *
+     * @param client the client
+     */
     public AbstractConnectionManagerTest(Client client) {
         super(client);
     }

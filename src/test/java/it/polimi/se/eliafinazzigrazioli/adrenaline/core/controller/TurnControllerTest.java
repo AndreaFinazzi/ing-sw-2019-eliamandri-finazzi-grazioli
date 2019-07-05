@@ -4,7 +4,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClien
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.WeaponCardClient;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.BoardSquare;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.MapType;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Match;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.PowerUpsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -18,6 +21,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * The type Turn controller test.
+ */
 public class TurnControllerTest {
 
     private MatchBuilder matchBuilder;
@@ -33,6 +39,11 @@ public class TurnControllerTest {
     private Player fifth;
 
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         matchBuilder = new MatchBuilder();
@@ -62,6 +73,9 @@ public class TurnControllerTest {
     }
 
 
+    /**
+     * Move play event.
+     */
     @Test
     public void movePlayEvent() {
         List<Coordinates> path = new ArrayList<>();
@@ -76,6 +90,9 @@ public class TurnControllerTest {
         assertEquals(new Coordinates(2,2), match.getGameBoard().getPlayerPosition(first).getCoordinates());
     }
 
+    /**
+     * Collect play event.
+     */
     @Test
     public void collectPlayEvent() {
         List<Coordinates> path = new ArrayList<>();
@@ -86,6 +103,9 @@ public class TurnControllerTest {
         assertEquals(new Coordinates(1,2), match.getGameBoard().getPlayerPosition(first).getCoordinates());
     }
 
+    /**
+     * Collect weapon event test.
+     */
     @Test
     public void collectWeaponEventTest() {
         match.getGameBoard().weaponCardsSetup(new WeaponsDeck());
@@ -111,6 +131,9 @@ public class TurnControllerTest {
         assertEquals(new Coordinates(1,2), match.getGameBoard().getPlayerPosition(first).getCoordinates());
     }
 
+    /**
+     * Spawn power up selected event test.
+     */
     @Test
     public void spawnPowerUpSelectedEventTest() {
         try {
@@ -129,6 +152,9 @@ public class TurnControllerTest {
         }
     }
 
+    /**
+     * Effect selected event test.
+     */
     @Test
     public void EffectSelectedEventTest() {
         EffectSelectedEvent event = null;

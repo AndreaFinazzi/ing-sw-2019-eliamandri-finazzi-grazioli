@@ -7,11 +7,24 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Cardinal direction selector effect state.
+ */
 public class CardinalDirectionSelectorEffectState extends SelectorEffectState {
 
     private String directionSource;
     private int directionSelectionOrder;
 
+    /**
+     * Instantiates a new Cardinal direction selector effect state.
+     *
+     * @param referenceSource the reference source
+     * @param sourceSelectionOrder the source selection order
+     * @param referenceType the reference type
+     * @param selectionType the selection type
+     * @param directionSource the direction source
+     * @param directionSelectionOrder the direction selection order
+     */
     public CardinalDirectionSelectorEffectState(String referenceSource, int sourceSelectionOrder, SelectableType referenceType, SelectableType selectionType, String directionSource, int directionSelectionOrder) {
         super(referenceSource, sourceSelectionOrder, referenceType, selectionType);
         this.directionSource = directionSource;

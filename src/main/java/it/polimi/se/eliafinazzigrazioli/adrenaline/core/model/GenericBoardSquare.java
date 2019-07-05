@@ -6,19 +6,40 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
 
 import java.io.Serializable;
 
+/**
+ * The type Generic board square.
+ */
 public class GenericBoardSquare extends BoardSquare implements Serializable {
 
     private AmmoCard collectable;
 
+    /**
+     * Instantiates a new Generic board square.
+     */
     public GenericBoardSquare() {
     }
 
+    /**
+     * Instantiates a new Generic board square.
+     *
+     * @param room the room
+     * @param coordinates the coordinates
+     * @param north the north
+     * @param south the south
+     * @param east the east
+     * @param west the west
+     */
     public GenericBoardSquare(Room room, Coordinates coordinates, InterSquareLink north, InterSquareLink south, InterSquareLink east, InterSquareLink west) {
         super(room, coordinates, north, south, east, west);
         collectable = null;
     }
 
 
+    /**
+     * Gets collectable.
+     *
+     * @return the collectable
+     */
     public AmmoCard getCollectable() {
         return collectable;
     }
@@ -51,13 +72,23 @@ public class GenericBoardSquare extends BoardSquare implements Serializable {
         return null;
     }
 
-    //TODO define type exception
+    /**
+     * Gather collectables ammo card.
+     *
+     * @return the ammo card
+     */
+//TODO define type exception
     public AmmoCard gatherCollectables() {
         AmmoCard tempCollectables = collectable;
         collectable = null;
         return tempCollectables;
     }
 
+    /**
+     * Drop collectables.
+     *
+     * @param toDrop the to drop
+     */
     public void dropCollectables(AmmoCard toDrop) {
         collectable = toDrop;
     }

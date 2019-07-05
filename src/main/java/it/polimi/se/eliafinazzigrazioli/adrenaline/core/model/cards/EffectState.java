@@ -8,6 +8,9 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.RuntimeTypeAdapter
 
 import java.util.List;
 
+/**
+ * The type Effect state.
+ */
 public abstract class EffectState {
 
     private boolean isFinal = false;
@@ -30,8 +33,21 @@ public abstract class EffectState {
             .registerSubtype(SelectionResetEffectState.class, "SelectionResetEffectState");
 
 
+    /**
+     * Execute list.
+     *
+     * @param invoker the invoker
+     * @param gameBoard the game board
+     * @param currentPlayer the current player
+     * @return the list
+     */
     public abstract List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer);
 
+    /**
+     * Is final boolean.
+     *
+     * @return the boolean
+     */
     public boolean isFinal() {
         return isFinal;
     }

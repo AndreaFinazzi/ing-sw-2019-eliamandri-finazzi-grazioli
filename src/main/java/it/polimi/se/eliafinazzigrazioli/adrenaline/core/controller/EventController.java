@@ -17,6 +17,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+/**
+ * The type Event controller.
+ */
 public class EventController implements Observer {
     private HashMap<Class<? extends AbstractViewEvent>, ArrayList<ViewEventsListenerInterface>> viewEventsListenerMap;
 
@@ -28,7 +31,12 @@ public class EventController implements Observer {
     private int timerClientID;
     //Bidirectional Event dispatcher
 
-    //TODO is MatchController reference useful?
+    /**
+     * Instantiates a new Event controller.
+     *
+     * @param matchController the match controller
+     */
+//TODO is MatchController reference useful?
     public EventController(MatchController matchController) {
         viewEventsListenerMap = new HashMap<>();
     }
@@ -37,6 +45,7 @@ public class EventController implements Observer {
     @Override
     public synchronized void update(AbstractViewEvent event) {
         LOGGER.info("Updating eventController");
+        // Stop turn timer
         if (event.getClientID() == timerClientID) stopTimer();
 
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(event.getClass());
@@ -88,6 +97,12 @@ public class EventController implements Observer {
         }, (long) Config.CONFIG_MATCH_TURN_TIMEOUT);
     }
 
+    /**
+     * Add view events listener.
+     *
+     * @param key the key
+     * @param value the value
+     */
     public synchronized void addViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) {
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(key);
 
@@ -100,6 +115,11 @@ public class EventController implements Observer {
         }
     }
 
+    /**
+     * Add virtual view.
+     *
+     * @param virtualView the virtual view
+     */
     public synchronized void addVirtualView(AbstractClientHandler virtualView) {
         if (virtualViews == null) {
             virtualViews = new ArrayList<>();
@@ -108,11 +128,24 @@ public class EventController implements Observer {
             virtualViews.add(virtualView);
     }
 
+    /**
+     * Remove view events listener.
+     *
+     * @param key the key
+     * @param value the value
+     * @throws ListenerNotFoundException the listener not found exception
+     */
     public synchronized void removeViewEventsListener(Class<? extends AbstractViewEvent> key, ViewEventsListenerInterface value) throws ListenerNotFoundException {
         ArrayList<ViewEventsListenerInterface> listeners = viewEventsListenerMap.get(key);
         if (!listeners.remove(value)) throw new ListenerNotFoundException();
     }
 
+    /**
+     * Pop virtual view abstract client handler.
+     *
+     * @param clientID the client id
+     * @return the abstract client handler
+     */
     public synchronized AbstractClientHandler popVirtualView(int clientID) {
         for (AbstractClientHandler virtualView : virtualViews) {
             if (virtualView.getClientID() == clientID) {

@@ -5,8 +5,16 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEvents
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
+/**
+ * The type Skipped turn event.
+ */
 public class SkippedTurnEvent extends AbstractModelEvent {
 
+    /**
+     * Instantiates a new Skipped turn event.
+     *
+     * @param player the player
+     */
     public SkippedTurnEvent(Player player) {
         super(player);
     }
