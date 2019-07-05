@@ -12,7 +12,7 @@ public class AdrenalineTest {
 
     @Test
     public void MatchConsistencyTest(){
-
+/*
         Thread server = new Thread(() -> new Server().run());
         server.start();
 
@@ -50,6 +50,7 @@ public class AdrenalineTest {
             thread.interrupt();
 
 
-    }
 
+ */
+    }
 }

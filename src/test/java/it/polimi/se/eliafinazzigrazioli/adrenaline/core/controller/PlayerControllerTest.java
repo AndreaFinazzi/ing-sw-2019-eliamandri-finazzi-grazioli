@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.assertEquals;
+
 public class PlayerControllerTest {
 
     private PlayerController playerController;
@@ -51,6 +53,6 @@ public class PlayerControllerTest {
         BoardSquare playerPos = matchController.getMatch().getGameBoard().getPlayerPosition(playerOne);
         BoardSquare boardSquare = gameBoard.getBoardSquareByCoordinates(new Coordinates(1, 1));
         System.out.println(matchController.getMatch().getPlayers().size());
-        //assertEquals(boardSquare, playerPos);
+        assertEquals(boardSquare, playerPos);
     }
 }

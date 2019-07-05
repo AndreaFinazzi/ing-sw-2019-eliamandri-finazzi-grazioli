@@ -1,6 +1,7 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.TestSupportClasses;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.LocalModel;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.MaxPlayerException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.PlayerAlreadyPresentException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
@@ -228,9 +229,18 @@ public class MatchTest {
 
         gameBoard.spawnPlayer(match.getPlayer("FinazIlDuro-X("), new PowerUpCard(null, Ammo.YELLOW), true);
         assertEquals(new Coordinates(3, 0), gameBoard.getPlayerPosition(match.getPlayer("FinazIlDuro-X(")).getCoordinates());
+    }
 
-
-
+    @Test
+    public void generateClientModelTest() {
+        match.setGameBoard(MapType.FOUR);
+        Player player = new Player(0,"Tony");
+        player.addAmmo(Ammo.YELLOW);
+        player.setPosition(match.getGameBoard().getBoardSquareByCoordinates(new Coordinates(1,1)));
+        LocalModel localModel = match.generateClientModel(player);
+        assertEquals(1, localModel.getAmmos().size());
+        assertEquals(Ammo.YELLOW, localModel.getAmmos().get(0));
+        assertNotNull(localModel);
 
     }
 }

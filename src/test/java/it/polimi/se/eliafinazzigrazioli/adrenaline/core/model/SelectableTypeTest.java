@@ -41,9 +41,5 @@ public class SelectableTypeTest {
         Gson gson = new Gson();
         String json = gson.toJson(ammoStringMap);
         System.out.println(json);
-        /*Type mapType = new TypeToken<Map<Ammo, String>>() {
-        }.getType();
-        ammoStringMap = gson.fromJson(json, mapType);
-        System.out.println(ammoStringMap.values());*/
     }
 }

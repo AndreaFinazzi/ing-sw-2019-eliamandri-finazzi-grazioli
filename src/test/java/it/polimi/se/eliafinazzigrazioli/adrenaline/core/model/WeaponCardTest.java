@@ -1,168 +1,105 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.CardController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.EventController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.MatchController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.controller.PlayerController;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.EffectSelectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.WeaponToUseSelectedEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponFileNotFoundException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.EffectState;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects.*;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.RuntimeTypeAdapterFactory;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponsDeck;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Coordinates;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.AbstractClientHandlerTest;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.server.MatchBuilder;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+
 
 public class WeaponCardTest {
 
+    private WeaponsDeck weaponsDeck;
+    private MatchBuilder matchBuilder;
+    private MatchController matchController;
+    private EventController eventController;
+    private CardController cardController;
+    private PlayerController playerController;
+    private Match match;
+    private Player first;
 
-    @Test
-    public void weaponCardSerializationTest() {
-        WeaponCard weaponCard = new WeaponCard();
-        /*Gson gson = new Gson();
-        String json = gson.toJson(weaponCard);
-        Type weaponType = new TypeToken<WeaponCard>(){}.getType();
-        weaponCard = gson.fromJson(json, weaponType);*/
-        //System.out.println(weaponCard);
 
-        List<EffectState> states = new ArrayList<>(Arrays.asList(
-                new VisibilitySelectorEffectState(true, "ehi", 1, SelectableType.PLAYER, SelectableType.PLAYER),
-                new PreselectionBasedSelectorEffectState("bla", 3, null, true),
-                new SelectionRequestEffectState(false, SelectableType.PLAYER, 0)
-        ));
-        RuntimeTypeAdapterFactory<EffectState> effectStateRuntimeTypeAdapterFactory = RuntimeTypeAdapterFactory.of(EffectState.class, "type")
-                .registerSubtype(SelectorEffectState.class, "SelectorEffectState")
-                .registerSubtype(ActionEffectState.class, "ActionEffectState")
-                .registerSubtype(VisibilitySelectorEffectState.class, "VisibilitySelectionEffectState")
-                .registerSubtype(SelectionRequestEffectState.class, "SelectionRequestEffectState")
-                .registerSubtype(CardinalDirectionSelectorEffectState.class, "CardinalDirectionSelectorEffectState")
-                .registerSubtype(DistanceSelectorEffectState.class, "DistanceSelectorEffectState")
-                .registerSubtype(InRoomSelectorEffectState.class, "InRoomSelectorEffectState")
-                .registerSubtype(PreselectionBasedSelectorEffectState.class, "PreselectionBasedSelectorEffectState")
-                .registerSubtype(MoveActionEffectState.class, "MoveActionEffectState")
-                .registerSubtype(DamageActionEffectState.class, "DamageActionEffectState");
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapterFactory(effectStateRuntimeTypeAdapterFactory)
-                .create();
-        Type effectStateListType = new TypeToken<List<EffectState>>() {
-        }.getType();
-        String json = gson.toJson(states, effectStateListType);
-        System.out.println(json);
-        states = gson.fromJson(json, effectStateListType);
-        System.out.println(states);
+    @Before
+    public void setUp() throws Exception {
+        weaponsDeck = new WeaponsDeck();
+        matchBuilder = new MatchBuilder();
+        matchController = new MatchController(matchBuilder);
+        eventController = new EventController(matchController);
+        matchBuilder.signNewClient(new AbstractClientHandlerTest(null));
+        matchBuilder.signNewClient(new AbstractClientHandlerTest(null));
+        matchBuilder.signNewClient(new AbstractClientHandlerTest(null));
+        playerController = new PlayerController(eventController, matchController);
+        match = new Match();
+        cardController = new CardController(eventController, match);
+        match.setGameBoard(MapType.FOUR);
+        BoardSquare boardSquare = match.getGameBoard().getBoardSquareByCoordinates(new Coordinates(1,1));
+        first = new Player(0, "tony");
+        match.addPlayer(first);
+        first.setPosition(boardSquare);
+        match.getGameBoard().setPlayerPositions(first, boardSquare);
+        Player second = new Player(1, "finaz");
+        second.setPosition(boardSquare);
+        match.addPlayer(second);
+        match.getGameBoard().setPlayerPositions(second, boardSquare);
+        Player third = new Player(2, "graz");
+        third.setPosition(boardSquare);
+        match.addPlayer(third);
+        match.getGameBoard().setPlayerPositions(third, boardSquare);
     }
 
     @Test
-    public void jsonTest() {
-        String json = "{\n" +
-                "    \"weaponName\" : \"Lock Refile\",\n" +
-                "    \"cardColor\" : \"BLUE\",\n" +
-                "    \"loader\" : [\"BLUE\"],\n" +
-                "    \"effects\" : [\n" +
-                "        {\n" +
-                "            \"effectName\" : \"basic effect\",\n" +
-                "            \"effectDescription\" : \"Deal 2 damage and 1 mark to 1 target you can see.\",\n" +
-                "            \"price\" : [],\n" +
-                "            \"effectStates\" : [\n" +
-                "                {\n" +
-                "                    \"type\" : \"VisibilitySelectorEffectState\",\n" +
-                "                    \"notVisible\" : false,\n" +
-                "                    \"referenceSource\" : null,\n" +
-                "                    \"sourceSelectionOrder\" : 0,\n" +
-                "                    \"selectionType\" : \"PLAYER\",\n" +
-                "                    \"referenceType\" : \"PLAYER\"\n" +
-                "                }, {\n" +
-                "                    \"type\" : \"SelectionRequestEffectState\",\n" +
-                "                    \"userSelectionRequired\" : true,\n" +
-                "                    \"selectionType\" : \"PLAYER\",\n" +
-                "                    \"maxSelectableItems\" : 1\n" +
-                "                }, {\n" +
-                "                    \"type\" : \"DamageActionEffectState\",\n" +
-                "                    \"damageAmount\" : 2,\n" +
-                "                    \"markAmount\" : 1, \n" +
-                "                    \"playerToAffectSource\" : \"basic effect\",\n" +
-                "                    \"toAffectPlayerSelectionOrder\" : 0\n" +
-                "                }\n" +
-                "            ],\n" +
-                "            \"nextCallableEffects\" : [\n" +
-                "                \"with second lock\"\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"effectName\" : \"with second lock\",\n" +
-                "            \"effectDescription\" : \"Deal 1 mark to a different target you can see.\",\n" +
-                "            \"price\" : [\"RED\"],\n" +
-                "            \"effectStates\" : [\n" +
-                "                {\n" +
-                "                    \"type\" : \"VisibilitySelectorEffectState\",\n" +
-                "                    \"notVisible\" : false,\n" +
-                "                    \"referenceSource\" : null,\n" +
-                "                    \"sourceSelectionOrder\" : 0,\n" +
-                "                    \"selectionType\" : \"PLAYER\",\n" +
-                "                    \"referenceType\" : \"PLAYER\"\n" +
-                "                }, {\n" +
-                "                    \"type\" : \"PreselectionBasedSelectorEffectState\",\n" +
-                "                    \"previousSelected\" : {\n" +
-                "                        \"basic effect\" : [0]\n" +
-                "                    },\n" +
-                "                    \"alreadySelected\" : false\n" +
-                "                }, {\n" +
-                "                    \"type\" : \"SelectionRequestEffectState\",\n" +
-                "                    \"userSelectionRequired\" : true,\n" +
-                "                    \"selectionType\" : \"PLAYER\",\n" +
-                "                    \"maxSelectableItems\" : 1\n" +
-                "                }, {\n" +
-                "                    \"type\" : \"DamageActionEffectState\",\n" +
-                "                    \"damageAmount\" : 0,\n" +
-                "                    \"markAmount\" : 1, \n" +
-                "                    \"playerToAffectSource\" : \"with second lock\",\n" +
-                "                    \"toAffectPlayerSelectionOrder\" : 0\n" +
-                "                }\n" +
-                "            ]\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"callableEffects\" : [\"basic effect\"]\n" +
-                "}";
-        RuntimeTypeAdapterFactory<EffectState> effectStateRuntimeTypeAdapterFactory = RuntimeTypeAdapterFactory.of(EffectState.class, "type")
-                .registerSubtype(SelectorEffectState.class, "SelectorEffectState")
-                .registerSubtype(ActionEffectState.class, "ActionEffectState")
-                .registerSubtype(VisibilitySelectorEffectState.class, "VisibilitySelectorEffectState")
-                .registerSubtype(SelectionRequestEffectState.class, "SelectionRequestEffectState")
-                .registerSubtype(CardinalDirectionSelectorEffectState.class, "CardinalDirectionSelectorEffectState")
-                .registerSubtype(DistanceSelectorEffectState.class, "DistanceSelectorEffectState")
-                .registerSubtype(InRoomSelectorEffectState.class, "InRoomSelectorEffectState")
-                .registerSubtype(PreselectionBasedSelectorEffectState.class, "PreselectionBasedSelectorEffectState")
-                .registerSubtype(MoveActionEffectState.class, "MoveActionEffectState")
-                .registerSubtype(DamageActionEffectState.class, "DamageActionEffectState");
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapterFactory(effectStateRuntimeTypeAdapterFactory)
-                .create();
-        Type weaponCardType = new TypeToken<WeaponCard>() {
-        }.getType();
-        WeaponCard card = gson.fromJson(json, weaponCardType);
-        System.out.println(card);
-    }
-
-    @Test
-    public void jsonParserTest() {
+    public void shootTest() {
         try {
-            System.out.println(WeaponCard.jsonParser("Electroscythe"));
-        } catch (WeaponFileNotFoundException e) {
-            System.out.println(e.getMessage());
+            WeaponCard weaponCard = WeaponCard.jsonParser("Furnace.json");
+            try {
+                first.addWeapon(weaponCard);
+                weaponCard.setActiveEffect(weaponCard.getCallableEffects().get(0));
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            weaponCard.initialize();
+            weaponCard.setLoaded(true);
+            weaponCard.setActiveEffect(weaponCard.getCallableEffects().get(0));
+            WeaponToUseSelectedEvent event = new WeaponToUseSelectedEvent(0, "tony", weaponCard.getWeaponName(), new ArrayList<>());
+            EffectSelectedEvent selectedEvent = new EffectSelectedEvent(0, "tony", weaponCard.getCallableEffects().get(0), new ArrayList<>());
+                try {
+                cardController.handleEvent(event);
+                cardController.handleEvent(selectedEvent);
+
+                weaponCard.executeStep(match.getGameBoard(), first);
+
+            } catch(HandlerNotImplementedException e) {
+                e.printStackTrace();
+            }
+        } catch(WeaponFileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
-
     @Test
-    public void executeStepTest() {
-        WeaponCard card;
+    public void getDescriptionTest() {
         try {
-            card = WeaponCard.jsonParser("LockRefile");
-        } catch (WeaponFileNotFoundException e) {
-            System.out.println(e.getMessage());
+            WeaponCard weaponCard = WeaponCard.jsonParser("Furnace.json");
+            Map<String, String> effectsDescription = weaponCard.getEffectsDescription();
+            assertEquals(2, effectsDescription.size());
+        } catch(WeaponFileNotFoundException e) {
+            e.printStackTrace();
+            fail();
         }
-
     }
 }

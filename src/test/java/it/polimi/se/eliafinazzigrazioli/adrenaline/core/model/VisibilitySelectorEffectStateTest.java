@@ -20,9 +20,6 @@ public class VisibilitySelectorEffectStateTest {
     @Before
     public void setUp() throws Exception {
         gameBoard = new GameBoard(MapType.ONE);
-        /*effectState = new VisibilitySelectorEffectState(false, null,0, SelectableType.PLAYER, SelectableType.BOARDSQUARE);
-        weaponEffect = new WeaponEffect(effectState, null);
-        weaponCard = new WeaponCard(weaponEffect);*/
     }
 
     @Test
@@ -41,17 +38,5 @@ public class VisibilitySelectorEffectStateTest {
         gameBoard.movePlayer(playerTwo, gameBoard.getBoardSquareByCoordinates(new Coordinates(1, 2)));
         gameBoard.movePlayer(playerThree, gameBoard.getBoardSquareByCoordinates(new Coordinates(3, 0)));
         gameBoard.movePlayer(playerFour, gameBoard.getBoardSquareByCoordinates(new Coordinates(2, 0)));
-
-        /*effectState.execute(weaponCard, gameBoard, playerOne);
-
-        for (Player player:weaponEffect.getToSelectPlayers()){
-            assert (visiblePlayers.contains(player));
-        }
-        System.out.println();
-        for (Player player:visiblePlayers){
-            assert (weaponEffect.getToSelectPlayers().contains(player));
-        }*/
-
-
     }
 }

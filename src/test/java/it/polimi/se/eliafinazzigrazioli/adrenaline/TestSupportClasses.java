@@ -23,7 +23,7 @@ public class TestSupportClasses {
     );
     private static List<Avatar> avatarList = new ArrayList<>(Arrays.asList(Avatar.values()));
 
-    public static void instanceMatch(MapType mapType,int numOfPlayers) {
+    public static void instanceMatch(MapType mapType, int numOfPlayers) {
         match.setGameBoard(mapType);
         for (int i = 0; i < numOfPlayers; i++) {
 
@@ -36,9 +36,6 @@ public class TestSupportClasses {
             } catch (AvatarNotAvailableException e) {
                 e.printStackTrace();
             }
-
-
-
         }
     }
 }
