@@ -40,6 +40,7 @@ public class Client implements Runnable {
 
     private boolean cli = false;
     private boolean rmi = false;
+    private boolean test = false;
     private int networkPort;
 
     private int clientID;
@@ -52,11 +53,9 @@ public class Client implements Runnable {
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public Client(String args[]) {
-        if (args.length > 0 && args[0] == "test") {
-            setView(new InputTestClass(this));
-            setConnectionManager(new ConnectionManagerSocket(this));
-            init();
-        }
+        if (args.length > 0 && args[0] == "test")
+            test = true;
+
     }
 
     public Client(boolean cli, boolean rmi) {
@@ -128,27 +127,31 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        if (cli) {
-            setView(new CLI(this));
+        if (test) {
+            setView(new InputTestClass(this));
+            setConnectionManager(new ConnectionManagerSocket(this));
         } else {
-            GUI guiView = GUI.getInstance();
-            guiView.setClient(this);
-            setView(guiView);
-        }
-
-        if (rmi) {
-            try {
-                setConnectionManager(new ConnectionManagerRMI(this, networkPort));
-            } catch (RemoteException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-                disconnect();
-            } catch (NotBoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
+            if (cli) {
+                setView(new CLI(this));
+            } else {
+                GUI guiView = GUI.getInstance();
+                guiView.setClient(this);
+                setView(guiView);
             }
-        } else {
-            setConnectionManager(new ConnectionManagerSocket(this, networkPort));
-        }
 
+            if (rmi) {
+                try {
+                    setConnectionManager(new ConnectionManagerRMI(this, networkPort));
+                } catch (RemoteException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                    disconnect();
+                } catch (NotBoundException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                }
+            } else {
+                setConnectionManager(new ConnectionManagerSocket(this, networkPort));
+            }
+        }
         init();
     }
 }
