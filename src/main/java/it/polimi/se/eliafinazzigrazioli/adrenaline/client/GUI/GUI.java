@@ -137,11 +137,11 @@ public class GUI extends Application implements RemoteView {
         }
     }
 
-    public synchronized static GUI getInstance(String[] args) {
+    public synchronized static GUI getInstance() {
         if (instance == null) {
             new Thread(() -> {
                 // Have to run in a thread because launch doesn't return
-                Application.launch(GUI.class, args);
+                Application.launch(GUI.class, "");
             }).start();
         }
 

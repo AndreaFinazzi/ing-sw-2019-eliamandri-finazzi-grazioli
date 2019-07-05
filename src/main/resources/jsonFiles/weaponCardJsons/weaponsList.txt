@@ -1,0 +1,10 @@
+Electroscythe
+Furnace
+Heatseeker
+Hellion
+LockRefile
+MachineGun
+THOR
+TractorBeam
+VortexCannon
+Whisper

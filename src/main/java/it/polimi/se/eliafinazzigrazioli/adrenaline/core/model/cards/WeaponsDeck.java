@@ -1,11 +1,16 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class WeaponsDeck extends Deck<String> {
 
+    static final Logger LOGGER = Logger.getLogger(WeaponsDeck.class.getName());
 
     /**
      * WeaponDeck's constructor automatically reads all weapon files' names and saves them in an ArrayList. Cards will be drawn
@@ -14,10 +19,24 @@ public class WeaponsDeck extends Deck<String> {
      */
     public WeaponsDeck() {
         cards = new ArrayList<>();
-        File weaponsFolder = new File("src/main/resources/jsonFiles/weaponCardJsons");
-        File[] listOfCardFiles = weaponsFolder.listFiles();
-        for (int i = 0; i < listOfCardFiles.length; i++)
-            cards.add(listOfCardFiles[i].getName());
+        BufferedReader weaponsListReader = null;
+        try {
+            weaponsListReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/jsonFiles/weaponCardJsons/weaponsList.txt")));
+            String weaponIndex;
+            while ((weaponIndex = weaponsListReader.readLine()) != null) {
+                cards.add(weaponIndex + ".json");
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            if (weaponsListReader != null) {
+                try {
+                    weaponsListReader.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                }
+            }
+        }
     }
 
     public boolean isEmpty() {

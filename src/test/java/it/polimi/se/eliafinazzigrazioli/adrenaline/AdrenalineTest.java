@@ -13,9 +13,7 @@ public class AdrenalineTest {
     @Test
     public void MatchConsistencyTest(){
 
-
-
-        Thread server = new Thread(() -> Server.main(new String[0]));
+        Thread server = new Thread(() -> new Server().run());
         server.start();
 
         try {
@@ -29,7 +27,7 @@ public class AdrenalineTest {
             clients.add(new Thread(() -> {
                 String[] args = new String[1];
                 args[0] = "test";
-                Client.main(args);
+                new Client(args).run();
             }));
         }
         for (Thread thread: clients) {
@@ -47,9 +45,9 @@ public class AdrenalineTest {
             e.printStackTrace();
         }
 
-        server.stop();
+        server.interrupt();
         for (Thread thread: clients)
-            thread.stop();
+            thread.interrupt();
 
 
     }

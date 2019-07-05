@@ -17,7 +17,10 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observable;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Observer;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
+import java.net.URISyntaxException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Match implements Observable {
 
@@ -76,6 +79,8 @@ public class Match implements Observable {
 
     };
 
+    static final Logger LOGGER = Logger.getLogger(Match.class.getName());
+
     private int matchID;
 
     private ArrayList<Observer> observers = new ArrayList<>();
@@ -96,7 +101,11 @@ public class Match implements Observable {
     public Match() {
         phase = MatchPhase.INITIALIZATION;
         killTrack = new KillTrack(Rules.GAME_MAX_KILL_TRACK_SKULLS);
-        powerUpsDeck = new PowerUpsDeck();
+        try {
+            powerUpsDeck = new PowerUpsDeck();
+        } catch (URISyntaxException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
         weaponsDeck = new WeaponsDeck();
         try {
             ammoCardsDeck = new AmmoCardsDeck();

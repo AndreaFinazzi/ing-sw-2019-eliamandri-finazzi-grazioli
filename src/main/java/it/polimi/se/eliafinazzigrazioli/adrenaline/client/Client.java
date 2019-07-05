@@ -7,7 +7,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.InputTestClass;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Client {
+public class Client implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 
     private boolean active = true;
@@ -40,6 +39,9 @@ public class Client {
         LOGGER.severe("EVENTS QUEUE INTERRUPTED FOREVER!!!");
     });
 
+    private boolean cli = false;
+    private boolean rmi = false;
+
     private int clientID;
 
     private String playerName;
@@ -49,8 +51,17 @@ public class Client {
 
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-    public Client(String[] args) {
+    public Client(String args[]) {
+        if (args.length > 0 && args[0] == "test") {
+            setView(new InputTestClass(this));
+            setConnectionManager(new ConnectionManagerSocket(this));
+            init();
+        }
+    }
 
+    public Client(boolean cli, boolean rmi) {
+        this.cli = cli;
+        this.rmi = rmi;
     }
 
     public boolean isActive() {
@@ -102,53 +113,37 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) {
-
-        Scanner input = new Scanner(System.in);
-        String commandView, commandNetwork;
-        Client client = new Client(args);
-
-        if (args.length > 0 && args[0].equals("test")) {
-            client.setView(new InputTestClass(client));
-            client.setConnectionManager(new ConnectionManagerSocket(client));
-            client.init();
-        }
-
-
-        System.out.println("to CLI or not to CLI? [Y/n]");
-        commandView = input.nextLine();
-        if (commandView.equals("n") || commandView.equals("no") || commandView.equals("not")) {
-            GUI guiView = GUI.getInstance(args);
-            guiView.setClient(client);
-            client.setView(guiView);
-
-        } else {
-            client.setView(new CLI(client));
-        }
-
-        System.out.println("to RMI or not to RMI? [Y/n]");
-        commandNetwork = input.nextLine();
-        if (commandNetwork.equals("n") || commandNetwork.equals("no") || commandNetwork.equals("not")) {
-            client.setConnectionManager(new ConnectionManagerSocket(client));
-        } else {
-            try {
-                client.setConnectionManager(new ConnectionManagerRMI(client));
-            } catch (RemoteException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-                client.disconnect();
-            } catch (NotBoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-            }
-        }
-
-        client.init();
-    }
-
     public BlockingQueue<AbstractModelEvent> getEventsQueue() {
         return eventsQueue;
     }
 
     public void setDisconnected() {
         view.setDisconnected();
+    }
+
+    @Override
+    public void run() {
+        if (cli) {
+            setView(new CLI(this));
+        } else {
+            GUI guiView = GUI.getInstance();
+            guiView.setClient(this);
+            setView(guiView);
+        }
+
+        if (rmi) {
+            try {
+                setConnectionManager(new ConnectionManagerRMI(this));
+            } catch (RemoteException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+                disconnect();
+            } catch (NotBoundException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+            }
+        } else {
+            setConnectionManager(new ConnectionManagerSocket(this));
+        }
+
+        init();
     }
 }

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>it.polimi.se2019</groupId>
+    <groupId>it.polimi.se.eliafinazzigrazioli</groupId>
     <artifactId>adrenaline</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -40,13 +40,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.8</version>
-        </dependency>
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -57,6 +50,12 @@
     </dependencies>
 
     <build>
+        <!--        <resources>-->
+        <!--            <resource>-->
+        <!--                <directory>/classes</directory>-->
+        <!--                <filtering>false</filtering>-->
+        <!--            </resource>-->
+        <!--        </resources>-->
         <plugins>
 
             <!-- Export the project as a runnable JAR, with the provided mainClass -->
@@ -67,9 +66,33 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>it.polimi.se2019.App</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>it.polimi.se.eliafinazzigrazioli.adrenaline.Application</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>it.polimi.se.eliafinazzigrazioli.adrenaline.Application</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
             </plugin>
 

@@ -6,18 +6,21 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.WeaponF
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.AmmoCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**Laura<3*/
 
 public class AmmoCardsDeck {
+
+    static final Logger LOGGER = Logger.getLogger(AmmoCardsDeck.class.getName());
 
     private List<AmmoCard> discardedCards;
 
@@ -26,26 +29,32 @@ public class AmmoCardsDeck {
     public AmmoCardsDeck() throws WeaponFileNotFoundException {
 
         List<String> cardCodes = new ArrayList<>();
-        File weaponsFolder = new File("src/main/resources/jsonFiles/ammoCardsDeck");
-        File[] listOfCardFiles = weaponsFolder.listFiles();
-        for (int i = 0; i < listOfCardFiles.length; i++)
-            cardCodes.add(listOfCardFiles[i].getName());
-
+        BufferedReader ammoCardsListReader = null;
+        try {
+            ammoCardsListReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/jsonFiles/ammoCardsDeck/ammoCardsList.txt")));
+            String ammoCardIndex;
+            while ((ammoCardIndex = ammoCardsListReader.readLine()) != null) {
+                cardCodes.add(ammoCardIndex + ".json");
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            if (ammoCardsListReader != null) {
+                try {
+                    ammoCardsListReader.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                }
+            }
+        }
 
         deck = new ArrayList<>();
         for (String code: cardCodes)
             for (int i = 0; i < Rules.GAME_AMMO_CARDS_DUPLICATES; i++) {
-                String filePath = "src/main/resources/jsonFiles/ammoCardsDeck/" + code;
-                String jsonString;
-                try {
-                    jsonString = new String(Files.readAllBytes(Paths.get(filePath)));
-                }
-                catch (IOException e){
-                    throw new WeaponFileNotFoundException();
-                }
+                InputStreamReader fileInputStreamReader = new InputStreamReader(getClass().getResourceAsStream("/jsonFiles/ammoCardsDeck/" + code));
                 Gson gson = new Gson();
                 Type ammoCardType = new TypeToken<AmmoCard>(){}.getType();
-                AmmoCard ammoCard = gson.fromJson(jsonString, ammoCardType);
+                AmmoCard ammoCard = gson.fromJson(fileInputStreamReader, ammoCardType);
                 deck.add(ammoCard);
             }
         discardedCards = new ArrayList<>();

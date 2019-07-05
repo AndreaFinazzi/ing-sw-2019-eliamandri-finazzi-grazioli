@@ -9,10 +9,8 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Ammo;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
-import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 //todo check room selection logic for furnace and complete json
@@ -41,19 +39,14 @@ public class WeaponCard extends Card {
 
     //TODO factory method for cards
     public static WeaponCard jsonParser(String cardName) throws WeaponFileNotFoundException {
-        String filePath = "src/main/resources/jsonFiles/weaponCardJsons/" + cardName;
+        String filePath = "/jsonFiles/weaponCardJsons/" + cardName;
         String jsonString;
-        try {
-            jsonString = new String(Files.readAllBytes(Paths.get(filePath)));
-        }
-        catch (IOException e){
-            throw new WeaponFileNotFoundException();
-        }
+        InputStreamReader fileInputStreamReader = new InputStreamReader(WeaponCard.class.getResourceAsStream(filePath));
         Gson gson = new GsonBuilder()
                 .registerTypeAdapterFactory(EffectState.effectStateRuntimeTypeAdapterFactory)
                 .create();
         Type weaponCardType = new TypeToken<WeaponCard>(){}.getType();
-        return gson.fromJson(jsonString, weaponCardType);
+        return gson.fromJson(fileInputStreamReader, weaponCardType);
     }
 
     public WeaponCard(WeaponEffect activeEffect) {

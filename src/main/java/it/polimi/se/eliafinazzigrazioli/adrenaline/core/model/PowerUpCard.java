@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
 
-import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class PowerUpCard {
 
@@ -37,16 +35,11 @@ public class PowerUpCard {
     }
 
     public static PowerUpCard clientCopyToServer(PowerUpCardClient powerUpCardClient) {
-        String filePath = "src/main/resources/jsonFiles/powerUpsDeck/" + powerUpCardClient.getId() + ".json" ;
-        String jsonString = null;
-        try {
-            jsonString = new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String filePath = "/jsonFiles/powerUpsDeck/" + powerUpCardClient.getId() + ".json";
+        InputStreamReader fileInputStreamReader = new InputStreamReader(PowerUpCard.class.getResourceAsStream(filePath));
         Gson gson = new Gson();
         Type powerUpType = new TypeToken<PowerUpCard>(){}.getType();
-        return gson.fromJson(jsonString, powerUpType);
+        return gson.fromJson(fileInputStreamReader, powerUpType);
     }
 
     public Ammo getAmmo() {

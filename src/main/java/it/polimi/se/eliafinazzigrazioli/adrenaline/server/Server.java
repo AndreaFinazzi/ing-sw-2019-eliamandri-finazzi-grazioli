@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 //TODO CHECK CONCURRENCY ISSUES OF THE WHOLE LOGIC!!!
 
-public class Server {
+public class Server implements Runnable {
 
     protected static final int PING_TIMEOUT = 1000;
 
@@ -34,20 +34,25 @@ public class Server {
     private boolean online;
     private int currentClientID = 0;
 
-    private Server() {
-        LOGGER.info("Creating Server"); //TODO move to messages
+    private boolean initialied = false;
 
-        matchBuilder = new MatchBuilder();
+    public Server() {
+        if (!initialied) {
+            initialied = true;
+            LOGGER.info("Creating Server"); //TODO move to messages
 
-        try {
-            //System.setProperty("java.rmi.server.hostname", "192.168.43.185");
+            matchBuilder = new MatchBuilder();
 
-            registry = LocateRegistry.createRegistry(1099);
-        } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
+            try {
+                //System.setProperty("java.rmi.server.hostname", "192.168.43.185");
+
+                registry = LocateRegistry.createRegistry(1099);
+            } catch (RemoteException e) {
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+            }
+
+            online = true;
         }
-
-        online = true;
     }
 
     public void startServerSocket() {
@@ -79,7 +84,8 @@ public class Server {
     }
 
     private void close() {
-
+        online = false;
+        Thread.currentThread().interrupt();
     }
 
     public boolean isUp() {
@@ -90,14 +96,13 @@ public class Server {
         this.online = online;
     }
 
-    public static void main(String[] args) {
+    @Override
+    public void run() {
         LOGGER.info(Messages.MESSAGE_LOGGING_INFO_SERVER_STARTED);
 
-        Server server = new Server();
-
         try {
-            server.startServerSocket();
-            server.startServerRMI();
+            startServerSocket();
+            startServerRMI();
         } finally {
             //TODO do something to properly control Server shutdown
         }

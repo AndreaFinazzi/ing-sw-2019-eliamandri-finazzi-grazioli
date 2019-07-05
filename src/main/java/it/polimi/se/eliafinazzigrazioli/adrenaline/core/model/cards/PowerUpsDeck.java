@@ -5,16 +5,20 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PowerUpCard;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Rules;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PowerUpsDeck extends Deck<PowerUpCard> {
+
+    static final Logger LOGGER = Logger.getLogger(PowerUpsDeck.class.getName());
 
     private List<PowerUpCard> discardedPowerUps = new ArrayList<>();
 
@@ -23,30 +27,40 @@ public class PowerUpsDeck extends Deck<PowerUpCard> {
         discardedPowerUps = new ArrayList<>();
     }
 
-    public PowerUpsDeck() {
+    public PowerUpsDeck() throws URISyntaxException {
 
         cards = new ArrayList<>();
 
         List<String> cardCodes = new ArrayList<>();
-        File weaponsFolder = new File("src/main/resources/jsonFiles/powerUpsDeck");
-        File[] listOfCardFiles = weaponsFolder.listFiles();
-        for (int i = 0; i < listOfCardFiles.length; i++)
-            cardCodes.add(listOfCardFiles[i].getName());
-
-
-        for (String code: cardCodes)
-            for (int i = 0; i < Rules.GAME_AMMO_CARDS_DUPLICATES; i++) {
-                String filePath = "src/main/resources/jsonFiles/powerUpsDeck/" + code;
-                String jsonString = null;
+        BufferedReader powerUpsListReader = null;
+        try {
+            powerUpsListReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/jsonFiles/powerUpsDeck/powerUpsList.txt")));
+            String powerUpIndex;
+            while ((powerUpIndex = powerUpsListReader.readLine()) != null) {
+                cardCodes.add(powerUpIndex + ".json");
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            if (powerUpsListReader != null) {
                 try {
-                    jsonString = new String(Files.readAllBytes(Paths.get(filePath)));
+                    powerUpsListReader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 }
+            }
+        }
+
+        for (String code : cardCodes)
+            for (int i = 0; i < Rules.GAME_AMMO_CARDS_DUPLICATES; i++) {
+                InputStreamReader fileInputStreamReader = new InputStreamReader(getClass().getResourceAsStream("/jsonFiles/powerUpsDeck/" + code));
 
                 Gson gson = new Gson();
-                Type powerUpType = new TypeToken<PowerUpCard>(){}.getType();
-                PowerUpCard powerUpCard = gson.fromJson(jsonString, powerUpType);
+                Type powerUpType = new TypeToken<PowerUpCard>() {
+                }.getType();
+                PowerUpCard powerUpCard = null;
+                powerUpCard = gson.fromJson(fileInputStreamReader, powerUpType);
+
                 cards.add(powerUpCard);
             }
         discardedPowerUps = new ArrayList<>();
@@ -65,7 +79,7 @@ public class PowerUpsDeck extends Deck<PowerUpCard> {
         discardedPowerUps = new ArrayList<>();
     }
 
-    public void discardPowerUp(PowerUpCard powerUpCard){
+    public void discardPowerUp(PowerUpCard powerUpCard) {
         if (powerUpCard != null)
             discardedPowerUps.add(powerUpCard);
     }
