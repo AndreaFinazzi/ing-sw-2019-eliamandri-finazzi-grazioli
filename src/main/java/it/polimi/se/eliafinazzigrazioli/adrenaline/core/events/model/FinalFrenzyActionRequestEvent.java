@@ -1,11 +1,9 @@
-package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.request;
+package it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model;
 
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.ModelEventsListenerInterface;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.events.HandlerNotImplementedException;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
 
-public class ActionRequestEvent extends AbstractModelEvent {
+public class FinalFrenzyActionRequestEvent extends AbstractModelEvent {
 
     private int simpleMovesMax;
     private int collectingMovesMax;
@@ -13,21 +11,20 @@ public class ActionRequestEvent extends AbstractModelEvent {
 
     private int actionsRemained;
 
-    public ActionRequestEvent(Player player, int actionsRemained, int simpleMovesMax, int collectingMovesMax, int shootingMovesMax) {
+    private boolean singleAction;
+
+    public FinalFrenzyActionRequestEvent(Player player, int actionsRemained, int simpleMovesMax, int collectingMovesMax, int shootingMovesMax, boolean singleAction) {
         super(true, true, player);
-        this.actionsRemained = actionsRemained;
         this.simpleMovesMax = simpleMovesMax;
         this.collectingMovesMax = collectingMovesMax;
         this.shootingMovesMax = shootingMovesMax;
+        this.actionsRemained = actionsRemained;
+        this.singleAction = singleAction;
     }
 
     @Override
     public void handle(ModelEventsListenerInterface listener) throws HandlerNotImplementedException {
         listener.handleEvent(this);
-    }
-
-    public int getActionsRemained() {
-        return actionsRemained;
     }
 
     public int getSimpleMovesMax() {
@@ -40,5 +37,13 @@ public class ActionRequestEvent extends AbstractModelEvent {
 
     public int getShootingMovesMax() {
         return shootingMovesMax;
+    }
+
+    public int getActionsRemained() {
+        return actionsRemained;
+    }
+
+    public boolean isSingleAction() {
+        return singleAction;
     }
 }

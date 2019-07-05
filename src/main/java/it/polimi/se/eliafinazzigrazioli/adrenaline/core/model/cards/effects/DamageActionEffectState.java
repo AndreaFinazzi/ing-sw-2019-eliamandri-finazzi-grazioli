@@ -2,14 +2,13 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.effects;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.PlayerShotEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.UsablePowerUpsEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.exceptions.model.OutOfBoundException;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.DamageMark;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.GameBoard;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.Player;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.PlayerBoard;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.*;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponCard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -63,6 +62,21 @@ public class DamageActionEffectState extends ActionEffectState {
             }
 
             events.add(new PlayerShotEvent(currentPlayer, toDamage.getPlayerNickname(), damages, marks, marksRemoved));
+            List<PowerUpCard> usablePowerUpsTargeting = new ArrayList<>();
+            for (PowerUpCard powerUpCard: currentPlayer.getPowerUps()) {
+                if (powerUpCard.getType().equals("Targeting Scope"))
+                    usablePowerUpsTargeting.add(powerUpCard);
+            }
+            if (!usablePowerUpsTargeting.isEmpty() && damageAmount > 0)
+                events.add(new UsablePowerUpsEvent(currentPlayer, new ArrayList<>(Arrays.asList("Targeting Scope")), toDamage.getPlayerNickname()));
+
+            List<PowerUpCard> usablePowerUpsTrackBack = new ArrayList<>();
+            for (PowerUpCard powerUpCard: toDamage.getPowerUps()) {
+                if (powerUpCard.getType().equals("Tagback Grenade"))
+                    usablePowerUpsTrackBack.add(powerUpCard);
+            }
+            if (!usablePowerUpsTrackBack.isEmpty() && damageAmount > 0)
+                events.add(new UsablePowerUpsEvent(toDamage, new ArrayList<>(Arrays.asList("Tagback Grenade")), currentPlayer.getPlayerNickname()));
             return events;
         }
         return new ArrayList<>();

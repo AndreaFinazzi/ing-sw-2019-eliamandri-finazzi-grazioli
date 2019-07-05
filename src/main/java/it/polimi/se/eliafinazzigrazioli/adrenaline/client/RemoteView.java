@@ -164,55 +164,131 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
                         GameBoardClient gameBoard = getLocalModel().getGameBoard();
                         BoardSquareClient finalPosition = path.isEmpty() ?
                                 gameBoard.getPlayerPositionByName(getClient().getPlayerName()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size() - 1));
-                        if (finalPosition.isSpawnBoard()) {
-                            List<WeaponCardClient> collectibleWeapons = calculatePayableWeapons(finalPosition.getWeaponCards(), getLocalModel(), false);
-
-                            WeaponCardClient selectedWeapon = selectWeaponCardFromSpawnSquare(finalPosition.getCoordinates(), collectibleWeapons);  /** SELECTION HERE */
-
-                            if (selectedWeapon != null) { //Weapon has been selected
-                                //Selection of the power ups the user wants to pay with
-                                List<PowerUpCardClient> powerUpsSelected = getPowerUpsToPay(selectedWeapon.getLoader());
-
-                                //Confirmation of the feasibility of the payment, if the payment isn't feasible generated event remains null and the procedure is repeated
-                                if (getLocalModel().canPay(selectedWeapon.getLoader(), powerUpsSelected)) {
-                                    if (getLocalModel().isWeaponHandFull()) {
-                                        showMessage("You have too many weapons, drop one:");
-                                        WeaponCardClient weaponCardToDiscard = selectWeaponCardFromHand(getLocalModel().getWeaponCards());    /**SELECTION HERE*/
-                                        if (weaponCardToDiscard != null)
-                                            generatedEvent = new WeaponCollectionEvent(
-                                                    getClient().getClientID(),
-                                                    getClient().getPlayerName(),
-                                                    path == null ? new ArrayList<>() : path,
-                                                    selectedWeapon,
-                                                    weaponCardToDiscard,
-                                                    powerUpsSelected);
-                                    }
-                                    else
-                                        generatedEvent = new WeaponCollectionEvent(
-                                                getClient().getClientID(),
-                                                getClient().getPlayerName(),
-                                                path == null ? new ArrayList<>() : path,
-                                                selectedWeapon,
-                                                null,
-                                                powerUpsSelected);
-                                }
-                            }
-                            else
-                                showMessage("Looks like you changed your mind... or maybe you're just too poor.");
-                        }
-                        else if (finalPosition.hasAmmoCard()) {
-                            generatedEvent = new CollectPlayEvent(getClient().getClientID(), getClient().getPlayerName(), path == null ? new ArrayList<>() : path);
-                        }
-                        else {
-                            generatedEvent = null;
-                        }
+                        generatedEvent = collectionHandling(generatedEvent, path, finalPosition);
                         break;
+                    case USE_POWER_UP:
+                        List<PowerUpCardClient> usablePowerUps = new ArrayList<>();
+                        PowerUpCardClient powerUpToUse = null;
+                        for (PowerUpCardClient powerUpCardClient: getLocalModel().getPowerUpCards()) {
+                            if (Arrays.asList("Newton", "Teleporter").contains(powerUpCardClient.getPowerUpType()))
+                                usablePowerUps.add(powerUpCardClient);
+                        }
+                        if (!usablePowerUps.isEmpty()) {
+                            powerUpToUse = selectPowerUp(usablePowerUps);
+                        }
+                        if (powerUpToUse != null)
+                            generatedEvent = new UseTurnPowerUpEvent(getClient().getClientID(), getClient().getPlayerName(), powerUpToUse.getId());
+
                 }
                 if (generatedEvent == null)
                     showMessage("This action can't be performed... choose again.");
             }
             notifyObservers(generatedEvent);
             }
+    }
+
+    default AbstractViewEvent collectionHandling(AbstractViewEvent generatedEvent, List<Coordinates> path, BoardSquareClient finalPosition) {
+        if (finalPosition.isSpawnBoard()) {
+            List<WeaponCardClient> collectibleWeapons = calculatePayableWeapons(finalPosition.getWeaponCards(), getLocalModel(), false);
+
+            WeaponCardClient selectedWeapon = selectWeaponCardFromSpawnSquare(finalPosition.getCoordinates(), collectibleWeapons);  /** SELECTION HERE */
+
+            if (selectedWeapon != null) { //Weapon has been selected
+                //Selection of the power ups the user wants to pay with
+                List<PowerUpCardClient> powerUpsSelected = getPowerUpsToPay(selectedWeapon.getLoader());
+
+                //Confirmation of the feasibility of the payment, if the payment isn't feasible generated event remains null and the procedure is repeated
+                if (getLocalModel().canPay(selectedWeapon.getLoader(), powerUpsSelected)) {
+                    if (getLocalModel().isWeaponHandFull()) {
+                        showMessage("You have too many weapons, drop one:");
+                        WeaponCardClient weaponCardToDiscard = selectWeaponCardFromHand(getLocalModel().getWeaponCards());    /**SELECTION HERE*/
+                        if (weaponCardToDiscard != null)
+                            generatedEvent = new WeaponCollectionEvent(
+                                    getClient().getClientID(),
+                                    getClient().getPlayerName(),
+                                    path == null ? new ArrayList<>() : path,
+                                    selectedWeapon,
+                                    weaponCardToDiscard,
+                                    powerUpsSelected);
+                    }
+                    else
+                        generatedEvent = new WeaponCollectionEvent(
+                                getClient().getClientID(),
+                                getClient().getPlayerName(),
+                                path == null ? new ArrayList<>() : path,
+                                selectedWeapon,
+                                null,
+                                powerUpsSelected);
+                }
+            }
+            else
+                showMessage("Looks like you changed your mind... or maybe you're just too poor.");
+        }
+        else if (finalPosition.hasAmmoCard()) {
+            generatedEvent = new CollectPlayEvent(getClient().getClientID(), getClient().getPlayerName(), path == null ? new ArrayList<>() : path);
+        }
+        else {
+            generatedEvent = null;
+        }
+        return generatedEvent;
+    }
+
+    @Override
+    default void handleEvent(FinalFrenzyActionRequestEvent event) throws HandlerNotImplementedException {
+        if (event.getPlayer().equals(getClient().getPlayerName())) {
+            AbstractViewEvent generatedEvent = null;
+            while (generatedEvent == null) {
+                PlayerAction choice = selectAction();
+                List<Coordinates> path;
+                switch (choice) {
+                    case MOVE:
+                        if (!event.isSingleAction()) {
+                            path = getPathFromUser(event.getSimpleMovesMax());
+                            generatedEvent = path.isEmpty() ? null : new MovePlayEvent(getClient().getClientID(), getClient().getPlayerName(), path);
+                        }
+                        break;
+
+                    case SHOOT:
+                        List<WeaponCardClient> selectableWeapons = new ArrayList<>();
+                        path = getPathFromUser(event.getShootingMovesMax());
+                        for (WeaponCardClient weaponCardClient : getLocalModel().getWeaponCards()) {
+                            if (weaponCardClient.isLoaded() || getLocalModel().canPay(weaponCardClient.getPrice()))
+                                selectableWeapons.add(weaponCardClient);
+                        }
+                        WeaponCardClient shootingWeapon = selectWeaponCardFromHand(selectableWeapons);
+                        if (shootingWeapon != null) {
+                            if (shootingWeapon.isLoaded())
+                                generatedEvent = new WeaponToUseSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), shootingWeapon.getWeaponName(), path);
+                            else {
+                                //Selection of the power ups the user wants to pay with
+                                List<PowerUpCardClient> powerUpsSelected = getPowerUpsToPay(shootingWeapon.getPrice());
+
+                                //Confirmation of the feasibility of the payment, if the payment isn't feasible generated event remains null and the procedure is repeated
+                                if (getLocalModel().canPay(shootingWeapon.getPrice(), powerUpsSelected)) {
+                                    notifyObservers(new ReloadWeaponEvent(getClient().getClientID(), getClient().getPlayerName(), shootingWeapon, powerUpsSelected));
+                                    generatedEvent = new WeaponToUseSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), shootingWeapon.getWeaponName(), path);
+                                }
+                                else
+                                    showMessage("You didn't select enough power ups. Select another weapon and pay your debts >:(");
+                            }
+
+                        }
+
+                        break;
+
+                    case COLLECT:
+                        path = getPathFromUser(event.getCollectingMovesMax());
+                        GameBoardClient gameBoard = getLocalModel().getGameBoard();
+                        BoardSquareClient finalPosition = path.isEmpty() ?
+                                gameBoard.getPlayerPositionByName(getClient().getPlayerName()) : gameBoard.getBoardSquareByCoordinates(path.get(path.size() - 1));
+                        generatedEvent = collectionHandling(generatedEvent, path, finalPosition);
+                        break;
+                }
+                if (generatedEvent == null)
+                    showMessage("This action can't be performed... choose again.");
+            }
+            notifyObservers(generatedEvent);
+        }
     }
 
     @Override
@@ -412,6 +488,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
 
     @Override
     default void handleEvent(SelectableBoardSquaresEvent event) throws HandlerNotImplementedException {
+        showMessage("Select a square");
         List<Coordinates> selectedCoordinates = getTargetCoordinates(event.getSelectableBoardSquares(), event.getMaxSelectableItems());
         notifyObservers(new SquareSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), selectedCoordinates));
     }
@@ -425,7 +502,18 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     @Override
     default void handleEvent(SelectableRoomsEvent event) throws HandlerNotImplementedException {
         Room selectedRoom = selectRoom(event.getSelectableRooms());
+        showMessage("Select room to damage");
         notifyObservers(new RoomSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), selectedRoom));
+    }
+
+    @Override
+    default void handleEvent(SelectDirectionEvent event) throws HandlerNotImplementedException {
+        showMessage("Select a direction:");
+        ArrayList<MoveDirection> directions = new ArrayList<>();
+        directions.addAll(Arrays.asList(MoveDirection.values()));
+        directions.remove(MoveDirection.STOP);
+        MoveDirection direction = selectDirection(getLocalModel().getGameBoard().getPlayerPositionByName(getClient().getPlayerName()), directions);
+        notifyObservers(new DirectionSelectedEvent(getClient().getClientID(), getClient().getPlayerName(), direction));
     }
 
     @Override
@@ -496,28 +584,56 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     @Override
+    default void handleEvent(FinalFrenzyBeginEvent event) throws HandlerNotImplementedException {
+        showMessage("LAST SKULL REMOVED! FINAL FRENZY BEGINS!!!!!!!");
+    }
+
+    @Override
+    default void handleEvent(UsablePowerUpsEvent event) throws HandlerNotImplementedException {
+        if (event.getUsableTypes().contains("Targeting Scope")) {
+            targetingHandle(event);
+        } else if (event.getUsableTypes().contains("Tagback Grenade")) {
+            showMessage("You can use Tagback Grenade on " + event.getTarget() + ", select the power up you want to use or proceed");
+            List<PowerUpCardClient> usablePowerUps = new ArrayList<>();
+            for (PowerUpCardClient powerUpCardClient : getLocalModel().getPowerUpCards()) {
+                if (event.getUsableTypes().contains(powerUpCardClient.getPowerUpType()))
+                    usablePowerUps.add(powerUpCardClient);
+            }
+            PowerUpCardClient powerUpSelected = null;
+            if (!usablePowerUps.isEmpty())
+                powerUpSelected = selectPowerUp(usablePowerUps);
+            if (powerUpSelected != null) {
+                notifyObservers(new PowerUpsToUseEvent(
+                        getClient().getClientID(),
+                        getClient().getPlayerName(),
+                        powerUpSelected.getId(),
+                        event.getTarget(),
+                        null,
+                        null,
+                        "Tagback Grenade"
+                ));
+            }
+        }
+    }
+
+    @Override
     default void handleEvent(NotAllowedPlayEvent event) throws HandlerNotImplementedException {
         showMessage(event.getMessage());
         showMessage("ACTION FAILED!");
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(AbstractModelEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
+
     @Override
     default void handleEvent(ConnectionTimeoutEvent event) throws HandlerNotImplementedException {
         throw new HandlerNotImplementedException();
     }
-
     //TODO to implement
-    @Override
-    default void handleEvent(FinalFrenzyBeginEvent event) throws HandlerNotImplementedException {
-        throw new HandlerNotImplementedException();
-    }
 
     //TODO to implement
     @Override
@@ -803,26 +919,13 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         }
     }
 
+    default Ammo selectAmmoType(List<Ammo> selectableAmmos) {
+        return selectableAmmos.get(new Random().nextInt(selectableAmmos.size()));
+    }
+
     WeaponCardClient selectWeaponToReload(List<WeaponCardClient> reloadableWeapons);
 
-    default WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons) {
-        int count = 0;
-        for (WeaponCardClient weaponCardClient : selectableWeapons) {
-            count++;
-            showMessage(count + ") " + weaponCardClient);
-        }
-        showMessage((count + 1) + ") Select nothing");
-        int choice = 0;
-        Scanner scanner = new Scanner(System.in);
-        do {
-            showMessage("enter:");
-            choice = scanner.nextInt();
-        } while (choice < 1 || choice > selectableWeapons.size() + 1);
-        if (choice != count + 1)
-            return selectableWeapons.get(choice - 1);
-        else
-            return null;
-    }
+    WeaponCardClient selectWeaponCardFromHand(List<WeaponCardClient> selectableWeapons);
 
     default WeaponEffectClient selectWeaponEffect(WeaponCardClient weapon, List<WeaponEffectClient> callableEffects) {
         int count = 0;
@@ -1007,4 +1110,52 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
     }
 
     void setDisconnected();
+
+    default void targetingHandle(UsablePowerUpsEvent event) {
+        showMessage("You can use Targeting Scope on " + event.getTarget() + ", select the power up you want to use or proceed");
+        List<PowerUpCardClient> usablePowerUps = new ArrayList<>();
+        for (PowerUpCardClient powerUpCardClient: getLocalModel().getPowerUpCards()) {
+            if (event.getUsableTypes().contains(powerUpCardClient.getPowerUpType()))
+                usablePowerUps.add(powerUpCardClient);
+        }
+        PowerUpCardClient powerUpSelected = null;
+        if (!usablePowerUps.isEmpty())
+            powerUpSelected = selectPowerUp(usablePowerUps);
+        if (powerUpSelected != null) {
+            List<Ammo> selectableAmmos = new ArrayList<>();
+            for (PowerUpCardClient powerUpCardClient: getLocalModel().getPowerUpCards()) {
+                if (!selectableAmmos.contains(powerUpCardClient.getEquivalentAmmo()))
+                    selectableAmmos.add(powerUpCardClient.getEquivalentAmmo());
+            }
+            for (Ammo ammo: getLocalModel().getAmmos()) {
+                if (!selectableAmmos.contains(ammo))
+                    selectableAmmos.add(ammo);
+            }
+            Ammo ammoToUse = null;
+            if (powerUpSelected != null) {
+                ammoToUse = selectAmmoType(selectableAmmos);
+            }
+            if (ammoToUse != null) {
+                List<PowerUpCardClient> spendablePowerUps = new ArrayList<>();
+                for (PowerUpCardClient powerUpCardClient: getLocalModel().getPowerUpCards()) {
+                    if (powerUpCardClient.getEquivalentAmmo().equals(ammoToUse))
+                        spendablePowerUps.add(powerUpCardClient);
+                }
+                spendablePowerUps.remove(powerUpSelected);
+                PowerUpCardClient powerUpToSpend = null;
+                if (!spendablePowerUps.isEmpty())
+                    powerUpToSpend = selectPowerUp(spendablePowerUps);
+                if (getLocalModel().canPay(new ArrayList<>(Arrays.asList(ammoToUse)), new ArrayList<>()))
+                    notifyObservers(new PowerUpsToUseEvent(
+                            getClient().getClientID(),
+                            getClient().getPlayerName(),
+                            powerUpSelected.getId(),
+                            event.getTarget(),
+                            ammoToUse,
+                            powerUpToSpend == null ? null : powerUpToSpend.getId(),
+                            "Targeting Scope"
+                    ));
+            }
+        }
+    }
 }

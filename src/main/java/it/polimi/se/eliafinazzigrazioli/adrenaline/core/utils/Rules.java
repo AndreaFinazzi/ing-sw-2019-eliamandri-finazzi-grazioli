@@ -60,6 +60,7 @@ public final class Rules {
     public static final int PLAYER_BOARD_MAX_AMMO = asInt(PLAYER_BOARD.get("max_ammo"), 3);
     public static final ArrayList<Integer> PLAYER_BOARD_DEATH_SCORES = asIntegerArrayList(PLAYER_BOARD.getAsJsonArray("death_scores"), new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1)));
 
+
     // GAME
     private static final JsonObject GAME = RULES.getAsJsonObject("game");
     public static final int GAME_MIN_PLAYERS = asInt(GAME.get("min_players"), 3);
@@ -92,6 +93,21 @@ public final class Rules {
     private static final JsonObject COLLECTING_ADRENALINIC_ACTION = RULES.getAsJsonObject("collection_adrenalinic_action");
     public static final int COLLECTING_ADRENALINIC_ACTION_MOVES_SURPLUS = asInt(COLLECTING_ADRENALINIC_ACTION.get("moves_surplus"), 1);
     public static final int COLLECTING_ADRENALINIC_ACTION_MIN_DAMAGE = asInt(COLLECTING_ADRENALINIC_ACTION.get("min_damages"), 3);
+
+    // FINAL FRENZY PARAMETERS
+    private static final JsonNode FINAL_FRENZY = RULES.get("final_frenzy");
+    public static final ArrayList<Integer> FINAL_FRENZY_DEATH_SCORES = asArray(FINAL_FRENZY .get("death_scores"));
+
+    // DOUBLE ACTION CASE
+    private static final JsonNode DOUBLE_ACTION = FINAL_FRENZY.get("single_action");
+    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES = DOUBLE_ACTION.get("max_movements").asInt(4);
+    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_COLLECTION = DOUBLE_ACTION.get("max_moves_collecting").asInt(2);
+    public static final int FINAL_FRENZY_DOUBLE_ACTION_MAX_MOVES_BEFORE_SHOOTING = DOUBLE_ACTION.get("max_moves_shooting").asInt(1);
+
+    // SINGLE ACTION CASE
+    private static final JsonNode SINGLE_ACTION = FINAL_FRENZY.get("single_action");
+    public static final int FINAL_FRENZY_SINGLE_ACTION_MAX_MOVES_BEFORE_COLLECTION = SINGLE_ACTION.get("max_moves_collecting").asInt(3);
+    public static final int FINAL_FRENZY_SINGLE_ACTION_MAX_MOVES_BEFORE_SHOOTING = SINGLE_ACTION.get("max_moves_shooting").asInt(2);
 
     // POWER UPS
     private static final JsonObject POWER_UPS = RULES.getAsJsonObject("power_ups");

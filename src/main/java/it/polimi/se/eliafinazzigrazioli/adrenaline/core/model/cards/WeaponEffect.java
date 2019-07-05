@@ -231,6 +231,10 @@ public class WeaponEffect {
         }
     }
 
+    public void clearPlayerSelection() {
+        selectedPlayers.clear();
+    }
+
 
     /*
     Method used to filter suggested callable effects.
@@ -253,6 +257,7 @@ public class WeaponEffect {
     public void selectionReset() {
         beginningSelectionBuilding = true;
     }
+
     public String getEffectDescription() {
         return effectDescription;
     }

@@ -163,5 +163,15 @@ public interface ModelEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(FinalFrenzyActionRequestEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
 
+    default void handleEvent(UsablePowerUpsEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    default void handleEvent(SelectDirectionEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
 }

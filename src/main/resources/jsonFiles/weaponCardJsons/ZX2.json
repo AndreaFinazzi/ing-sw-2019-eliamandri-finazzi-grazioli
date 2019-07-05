@@ -1,0 +1,71 @@
+{
+  "weaponName": "ZX-2",
+  "id": "027",
+  "cardColor": "YELLOW",
+  "loader": ["RED"],
+  "effects": [
+    {
+      "effectName": "basic mode",
+      "effectDescription": "Deal 1 damage and 2 marks to 1 target you can see.",
+      "price": [],
+      "effectStates": [
+        {
+          "type" : "VisibilitySelectorEffectState",
+          "notVisible" : false,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : -1,
+          "selectionType" : "PLAYER",
+          "referenceType" : "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 2,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ],
+      "nextCallableEffects": []
+    },
+    {
+      "effectName": "in scanner mode",
+      "effectDescription": "Choose up to 3 targets you can see and deal 1 mark to each.",
+      "price": [],
+      "effectStates": [
+        {
+          "type" : "VisibilitySelectorEffectState",
+          "notVisible" : false,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : -1,
+          "selectionType" : "PLAYER",
+          "referenceType" : "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 3
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 0,
+          "markAmount" : 1,
+          "playerToAffectSource" : "in scanner mode",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": [
+    "basic mode",
+    "in scanner mode"
+  ],
+  "notes": "Remember that the 3 targets can be in 3 different rooms."
+}

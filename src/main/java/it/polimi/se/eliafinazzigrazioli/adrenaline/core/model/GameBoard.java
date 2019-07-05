@@ -300,6 +300,17 @@ public class GameBoard {
         return true;
     }
 
+    public List<Coordinates> getSquaresList() {
+        List<Coordinates> coordinatesList = new ArrayList<>();
+        for (int x = 0; x < xMax; x++) {
+            for (int y = 0; y < yMax; y++) {
+                if (squaresMatrix[x][y] != null)
+                    coordinatesList.add(squaresMatrix[x][y].getCoordinates());
+            }
+        }
+        return coordinatesList;
+    }
+
     public AmmoCard collectAmmoCard(Player player, PowerUpsDeck deck) {
         BoardSquare position = getPlayerPosition(player);
         if (position.isSpawnPoint())
@@ -546,5 +557,22 @@ public class GameBoard {
 
     public MapType getMapType() {
         return mapType;
+    }
+
+    public List<Coordinates> getSquaresOnCardinals(Player player, int distance) {
+        List<BoardSquare> squaresByDistance = new ArrayList<>();
+        List<Coordinates> cardinalSquares = new ArrayList<>();
+        try {
+            squaresByDistance = getSquaresByDistance(player, distance, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for (BoardSquare boardSquare: squaresByDistance) {
+            if (boardSquare.getCoordinates().getXCoordinate() == playerPositions.get(player).getCoordinates().getXCoordinate() ||
+                            boardSquare.getCoordinates().getYCoordinate() == playerPositions.get(player).getCoordinates().getYCoordinate())
+                cardinalSquares.add(boardSquare.getCoordinates());
+        }
+        return cardinalSquares;
     }
 }

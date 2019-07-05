@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.core.model;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.model.PowerUpCardClient;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.model.cards.WeaponEffect;
 
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
@@ -12,7 +13,6 @@ public class PowerUpCard {
     private final String id;
     private final String type;
     private final Ammo ammo;
-    private final PowerUpEffect effect;
     private final String description;
     private final boolean toPay;
 
@@ -20,16 +20,14 @@ public class PowerUpCard {
         this.type = type;
         this.ammo = ammo;
         id = null;
-        effect = null;
         description = null;
         toPay = false;
     }
 
-    public PowerUpCard(String id, String type, Ammo ammo, PowerUpEffect effect, String description, boolean toPay) {
+    public PowerUpCard(String id, String type, Ammo ammo, WeaponEffect effect, String description, boolean toPay) {
         this.id = id;
         this.type = type;
         this.ammo = ammo;
-        this.effect = effect;
         this.description = description;
         this.toPay = toPay;
     }
@@ -50,10 +48,6 @@ public class PowerUpCard {
         return type;
     }
 
-    public void activate() {
-        effect.activate();
-    }
-
     public String getDescription() {
         return description;
     }
@@ -70,7 +64,6 @@ public class PowerUpCard {
     public String toString() {
         return "PowerUpCard{" +
                 "ammo=" + ammo +
-                ", effect=" + effect +
                 '}';
     }
 }

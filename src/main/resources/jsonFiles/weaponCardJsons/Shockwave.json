@@ -1,0 +1,165 @@
+{
+  "weaponName": "Shockwave",
+  "id": "028",
+  "cardColor": "YELLOW",
+  "loader": [],
+  "effects": [
+    {
+      "effectName": "basic mode",
+      "effectDescription": "Choose up to 3 targets on different squares, each exactly 1 move away. Deal 1 damage to each target.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 99,
+          "minDistance": 1,
+          "referenceSource": "basic mode",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 99,
+          "minDistance": 1,
+          "referenceSource": "basic mode",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 99,
+          "minDistance": 1,
+          "referenceSource": "basic mode",
+          "sourceSelectionOrder": 1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 0
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 2
+        }
+      ],
+      "nextCallableEffects": []
+    },
+    {
+      "effectName": "in tsunami mode",
+      "effectDescription": "Deal 1 damage to all targets that are exactly 1 move away.",
+      "price": ["YELLOW"],
+      "effectStates": [
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : -1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in tsunami mode",
+          "toAffectPlayerSelectionOrder" : 0
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in tsunami mode",
+          "toAffectPlayerSelectionOrder" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in tsunami mode",
+          "toAffectPlayerSelectionOrder" : 2
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in tsunami mode",
+          "toAffectPlayerSelectionOrder" : 3
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": [
+    "basic mode",
+    "in tsunami mode"
+  ],
+  "notes": null
+}

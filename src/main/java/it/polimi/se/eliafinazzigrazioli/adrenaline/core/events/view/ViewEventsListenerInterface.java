@@ -86,5 +86,15 @@ public interface ViewEventsListenerInterface extends EventListenerInterface {
         throw new HandlerNotImplementedException();
     }
 
+    default void handleEvent(PowerUpsToUseEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
 
+    default void handleEvent(UseTurnPowerUpEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
+
+    default void handleEvent(DirectionSelectedEvent event) throws HandlerNotImplementedException {
+        throw new HandlerNotImplementedException();
+    }
 }

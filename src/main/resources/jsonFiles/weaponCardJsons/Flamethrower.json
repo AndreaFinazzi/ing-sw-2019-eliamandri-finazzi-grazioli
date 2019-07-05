@@ -1,0 +1,271 @@
+{
+  "weaponName": "Flamethrower",
+  "id": "0213",
+  "cardColor": "RED",
+  "loader": [],
+  "effects": [
+    {
+      "effectName": "basic mode",
+      "effectDescription": "Choose a square 1 move away and possibly a second square 1 more move away in the same direction. On each square, you may choose 1 target and give it 1 damage.",
+      "price": [],
+      "effectStates": [
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "DIRECTION",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "CardinalDirectionSelectorEffectState",
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER",
+          "directionSource": "basic mode",
+          "directionSelectionOrder": 0
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "BOARDSQUARE",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 2,
+          "minDistance": 2,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "CardinalDirectionSelectorEffectState",
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER",
+          "directionSource": "basic mode",
+          "directionSelectionOrder": 0
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "BOARDSQUARE",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 0,
+          "minDistance": 0,
+          "referenceSource": "basic mode",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "BOARDSQUARE"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 0,
+          "minDistance": 0,
+          "referenceSource": "basic mode",
+          "sourceSelectionOrder": 1,
+          "selectionType": "PLAYER",
+          "referenceType": "BOARDSQUARE"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 0
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 1
+        }
+      ],
+      "nextCallableEffects": []
+    },
+    {
+      "effectName": "in barbecue mode",
+      "effectDescription": "Choose 2 squares as above. Deal 2 damage to everyone on the first square and 1 damage to everyone on the second square.",
+      "price": ["YELLOW", "YELLOW"],
+      "effectStates": [
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "DIRECTION",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "CardinalDirectionSelectorEffectState",
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER",
+          "directionSource": "in barbecue mode",
+          "directionSelectionOrder": 0
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "BOARDSQUARE",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 2,
+          "minDistance": 2,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type": "CardinalDirectionSelectorEffectState",
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER",
+          "directionSource": "in barbecue mode",
+          "directionSelectionOrder": 0
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "BOARDSQUARE",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 0,
+          "minDistance": 0,
+          "referenceSource": "in barbecue mode",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "BOARDSQUARE"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : -1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in barbecue mode",
+          "toAffectPlayerSelectionOrder" : 0
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in barbecue mode",
+          "toAffectPlayerSelectionOrder" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in barbecue mode",
+          "toAffectPlayerSelectionOrder" : 2
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in barbecue mode",
+          "toAffectPlayerSelectionOrder" : 3
+        },
+        {
+          "type": "SelectionResetEffectState",
+          "effectToClean": "in barbecue mode"
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 0,
+          "minDistance": 0,
+          "referenceSource": "in barbecue mode",
+          "sourceSelectionOrder": 1,
+          "selectionType": "PLAYER",
+          "referenceType": "BOARDSQUARE"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : -1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in barbecue mode",
+          "toAffectPlayerSelectionOrder" : 0
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in barbecue mode",
+          "toAffectPlayerSelectionOrder" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in barbecue mode",
+          "toAffectPlayerSelectionOrder" : 2
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in barbecue mode",
+          "toAffectPlayerSelectionOrder" : 3
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": [
+    "basic mode",
+    "in barbecue mode"
+  ],
+  "notes": "This weapon cannot damage anyone in your square. However, it can sometimes damage a target you can't see – the flame won't go through walls, but it will go through doors. Think of it as a straight-line blast of flame that can travel 2 squares in a cardinal direction."
+}

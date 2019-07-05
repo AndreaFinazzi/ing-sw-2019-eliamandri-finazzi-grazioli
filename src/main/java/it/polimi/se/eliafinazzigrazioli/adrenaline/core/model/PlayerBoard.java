@@ -23,6 +23,8 @@ public class PlayerBoard {
     private ArrayList<Ammo> ammos;
 
     private ArrayList<Integer> deathScores;
+    private ArrayList<Integer> deathScoresFinalFrenzy;
+    private boolean finalFrenzyMode;
 
     private int deliverableMarks;
 
@@ -31,8 +33,19 @@ public class PlayerBoard {
         this.marks = new ArrayList<>();
         this.ammos = new ArrayList<>();
 
+        finalFrenzyMode = false;
+
         deathScores = Rules.PLAYER_BOARD_DEATH_SCORES;
+        deathScoresFinalFrenzy = Rules.FINAL_FRENZY_DEATH_SCORES;
         deliverableMarks = Rules.PLAYER_BOARD_MAX_MARKS_DELIVERED;
+    }
+
+    public void switchToFinalFrenzy() {
+        finalFrenzyMode = true;
+    }
+
+    public boolean isFinalFrenzyMode() {
+        return finalFrenzyMode;
     }
 
     public boolean canUseMark() {
@@ -60,6 +73,10 @@ public class PlayerBoard {
                 overkill = true;
             return damage;
         }
+    }
+
+    public boolean hasDamages() {
+        return !(damages.size() == 0);
     }
 
     public DamageMark addMark(DamageMark mark) {

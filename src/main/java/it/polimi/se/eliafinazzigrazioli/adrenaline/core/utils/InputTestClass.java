@@ -127,7 +127,10 @@ public class InputTestClass implements RemoteView, Runnable {
 
     @Override
     public Coordinates selectCoordinates(List<Coordinates> coordinates) {
-        return coordinates.get(new Random().nextInt(coordinates.size()));
+        if (coordinates.size() > 0)
+            return coordinates.get(new Random().nextInt(coordinates.size()));
+        else
+            return null;
     }
 
     @Override

@@ -26,7 +26,8 @@ public abstract class EffectState {
             .registerSubtype(InRoomSelectorEffectState.class, "InRoomSelectorEffectState")
             .registerSubtype(PreselectionBasedSelectorEffectState.class, "PreselectionBasedSelectorEffectState")
             .registerSubtype(MoveActionEffectState.class, "MoveActionEffectState")
-            .registerSubtype(DamageActionEffectState.class, "DamageActionEffectState");
+            .registerSubtype(DamageActionEffectState.class, "DamageActionEffectState")
+            .registerSubtype(SelectionResetEffectState.class, "SelectionResetEffectState");
 
 
     public abstract List<AbstractModelEvent> execute(WeaponCard invoker, GameBoard gameBoard, Player currentPlayer);

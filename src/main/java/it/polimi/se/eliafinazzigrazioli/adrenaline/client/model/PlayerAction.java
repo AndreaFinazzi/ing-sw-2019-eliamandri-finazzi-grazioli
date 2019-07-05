@@ -4,9 +4,10 @@ public enum PlayerAction {
     MOVE("Move"),
     SHOOT("Shoot"),
     COLLECT("Collect"),
+    USE_POWER_UP("Use power up"),
     SHOW_INFO("Show info", false),
     SHOW_OWNED_WEAPONS("Show owned weapon", false),
-    SHOW_OWNED_POWERUPS("Show owned powerup", false),
+    SHOW_OWNED_POWERUPS("Show owned powerups", false),
     SHOW_PLAYERBOARDS("Show playerboards", false),
     SHOW_OPPONENT_WEAPON("Show opponent weapons", false),
     SHOW_SPAWN_WEAPON("Show weapons on spawns", false);

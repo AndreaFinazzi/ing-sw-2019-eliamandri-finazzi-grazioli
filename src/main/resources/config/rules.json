@@ -57,7 +57,23 @@
     "collection_adrenalinic_action" : {
       "moves_surplus" : 1,
       "min_damages" : 3
+    },
+    "final_frenzy": {
+      "death_scores": [
+        2,
+        1,
+        1,
+        1
+      ],
+      "single_action": {
+        "max_movements": 4,
+        "max_moves_collecting": 2,
+        "max_moves_shooting": 1
+      },
+      "double_action": {
+        "max_moves_collecting": 3,
+        "max_moves_shooting": 2
+      }
     }
-
   }
 }

@@ -54,6 +54,8 @@ public class PowerUpCardClient implements Serializable, CardInterface {
         return description;
     }
 
+
+
     public String[][] drawCard() {
         String string = this.toString();
         String[][] box = CLIUtils.drawEmptyBox(FULL_WIDTH, FULL_HEIGHT, Color.ammoToColor(equivalentAmmo));

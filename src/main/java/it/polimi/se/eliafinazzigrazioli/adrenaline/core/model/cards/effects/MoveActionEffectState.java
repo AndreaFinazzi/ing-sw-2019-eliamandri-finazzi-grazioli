@@ -27,22 +27,29 @@ public class MoveActionEffectState extends ActionEffectState {
         List<AbstractModelEvent> events = new ArrayList<>();
         BoardSquare destination;
         Player toMove;
-        if (movementDestinationSource != null)
-            destination = invoker.getEffectByName(movementDestinationSource).getSelectedBoardSquare(destinationSelectionOrder);
+        if (movementDestinationSource != null) {
+            try {
+                destination = invoker.getEffectByName(movementDestinationSource).getSelectedBoardSquare(destinationSelectionOrder);
+            } catch (IndexOutOfBoundsException e) {
+                destination = null;
+            }
+        }
         else
             destination = gameBoard.getPlayerPosition(currentPlayer);
-        if (playerToAffectSource != null) {
-            try {
-                toMove = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(toAffectPlayerSelectionOrder);
-            } catch (IndexOutOfBoundsException e) {
-                toMove = null;
+        if (destination != null) {
+            if (playerToAffectSource != null) {
+                try {
+                    toMove = invoker.getEffectByName(playerToAffectSource).getSelectedPlayer(toAffectPlayerSelectionOrder);
+                } catch (IndexOutOfBoundsException e) {
+                    toMove = null;
+                }
+            } else
+                toMove = currentPlayer;
+            if (toMove != null) {
+                gameBoard.movePlayer(toMove, destination);
+                events.add(new PlayerMovedByWeaponEvent(currentPlayer, invoker.getWeaponName(), toMove.getPlayerNickname(), destination.getCoordinates()));
+                return events;
             }
-        } else
-            toMove = currentPlayer;
-        if (toMove != null) {
-            gameBoard.movePlayer(toMove, destination);
-            events.add(new PlayerMovedByWeaponEvent(currentPlayer, invoker.getWeaponName(), toMove.getPlayerNickname(), destination.getCoordinates()));
-            return events;
         }
         return new ArrayList<>();
     }

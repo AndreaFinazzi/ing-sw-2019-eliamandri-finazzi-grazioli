@@ -32,6 +32,8 @@ public class Player implements Selectable {
     private List<WeaponCard> weapons;
     private List<PowerUpCard> powerUps;
 
+    private boolean finalFrenzyDoubleAction = false;
+
     // Define additional methods, granting access to players list by nickname (unique key)
     // These are implemented in anonymous class in Match
     public abstract static class AbstractPlayerList extends ArrayList<Player> {
@@ -68,6 +70,14 @@ public class Player implements Selectable {
         this.damageMarkDelivered = damageMarkDelivered;
         weapons = new ArrayList<>();
         powerUps = new ArrayList<>();
+    }
+
+    public void enableDoubleAction() {
+        finalFrenzyDoubleAction = true;
+    }
+
+    public boolean isFinalFrenzyDoubleActionEnabled() {
+        return finalFrenzyDoubleAction;
     }
 
     public void addPoints(int newPoints) {
@@ -165,6 +175,10 @@ public class Player implements Selectable {
 
     public List<PowerUpCard> getPowerUps() {
         return new ArrayList<>(powerUps);
+    }
+
+    public boolean hasDamages() {
+        return playerBoard.hasDamages();
     }
 
     public void removePowerUp(PowerUpCard powerUpCard) {

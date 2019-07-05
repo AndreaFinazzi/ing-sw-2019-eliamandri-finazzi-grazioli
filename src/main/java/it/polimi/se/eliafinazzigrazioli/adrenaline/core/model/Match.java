@@ -91,6 +91,7 @@ public class Match implements Observable {
     private MatchPhase phase;
     private Player currentPlayer;
     private Player firstPlayer;
+    private Player lastTurnPlayer;
     private PowerUpsDeck powerUpsDeck;
     private WeaponsDeck weaponsDeck;
     private AmmoCardsDeck ammoCardsDeck;
@@ -130,9 +131,28 @@ public class Match implements Observable {
             }
             events.add(new SkullRemovalEvent(currentPlayer, currentPlayer.getDamageMarkDelivered(), deadPlayer.getPlayerNickname(), deadPlayer.getPlayerBoard().isOverkill(), trackFull));
         }
-        if (killTrack.isFull())
+        if (killTrack.isFull()) {
             phase = MatchPhase.FINAL_FRENZY;
+            lastTurnPlayer = currentPlayer;
+        }
         return events;
+    }
+
+    public Player getLastTurnPlayer() {
+        return lastTurnPlayer;
+    }
+
+    public List<Player> finalFrenzyPlayerBoardSwitch() {
+        List<Player> playersToSwitch = new ArrayList<>();
+        for (Player player: players) {
+            if (!player.hasDamages()) {
+                player.getPlayerBoard().switchToFinalFrenzy();
+                playersToSwitch.add(player);
+            }
+            if (players.indexOf(player) <= players.indexOf(currentPlayer))
+                player.enableDoubleAction();
+        }
+        return playersToSwitch;
     }
 
 

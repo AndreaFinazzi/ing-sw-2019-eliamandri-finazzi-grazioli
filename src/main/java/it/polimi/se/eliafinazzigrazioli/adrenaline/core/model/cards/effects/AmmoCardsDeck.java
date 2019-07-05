@@ -16,8 +16,6 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**Laura<3*/
-
 public class AmmoCardsDeck {
 
     static final Logger LOGGER = Logger.getLogger(AmmoCardsDeck.class.getName());

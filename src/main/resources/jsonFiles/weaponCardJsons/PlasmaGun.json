@@ -1,0 +1,100 @@
+{
+  "weaponName": "Plasma Gun",
+  "id": "0219",
+  "cardColor": "BLUE",
+  "loader": ["YELLOW"],
+  "effects": [
+    {
+      "effectName": "basic effect",
+      "effectDescription": "Deal 2 damage to 1 target you can see.",
+      "price": [],
+      "effectStates": [
+        {
+          "type" : "VisibilitySelectorEffectState",
+          "notVisible" : false,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : -1,
+          "selectionType" : "PLAYER",
+          "referenceType" : "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic effect",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ],
+      "nextCallableEffects": [
+        "with phase glide",
+        "with charged shot"
+      ]
+    },
+    {
+      "effectName": "with phase glide",
+      "effectDescription": "Move 1 or 2 squares. This effect can be used either before or after the basic effect.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 2,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "BOARDSQUARE",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "MoveActionEffectState",
+          "playerToAffectSource": null,
+          "toAffectPlayerSelectionOrder": -1,
+          "movementDestinationSource": "with phase glide",
+          "destinationSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": [
+        "basic effect",
+        "with charged shot"
+      ]
+    },
+    {
+      "effectName": "with charged shot",
+      "effectDescription": "Deal 1 additional damage to your target.",
+      "price": ["BLUE"],
+      "effectStates": [
+        {
+          "type" : "PreselectionBasedSelectorEffectState",
+          "previousSelected" : {
+            "basic effect" : [0]
+          },
+          "alreadySelected" : true
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic effect",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": [
+    "basic effect",
+    "with phase glide"
+  ],
+  "notes": "The two moves have no ammo cost. You don't have to be able to see your target when you play the card. For example, you can move 2 squares and shoot a target you now see. You cannot use 1 move before shooting and 1 move after."
+}

@@ -1,0 +1,105 @@
+{
+  "weaponName": "Shotgun",
+  "id": "025",
+  "cardColor": "YELLOW",
+  "loader": ["YELLOW"],
+  "effects": [
+    {
+      "effectName": "basic mode",
+      "effectDescription": "Deal 3 damage to 1 target on your square. If you want, you may then move the target 1 square.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 0,
+          "minDistance": 0,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 3,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic mode",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ],
+      "nextCallableEffects": [
+        "basic mode (optional movement)"
+      ]
+    },
+    {
+      "effectName": "in long barrel mode",
+      "effectDescription": "Deal 2 damage to 1 target on any square exactly one move away.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": null,
+          "sourceSelectionOrder": -1,
+          "selectionType": "PLAYER",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 2,
+          "markAmount" : 0,
+          "playerToAffectSource" : "in long barrel mode",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ],
+      "nextCallableEffects": []
+    },
+    {
+      "effectName": "basic mode (optional movement)",
+      "effectDescription": "Activate optional target movement of basic mode.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": "basic mode",
+          "sourceSelectionOrder": 0,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "BOARDSQUARE",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "MoveActionEffectState",
+          "playerToAffectSource": "basic mode",
+          "toAffectPlayerSelectionOrder": 0,
+          "movementDestinationSource": "basic mode (optional movement)",
+          "destinationSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": []
+    }
+  ],
+  "callableEffects": [
+    "basic mode",
+    "in long barrel mode"
+  ],
+  "notes": null
+}

@@ -1,0 +1,143 @@
+{
+  "weaponName": "Grenade Launcher",
+  "id": "0212",
+  "cardColor": "RED",
+  "loader": [],
+  "effects": [
+    {
+      "effectName": "basic effect",
+      "effectDescription": "Deal 1 damage to 1 target you can see. Then you may move the target 1 square.",
+      "price": [],
+      "effectStates": [
+        {
+          "type" : "VisibilitySelectorEffectState",
+          "notVisible" : false,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : -1,
+          "selectionType" : "PLAYER",
+          "referenceType" : "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "basic effect",
+          "toAffectPlayerSelectionOrder" : 0
+        }
+      ],
+      "nextCallableEffects": [
+        "basic effect (optional target movement)",
+        "with extra grenade"
+      ]
+    },
+    {
+      "effectName": "basic effect (optional target movement)",
+      "effectDescription": "Use basic effect possibility to move the opponent target.",
+      "price": [],
+      "effectStates": [
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 1,
+          "minDistance": 1,
+          "referenceSource": "basic effect",
+          "sourceSelectionOrder": 1,
+          "selectionType": "BOARDSQUARE",
+          "referenceType": "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "BOARDSQUARE",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "MoveActionEffectState",
+          "playerToAffectSource": "basic effect",
+          "toAffectPlayerSelectionOrder": 0,
+          "movementDestinationSource": "basic effect (optional target movement)",
+          "destinationSelectionOrder": 0
+        }
+      ],
+      "nextCallableEffects": [
+        "with extra grenade"
+      ]
+    },
+    {
+      "effectName": "with extra grenade",
+      "effectDescription": "Deal 1 damage to every player on a square you can see. You can use this before or after the basic effect's move.",
+      "price": ["RED"],
+      "effectStates": [
+        {
+          "type" : "VisibilitySelectorEffectState",
+          "notVisible" : false,
+          "referenceSource" : null,
+          "sourceSelectionOrder" : -1,
+          "selectionType" : "BOARDSQUARE",
+          "referenceType" : "PLAYER"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : true,
+          "selectionType" : "BOARDSQUARE",
+          "maxSelectableItems" : 1
+        },
+        {
+          "type": "DistanceSelectorEffectState",
+          "maxDistance": 0,
+          "minDistance": 0,
+          "referenceSource": "with extra grenade",
+          "sourceSelectionOrder": 0,
+          "selectionType": "PLAYER",
+          "referenceType": "BOARDSQUARE"
+        },
+        {
+          "type" : "SelectionRequestEffectState",
+          "userSelectionRequired" : false,
+          "selectionType" : "PLAYER",
+          "maxSelectableItems" : -1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "with extra grenade",
+          "toAffectPlayerSelectionOrder" : 0
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "with extra grenade",
+          "toAffectPlayerSelectionOrder" : 1
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "with extra grenade",
+          "toAffectPlayerSelectionOrder" : 2
+        },
+        {
+          "type" : "DamageActionEffectState",
+          "damageAmount" : 1,
+          "markAmount" : 0,
+          "playerToAffectSource" : "with extra grenade",
+          "toAffectPlayerSelectionOrder" : 3
+        }
+      ],
+      "nextCallableEffects": [
+        "basic effect (optional target movement)"
+      ]
+    }
+  ],
+  "callableEffects": [
+    "basic effect"
+  ],
+  "notes": "For example, you can shoot a target, move it onto a square with other targets, then damage everyone including the first target. Or you can deal 2 to a main target, 1 to everyone else on that square, then move the main target. Or you can deal 1 to an isolated target and 1 to everyone on a different square. If you target your own square, you will not be moved or damaged."
+}
