@@ -130,7 +130,6 @@ public class CLI implements RemoteView, Runnable {
             message = "You ";
         else
             message = "Player " + player + " " + localModel.getPlayersAvatarMap().get(player);
-        //message = message + " payed the fallowing power ups:";
         for (PowerUpCardClient powerUpCardClient: powerUpCardClients)
             powerUpsMatrix.add(powerUpCardClient.drawCard(true));
         if(powerUpsMatrix.size() > 0) {
@@ -142,7 +141,13 @@ public class CLI implements RemoteView, Runnable {
                     message = message.concat(ammo.toString()).concat(" ");
                 }
             }
-        } else {
+        }else if(ammos.size() > 0) {
+            message = message + "\npayed the fallowing ammos: ";
+            for(Ammo ammo : ammos) {
+                message = message.concat(ammo.toString()).concat(" ");
+            }
+        }
+        else {
             message = "You don't pay!!!";
         }
         showMessage(message);
@@ -351,6 +356,17 @@ public class CLI implements RemoteView, Runnable {
     }
 
     /**INTERACTION (INPUT) METHODS   NB: THEY MUST NOT BE VOID FUNCTIONS--------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+    @Override
+    public Ammo selectAmmoType(List<Ammo> selectableAmmos) {
+        if(selectableAmmos.isEmpty())
+            return null;
+        showMessage(CLIUtils.serializeList(selectableAmmos));
+        int select = nextInt(selectableAmmos.size());
+        if(select < 0)
+            return null;
+        return selectableAmmos.get(select);
+    }
 
     @Override
     public MoveDirection selectDirection(BoardSquareClient currentPose, ArrayList<MoveDirection> availableMoves) {
@@ -681,7 +697,6 @@ public class CLI implements RemoteView, Runnable {
     }
 
     public void showInfo() {
-
         int currentX; int currentY;
 
         String[][] infoMatrix = new String[DIM_X][DIM_Y];
