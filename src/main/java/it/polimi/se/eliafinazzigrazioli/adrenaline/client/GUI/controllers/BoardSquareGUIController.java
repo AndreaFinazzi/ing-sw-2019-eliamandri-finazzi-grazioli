@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class BoardSquareGUIController extends AbstractGUIController {
+public class BoardSquareGUIController extends GUIController {
 
     @FXML
     private TilePane boardSquare;

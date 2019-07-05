@@ -18,13 +18,11 @@ public abstract class AbstractConnectionManager implements Observer {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractConnectionManager.class.getName());
 
-    //TODO should be placed in config file
-    protected static final int CONNECTION_ATTEMPT_DELAY = 500;
-    protected static final int CONNECTION_MAX_ATTEMPTS = 20;
-
     protected int connection_attempts = 0;
     private Timer turnTimer = new Timer();
     protected Client client;
+
+    protected int port;
 
     private ExecutorService handlersExecutor = Executors.newCachedThreadPool();
 

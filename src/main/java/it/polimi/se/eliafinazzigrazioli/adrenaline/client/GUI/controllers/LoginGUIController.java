@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class LoginGUIController extends AbstractGUIController {
+public class LoginGUIController extends GUIController {
     @FXML
     private StackPane rootStackPane;
 

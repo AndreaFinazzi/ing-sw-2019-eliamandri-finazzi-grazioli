@@ -3,6 +3,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client.CLI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class CLIUtils {
 
@@ -194,6 +195,29 @@ public class CLIUtils {
 
     public static String alignSquare(List<String[][]> squares) {
         return matrixToString(composeMatrix(squares));
+    }
+
+
+    public static int nextInt(Scanner scanner, int size) {
+
+        if (size <= 0)
+            return -1;
+
+        int nextInt;
+        String inputString;
+        do {
+            try {
+                inputString = scanner.nextLine();
+                nextInt = Integer.parseInt(inputString);
+            } catch (Exception e) {
+                nextInt = -1;
+            }
+            if (nextInt < 1 || nextInt > size) {
+                System.out.println("Choice out of bound. Sit down and focus, you can do it: ");
+            }
+        } while (nextInt < 1 || nextInt > size);
+
+        return nextInt - 1;
     }
 
 }

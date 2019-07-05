@@ -5,6 +5,8 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -44,10 +46,10 @@ public class Server implements Runnable {
             matchBuilder = new MatchBuilder();
 
             try {
-                //System.setProperty("java.rmi.server.hostname", "192.168.43.185");
+                System.setProperty("java.rmi.server.hostname", InetAddress.getLocalHost().getHostName());
 
-                registry = LocateRegistry.createRegistry(1099);
-            } catch (RemoteException e) {
+                registry = LocateRegistry.createRegistry(Config.CONFIG_SERVER_RMI_PORT);
+            } catch (RemoteException | UnknownHostException e) {
                 LOGGER.log(Level.SEVERE, e.toString(), e);
             }
 

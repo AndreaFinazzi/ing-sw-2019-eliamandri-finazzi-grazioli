@@ -31,7 +31,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
-public class CommandsGUIController extends AbstractGUIController {
+public class CommandsGUIController extends GUIController {
 
     private List<PowerUpCardClient> myPowerUps;
 
@@ -228,7 +228,7 @@ public class CommandsGUIController extends AbstractGUIController {
     public Node generateCardNode(PowerUpCardClient powerUpCard) {
         Button button = null;
         try {
-            button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, (AbstractGUIController) null);
+            button = (Button) loadFXML(GUI.FXML_PATH_POWER_UP, (GUIController) null);
             button.setDisable(true);
             Button finalButton = button;
             button.setOnMouseClicked(event -> {
@@ -439,7 +439,7 @@ public class CommandsGUIController extends AbstractGUIController {
                 currentButton = moveDirectionButtonEnumMap.get(moveDirection);
                 initialText = currentButton.getText();
                 try {
-                    arrowIcon = new Image(view.getIconAsset(GUI.ASSET_PREFIX_ICONS_ARROWS + normalizedName + GUI.ASSET_FORMAT_ICONS), 50, 50, true, true);
+                    arrowIcon = new Image(view.getIconAsset(GUI.ASSET_PREFIX_ICONS_ARROWS + normalizedName + GUI.ASSET_FORMAT), 50, 50, true, true);
                     currentButton.setGraphic(new ImageView(arrowIcon));
                     currentButton.setText(null);
                 } catch (Exception e) {

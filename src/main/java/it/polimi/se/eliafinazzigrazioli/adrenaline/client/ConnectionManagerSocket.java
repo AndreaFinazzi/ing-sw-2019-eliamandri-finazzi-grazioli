@@ -2,7 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
-import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.ClientDisconnectionEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,34 +15,36 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
 
     private static final Logger LOGGER = Logger.getLogger(ConnectionManagerSocket.class.getName());
 
-    //TODO move in config file
-    private static final String IP_SERVER = "localhost";
-    private static final int PORT_SEVER = 9999;
-
     private Socket clientSocket;
     private ObjectOutputStream sender;
     private ObjectInputStream receiver;
 
     public ConnectionManagerSocket(Client client) {
-        super(client);
+        this(client, Config.CONFIG_SERVER_SOCKET_PORT);
+    }
 
+    public ConnectionManagerSocket(Client client, int port) {
+        super(client);
+        this.port = port;
     }
 
     @Override
     public void send(AbstractViewEvent event) {
-        try {
-            sender.writeObject(event);
-            sender.flush();
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, e.toString(), e);
-            connection_attempts++;
+        if (!clientSocket.isClosed()) {
             try {
-                LOGGER.info("Trying again in a few seconds");
-                Thread.sleep(CONNECTION_ATTEMPT_DELAY);
-                if (connection_attempts <= CONNECTION_MAX_ATTEMPTS) send(event);
-            } catch (InterruptedException ex) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                Thread.currentThread().interrupt();
+                sender.writeObject(event);
+                sender.flush();
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, e.toString(), e);
+                connection_attempts++;
+                try {
+                    LOGGER.info("Trying again in a few seconds");
+                    Thread.sleep(Config.CONFIG_CLIENT_CONNECTION_ATTEMPT_DELAY);
+                    if (connection_attempts <= Config.CONFIG_CLIENT_CONNECTION_MAX_ATTEMPTS) send(event);
+                } catch (InterruptedException ex) {
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
@@ -50,7 +52,7 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
     @Override
     public void init() {
         try {
-            clientSocket = new Socket(IP_SERVER, PORT_SEVER);
+            clientSocket = new Socket(Config.CONFIG_CLIENT_SERVER_IP, Config.CONFIG_SERVER_SOCKET_PORT);
             sender = new ObjectOutputStream(clientSocket.getOutputStream());
             receiver = new ObjectInputStream(clientSocket.getInputStream());
             startListener();
@@ -58,7 +60,7 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             try {
                 LOGGER.info("Trying again in a few seconds");
-                Thread.sleep(CONNECTION_ATTEMPT_DELAY);
+                Thread.sleep(Config.CONFIG_CLIENT_CONNECTION_ATTEMPT_DELAY);
                 init();
             } catch (InterruptedException ex) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -70,19 +72,27 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
     }
 
     private void startListener() {
-        new Thread(() -> {
-            AbstractModelEvent event;
-            try {
-                while (true) {
-                    event = (AbstractModelEvent) receiver.readObject();
-                    received(event);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AbstractModelEvent event;
+                try {
+                    while (!clientSocket.isClosed()) {
+                        event = (AbstractModelEvent) receiver.readObject();
+                        received(event);
+                        connection_attempts = 0;
+                    }
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                    if (connection_attempts <= Config.CONFIG_CLIENT_CONNECTION_MAX_ATTEMPTS) {
+                        connection_attempts++;
+                        run();
+                    }
+                } catch (ClassNotFoundException e) {
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                } finally {
+                    Thread.currentThread().interrupt();
                 }
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
-                if (connection_attempts <= CONNECTION_MAX_ATTEMPTS) startListener();
-                closeConnection();
-            } catch (ClassNotFoundException e) {
-                LOGGER.log(Level.SEVERE, e.toString(), e);
             }
         }).start();
     }
@@ -94,12 +104,14 @@ public class ConnectionManagerSocket extends AbstractConnectionManager {
 
     @Override
     public void disconnect() {
-        send(new ClientDisconnectionEvent(client.getClientID(), client.getPlayerName()));
-    }
-
-    public void closeConnection() {
         try {
-            clientSocket.close();
+            LOGGER.info("Disconnecting. Bye bye!");
+            if (!clientSocket.isClosed()) {
+                receiver.close();
+                sender.close();
+                clientSocket.close();
+            }
+            Thread.currentThread().interrupt();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }

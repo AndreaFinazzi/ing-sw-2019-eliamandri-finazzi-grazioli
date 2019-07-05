@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
-public class OpponentPlayerGUIController extends AbstractGUIController {
+public class OpponentPlayerGUIController extends GUIController {
     @FXML
     private StackPane rootStackPane;
     @FXML

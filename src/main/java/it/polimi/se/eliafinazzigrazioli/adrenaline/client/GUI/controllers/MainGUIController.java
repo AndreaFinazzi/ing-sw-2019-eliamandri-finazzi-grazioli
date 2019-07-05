@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
-public class MainGUIController extends AbstractGUIController {
+public class MainGUIController extends GUIController {
 
     private AtomicReference<WeaponCardClient> selectedWeapon;
     private AtomicReference<Coordinates> selectedCoordinates;
@@ -365,7 +365,8 @@ public class MainGUIController extends AbstractGUIController {
             //initialize killTrack
             for (int i = 0; i < view.getLocalModel().getKillTrack().getTrack().size(); i++) {
                 try {
-                    loadFXML(GUI.FXML_PATH_SKULL, (Pane) killTrackVBox.getChildren().get(i), null);
+                    ImageView skullNode = (ImageView) loadFXML(GUI.FXML_PATH_SKULL, (Pane) killTrackVBox.getChildren().get(i), null);
+                    skullNode.setImage(new Image(view.getAsset(GUI.ASSET_ID_SKULL_ROTATED)));
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 }

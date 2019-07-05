@@ -33,14 +33,14 @@ public class Client implements Runnable {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             Thread.currentThread().interrupt();
         } finally {
-
+            connectionManager.disconnect();
+            LOGGER.severe("EVENTS QUEUE INTERRUPTED FOREVER!!!");
         }
-
-        LOGGER.severe("EVENTS QUEUE INTERRUPTED FOREVER!!!");
     });
 
     private boolean cli = false;
     private boolean rmi = false;
+    private int networkPort;
 
     private int clientID;
 
@@ -62,6 +62,11 @@ public class Client implements Runnable {
     public Client(boolean cli, boolean rmi) {
         this.cli = cli;
         this.rmi = rmi;
+    }
+
+    public Client(boolean cli, boolean rmi, int networkPort) {
+        this(cli, rmi);
+        this.networkPort = networkPort;
     }
 
     public boolean isActive() {
@@ -133,7 +138,7 @@ public class Client implements Runnable {
 
         if (rmi) {
             try {
-                setConnectionManager(new ConnectionManagerRMI(this));
+                setConnectionManager(new ConnectionManagerRMI(this, networkPort));
             } catch (RemoteException e) {
                 LOGGER.log(Level.SEVERE, e.toString(), e);
                 disconnect();
@@ -141,7 +146,7 @@ public class Client implements Runnable {
                 LOGGER.log(Level.SEVERE, e.toString(), e);
             }
         } else {
-            setConnectionManager(new ConnectionManagerSocket(this));
+            setConnectionManager(new ConnectionManagerSocket(this, networkPort));
         }
 
         init();

@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.server;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.client.ClientRemoteRMI;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 import java.io.IOException;
@@ -27,9 +28,7 @@ public class ServerRMIManager implements Runnable, ServerRemoteRMI {
     public ServerRMIManager(Server server) throws RemoteException {
         this.server = server;
 
-        //System.setProperty("java.rmi.server.hostname", "192.168.43.185");
-
-        UnicastRemoteObject.exportObject(this, 1099);
+        UnicastRemoteObject.exportObject(this, Config.CONFIG_SERVER_RMI_PORT);
     }
 
 
@@ -104,7 +103,7 @@ public class ServerRMIManager implements Runnable, ServerRemoteRMI {
     @Override
     public void run() {
         try {
-            server.getRegistry().bind("ServerRMIManager", this);
+            server.getRegistry().bind(Config.CONFIG_SERVER_RMI_NAME, this);
         } catch (RemoteException | AlreadyBoundException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }

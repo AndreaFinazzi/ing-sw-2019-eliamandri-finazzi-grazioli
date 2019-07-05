@@ -13,19 +13,19 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
-public class AbstractGUIController implements Initializable {
-    static final Logger LOGGER = Logger.getLogger(AbstractGUIController.class.getName());
+public class GUIController implements Initializable {
+    static final Logger LOGGER = Logger.getLogger(GUIController.class.getName());
 
     protected boolean initialized = false;
 
     protected GUI view;
     protected Semaphore semaphore;
 
-    public AbstractGUIController() {
+    public GUIController() {
 
     }
 
-    public AbstractGUIController(GUI view) {
+    public GUIController(GUI view) {
         this();
         this.view = view;
     }
@@ -38,19 +38,19 @@ public class AbstractGUIController implements Initializable {
         this.semaphore = semaphore;
     }
 
-    AbstractGUIController loadFXML(String path) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+    GUIController loadFXML(String path) throws IOException {
+        FXMLLoader loader = new FXMLLoader(view.getResource(path));
         loader.load();
-        AbstractGUIController guiController = loader.getController();
+        GUIController guiController = loader.getController();
         guiController.setView(view);
 
         return guiController;
     }
 
-    AbstractGUIController loadFXML(String path, Pane parent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+    GUIController loadFXML(String path, Pane parent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(view.getResource(path));
         loader.load();
-        AbstractGUIController guiController = loader.getController();
+        GUIController guiController = loader.getController();
         guiController.setView(view);
 
         Platform.runLater(() -> parent.getChildren().add(loader.getRoot()));
@@ -58,8 +58,8 @@ public class AbstractGUIController implements Initializable {
         return guiController;
     }
 
-    Node loadFXML(String path, Pane parent, AbstractGUIController guiController) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+    Node loadFXML(String path, Pane parent, GUIController guiController) throws IOException {
+        FXMLLoader loader = new FXMLLoader(view.getResource(path));
         loader.setController(guiController);
         loader.load();
 
@@ -68,8 +68,8 @@ public class AbstractGUIController implements Initializable {
         return loader.getRoot();
     }
 
-    Node loadFXML(String path, AbstractGUIController guiController) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+    Node loadFXML(String path, GUIController guiController) throws IOException {
+        FXMLLoader loader = new FXMLLoader(view.getResource(path));
         loader.setController(guiController);
         loader.load();
 

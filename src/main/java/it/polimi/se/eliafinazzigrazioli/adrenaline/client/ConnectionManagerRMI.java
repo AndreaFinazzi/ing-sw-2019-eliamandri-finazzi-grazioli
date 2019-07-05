@@ -2,6 +2,7 @@ package it.polimi.se.eliafinazzigrazioli.adrenaline.client;
 
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.model.AbstractModelEvent;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.events.view.AbstractViewEvent;
+import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.server.ServerRemoteRMI;
 
 import java.rmi.NotBoundException;
@@ -9,7 +10,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Scanner;
 import java.util.logging.Level;
 
 public class ConnectionManagerRMI extends AbstractConnectionManager implements ClientRemoteRMI {
@@ -19,7 +19,12 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
     private ServerRemoteRMI serverRemoteRMI;
 
     public ConnectionManagerRMI(Client client) throws RemoteException, NotBoundException {
+        this(client, Config.CONFIG_SERVER_RMI_PORT);
+    }
+
+    public ConnectionManagerRMI(Client client, int port) throws RemoteException, NotBoundException {
         super(client);
+        this.port = port;
     }
 
     // AbstractConnectionManager
@@ -28,45 +33,44 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
         try {
             LOGGER.info("Client ConnectionManagerRMI sending event: " + event);
             serverRemoteRMI.receive(event);
+            connection_attempts = 0;
+
         } catch (RemoteException e) {
             LOGGER.log(Level.WARNING, e.toString(), e);
             connection_attempts++;
             try {
                 LOGGER.info("Trying again in a few seconds");
-                Thread.sleep(CONNECTION_ATTEMPT_DELAY);
-                if (connection_attempts <= CONNECTION_MAX_ATTEMPTS) send(event);
+                Thread.sleep(Config.CONFIG_CLIENT_CONNECTION_ATTEMPT_DELAY);
+                if (connection_attempts <= Config.CONFIG_CLIENT_CONNECTION_MAX_ATTEMPTS) send(event);
             } catch (InterruptedException ex) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 Thread.currentThread().interrupt();
             }
         }
-
-        connection_attempts = 0;
     }
 
     @Override
     public void init() {
         try {
-            registry = LocateRegistry.getRegistry(1099);
-            serverRemoteRMI = (ServerRemoteRMI) registry.lookup("ServerRMIManager");
+            registry = LocateRegistry.getRegistry(Config.CONFIG_CLIENT_SERVER_IP, Config.CONFIG_SERVER_RMI_PORT);
+            serverRemoteRMI = (ServerRemoteRMI) registry.lookup(Config.CONFIG_SERVER_RMI_NAME);
 
             LOGGER.info("ClientHandlerRMI: Lookup successfully executed.");
 
-            //TODO just for debugging purpose
-            Scanner input = new Scanner(System.in);
-            System.out.println("Tell me which port for RMI: ");
-            int port = input.nextInt();
             UnicastRemoteObject.exportObject(this, port);
-
 
             performRegistration();
             LOGGER.info("Client ConnectionManagerRMI ready.");
+
         } catch (RemoteException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             try {
-                LOGGER.info("Trying again in a few seconds");
-                Thread.sleep(CONNECTION_ATTEMPT_DELAY);
-                init();
+                if (connection_attempts <= Config.CONFIG_CLIENT_CONNECTION_MAX_ATTEMPTS) {
+                    connection_attempts++;
+                    LOGGER.info("Trying again in a few seconds");
+                    Thread.sleep(Config.CONFIG_CLIENT_CONNECTION_ATTEMPT_DELAY);
+                    init();
+                }
             } catch (InterruptedException ex) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 Thread.currentThread().interrupt();
@@ -91,13 +95,16 @@ public class ConnectionManagerRMI extends AbstractConnectionManager implements C
 
     @Override
     public void disconnect() {
+        LOGGER.info("Disconnecting. Bye bye!");
         if (serverRemoteRMI != null) {
             try {
                 serverRemoteRMI.removeClientRMI(this);
             } catch (RemoteException e) {
                 LOGGER.log(Level.SEVERE, e.toString(), e);
+                Thread.currentThread().interrupt();
             }
         }
+        Thread.currentThread().interrupt();
     }
 
     @Override

@@ -1,25 +1,37 @@
 package it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 // Centralized message manager
 public final class Messages {
-    private static final String MESSAGES_FILE_PATH = Config.CONFIG_SERVER_MESSAGES_FILE_PATH;
-    private static final String MESSAGES_FILE_NAME = Config.CONFIG_SERVER_MESSAGES_FILE_NAME;
+    private static final Logger LOGGER = Logger.getGlobal();
 
-    private static final String MESSAGES_FILE_NOT_FOUND_ERROR = MESSAGES_FILE_NAME + " file not found in " + MESSAGES_FILE_PATH;
+    private static final String MESSAGES_FILE_PATH = Config.CONFIG_SERVER_MESSAGES_FILE_PATH;
+
+    private static final String MESSAGES_FILE_NOT_FOUND_ERROR = MESSAGES_FILE_PATH + " file not found in " + MESSAGES_FILE_PATH;
 
     private static final Properties MESSAGES = new Properties();
 
-    private static final Logger LOGGER = Logger.getGlobal();
-
     static {
         try {
-            MESSAGES.load(Config.class.getClassLoader().getResourceAsStream(MESSAGES_FILE_NAME));
-        } catch (IOException e) {
+            InputStreamReader inputStreamReader;
+
+            File jarFile = new File(Messages.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            File configFile = new File(jarFile.getParent() + MESSAGES_FILE_PATH);
+            if (!configFile.exists())
+                inputStreamReader = new InputStreamReader(Messages.class.getResourceAsStream(MESSAGES_FILE_PATH));
+            else
+                inputStreamReader = new InputStreamReader(new FileInputStream(configFile));
+
+            MESSAGES.load(inputStreamReader);
+        } catch (IOException | URISyntaxException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }

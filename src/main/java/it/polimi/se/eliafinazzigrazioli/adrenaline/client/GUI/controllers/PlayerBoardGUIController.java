@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
-public class PlayerBoardGUIController extends AbstractGUIController {
+public class PlayerBoardGUIController extends GUIController {
 
     @FXML
     private HBox deathOverlayHBox;
@@ -413,8 +413,7 @@ public class PlayerBoardGUIController extends AbstractGUIController {
             initialized = true;
             super.initialize(location, resources);
 
-            playerBoardGridPane.getStyleClass().remove(GUI.STYLE_CLASS_PLAYER_BOARD_DEFAULT);
-            playerBoardGridPane.getStyleClass().add(GUI.STYLE_CLASS_PLAYER_BOARD_PREFIX + avatar.getDamageMark().name());
+            view.applyBackground(playerBoardGridPane, view.getPlayerBoardAsset(avatar));
 
             if (isOpponent) {
                 cardsGridPane.setOnMouseClicked((event) -> toggleCardsView());

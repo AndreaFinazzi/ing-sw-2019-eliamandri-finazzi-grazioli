@@ -19,7 +19,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
@@ -47,42 +51,45 @@ public class GUI extends Application implements RemoteView {
     public static final String STYLE_CLASS_PLAYER_BOARD_PREFIX = "playerBoard_";
     public static final String STYLE_CLASS_PLAYER_BOARD_SKULL = "playerBoardSkull";
 
-    public static final String FXML_PATH_ROOT = "/client/GUI/fxml/";
-    public static final String ASSET_PATH_ROOT = "/client/GUI/assets/";
-    public static final String ASSET_PATH_CARDS_ROOT = ASSET_PATH_ROOT + "cards/";
-    public static final String ASSET_PATH_CARDS_ROTATED_ROOT = ASSET_PATH_CARDS_ROOT + "rotated/";
-    public static final String ASSET_PATH_MAPS_ROOT = ASSET_PATH_ROOT + "maps/";
-    public static final String ASSET_PATH_AMMO_ROOT = ASSET_PATH_ROOT + "ammo/";
-    public static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + "playerboards/";
-    public static final String ASSET_PATH_AVATAR_ROOT = ASSET_PATH_ROOT + "avatars/";
-    public static final String ASSET_PATH_ICONS_ROOT = ASSET_PATH_ROOT + "icons/";
-    public static final String ASSET_PATH_MARKS_ROOT = ASSET_PATH_ROOT + "marks/";
+    public static final String ASSET_PATH_ROOT = Config.CONFIG_CLIENT_GUI_PATH_ASSETS_ROOT;
+    public static final String ASSET_PATH_CARDS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_CARDS;
+    public static final String ASSET_PATH_CARDS_ROTATED_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_CARDS_ROTATED;
+    public static final String ASSET_PATH_MAPS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_MAPS;
+    public static final String ASSET_PATH_AMMO_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_AMMO;
+    public static final String ASSET_PATH_PLAYER_BOARDS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_PLAYER_BOARDS;
+    public static final String ASSET_PATH_AVATAR_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_AVATARS;
+    public static final String ASSET_PATH_ICONS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_ICONS;
+    public static final String ASSET_PATH_MARKS_ROOT = ASSET_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_ASSETS_MARKS;
 
-    public static final String ASSET_FORMAT_CARDS = ".png";
-    public static final String ASSET_FORMAT_ICONS = ".png";
-    public static final String ASSET_FORMAT_AMMO = ".png";
-    public static final String ASSET_PREFIX_POWER_UP = "AD_powerups_IT_";
-    public static final String ASSET_PREFIX_WEAPON = "AD_weapons_IT_";
-    public static final String ASSET_PREFIX_AMMO = "AD_ammo_";
-    public static final String ASSET_PREFIX_AVATAR = "avatar_";
-    public static final String ASSET_PREFIX_ICONS_ARROWS = "arrow_";
-    public static final String ASSET_PREFIX_MARKS = "mark_";
+    public static final String ASSET_FORMAT = Config.CONFIG_CLIENT_GUI_ASSETS_DEFAULT_FORMAT;
+    public static final String ASSET_PREFIX_MAP = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_MAP;
+    public static final String ASSET_PREFIX_POWER_UP = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_POWER_UP;
+    public static final String ASSET_PREFIX_WEAPON = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_WEAPON;
+    public static final String ASSET_PREFIX_AMMO = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_AMMO;
+    public static final String ASSET_PREFIX_PLAYERBOARD = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_PLAYERBOARD;
+    public static final String ASSET_PREFIX_AVATAR = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_AVATAR;
+    public static final String ASSET_PREFIX_ICONS_ARROWS = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_ICONS_ARROW;
+    public static final String ASSET_PREFIX_MARKS = Config.CONFIG_CLIENT_GUI_ASSETS_PREFIX_MARK;
 
-    public static final String ASSET_ID_HIDDEN_CARD = "02";
-    public static final String ASSET_ID_HIDDEN_AMMO = "04";
-    public static final String ASSET_ID_SKULL = "skull";
+    public static final String ASSET_SUFFIX_PLAYERBOARD = Config.CONFIG_CLIENT_GUI_ASSETS_SUFFIX_PLAYERBOARD;
 
-    public static final String FXML_PATH_LOGIN = FXML_PATH_ROOT + "login.fxml";
-    public static final String FXML_PATH_COMMANDS = FXML_PATH_ROOT + "commands.fxml";
-    public static final String FXML_PATH_OPPONENT_PLAYER_INFO = FXML_PATH_ROOT + "opponent_player_info.fxml";
-    public static final String FXML_PATH_PLAYER_BOARD = FXML_PATH_ROOT + "player_board.fxml";
-    public static final String FXML_PATH_BOARD_SQUARE = FXML_PATH_ROOT + "board_square.fxml";
-    public static final String FXML_PATH_MAIN = FXML_PATH_ROOT + "main.fxml";
-    public static final String FXML_PATH_POWER_UP = FXML_PATH_ROOT + "power_up_card.fxml";
-    public static final String FXML_PATH_WEAPON = FXML_PATH_ROOT + "weapon_card.fxml";
-    public static final String FXML_PATH_AVATAR = FXML_PATH_ROOT + "avatar.fxml";
-    public static final String FXML_PATH_MARK = FXML_PATH_ROOT + "mark.fxml";
-    public static final String FXML_PATH_SKULL = FXML_PATH_ROOT + "skull.fxml";
+    public static final String ASSET_ID_HIDDEN_CARD = Config.CONFIG_CLIENT_GUI_ASSETS_ID_HIDDEN_CARD;
+    public static final String ASSET_ID_HIDDEN_AMMO = Config.CONFIG_CLIENT_GUI_ASSETS_ID_HIDDEN_AMMO;
+    public static final String ASSET_ID_SKULL = Config.CONFIG_CLIENT_GUI_ASSETS_ID_SKULL;
+    public static final String ASSET_ID_SKULL_ROTATED = Config.CONFIG_CLIENT_GUI_ASSETS_ID_SKULL_ROTATED;
+
+    public static final String FXML_PATH_ROOT = Config.CONFIG_CLIENT_GUI_PATH_FXML_ROOT;
+    public static final String FXML_PATH_LOGIN = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_LOGIN;
+    public static final String FXML_PATH_COMMANDS = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_COMMANDS;
+    public static final String FXML_PATH_OPPONENT_PLAYER_INFO = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_OPPONENT_PLAYER_INFO;
+    public static final String FXML_PATH_PLAYER_BOARD = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_PLAYER_BOARD;
+    public static final String FXML_PATH_BOARD_SQUARE = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_BOARD_SQUARE;
+    public static final String FXML_PATH_MAIN = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_MAIN;
+    public static final String FXML_PATH_POWER_UP = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_POWER_UP_CARD;
+    public static final String FXML_PATH_WEAPON = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_WEAPON_CARD;
+    public static final String FXML_PATH_AVATAR = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_AVATAR;
+    public static final String FXML_PATH_MARK = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_MARK;
+    public static final String FXML_PATH_SKULL = FXML_PATH_ROOT + Config.CONFIG_CLIENT_GUI_PATH_FXML_SKULL;
 
     public static final String PROPERTIES_KEY_CARD_ID = "card_id";
     public static final String PROPERTIES_KEY_CARD_SPENT = "card_spent";
@@ -460,7 +467,7 @@ public class GUI extends Application implements RemoteView {
         if (!initialized) {
             initialized = true;
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_PATH_LOGIN));
+            FXMLLoader loader = new FXMLLoader(getResource(FXML_PATH_LOGIN));
 
             StackPane root = null;
             try {
@@ -500,7 +507,7 @@ public class GUI extends Application implements RemoteView {
 
     private void initialize() {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource(FXML_PATH_MAIN));
+        loader.setLocation(getResource(FXML_PATH_MAIN));
         mainGUIController = new MainGUIController(this);
         loader.setController(mainGUIController);
 
@@ -551,6 +558,7 @@ public class GUI extends Application implements RemoteView {
 
     }
 
+    // TODO cardCollected should be void
     @Override
     public void showPowerUpCollectionUpdate(String player, PowerUpCardClient cardCollected, boolean isOpponent) {
         if (isOpponent) {
@@ -575,7 +583,6 @@ public class GUI extends Application implements RemoteView {
             commandsGUIController.updateWeaponCards();
         }
         mainGUIController.removeWeaponCardFromMap(roomColor, collectedCard, droppedCard);
-
     }
 
     @Override
@@ -791,38 +798,38 @@ public class GUI extends Application implements RemoteView {
 
 
     public String getPowerUpAsset(String id) {
-        String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_POWER_UP + id + ASSET_FORMAT_CARDS;
-        return this.getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_POWER_UP + id + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
 
     }
 
     public String getWeaponAsset(String id) {
-        String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT_CARDS;
-        return this.getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_CARDS_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
 
     }
 
     public String getAmmoAsset(String id) {
-        String uri = ASSET_PATH_AMMO_ROOT + ASSET_PREFIX_AMMO + id + ASSET_FORMAT_AMMO;
-        return this.getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_AMMO_ROOT + ASSET_PREFIX_AMMO + id + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
 
     }
 
     public String getWeaponRotatedAsset(String id) {
-        String uri = ASSET_PATH_CARDS_ROTATED_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT_CARDS;
-        return this.getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_CARDS_ROTATED_ROOT + ASSET_PREFIX_WEAPON + id + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
 
     }
 
     public String getAvatarAsset(String id) {
-        String uri = ASSET_PATH_AVATAR_ROOT + ASSET_PREFIX_AVATAR + id + ASSET_FORMAT_ICONS;
-        return this.getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_AVATAR_ROOT + ASSET_PREFIX_AVATAR + id + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
 
     }
 
     public String getIconAsset(String id) {
         String uri = ASSET_PATH_ICONS_ROOT + id;
-        return this.getClass().getResource(uri).toExternalForm();
+        return getResource(uri).toExternalForm();
 
     }
 
@@ -837,18 +844,28 @@ public class GUI extends Application implements RemoteView {
     }
 
     public String getAsset(String id) {
-        String uri = ASSET_PATH_ROOT + id + ASSET_FORMAT_ICONS;
-        return this.getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_ROOT + id + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
     }
 
     public String getMapAsset(MapType mapType) {
-        String uri = ASSET_PATH_MAPS_ROOT + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_PREFIX + mapType.name() + Config.CONFIG_CLIENT_GUI_ASSETS_MAP_FORMAT;
-        return this.getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_MAPS_ROOT + ASSET_PREFIX_MAP + mapType.name() + Config.CONFIG_CLIENT_GUI_ASSETS_DEFAULT_FORMAT;
+        return getResource(uri).toExternalForm();
     }
 
     public String getMarkAsset(DamageMark damageMark) {
-        String uri = ASSET_PATH_MARKS_ROOT + ASSET_PREFIX_MARKS + damageMark.name() + ASSET_FORMAT_ICONS;
-        return this.getClass().getResource(uri).toExternalForm();
+        String uri = ASSET_PATH_MARKS_ROOT + ASSET_PREFIX_MARKS + damageMark.name() + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
+    }
+
+    public String getPlayerBoardAsset(Avatar avatar) {
+        String uri = ASSET_PATH_PLAYER_BOARDS_ROOT + ASSET_PREFIX_PLAYERBOARD + avatar.getDamageMark().name() + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
+    }
+
+    public String getPlayerBoardFFAsset(Avatar avatar) {
+        String uri = ASSET_PATH_PLAYER_BOARDS_ROOT + ASSET_PREFIX_PLAYERBOARD + avatar.getDamageMark().name() + ASSET_SUFFIX_PLAYERBOARD + ASSET_FORMAT;
+        return getResource(uri).toExternalForm();
     }
 
     public void setOpponentPlayerToGUIControllerMap(Map<String, OpponentPlayerGUIController> opponentPlayerToGUIControllerMap) {
@@ -901,5 +918,22 @@ public class GUI extends Application implements RemoteView {
 
     public void disableAll() {
         commandsGUIController.disableCards();
+    }
+
+    public URL getResource(String path) {
+        URL url = null;
+
+        try {
+            File jarFile = new File(GUI.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            File customFile = new File(jarFile.getParent() + path);
+            if (!customFile.exists())
+                url = Config.class.getResource(path);
+            else
+                url = customFile.toURI().toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        return url;
     }
 }
