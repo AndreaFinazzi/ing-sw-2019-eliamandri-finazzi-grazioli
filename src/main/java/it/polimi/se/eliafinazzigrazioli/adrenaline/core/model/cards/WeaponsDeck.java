@@ -44,7 +44,9 @@ public class WeaponsDeck {
     }
 
     public String drawCard() {
-        return cards.get(new Random().nextInt(cards.size()));
+        String card = cards.get(new Random().nextInt(cards.size()));
+        cards.remove(card);
+        return card;
     }
 
     public boolean isEmpty() {

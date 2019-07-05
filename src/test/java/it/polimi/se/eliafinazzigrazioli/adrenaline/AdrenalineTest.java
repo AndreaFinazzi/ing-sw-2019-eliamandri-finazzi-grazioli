@@ -23,7 +23,7 @@ public class AdrenalineTest {
         }
 
         List<Thread> clients = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 13; i++) {
             clients.add(new Thread(() -> {
                 String[] args = new String[1];
                 args[0] = "test";
@@ -40,7 +40,7 @@ public class AdrenalineTest {
         }
 
         try {
-            Thread.sleep(50000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

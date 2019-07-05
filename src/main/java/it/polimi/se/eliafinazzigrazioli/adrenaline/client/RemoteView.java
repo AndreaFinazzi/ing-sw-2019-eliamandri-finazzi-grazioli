@@ -1135,7 +1135,7 @@ public interface RemoteView extends ModelEventsListenerInterface, Observable {
         if (powerUpSelected != null) {
             List<Ammo> selectableAmmos = new ArrayList<>();
             for (PowerUpCardClient powerUpCardClient: getLocalModel().getPowerUpCards()) {
-                if (!selectableAmmos.contains(powerUpCardClient.getEquivalentAmmo()))
+                if (!selectableAmmos.contains(powerUpCardClient.getEquivalentAmmo()) && powerUpCardClient != powerUpSelected)
                     selectableAmmos.add(powerUpCardClient.getEquivalentAmmo());
             }
             for (Ammo ammo: getLocalModel().getAmmos()) {

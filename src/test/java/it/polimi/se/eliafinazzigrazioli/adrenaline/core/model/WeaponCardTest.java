@@ -144,25 +144,4 @@ public class WeaponCardTest {
         WeaponCard card = gson.fromJson(json, weaponCardType);
         System.out.println(card);
     }
-
-    @Test
-    public void jsonParserTest() {
-        try {
-            System.out.println(WeaponCard.jsonParser("Electroscythe"));
-        } catch (WeaponFileNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-
-    @Test
-    public void executeStepTest() {
-        WeaponCard card;
-        try {
-            card = WeaponCard.jsonParser("LockRefile");
-        } catch (WeaponFileNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
-
-    }
 }
