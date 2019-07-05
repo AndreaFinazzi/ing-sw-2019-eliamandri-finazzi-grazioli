@@ -156,8 +156,62 @@ public class Match implements Observable {
     }
 
 
+    public Map<String, Integer> finalPointsCalculation() {
+        List<DamageMark> markOrder = new ArrayList<>();
+        Map<DamageMark, Integer> marksCount = new HashMap<>();
+        for (KillTrack.Slot slot: killTrack.getTrack()) {
+            if (!slot.isSkull()) {
+                DamageMark damageMark = slot.getDamageMark();
+                if (!markOrder.contains(damageMark))
+                    markOrder.add(damageMark);
+                if (!marksCount.keySet().contains(damageMark))
+                    marksCount.put(damageMark, 0);
+                if (slot.isDoubleDamage())
+                    marksCount.put(damageMark, marksCount.get(damageMark) + 2);
+                else
+                    marksCount.put(damageMark, marksCount.get(damageMark) + 1);
+            }
+        }
+        for (DamageMark damageMark: killTrack.getMarksAfterLastSkull()) {
+            if (!markOrder.contains(damageMark))
+                markOrder.add(damageMark);
+            if (!marksCount.keySet().contains(damageMark))
+                marksCount.put(damageMark, 0);
 
+            marksCount.put(damageMark, marksCount.get(damageMark) + 1);
+        }
 
+        Map<String, Integer> points = new HashMap<>();
+        int count = 0;
+        while (!markOrder.isEmpty()) {
+            Player bestPlayer = null;
+            int max = 0;
+            for (DamageMark damageMark: markOrder) {
+                if (marksCount.get(damageMark) > max) {
+                    bestPlayer = getPlayerByMark(damageMark);
+                    max = marksCount.get(damageMark);
+                }
+            }
+            markOrder.remove(bestPlayer.getDamageMarkDelivered());
+            if (bestPlayer != null)
+                points.put(bestPlayer.getPlayerNickname(), Rules.PLAYER_BOARD_DEATH_SCORES.get(count));
+            count++;
+        }
+
+        return points;
+    }
+
+    public String getWinner() {
+        int max = 0;
+        Player winner = null;
+        for (Player player: players) {
+            if (player.getPoints() > max) {
+                winner = player;
+                max = player.getPoints();
+            }
+        }
+        return winner.getPlayerNickname();
+    }
 
     public void updatePoints(Map<String, Integer> playerPoints) {
         for (Map.Entry<String, Integer> points: playerPoints.entrySet())
