@@ -6,8 +6,6 @@ import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Config;
 import it.polimi.se.eliafinazzigrazioli.adrenaline.core.utils.Messages;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -54,10 +52,10 @@ public class ServerRMIManager implements Runnable, ServerRemoteRMI {
 
     static {
         try {
-            System.setProperty("java.rmi.server.hostname", InetAddress.getLocalHost().getHostName());
+            System.setProperty("java.rmi.server.hostname", Config.CONFIG_CLIENT_SERVER_IP);
 
             registry = LocateRegistry.createRegistry(Config.CONFIG_SERVER_RMI_PORT);
-        } catch (RemoteException | UnknownHostException e) {
+        } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             registry = null;
         }
